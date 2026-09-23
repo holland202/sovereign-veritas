@@ -8,16 +8,11 @@ from typing import Any
 class Capability:
     name: str
     authorized: bool = False
-    required_evidence: list[str] = field(default_factory=list)
+    required_evidence: tuple[str, ...] = ()
     description: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "name": self.name,
-            "authorized": self.authorized,
-            "required_evidence": list(self.required_evidence),
-            "description": self.description,
-        }
+        return {"name": self.name, "authorized": self.authorized, "required_evidence": list(self.required_evidence), "description": self.description}
 
 
 class CapabilityRegistry:
@@ -34,10 +29,15 @@ class CapabilityRegistry:
     def authorize(self, name: str) -> Capability | None:
         capability = self._capabilities.get(name)
         if capability is not None:
-            self._capabilities[name] = Capability(
-                name=capability.name,
-                authorized=True,
-                required_evidence=list(capability.required_evidence),
-                description=capability.description,
-            )
-        return self._capabilities.get(name)
+            capability = Capability(capability.name, True, capability.required_evidence, capability.description)
+            self._capabilities[name] = capability
+        return capability
+
+    def check(self, name: str, evidence: dict[str, Any]) -> tuple[bool, list[str]]:
+        capability = self.get(name)
+        if capability is None:
+            return False, [f"capability_missing:{name}"]
+        if not capability.authorized:
+            return False, [f"capability_not_authorized:{name}"]
+        missing = [key for key in capability.required_evidence if not evidence.get(key)]
+        return not missing, missing

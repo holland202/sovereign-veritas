@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-@dataclass
+@dataclass(frozen=True)
 class RuntimeState:
     platform: str
     python_version: str
@@ -14,14 +14,14 @@ class RuntimeState:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def is_healthy(self) -> bool:
-        return self.thermal_status in {"normal", "cool"} and self.compute_budget != "exhausted"
+        return (
+            self.thermal_status in {"normal", "cool"}
+            and self.compute_budget not in {"exhausted", "unavailable"}
+            and self.power_status not in {"unsafe", "unavailable"}
+        )
+
+    def is_available(self) -> bool:
+        return all(value not in {"", "unknown", "unavailable"} for value in (self.thermal_status, self.compute_budget, self.power_status))
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "platform": self.platform,
-            "python_version": self.python_version,
-            "thermal_status": self.thermal_status,
-            "compute_budget": self.compute_budget,
-            "power_status": self.power_status,
-            "metadata": dict(self.metadata),
-        }
+        return {"platform": self.platform, "python_version": self.python_version, "thermal_status": self.thermal_status, "compute_budget": self.compute_budget, "power_status": self.power_status, "metadata": dict(self.metadata)}
