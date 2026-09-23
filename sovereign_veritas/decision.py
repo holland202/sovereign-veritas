@@ -23,8 +23,6 @@ class Decision:
 
 
 class Gate:
-    """Deterministic local action gate."""
-
     def evaluate(
         self,
         evidence: EvidenceRecord,

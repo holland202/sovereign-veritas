@@ -21,8 +21,6 @@ class Capability:
 
 
 class CapabilityRegistry:
-    """Simple registry for local action authorization and evidence requirements."""
-
     def __init__(self) -> None:
         self._capabilities: dict[str, Capability] = {}
 
@@ -43,13 +41,3 @@ class CapabilityRegistry:
                 description=capability.description,
             )
         return self._capabilities.get(name)
-
-    def check(self, capability_name: str, evidence: dict[str, Any]) -> tuple[bool, list[str]]:
-        capability = self._capabilities.get(capability_name)
-        if capability is None:
-            return False, [f"capability_missing:{capability_name}"]
-        if not capability.authorized:
-            return False, [f"capability_not_authorized:{capability_name}"]
-
-        missing = [field for field in capability.required_evidence if not evidence.get(field)]
-        return (not missing), missing

@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
 @dataclass
 class VeritasScienceAdapter:
-    """Adapt scientific evidence into sovereignty runtime evidence records."""
-
     source: str = "veritas-science"
     version: str = "0.1.0"
 
