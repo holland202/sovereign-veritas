@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from sovereign_veritas.capability import Capability, CapabilityRegistry
-from sovereign_veritas.decision import Decision, Gate
+from sovereign_veritas.decision import Gate
 from sovereign_veritas.evidence import EvidenceRecord, Ledger
 from sovereign_veritas.runtime import RuntimeState
 
@@ -12,8 +12,6 @@ def test_gate_allows_valid_evidence():
         authorized=True,
         required_evidence=["fresh_sensor_window", "verified_prediction"],
     )
-    registry = CapabilityRegistry()
-    registry.register(capability)
     runtime = RuntimeState(
         platform="android",
         python_version="3.14.6",
