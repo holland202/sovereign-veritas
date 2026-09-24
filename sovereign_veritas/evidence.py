@@ -99,12 +99,15 @@ class EvidencePackage:
     known_limitations: tuple[str, ...] = ()
     artifact_digests: tuple[str, ...] = ()
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "provenance", _freeze(self.provenance))
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "schema_version": self.schema_version,
             "record": self.record.to_dict(),
             "record_digest": self.record.record_digest,
-            "provenance": deepcopy(self.provenance),
+            "provenance": _thaw(self.provenance),
             "known_limitations": list(self.known_limitations),
             "artifact_digests": list(self.artifact_digests),
         }
