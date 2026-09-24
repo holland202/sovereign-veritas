@@ -167,3 +167,18 @@ class Ledger:
     def as_dicts(self) -> list[dict[str, Any]]:
         self.verify()
         return [record.to_dict() | {"record_digest": record.record_digest} for record in self._records]
+
+
+class LedgerSink:
+    """EvidenceSink that makes the hash chain the default custody path.
+
+    Structurally satisfies interfaces.contracts.EvidenceSink.
+    Duplicate record_ids and broken chains propagate loudly by design:
+    evidence integrity failures must never be silently absorbed.
+    """
+
+    def __init__(self, ledger: Ledger) -> None:
+        self.ledger = ledger
+
+    def record(self, record: EvidenceRecord) -> EvidenceRecord:
+        return self.ledger.append(record)
