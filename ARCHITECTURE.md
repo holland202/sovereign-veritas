@@ -16,9 +16,12 @@ sense → model → predict → act → verify → record evidence → adapt saf
    - meaningful-test/vacuity detection
    - evaluation results
    - protected evidence artifacts
+   - structured uncertainty and evidence quality
 
 2. Governance and Containment
    - capability authorization
+   - hierarchical capabilities
+   - quality-bounded and step-bounded capabilities
    - containment
    - runtime/resource gating
    - Veritas Gate
@@ -61,11 +64,11 @@ sense → model → predict → act → verify → record evidence → adapt saf
 
 proposed action
     ↓
-capability check
+capability check (including parent hierarchy)
     ↓
 containment check
     ↓
-evidence sufficiency
+evidence sufficiency + quality threshold
     ↓
 runtime / uncertainty / risk checks
     ↓
@@ -74,6 +77,11 @@ ALLOW / DEFER / REFUSE
 record decision + evidence
 
 A model cannot authorize its own capability.
+
+Evidence quality (when declared by a capability via min_evidence_quality)
+must meet or exceed the threshold or the Gate returns DEFER with an
+explicit reason. Step bounds (max_steps) are enforced when callers place
+step_count in evidence metadata.
 
 ## Evidence Package
 
@@ -84,7 +92,8 @@ An important result should record, as applicable:
 - model/code version
 - training-data reference
 - prediction
-- uncertainty
+- uncertainty (structured)
+- evidence quality (0.0–1.0)
 - operating regime
 - verification results
 - capability/containment decision

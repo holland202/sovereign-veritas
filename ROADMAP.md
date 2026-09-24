@@ -9,6 +9,7 @@ Integrate:
 - vacuity/meaningful-test checks
 - verification/evaluation records
 - protected evidence artifacts
+- structured uncertainty and evidence quality fields
 
 Acceptance:
 
@@ -17,12 +18,15 @@ Acceptance:
 - explicit verification state
 - retained failures/refutations
 - independently inspectable evidence packages
+- graded quality decisions by the Gate
 
 ## Phase 2 — Safety and Governance
 
 Integrate:
 
 - capability registry
+- hierarchical capabilities
+- quality-bounded and step-bounded capabilities
 - containment
 - runtime/resource state
 - Sovereign Evolution
@@ -33,8 +37,10 @@ Acceptance:
 - unauthorized actions cannot execute
 - unavailable prerequisites cannot become ALLOW
 - incomplete evidence can DEFER
+- evidence quality below threshold can DEFER
 - policy violations REFUSE
 - models cannot self-authorize
+- parent capabilities must be authorized for children
 
 ## Phase 3 — Edge Intelligence
 
