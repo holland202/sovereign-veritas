@@ -34,7 +34,7 @@ class Gate:
         if not capability.authorized:
             return Decision("REFUSE", ("capability_not_authorized",))
         if not runtime.is_available():
-            return Decision("DEFER", ("runtime_state_unavailable",))
+            return Decision("REFUSE", ("runtime_state_unavailable",))
         if not runtime.is_healthy():
             return Decision("DEFER", ("runtime_not_healthy",))
         for name in capability.required_evidence:

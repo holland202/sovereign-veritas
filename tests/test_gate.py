@@ -48,7 +48,7 @@ def test_model_cannot_authorize_capability():
 
 def test_runtime_unavailable_does_not_become_safe():
     result = Gate().evaluate(evidence(), Capability("read", True), runtime(thermal_status="unavailable"))
-    assert result.decision == "DEFER"
+    assert result.decision == "REFUSE"
 
 
 def test_ledger_is_append_only_and_chained():
