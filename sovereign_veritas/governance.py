@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from .capability import Capability, CapabilityRegistry
-from .evidence import EvidenceRecord, LedgerSink
+from .evidence import EvidenceRecord
 from .interfaces.contracts import EvidenceSink
 
 
@@ -15,14 +15,6 @@ class CapabilityGovernor:
     Callers (human, attested policy, or higher-level orchestration) supply
     the decision; this class makes the change custodial by default.
     """
-
-    def __init(
-        self,
-        registry: CapabilityRegistry,
-        sink: EvidenceSink,
-    ) -> None:
-        self.registry = registry
-        self.sink = sink
 
     def __init__(self, registry: CapabilityRegistry, sink: EvidenceSink) -> None:
         self.registry = registry
