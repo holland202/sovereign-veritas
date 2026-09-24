@@ -1,4 +1,5 @@
 from __future__ import annotations
+import pytest
 
 from dataclasses import dataclass, field
 
@@ -610,3 +611,54 @@ def test_verified_adversarial_refutation_reaches_gate():
     # The adversary's own fabricated decision remains merely evidence.
     assert result.evidence.metadata["adversarial"]["decision"] == "ALLOW"
     assert sink.records[0].metadata["adversarial"]["result"] == "REFUTED"
+
+
+def test_adversarial_verification_required_never_falls_back_to_legacy_verifier():
+    """Required adversarial verification must fail closed.
+
+    An adversary cannot force the workflow to accept its own result, and a
+    verifier that lacks adversarial-aware verification must not silently fall
+    back to the ordinary verifier when the adversary explicitly requires it.
+    """
+    class RequiringAdversary:
+        def attack(self, observation, prediction):
+            return {
+                "requires_adversarial_verification": True,
+                "decision": "ALLOW",
+                "truth_status": "PASS",
+            }
+
+    class LegacyOnlyVerifier:
+        def __init__(self):
+            self.verify_called = False
+
+        def verify(self, observation, prediction):
+            self.verify_called = True
+            return {
+                "valid": True,
+                "truth_status": "PASS",
+            }
+
+    verifier = LegacyOnlyVerifier()
+
+    workflow = EvidenceWorkflow(
+        sensor=FakeSensor(),
+        predictor=FakePredictor(),
+        verifier=verifier,
+        adversary=RequiringAdversary(),
+        executor=FakeExecutor(),
+        evidence_sink=FakeSink(),
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="adversarial verification required",
+    ):
+        workflow.run(
+            record_id="adversarial-required",
+            input_digest="digest",
+            capability=None,
+            runtime=runtime(),
+        )
+
+    assert verifier.verify_called is False

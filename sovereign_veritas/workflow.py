@@ -78,17 +78,38 @@ class EvidenceWorkflow:
                 "verify_with_adversarial",
                 None,
             )
+            requires_adversarial_verification = bool(
+                adversarial.get(
+                    "requires_adversarial_verification",
+                    False,
+                )
+            )
+
+            if (
+                requires_adversarial_verification
+                and verify_with_adversarial is None
+            ):
+                raise RuntimeError(
+                    "adversarial verification required but verifier "
+                    "does not implement verify_with_adversarial"
+                )
         else:
             verify_with_adversarial = None
 
-        if verify_with_adversarial is not None:
+        if (
+            verify_with_adversarial is not None
+            and adversarial is not None
+        ):
             verification = verify_with_adversarial(
                 observation,
                 prediction,
                 adversarial,
             )
         else:
-            verification = self.verifier.verify(observation, prediction)
+            verification = self.verifier.verify(
+                observation,
+                prediction,
+            )
 
         action_dict = None
         if action is not None:
