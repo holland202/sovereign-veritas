@@ -8,9 +8,18 @@ from datetime import datetime, timezone
 from typing import Any
 
 
+def canonical_json(value: Any) -> str:
+    """Return deterministic JSON suitable for hashing and evidence export."""
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+
+
 def _digest(value: Any) -> str:
-    encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
+    return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -47,6 +56,46 @@ class EvidenceRecord:
     @property
     def record_digest(self) -> str:
         return _digest(self.to_dict())
+
+
+@dataclass(frozen=True)
+class EvidencePackage:
+    """Independently inspectable evidence bundle around one EvidenceRecord."""
+
+    schema_version: str
+    record: EvidenceRecord
+    provenance: dict[str, Any] = field(default_factory=dict)
+    known_limitations: tuple[str, ...] = ()
+    artifact_digests: tuple[str, ...] = ()
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": self.schema_version,
+            "record": self.record.to_dict(),
+            "record_digest": self.record.record_digest,
+            "provenance": deepcopy(self.provenance),
+            "known_limitations": list(self.known_limitations),
+            "artifact_digests": list(self.artifact_digests),
+        }
+
+    def serialize(self) -> str:
+        return canonical_json(self.to_dict())
+
+    @property
+    def package_digest(self) -> str:
+        return _digest(self.to_dict())
+
+    @property
+    def verification_status(self) -> str:
+        verification = self.record.verification
+        if verification is None:
+            return "NOT_VERIFIED"
+
+        status = verification.get("status")
+        if status is None:
+            return "UNKNOWN"
+
+        return str(status)
 
 
 class Ledger:
