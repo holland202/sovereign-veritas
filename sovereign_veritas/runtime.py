@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from .evidence import _freeze, _thaw
+
 
 @dataclass(frozen=True)
 class RuntimeState:
@@ -12,6 +14,9 @@ class RuntimeState:
     compute_budget: str = "available"
     power_status: str = "stable"
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "metadata", _freeze(self.metadata))
 
     def is_healthy(self) -> bool:
         return (
@@ -24,4 +29,4 @@ class RuntimeState:
         return all(value not in {"", "unknown", "unavailable"} for value in (self.thermal_status, self.compute_budget, self.power_status))
 
     def to_dict(self) -> dict[str, Any]:
-        return {"platform": self.platform, "python_version": self.python_version, "thermal_status": self.thermal_status, "compute_budget": self.compute_budget, "power_status": self.power_status, "metadata": dict(self.metadata)}
+        return {"platform": self.platform, "python_version": self.python_version, "thermal_status": self.thermal_status, "compute_budget": self.compute_budget, "power_status": self.power_status, "metadata": _thaw(self.metadata)}
