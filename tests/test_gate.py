@@ -144,3 +144,22 @@ def test_evidence_package_preserves_refutation_status():
 
     assert package.verification_status == "FAIL"
     assert package.record.verification["refutes_claim"] is True
+
+
+def test_evidence_verification_cannot_be_mutated_into_pass():
+    record = evidence(
+        record_id="tamper-1",
+        verification={"status": "FAIL"},
+    )
+
+    # Nested evidence is immutable after construction.
+    with pytest.raises(TypeError):
+        record.verification["status"] = "PASS"
+
+    result = Gate().evaluate(
+        record,
+        Capability("read_only", True),
+        runtime(),
+    )
+
+    assert result.decision == "REFUSE"
