@@ -9,6 +9,7 @@ from .evidence import EvidenceRecord
 from .interfaces.contracts import (
     ActionExecutor,
     ActionProposal,
+    Adversary,
     EvidenceSink,
     Predictor,
     Sensor,
@@ -40,6 +41,7 @@ class EvidenceWorkflow:
         sensor: Sensor,
         predictor: Predictor,
         verifier: Verifier,
+        adversary: Adversary | None = None,
         executor: ActionExecutor,
         evidence_sink: EvidenceSink,
         gate: Gate | None = None,
@@ -47,6 +49,7 @@ class EvidenceWorkflow:
         self.sensor = sensor
         self.predictor = predictor
         self.verifier = verifier
+        self.adversary = adversary
         self.executor = executor
         self.evidence_sink = evidence_sink
         self.gate = gate or Gate()
@@ -64,7 +67,28 @@ class EvidenceWorkflow:
     ) -> WorkflowResult:
         observation = self.sensor.observe()
         prediction = self.predictor.predict(observation)
-        verification = self.verifier.verify(observation, prediction)
+
+        adversarial = None
+        if self.adversary is not None:
+            adversarial = self.adversary.attack(observation, prediction)
+
+        if adversarial is not None:
+            verify_with_adversarial = getattr(
+                self.verifier,
+                "verify_with_adversarial",
+                None,
+            )
+        else:
+            verify_with_adversarial = None
+
+        if verify_with_adversarial is not None:
+            verification = verify_with_adversarial(
+                observation,
+                prediction,
+                adversarial,
+            )
+        else:
+            verification = self.verifier.verify(observation, prediction)
 
         action_dict = None
         if action is not None:
@@ -87,6 +111,23 @@ class EvidenceWorkflow:
             action=action_dict,
             metadata=dict(metadata or {}),
         )
+
+        if adversarial is not None:
+            evidence_metadata = dict(evidence.metadata)
+            evidence_metadata["adversarial"] = adversarial
+
+            evidence = EvidenceRecord(
+                record_id=evidence.record_id,
+                input_digest=evidence.input_digest,
+                prediction=evidence.prediction,
+                verification=evidence.verification,
+                capability=evidence.capability,
+                action=evidence.action,
+                decision=evidence.decision,
+                reasons=evidence.reasons,
+                metadata=evidence_metadata,
+                timestamp=evidence.timestamp,
+            )
 
         decision = self.gate.evaluate(
             evidence,

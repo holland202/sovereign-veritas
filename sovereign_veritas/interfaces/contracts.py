@@ -28,6 +28,11 @@ class Predictor(Protocol):
         ...
 
 
+class Adversary(Protocol):
+    def attack(self, observation: Any, prediction: Prediction) -> dict[str, Any]:
+        ...
+
+
 class ActionExecutor(Protocol):
     def execute(self, action: ActionProposal) -> Any:
         ...
@@ -35,6 +40,16 @@ class ActionExecutor(Protocol):
 
 class Verifier(Protocol):
     def verify(self, observation: Any, prediction: Prediction) -> dict[str, Any]:
+        ...
+
+
+class AdversarialVerifier(Protocol):
+    def verify_with_adversarial(
+        self,
+        observation: Any,
+        prediction: Prediction,
+        adversarial: dict[str, Any],
+    ) -> dict[str, Any]:
         ...
 
 

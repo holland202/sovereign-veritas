@@ -325,3 +325,288 @@ def test_gate_refuse_or_defer_never_reaches_executor():
         assert executor.calls == []
         assert len(sink.records) == 1
         assert sink.records[0].decision == expected
+
+
+@dataclass
+class FakeAdversary:
+    result: dict = field(
+        default_factory=lambda: {
+            "candidate_id": "r-adversarial",
+            "attack_id": "a1",
+            "attack_type": "counterexample",
+            "target": "prediction",
+            "result": "NO_COUNTEREXAMPLE_FOUND",
+            "epistemic_status": "OBSERVATION",
+            "truth_status": "UNDETERMINED",
+        }
+    )
+    calls: list = field(default_factory=list)
+
+    def attack(self, observation, prediction):
+        self.calls.append((observation, prediction))
+        return self.result
+
+
+def workflow_with_adversary(verifier_status="PASS"):
+    executor = FakeExecutor()
+    sink = FakeSink()
+    adversary = FakeAdversary()
+    instance = EvidenceWorkflow(
+        sensor=FakeSensor(),
+        predictor=FakePredictor(),
+        verifier=FakeVerifier(verifier_status),
+        adversary=adversary,
+        executor=executor,
+        evidence_sink=sink,
+    )
+    return instance, executor, sink, adversary
+
+
+def test_adversary_runs_after_prediction_and_before_verification():
+    events = []
+
+    @dataclass
+    class OrderedPredictor:
+        def predict(self, observation):
+            events.append("predict")
+            return Prediction("prediction", 0.1, "test-model")
+
+    @dataclass
+    class OrderedAdversary:
+        def attack(self, observation, prediction):
+            events.append("adversary")
+            assert prediction.value == "prediction"
+            return {"truth_status": "UNDETERMINED", "result": "OBSERVED"}
+
+    @dataclass
+    class OrderedVerifier:
+        def verify(self, observation, prediction):
+            events.append("verify")
+            return {"status": "PASS"}
+
+    wf = EvidenceWorkflow(
+        sensor=FakeSensor(),
+        predictor=OrderedPredictor(),
+        verifier=OrderedVerifier(),
+        adversary=OrderedAdversary(),
+        executor=FakeExecutor(),
+        evidence_sink=FakeSink(),
+    )
+
+    result = wf.run(
+        record_id="order-1",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert events == ["predict", "adversary", "verify"]
+    assert result.decision.decision == "ALLOW"
+
+
+def test_adversarial_observation_enters_evidence_record():
+    wf, executor, sink, adversary = workflow_with_adversary()
+
+    result = wf.run(
+        record_id="adv-1",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert result.evidence.metadata["adversarial"] == adversary.result
+    assert sink.records[0].metadata["adversarial"] == adversary.result
+
+
+def test_adversary_cannot_manufacture_gate_decision():
+    wf, executor, sink, adversary = workflow_with_adversary()
+
+    adversary.result = {
+        "candidate_id": "r-adversarial",
+        "attack_id": "a2",
+        "attack_type": "counterexample",
+        "target": "prediction",
+        "result": "REFUTED",
+        "epistemic_status": "OBSERVATION",
+        "truth_status": "FALSE",
+        "decision": "ALLOW",
+    }
+
+    result = wf.run(
+        record_id="adv-2",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert result.decision.decision == "ALLOW"
+    assert result.evidence.decision == "ALLOW"
+    assert result.evidence.metadata["adversarial"]["decision"] == "ALLOW"
+    assert len(executor.calls) == 1
+
+
+def test_surviving_candidate_remains_undetermined():
+    wf, executor, sink, adversary = workflow_with_adversary()
+
+    result = wf.run(
+        record_id="adv-3",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert result.evidence.metadata["adversarial"]["truth_status"] == "UNDETERMINED"
+    assert result.decision.decision == "ALLOW"
+
+
+def test_adversary_does_not_override_failed_verification():
+    wf, executor, sink, adversary = workflow_with_adversary(verifier_status="FAIL")
+
+    adversary.result["result"] = "NO_COUNTEREXAMPLE_FOUND"
+
+    result = wf.run(
+        record_id="adv-4",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert result.decision.decision == "REFUSE"
+    assert not result.executed
+    assert executor.calls == []
+
+
+def test_no_adversary_preserves_existing_workflow_behavior():
+    wf, executor, sink = workflow()
+
+    result = wf.run(
+        record_id="adv-5",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert result.decision.decision == "ALLOW"
+    assert "adversarial" not in result.evidence.metadata
+    assert len(executor.calls) == 1
+
+
+def test_adversary_runs_even_when_gate_later_refuses_capability():
+    wf, executor, sink, adversary = workflow_with_adversary()
+
+    result = wf.run(
+        record_id="adv-6",
+        input_digest="abc",
+        capability=Capability("read_only", False),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert adversary.calls
+    assert result.decision.decision == "REFUSE"
+    assert executor.calls == []
+    assert sink.records[0].metadata["adversarial"] == adversary.result
+
+
+def test_adversarial_evidence_reaches_adversarial_aware_verifier():
+    observed = {}
+
+    @dataclass
+    class AdversarialAwareVerifier:
+        def verify(self, observation, prediction):
+            raise AssertionError("legacy verifier path should not be used")
+
+        def verify_with_adversarial(self, observation, prediction, adversarial):
+            observed["observation"] = observation
+            observed["prediction"] = prediction
+            observed["adversarial"] = adversarial
+            return {"status": "PASS", "source": "adversarial-aware"}
+
+    adversary = FakeAdversary()
+    wf = EvidenceWorkflow(
+        sensor=FakeSensor(),
+        predictor=FakePredictor(),
+        verifier=AdversarialAwareVerifier(),
+        adversary=adversary,
+        executor=FakeExecutor(),
+        evidence_sink=FakeSink(),
+    )
+
+    result = wf.run(
+        record_id="adv-aware-1",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert observed["observation"] == result.observation
+    assert observed["prediction"] == result.prediction
+    assert observed["adversarial"] == adversary.result
+    assert result.verification["source"] == "adversarial-aware"
+    assert result.decision.decision == "ALLOW"
+
+
+def test_verified_adversarial_refutation_reaches_gate():
+    adversary = FakeAdversary(
+        result={
+            "candidate_id": "r-adversarial",
+            "attack_id": "a-refute",
+            "attack_type": "counterexample",
+            "target": "prediction",
+            "result": "REFUTED",
+            "epistemic_status": "OBSERVATION",
+            "truth_status": "UNDETERMINED",
+            "decision": "ALLOW",
+        }
+    )
+
+    @dataclass
+    class AdversarialAwareVerifier:
+        def verify(self, observation, prediction):
+            raise AssertionError("legacy verifier path should not be used")
+
+        def verify_with_adversarial(self, observation, prediction, adversarial):
+            assert adversarial["result"] == "REFUTED"
+            assert adversarial["truth_status"] == "UNDETERMINED"
+            return {
+                "status": "FAIL",
+                "source": "independent-verification",
+                "refutes_prediction": True,
+            }
+
+    executor = FakeExecutor()
+    sink = FakeSink()
+
+    wf = EvidenceWorkflow(
+        sensor=FakeSensor(),
+        predictor=FakePredictor(),
+        verifier=AdversarialAwareVerifier(),
+        adversary=adversary,
+        executor=executor,
+        evidence_sink=sink,
+    )
+
+    result = wf.run(
+        record_id="adv-refute-1",
+        input_digest="abc",
+        capability=Capability("read_only", True),
+        runtime=runtime(),
+        action=action(),
+    )
+
+    assert result.verification["status"] == "FAIL"
+    assert result.verification["refutes_prediction"] is True
+    assert result.decision.decision == "REFUSE"
+    assert not result.executed
+    assert executor.calls == []
+
+    # The adversary's own fabricated decision remains merely evidence.
+    assert result.evidence.metadata["adversarial"]["decision"] == "ALLOW"
+    assert sink.records[0].metadata["adversarial"]["result"] == "REFUTED"
