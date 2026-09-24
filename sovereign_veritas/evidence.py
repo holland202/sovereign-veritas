@@ -49,7 +49,12 @@ def _digest(value: Any) -> str:
 
 @dataclass(frozen=True)
 class EvidenceRecord:
-    """Immutable observation of one prediction, verification, and gate decision."""
+    """Immutable observation of one prediction, verification, and gate decision.
+
+    uncertainty and evidence_quality are optional structured fields that let the
+    Gate make graded decisions without changing the core hash-chain contract.
+    evidence_quality is expected in [0.0, 1.0] when present.
+    """
 
     record_id: str
     input_digest: str
@@ -60,6 +65,8 @@ class EvidenceRecord:
     decision: str | None = None
     reasons: tuple[str, ...] = ()
     metadata: dict[str, Any] = field(default_factory=dict)
+    uncertainty: dict[str, Any] | None = None
+    evidence_quality: float | None = None
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     previous_digest: str | None = None
 
@@ -68,6 +75,7 @@ class EvidenceRecord:
         object.__setattr__(self, "verification", _freeze(self.verification))
         object.__setattr__(self, "action", _freeze(self.action))
         object.__setattr__(self, "metadata", _freeze(self.metadata))
+        object.__setattr__(self, "uncertainty", _freeze(self.uncertainty))
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -81,12 +89,26 @@ class EvidenceRecord:
             "decision": self.decision,
             "reasons": list(self.reasons),
             "metadata": _thaw(self.metadata),
+            "uncertainty": _thaw(self.uncertainty),
+            "evidence_quality": self.evidence_quality,
             "previous_digest": self.previous_digest,
         }
 
     @property
     def record_digest(self) -> str:
         return _digest(self.to_dict())
+
+    def quality_or_default(self, default: float = 0.0) -> float:
+        """Return evidence_quality if set, else look in metadata, else default."""
+        if self.evidence_quality is not None:
+            return float(self.evidence_quality)
+        meta_q = self.metadata.get("evidence_quality") if self.metadata else None
+        if meta_q is not None:
+            try:
+                return float(meta_q)
+            except (TypeError, ValueError):
+                return default
+        return default
 
 
 @dataclass(frozen=True)
