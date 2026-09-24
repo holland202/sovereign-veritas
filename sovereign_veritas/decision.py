@@ -33,6 +33,9 @@ class Gate:
             return Decision("REFUSE", ("capability_missing",))
         if not capability.authorized:
             return Decision("REFUSE", ("capability_not_authorized",))
+        requested_capability = (evidence.action or {}).get("capability")
+        if requested_capability and requested_capability != capability.name:
+            return Decision("REFUSE", ("action_capability_mismatch",))
         if not runtime.is_available():
             return Decision("REFUSE", ("runtime_state_unavailable",))
         if not runtime.is_healthy():

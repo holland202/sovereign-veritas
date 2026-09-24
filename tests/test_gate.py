@@ -163,3 +163,37 @@ def test_evidence_verification_cannot_be_mutated_into_pass():
     )
 
     assert result.decision == "REFUSE"
+
+def test_action_capability_mismatch_is_refused():
+    record = evidence(
+        record_id="cap-mismatch-1",
+        action={
+            "capability": "write",
+            "requested": "write",
+        },
+    )
+
+    result = Gate().evaluate(
+        record,
+        Capability("read_only", True),
+        runtime(),
+    )
+
+    assert result.decision == "REFUSE"
+
+def test_action_capability_match_is_allowed():
+    record = evidence(
+        record_id="cap-match-1",
+        action={
+            "capability": "read_only",
+            "requested": "read",
+        },
+    )
+
+    result = Gate().evaluate(
+        record,
+        Capability("read_only", True),
+        runtime(),
+    )
+
+    assert result.decision == "ALLOW"
