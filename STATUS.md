@@ -9,17 +9,15 @@ Only claims supported by recorded runs appear below.
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| SHA | `d813833b5e09b859b9a8940a783b78a3c36d08e0` |
 | Result | **110 passed** |
 | Host | Galaxy S25 / Termux |
-| Working tree | clean |
 
 ---
 
 ## MEASURED — Stage-1 concurrency (frozen)
 
-4 × 50 → 100/200 unique IDs, `reload_ok=false`, chain broken at index 2.  
-**Single writer SUPPORTED; concurrent writers UNSUPPORTED.** Option A in force.
+4 × 50 → chain broken, fail closed.  
+**Single writer SUPPORTED; concurrent writers UNSUPPORTED.**
 
 ---
 
@@ -27,31 +25,32 @@ Only claims supported by recorded runs appear below.
 
 | Mode | Result |
 |------|--------|
-| clean 100 | reload_ok true, recovered 100 |
-| torn_last_line 50 | reload_ok false, invalid JSON at index 50 |
+| clean 100 | recovered 100 |
+| torn_last_line | reload refused |
 
 ---
 
-## MEASURED — Physical interruption
+## MEASURED — Physical SIGKILL (n=2)
 
-| Run | Method | recovered_ok | count | notes |
-|-----|--------|--------------|-------|-------|
-| SIGKILL #1 | sigkill | true | 2226 | SM-S938U; manifest running |
-| SIGKILL #2–#5 | — | pending | — | same SHA; new dirs |
+| Run | recovered_ok | count | ledger_sha256 (prefix) |
+|-----|--------------|-------|------------------------|
+| #1 | true | 2226 | `45889465…` |
+| #2 | true | 2810 | `0b364791…` |
+| #3–#5 | pending | — | — |
+
+Device: SM-S938U / Android 16. Both runs: `manifest_status=running`.  
+**claim:** 2/2 measured SIGKILL recoveries verified. Not a reliability rate; not power-loss.
 
 See `docs/PHYSICAL_DURABILITY_RUNS.md`.
-
-**claim:** per-run only. Not power-loss; not reliability statistics until n grows.
 
 ---
 
 ## NOT YET MEASURED
 
-- Full SIGKILL matrix (5)
-- termux-force-stop / device-reboot / genuine power-loss
-- Long-running soak
+- SIGKILL #3–#5, force-stop, reboot, power-loss
+- Soak / scale / recovery-time matrix
 - Multi-writer B/C
-- Distribution shift, motivated adversary, real-task E2E
+- Gate-level durability signal
 
 ---
 

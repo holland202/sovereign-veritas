@@ -8,9 +8,8 @@ claim without preserving individual evidence.
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| SHA | `d813833b5e09b859b9a8940a783b78a3c36d08e0` |
+| SHA (matrix start) | `d813833` / docs tip `3d834d0` |
 | Suite | **110 passed** |
-| Working tree | clean |
 | Runtime dirs | ignored (`runtime-*/`) |
 
 Do not change implementation between SIGKILL matrix runs.
@@ -21,44 +20,57 @@ Do not change implementation between SIGKILL matrix runs.
 
 | Field | Value |
 |-------|-------|
-| Host | Samsung SM-S938U (Galaxy S25 Ultra) |
-| Android | 16 / SDK 36 |
-| Python | 3.14.6 CPython aarch64 (Termux) |
+| Host | Samsung SM-S938U / Android 16 / Termux / CPython 3.14.6 |
 | interruption_method | `sigkill` |
 | session_id | `1790301674-31060` |
-| manifest_status | **running** (clean-stop handler did not run) |
+| manifest_status | **running** |
 | recovered_ok | **true** |
 | recovered_count | **2226** |
 | ledger_size_bytes | 1055062 |
 | ledger_sha256 | `458894656f0d897a4b5b8afcf0a06d222c3a9268e974eff6f0ee4b91d7565c48` |
 | reload_error | null |
 
-### Allowed claim
+---
 
-Under this single SIGKILL interruption, on this device/path/checkout, the
-persisted ledger reloaded and its complete hash chain verified (2226 records).
+## Run 2026-09-24 — SIGKILL #2
 
-### Not claimed
+| Field | Value |
+|-------|-------|
+| Host | Samsung SM-S938U / Android 16 / Termux / CPython 3.14.6 |
+| interruption_method | `sigkill` |
+| session_id | `1790302312-9761` |
+| directory | `runtime-durability-physical-02` |
+| manifest_status | **running** |
+| recovered_ok | **true** |
+| recovered_count | **2810** |
+| ledger_size_bytes | 1331878 |
+| ledger_sha256 | `0b364791b1eff545124a2a90f55f17373f0d77e1f3c1f60dccb8aec7dc4193f1` |
+| reload_error | null |
 
-- General power-loss durability
-- Multi-run statistics (n=1 so far)
-- Concurrent-writer safety
-
-Artifacts (offline only): `SESSION.json`, `durability_ledger.jsonl`, `RECOVERY.json`.
+Second `recover` on the same files matched count and SHA-256 (artifact consistency, not a second kill).
 
 ---
 
-## SIGKILL #2–#5 — pending
+## Summary so far
 
-Protocol (same checkout, new directory each time):
+| Run | recovered_ok | count | SHA-256 (prefix) |
+|-----|--------------|-------|------------------|
+| SIGKILL #1 | true | 2226 | `45889465…` |
+| SIGKILL #2 | true | 2810 | `0b364791…` |
+| SIGKILL #3–#5 | pending | — | — |
+
+**Allowed:** 2/2 measured SIGKILL runs on this device/checkout recovered and verified.  
+**Not claimed:** reliable survival rate, power-loss durability, concurrent writers.
+
+---
+
+## SIGKILL #3–#5 — pending
 
 ```bash
 rm -rf ./runtime-durability-physical-0N
 python tools/physical_durability.py writer \
   ./runtime-durability-physical-0N --interval-s 0.01
-# note PID; from another session: kill -9 <PID>
+# other session: kill -9 <PID>
 python tools/physical_durability.py recover \
   ./runtime-durability-physical-0N --interruption-method sigkill
 ```
-
-Append each recovery JSON summary here after the run. Do not edit prior entries.
