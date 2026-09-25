@@ -118,12 +118,14 @@ def test_unauthorized_capability_stops_without_execution():
     registry = CapabilityRegistry()
     registry.register(Capability("write", False))
     planner, ledger, executor = _planner(registry=registry)
-    plan = BoundedPlan(steps=(_step("s1", capability="write", requested="write"),))
+    plan = BoundedPlan(
+        steps=(_step("s1", capability="write", requested="write"),)
+    )
     result = planner.run(plan)
     assert result.completed is False
     assert result.steps_executed == 0
     assert result.stopped_reason is not None
-    assert "REFUSE" in result.stopped_reason or "refuse" in result.stopped_reason.lower()
+    assert "refuse" in result.stopped_reason.lower()
     assert executor.calls == []
 
 
@@ -154,7 +156,7 @@ def test_refuse_at_step_2_prevents_step_3():
     result = planner.run(plan)
     assert result.completed is False
     assert result.steps_executed == 1
-    assert result.steps_attempted == 2  # step 2 evaluated, refused
+    assert result.steps_attempted == 2
     assert len(executor.calls) == 1
     assert len(ledger.all()) == 2
     assert ledger.all()[1].decision == "REFUSE"
@@ -178,7 +180,6 @@ def test_executor_failure_stops_plan():
     result = planner.run(plan)
     assert result.completed is False
     assert "executor_exception" in (result.stopped_reason or "")
-    # step 1 succeeded and was recorded; step 2 failed and was recorded by workflow
     assert len(ledger.all()) >= 1
     assert executor.calls == 2
 
@@ -188,12 +189,13 @@ def test_planner_cannot_use_one_capability_to_authorize_another():
     registry.register(Capability("read", True))
     registry.register(Capability("write", False))
     planner, ledger, executor = _planner(registry=registry)
-    # Step claims write capability but tries to ride on read — preflight mismatch
     bad = PlanStep(
         record_id="bad",
         input_digest="d",
         capability_name="read",
-        action=ActionProposal(capability="write", requested="write", parameters={}),
+        action=ActionProposal(
+            capability="write", requested="write", parameters={}
+        ),
     )
     with pytest.raises(ValueError, match="action_capability_mismatch"):
         planner.run(BoundedPlan(steps=(bad,)))
@@ -202,7 +204,9 @@ def test_planner_cannot_use_one_capability_to_authorize_another():
 
 def test_missing_capability_rejected_in_preflight():
     planner, ledger, executor = _planner()
-    plan = BoundedPlan(steps=(_step("s1", capability="nope", requested="nope")))
+    plan = BoundedPlan(
+        steps=(_step("s1", capability="nope", requested="nope"),)
+    )
     with pytest.raises(ValueError, match="capability_missing"):
         planner.run(plan)
     assert len(ledger.all()) == 0
