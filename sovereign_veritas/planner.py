@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Sequence
+from typing import Any
 
-from .capability import Capability, CapabilityRegistry
-from .decision import Decision
+from .capability import CapabilityRegistry
 from .interfaces.contracts import ActionProposal
 from .runtime import RuntimeState
 from .workflow import EvidenceWorkflow, WorkflowResult
@@ -61,8 +60,7 @@ class BoundedMultiStepPlanner:
       - unique record_ids
       - each step has matching action.capability == capability_name
       - each capability exists in the registry
-      - if capability.max_steps is set, plan length must not exceed it
-        for that capability's steps (and per-step step_count will be set)
+      - if any capability.max_steps is set, plan length must not exceed it
 
     Runtime:
       - step_count metadata starts at 1 and increases by 1 each step
@@ -99,27 +97,22 @@ class BoundedMultiStepPlanner:
 
             if step.action.capability != step.capability_name:
                 raise ValueError(
-                    f"action_capability_mismatch_at_step:{index + 1}:"
-                    f"{step.action.capability}!={step.capability_name}"
+                    "action_capability_mismatch_at_step:"
+                    f"{index + 1}:{step.action.capability}!={step.capability_name}"
                 )
 
             capability = self.registry.get(step.capability_name)
             if capability is None:
-                raise ValueError(
-                    f"capability_missing:{step.capability_name}"
-                )
+                raise ValueError(f"capability_missing:{step.capability_name}")
 
-            # If this capability declares max_steps, the plan must not
-            # schedule more steps for that capability than the bound allows.
-            # The Gate still enforces per-step step_count at runtime.
+            # If this capability declares max_steps, plan length must not
+            # exceed it (step_count will be 1..N). Gate still enforces at runtime.
             if capability.max_steps is not None:
-                # Global plan length is an upper bound on any step_count
-                # we will assign (1..N). Refuse plans that cannot succeed.
                 if len(plan.steps) > capability.max_steps:
                     raise ValueError(
-                        f"plan_exceeds_capability_max_steps:"
-                        f"{step.capability_name}:{len(plan.steps)}">"
-                        f"{capability.max_steps}"
+                        "plan_exceeds_capability_max_steps:"
+                        f"{step.capability_name}:{len(plan.steps)}"
+                        f">{capability.max_steps}"
                     )
 
     def run(self, plan: BoundedPlan) -> PlanResult:
@@ -131,8 +124,7 @@ class BoundedMultiStepPlanner:
         for index, step in enumerate(plan.steps):
             step_number = index + 1
             capability = self.registry.get(step.capability_name)
-            # preflight guarantees capability exists
-            assert capability is not None
+            assert capability is not None  # preflight guarantee
 
             metadata = dict(step.metadata)
             metadata["step_count"] = step_number
@@ -150,8 +142,7 @@ class BoundedMultiStepPlanner:
                     metadata=metadata,
                 )
             except Exception as exc:
-                # Workflow already recorded failure evidence when executor fails.
-                # We stop; no further steps.
+                # Workflow records failure evidence when executor fails.
                 stopped_reason = f"executor_exception:{type(exc).__name__}:{exc}"
                 break
 
@@ -165,8 +156,6 @@ class BoundedMultiStepPlanner:
                 break
 
             if not result.executed:
-                # ALLOW without execution should not happen under current
-                # workflow contract; treat as stop to stay fail-closed.
                 stopped_reason = "allow_without_execution"
                 break
 
