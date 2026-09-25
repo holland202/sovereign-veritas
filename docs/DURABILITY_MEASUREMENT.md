@@ -5,7 +5,7 @@
 ```
 Single-writer continuous append
         ↓
-interrupt proxy (clean stop | torn last line | operator SIGKILL)
+interrupt proxy (clean | torn last line | operator physical interrupt)
         ↓
 FileLedger reload
         ↓
@@ -14,43 +14,60 @@ valid chain  OR  FAIL CLOSED
 
 **claim_level:** `durability_characterization`
 
-This is **not** a physical power-cycle or dirty-block-device claim until an
-operator runs a real interruption on the S25 and records device/FS/Python.
+Software proxies are **not** physical power-cycle evidence.
+
+---
 
 ## Module
 
 `sovereign_veritas.durability.DurabilityProbe`
 
-### Modes
+| Mode | Intent |
+|------|--------|
+| `clean` | Stop between complete records; expect full recovery |
+| `torn_last_line` | After N complete records, write partial JSON; expect fail closed |
 
-| Mode | Meaning |
-|------|---------|
-| `clean` | Stop between complete records; reload should recover exact count |
-| `torn_last_line` | After N complete records, write a partial JSON line; reload must fail closed |
+---
 
-### Example
+## Measured — 2026-09-24 Termux / Galaxy S25
 
-```bash
-python -c "
-from pathlib import Path
-from sovereign_veritas.durability import DurabilityProbe
-import json
+Branch tip: `e1da8fd` · Suite: **110 passed**
 
-p = DurabilityProbe(Path('./runtime-durability-test'))
-print(json.dumps(p.run(target_records=100, mode='clean').to_dict(), indent=2))
-print(json.dumps(p.run(target_records=50, mode='torn_last_line').to_dict(), indent=2))
-"
+### Clean
+
+```
+mode: clean
+target_records: 100
+records_written_before_stop: 100
+reload_ok: true
+recovered_count: 100
+file_size_bytes: 43918
 ```
 
-### Manual physical experiment (operator)
+### Torn final line
 
-1. Start a long clean run in one Termux session.
-2. Force-stop the process mid-write (or power-interrupt if you accept the risk).
-3. Restart Python, `FileLedger(path)`, record `reload_ok` / error / count.
-4. Append the JSON + device notes to this file. Do not upgrade claim level
-   without that record.
+```
+mode: torn_last_line
+target_records: 50
+records_written_before_stop: 50
+reload_ok: false
+reload_error: ValueError:invalid JSON at ledger index 50
+notes: appended_partial_json_line_without_newline_close
+file_size_bytes: 21949
+```
+
+---
+
+## Physical interruption protocol (open)
+
+Use a **disposable** test ledger only (`./runtime-durability-physical/`), never production evidence.
+
+1. Start a long single-writer append loop in Termux.
+2. Interrupt (force-stop app / kill -9 / controlled power event if you accept risk).
+3. New process: `FileLedger(path)` — record `reload_ok`, error, recovered count, file size.
+4. Record: device model, Termux/Android version, Python version, filesystem path, interruption method, wall-clock time, full JSON.
+5. Append that record here. Do **not** upgrade claim level without it.
 
 ## Relationship to Stage 1
 
-Concurrency remains **option A** (single-writer). Durability experiments assume
-one writer. Do not mix concurrent writers into durability runs.
+Concurrency remains option A. Durability runs are **single-writer only**.

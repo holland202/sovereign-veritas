@@ -1,6 +1,6 @@
 # STATUS — Verified vs. Unverified
 
-This document states only what has been checked by running the code.
+Only claims supported by recorded runs appear below.
 
 ---
 
@@ -9,41 +9,66 @@ This document states only what has been checked by running the code.
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| SHA | `43fc64e432ae1831786edfff81aeaf0c381b4cf7` (docs baseline) |
-| Result | **107 passed** (prior tip; durability adds tests on later tip) |
+| Tip at measurement | `e1da8fd` |
+| Command | `pytest -q` |
+| Result | **110 passed in 0.67s** |
 | Host | Galaxy S25 / Termux |
 
 ---
 
 ## MEASURED — Stage-1 concurrency (frozen)
 
-| Metric | Baseline | Control (docstring-only tip) |
-|--------|----------|------------------------------|
-| 4 × 50 expected | 200 | 200 |
-| succeeded / unique IDs | 100 / 100 | 100 / 100 |
-| reload_ok | false | false |
-| error | chain broken at index 2 | chain broken at index 2 |
-| file_size_bytes | 44298 | 44298 |
+| Metric | Baseline + control |
+|--------|--------------------|
+| Workload | 4 processes × 50 records |
+| Expected unique IDs | 200 |
+| Succeeded / on disk | 100 / 100 |
+| reload_ok | **false** |
+| Error | chain broken at index 2 |
+| file_size_bytes | 44298 |
 
 **Contract:** single-writer SUPPORTED; concurrent writers UNSUPPORTED; corruption → FAIL CLOSED.  
-**Option A in force.** Options B/C require re-measure against this baseline.
+Option A in force. B/C require re-measure against this baseline.
 
 ---
 
-## IMPLEMENTED — Stage-2 durability harness
+## MEASURED — Stage-2 software durability (Termux / S25)
 
-- Module: `sovereign_veritas.durability.DurabilityProbe`
-- Modes: `clean` (recover), `torn_last_line` (fail closed)
-- claim_level: `durability_characterization` only
-- **Not** physical power-cycle until operator records a real interruption
+### Clean restart
+
+| Field | Value |
+|-------|-------|
+| mode | `clean` |
+| target_records | 100 |
+| written | 100 |
+| reload_ok | **true** |
+| recovered_count | **100** |
+| file_size_bytes | 43918 |
+
+Allowed claim: under the clean single-writer restart model, 100 records were persisted and fully recovered.
+
+### Torn final line
+
+| Field | Value |
+|-------|-------|
+| mode | `torn_last_line` |
+| written (complete) | 50 |
+| reload_ok | **false** |
+| reload_error | `ValueError: invalid JSON at ledger index 50` |
+| notes | partial JSON line appended deliberately |
+
+Allowed claim: incomplete trailing JSON is detected; reload refused (fail closed).
+
+**claim_level:** `durability_characterization` only.  
+**Not measured:** physical power loss, battery pull, sudden device shutdown, FS journal under power loss.
 
 ---
 
-## NOT YET VERIFIED
+## NOT YET MEASURED
 
-- Physical S25 power/process interruption durability
+- Physical S25 interruption / power-loss durability
 - Long-running soak (1h / 6h / 24h)
-- flock / multi-writer (B) or per-process merge (C)
+- Multi-writer designs B (flock) / C (per-process + merge)
 - Distribution shift, motivated adversary, real-task end-to-end
 
 ---
