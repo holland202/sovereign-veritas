@@ -13,6 +13,7 @@ from .adversarial import (
 )
 from .interfaces.contracts import AdversarialVerifier, Adversary
 from .capability import Capability, CapabilityRegistry
+from .concurrency import ConcurrencyProbe, ConcurrencyReport
 from .decision import Decision, Gate
 from .evidence import EvidenceRecord, EvidencePackage, Ledger, LedgerSink
 from .file_ledger import FileLedger
@@ -41,6 +42,8 @@ __all__ = [
     "BoundedPlan",
     "PlanStep",
     "PlanResult",
+    "ConcurrencyProbe",
+    "ConcurrencyReport",
     "Decision",
     "EvidenceRecord",
     "EvidencePackage",
