@@ -9,8 +9,10 @@ Only claims supported by recorded runs appear below.
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| Result | **110 passed** (Termux; tip at durability harness era) |
+| SHA | `d813833b5e09b859b9a8940a783b78a3c36d08e0` |
+| Result | **110 passed** |
 | Host | Galaxy S25 / Termux |
+| Working tree | clean |
 
 ---
 
@@ -30,25 +32,22 @@ Only claims supported by recorded runs appear below.
 
 ---
 
-## MEASURED — Physical interruption (n=1)
+## MEASURED — Physical interruption
 
-| Field | Value |
-|-------|-------|
-| Method | **sigkill** |
-| Device | SM-S938U / Android 16 |
-| manifest_status | running |
-| recovered_ok | **true** |
-| recovered_count | **2226** |
-| ledger_sha256 | `458894656f0d897a4b5b8afcf0a06d222c3a9268e974eff6f0ee4b91d7565c48` |
+| Run | Method | recovered_ok | count | notes |
+|-----|--------|--------------|-------|-------|
+| SIGKILL #1 | sigkill | true | 2226 | SM-S938U; manifest running |
+| SIGKILL #2–#5 | — | pending | — | same SHA; new dirs |
 
-See `docs/PHYSICAL_DURABILITY_RUNS.md`.  
-**claim:** this SIGKILL class, this run only. Not power-loss; not n≥1.
+See `docs/PHYSICAL_DURABILITY_RUNS.md`.
+
+**claim:** per-run only. Not power-loss; not reliability statistics until n grows.
 
 ---
 
 ## NOT YET MEASURED
 
-- Repeated SIGKILL matrix (suggested 5)
+- Full SIGKILL matrix (5)
 - termux-force-stop / device-reboot / genuine power-loss
 - Long-running soak
 - Multi-writer B/C

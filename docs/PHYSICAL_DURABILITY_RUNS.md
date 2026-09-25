@@ -3,6 +3,18 @@
 Each entry is one independent experiment. Do not pool runs into a stronger
 claim without preserving individual evidence.
 
+## Measurement baseline (frozen)
+
+| Field | Value |
+|-------|-------|
+| Branch | `feature/bounded-multi-step-planner` |
+| SHA | `d813833b5e09b859b9a8940a783b78a3c36d08e0` |
+| Suite | **110 passed** |
+| Working tree | clean |
+| Runtime dirs | ignored (`runtime-*/`) |
+
+Do not change implementation between SIGKILL matrix runs.
+
 ---
 
 ## Run 2026-09-24 — SIGKILL #1
@@ -29,10 +41,24 @@ persisted ledger reloaded and its complete hash chain verified (2226 records).
 ### Not claimed
 
 - General power-loss durability
-- Device reboot or battery-pull survival
-- Multi-run statistics (n=1)
+- Multi-run statistics (n=1 so far)
 - Concurrent-writer safety
-- All future Termux/Android builds
 
-Artifacts to preserve offline: `SESSION.json`, `durability_ledger.jsonl`,
-`RECOVERY.json` for this session.
+Artifacts (offline only): `SESSION.json`, `durability_ledger.jsonl`, `RECOVERY.json`.
+
+---
+
+## SIGKILL #2–#5 — pending
+
+Protocol (same checkout, new directory each time):
+
+```bash
+rm -rf ./runtime-durability-physical-0N
+python tools/physical_durability.py writer \
+  ./runtime-durability-physical-0N --interval-s 0.01
+# note PID; from another session: kill -9 <PID>
+python tools/physical_durability.py recover \
+  ./runtime-durability-physical-0N --interruption-method sigkill
+```
+
+Append each recovery JSON summary here after the run. Do not edit prior entries.
