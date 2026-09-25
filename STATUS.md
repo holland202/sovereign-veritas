@@ -8,18 +8,20 @@ checkout. It does not mean the system is generally trustworthy or autonomous.
 
 ## VERIFIED — in this repo, tests pass
 
-### Planner + Stage-0 validation (Termux / S25)
+### Planner + Stage-0 validation + concurrency harness (Termux / S25)
 
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| SHA | `2d109f01ee8d7ab3846a895e2febcb830892fc25` |
+| SHA (104-pass tip) | `2d109f01ee8d7ab3846a895e2febcb830892fc25` |
+| SHA (107-pass tip) | `7798251c62393700f2129576ac6afc4d7eb705f5` |
 | Command | `pytest -q` |
-| Result | **104 passed in 0.25s** |
+| Result | **107 passed in 0.71s** |
 | Host | Galaxy S25 / Termux |
 | Recorded | 2026-09-24 (operator) |
 
-Includes: integration kernel, BoundedMultiStepPlanner, Stage-0 ValidationSuite.
+Includes: integration kernel, BoundedMultiStepPlanner, Stage-0 ValidationSuite,
+Stage-1 ConcurrencyProbe harness tests.
 
 ### Integration suite (earlier)
 
@@ -31,22 +33,45 @@ Includes: integration kernel, BoundedMultiStepPlanner, Stage-0 ValidationSuite.
 
 ---
 
-## IMPLEMENTED, NOT YET DEVICE-CHARACTERIZED
+## MEASURED — Stage-1 concurrency characterization (Termux / S25)
 
-### Stage-1 concurrency harness
+**Not a safety claim.** This is measured multi-process behavior.
 
-- Module: `sovereign_veritas.concurrency.ConcurrencyProbe`
-- Unit tests exercise the harness (single-process baseline + multi-process run)
-- **No concurrency-safety claim.** Record a full `ConcurrencyReport.to_dict()`
-  from a real multi-process Termux run before any STATUS promotion.
+| Field | Value |
+|-------|-------|
+| Host | Galaxy S25 / Termux |
+| Path | `./runtime-concurrency-test` (home-writable; `/tmp` denied) |
+| process_count | 4 |
+| records_per_process | 50 |
+| expected_unique_ids | 200 |
+| total_succeeded | 100 |
+| total_errors | 4 (workers 0–1 init failures) |
+| unique_ids_on_disk | 100 |
+| reload_ok | **false** |
+| reload_error | `ValueError: ledger chain broken at index 2` |
+| file_size_bytes | 44298 |
+| claim_level | `concurrency_characterization` |
+
+### Interpretation (bounded)
+
+1. Concurrent appends without serialization **broke the hash chain**.
+2. Reload **failed closed** (did not silently accept a broken chain).
+3. Two workers completed 50/50; two workers saw a broken chain on open and wrote nothing further.
+4. Lost/unaccounted identity slots: 100 of 200 expected unique IDs.
+
+**Allowed claim:** Under these parameters on this device, multi-process FileLedger
+append is **not** safe; the suite detected the damage.
+
+**Not claimed:** locking correctness, loss-free interleaving, or that any fix
+exists until implemented and re-measured.
 
 ---
 
 ## NOT YET VERIFIED AS INTEGRATED
 
+- FileLedger multi-writer **serialization / locking** (known gap; measurement above)
 - Stage 2+ (physical interruption, soak, distribution shift, motivated adversary)
 - On-device thermal / NPU / HTP as Gate inputs
-- Concurrent multi-writer **safety** (only characterization harness exists)
 - Full SWAY P0–P4 measured results
 - HAI / BATADAL wired through this kernel
 - End-to-end local inference → ledgered evidence on S25
