@@ -8,75 +8,54 @@ checkout. It does not mean the system is generally trustworthy or autonomous.
 
 ## VERIFIED — in this repo, tests pass
 
-### Bounded multi-step planner + Stage-0 validation (current branch tip)
+### Planner + Stage-0 validation (Termux / S25)
 
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| Prior baseline SHA | `a195f9cbbb896aad81bf306f1eb286f93469e619` |
-| Command (Termux / S25) | `pytest -q` |
-| Result | **99 passed in 0.16s** (planner suite; recorded by operator 2026-09-24) |
+| SHA | `2d109f01ee8d7ab3846a895e2febcb830892fc25` |
+| Command | `pytest -q` |
+| Result | **104 passed in 0.25s** |
+| Host | Galaxy S25 / Termux |
+| Recorded | 2026-09-24 (operator) |
 
-Covered on that run:
+Includes: integration kernel, BoundedMultiStepPlanner, Stage-0 ValidationSuite.
 
-- All prior integration invariants (Gate, ledger, adversarial boundary, CapabilityGovernor)
-- BoundedMultiStepPlanner preflight + sequential Gate-only execution
-- Empty plan / duplicate IDs / max_steps / REFUSE-stops-plan / executor failure
-
-Stage-0 validation suite is **code + unit tests** on this branch; promote to
-"device-verified" only after a fresh Termux run that includes
-`tests/test_validation.py` is recorded here with SHA and count.
-
-### Integration suite (adversarial + evidence quality + CapabilityGovernor)
+### Integration suite (earlier)
 
 | Field | Value |
 |-------|-------|
 | Branch | `feature/integration-evidence-quality-adversarial` |
-| SHA | `116824cbcc2a66a6dcddc805227adbab676e8fd6` |
-| Command | `pytest -q` |
+| SHA | `a195f9cbbb896aad81bf306f1eb286f93469e619` |
 | Result | **89 passed** (Termux) |
-| Recorded | 2026-09-24 |
 
-Covered invariants include:
+---
 
-- Ledger append-only hash chain and tamper detection
-- FileLedger durable custody path
-- Gate ALLOW / DEFER / REFUSE with explicit reasons
-- Models cannot self-authorize
-- Evidence quality thresholds produce DEFER when below bound
-- Hierarchical capabilities require authorized parent
-- Step bounds refuse when `step_count` exceeds `max_steps`
-- CapabilityGovernor records evidence **before** registry mutation
-- Failed ledger write → registry **not** changed
-- Adversarial epistemic path does not grant authorization authority
-- Mandatory adversarial verification does not silently downgrade
+## IMPLEMENTED, NOT YET DEVICE-CHARACTERIZED
 
-### Persistent evidence ledger (earlier milestone)
+### Stage-1 concurrency harness
 
-FileLedger append + fsync + reload + recompute + verify across process
-boundary was implemented and exercised in this lineage.
+- Module: `sovereign_veritas.concurrency.ConcurrencyProbe`
+- Unit tests exercise the harness (single-process baseline + multi-process run)
+- **No concurrency-safety claim.** Record a full `ConcurrencyReport.to_dict()`
+  from a real multi-process Termux run before any STATUS promotion.
 
 ---
 
 ## NOT YET VERIFIED AS INTEGRATED
 
-- Stage 1+ real-world validation (concurrency, physical S25 interruption, soak)
-- On-device thermal / NPU / HTP runtime probes as Gate inputs
-- Keystore or hardware attestation anchoring
-- Full SWAY experiment matrix (P0–P4) with registered predictions
-- Validation domains (HAI, BATADAL) wired through the kernel
-- Research plugins (Principia, QUASAR, …) behind stable interfaces
-- Concurrent multi-writer FileLedger safety
-- End-to-end local inference producing ledgered evidence on S25
+- Stage 2+ (physical interruption, soak, distribution shift, motivated adversary)
+- On-device thermal / NPU / HTP as Gate inputs
+- Concurrent multi-writer **safety** (only characterization harness exists)
+- Full SWAY P0–P4 measured results
+- HAI / BATADAL wired through this kernel
+- End-to-end local inference → ledgered evidence on S25
 
 ---
 
 ## Version
 
 `__version__ = "0.1.1"`
-
-Version does not advance until a new measured integration claim is recorded
-here with SHA, command, and result.
 
 ---
 

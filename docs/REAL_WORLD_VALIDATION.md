@@ -1,7 +1,7 @@
 # Real-World Validation
 
-**Status:** Stage 0 implemented (synthetic fault injection). Higher stages are
-design targets until measured.
+**Status:** Stage 0 implemented and device-tested. Stage 1 harness implemented
+(characterization only).
 
 ## Claim discipline
 
@@ -9,6 +9,7 @@ design targets until measured.
 |----------------|--------------------|
 | Unit/integration tests | Implemented behavior passes specified tests |
 | Fault injection (Stage 0) | Specified synthetic fault model rejected/contained |
+| Concurrency characterization (Stage 1) | Measured multi-process outcomes under stated parameters |
 | Device soak | Measured behavior under stated workload/window |
 | Distribution shift | Measured performance on held-out shifts |
 | Motivated red-team | Behavior under documented attack set |
@@ -16,43 +17,58 @@ design targets until measured.
 
 Passing one row does **not** upgrade the claim to the next row.
 
+**Concurrency safety is never inferred from a green unit suite.**
+
 ## Stage 0 — Deterministic fault injection (implemented)
 
 Module: `sovereign_veritas.validation.ValidationSuite`
 
-Checks:
+Checks: ledger restart, torn persistence, duplicate writer identity, hostile
+persistence.
 
-1. **Ledger restart** — write N records, reload `FileLedger`, verify count + chain
-2. **Torn persistence** — truncate JSONL at deterministic offsets; load must fail closed
-3. **Duplicate writer identity** — second independent instance cannot append duplicate `record_id`
-4. **Hostile persistence** — malformed JSON, field mutation without digest update, forged digest
+Allowed claim: specified synthetic fault model rejected/contained.
 
-Allowed claim when green:
+## Stage 1 — Concurrency characterization (harness implemented)
 
-> The specified synthetic fault model was rejected/contained.
+Module: `sovereign_veritas.concurrency.ConcurrencyProbe`
 
-**Not** claimed: physical power-cycle recovery, multi-process locking, concurrency safety, motivated adversary resistance.
+Spawns N processes that append unique `record_id`s to one FileLedger path.
+Report fields include per-worker success/error counts, `reload_ok`,
+`final_record_count`, `unique_ids_on_disk`, file size.
 
-## Stage 1 — Concurrency characterization (not implemented)
+Allowed claim:
 
-Multiple processes against one ledger. Measure interleaving, exceptions, final chain. Require verified chain **or** explicit fail-closed. No concurrency-safety claim until measured.
+> Measured multi-process append behavior under the stated process_count and
+> records_per_process.
+
+**Not** claimed: concurrency-safety, locking correctness, or loss-free
+interleaving. A clean reload is a data point, not a guarantee.
+
+Recommended device experiment:
+
+```bash
+python -c "
+from pathlib import Path
+from sovereign_veritas.concurrency import ConcurrencyProbe
+import json
+r = ConcurrencyProbe(Path('/tmp/sv-conc')).run(process_count=4, records_per_process=50)
+print(json.dumps(r.to_dict(), indent=2))
+"
+```
+
+Record the full JSON (or a hash of it) alongside device, Python version, and
+filesystem notes before any safety language appears in STATUS.
 
 ## Stage 2 — Physical durability on S25 (not implemented)
 
-Termux interruption during writes, restart, recovery. Record device, FS, Python, interruption point, final verification.
+Termux interruption during writes, restart, recovery.
 
 ## Stage 3 — Long-running soak (not implemented)
 
-1h → 6h → 24h. Measure records, failures, memory, thermal where available. Missing measurements stay missing.
+1h → 6h → 24h with thermal/resource notes where available.
 
 ## Stage 4 — Distribution shift (not implemented)
 
-Sealed streams, explicit digests, false accepts/rejects/DEFER/REFUSE under shift.
-
 ## Stage 5 — Motivated adversary (not implemented)
 
-Attack evidence, ordering, identities, verifier output, authorization, cross-capability boundaries. Adversary stays outside authority boundary.
-
 ## Stage 6 — Real task integration (not implemented)
-
-Real sensors, stronger local models, actual tasks — only after earlier stages leave evidence.
