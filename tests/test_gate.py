@@ -197,3 +197,33 @@ def test_action_capability_match_is_allowed():
     )
 
     assert result.decision == "ALLOW"
+
+
+def test_refuted_verification_is_refused_distinctly():
+    result = Gate().evaluate(
+        evidence(verification={"status": "REFUTED"}),
+        Capability("read", True),
+        runtime(),
+    )
+    assert result.decision == "REFUSE"
+    assert result.reasons == ("verification_refuted",)
+
+
+def test_insufficient_verification_evidence_defers():
+    result = Gate().evaluate(
+        evidence(verification={"status": "INSUFFICIENT_EVIDENCE"}),
+        Capability("read", True),
+        runtime(),
+    )
+    assert result.decision == "DEFER"
+    assert result.reasons == ("verification_insufficient_evidence",)
+
+
+def test_unknown_verification_status_fails_closed():
+    result = Gate().evaluate(
+        evidence(verification={"status": "MADE_UP"}),
+        Capability("read", True),
+        runtime(),
+    )
+    assert result.decision == "REFUSE"
+    assert result.reasons == ("verification_not_passed",)

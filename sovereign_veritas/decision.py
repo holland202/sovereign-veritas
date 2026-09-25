@@ -6,6 +6,7 @@ from typing import Any
 from .capability import Capability, CapabilityRegistry
 from .evidence import EvidenceRecord
 from .runtime import RuntimeState
+from .verification import REFUSAL_REASONS, VerificationStatus
 
 
 @dataclass(frozen=True)
@@ -46,8 +47,28 @@ class Gate:
         if not evidence.input_digest:
             return Decision("REFUSE", ("evidence_invalid:missing_input_digest",))
 
-        if evidence.verification is None or evidence.verification.get("status") != "PASS":
-            return Decision("REFUSE", ("verification_not_passed",))
+        verification_status = VerificationStatus.coerce(
+            None if evidence.verification is None
+            else evidence.verification.get("status")
+        )
+
+        if verification_status in REFUSAL_REASONS:
+            return Decision(
+                "REFUSE",
+                (REFUSAL_REASONS[verification_status],),
+            )
+
+        if verification_status is VerificationStatus.INSUFFICIENT_EVIDENCE:
+            return Decision(
+                "DEFER",
+                ("verification_insufficient_evidence",),
+            )
+
+        if verification_status is not VerificationStatus.PASS:
+            return Decision(
+                "REFUSE",
+                ("verification_not_passed",),
+            )
 
         if capability is None:
             return Decision("REFUSE", ("capability_missing",))

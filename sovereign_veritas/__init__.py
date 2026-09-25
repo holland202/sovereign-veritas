@@ -18,11 +18,18 @@ from .decision import Decision, Gate
 from .durability import DurabilityProbe, DurabilityReport
 from .evidence import EvidenceRecord, EvidencePackage, Ledger, LedgerSink
 from .file_ledger import FileLedger
+from .anchored_file_ledger import AnchoredFileLedger
 from .governance import CapabilityGovernor
 from .planner import BoundedMultiStepPlanner, BoundedPlan, PlanResult, PlanStep
 from .runtime import RuntimeState
 from .uncertainty import normalize_uncertainty
 from .validation import ValidationReport, ValidationSuite
+from .verification import VerificationStatus
+from .verifier_registry import (
+    VerifierRegistry,
+    VerifierValidation,
+    VerifierValidationStatus,
+)
 
 __all__ = [
     "AdversarialVerifier",
@@ -54,10 +61,15 @@ __all__ = [
     "Ledger",
     "LedgerSink",
     "FileLedger",
+    "AnchoredFileLedger",
     "RuntimeState",
     "normalize_uncertainty",
     "ValidationSuite",
     "ValidationReport",
+    "VerifierValidationStatus",
+    "VerifierValidation",
+    "VerifierRegistry",
+    "VerificationStatus",
 ]
 
 __version__ = "0.1.1"

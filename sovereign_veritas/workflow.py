@@ -16,6 +16,7 @@ from .interfaces.contracts import (
     Verifier,
 )
 from .runtime import RuntimeState
+from .verifier_registry import VerifierRegistry, VerifierValidationStatus
 
 
 @dataclass(frozen=True)
@@ -45,6 +46,7 @@ class EvidenceWorkflow:
         executor: ActionExecutor,
         evidence_sink: EvidenceSink,
         gate: Gate | None = None,
+        verifier_registry: VerifierRegistry | None = None,
     ) -> None:
         self.sensor = sensor
         self.predictor = predictor
@@ -53,6 +55,7 @@ class EvidenceWorkflow:
         self.executor = executor
         self.evidence_sink = evidence_sink
         self.gate = gate or Gate()
+        self.verifier_registry = verifier_registry
 
     def run(
         self,
@@ -64,6 +67,7 @@ class EvidenceWorkflow:
         action: ActionProposal | None = None,
         policy: dict[str, Any] | None = None,
         metadata: dict[str, Any] | None = None,
+        verifier_id: str | None = None,
     ) -> WorkflowResult:
         observation = self.sensor.observe()
         prediction = self.predictor.predict(observation)
@@ -96,7 +100,38 @@ class EvidenceWorkflow:
         else:
             verify_with_adversarial = None
 
-        if (
+        registry_verification: dict[str, Any] | None = None
+        if verifier_id is not None:
+            if self.verifier_registry is None:
+                registry_verification = {
+                    "status": "INSUFFICIENT_EVIDENCE",
+                    "verifier_id": verifier_id,
+                    "registry_reason": "verifier_registry_missing",
+                }
+            else:
+                validation = self.verifier_registry.validation(verifier_id)
+                if validation is None:
+                    registry_verification = {
+                        "status": "INSUFFICIENT_EVIDENCE",
+                        "verifier_id": verifier_id,
+                        "registry_reason": "verifier_not_registered",
+                    }
+                elif validation.status is VerifierValidationStatus.FAILED:
+                    registry_verification = {
+                        "status": "FAIL",
+                        "verifier_id": verifier_id,
+                        "registry_reason": "verifier_validation_failed",
+                    }
+                elif validation.status is not VerifierValidationStatus.VALIDATED:
+                    registry_verification = {
+                        "status": "INSUFFICIENT_EVIDENCE",
+                        "verifier_id": verifier_id,
+                        "registry_reason": "verifier_not_validated",
+                    }
+
+        if registry_verification is not None:
+            verification = registry_verification
+        elif (
             verify_with_adversarial is not None
             and adversarial is not None
         ):

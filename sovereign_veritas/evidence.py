@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from copy import deepcopy
 from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from types import MappingProxyType
@@ -47,6 +46,13 @@ def _digest(value: Any) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+def _validate_jsonable(value: Any, path: str = "value") -> None:
+    try:
+        json.dumps(_thaw(value), sort_keys=True, ensure_ascii=False)
+    except (TypeError, ValueError) as exc:
+        raise TypeError(f"non-JSON-serializable value at {path}") from exc
+
+
 @dataclass(frozen=True)
 class EvidenceRecord:
     """Immutable observation of one prediction, verification, and gate decision.
@@ -71,11 +77,53 @@ class EvidenceRecord:
     previous_digest: str | None = None
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "prediction", _freeze(self.prediction))
-        object.__setattr__(self, "verification", _freeze(self.verification))
-        object.__setattr__(self, "action", _freeze(self.action))
-        object.__setattr__(self, "metadata", _freeze(self.metadata))
-        object.__setattr__(self, "uncertainty", _freeze(self.uncertainty))
+        prediction = _freeze(self.prediction)
+        verification = _freeze(self.verification)
+        action = _freeze(self.action)
+        metadata = _freeze(self.metadata)
+        uncertainty = _freeze(self.uncertainty)
+
+        _validate_jsonable(prediction, "prediction")
+        _validate_jsonable(verification, "verification")
+        _validate_jsonable(action, "action")
+        _validate_jsonable(metadata, "metadata")
+        _validate_jsonable(uncertainty, "uncertainty")
+
+        object.__setattr__(self, "prediction", prediction)
+        object.__setattr__(self, "verification", verification)
+        object.__setattr__(self, "action", action)
+        object.__setattr__(self, "metadata", metadata)
+        object.__setattr__(self, "uncertainty", uncertainty)
+
+    def with_updates(self, **changes: Any) -> "EvidenceRecord":
+        allowed = {
+            "record_id",
+            "input_digest",
+            "prediction",
+            "verification",
+            "capability",
+            "action",
+            "decision",
+            "reasons",
+            "metadata",
+            "uncertainty",
+            "evidence_quality",
+            "timestamp",
+            "previous_digest",
+        }
+
+        unknown = set(changes) - allowed
+        if unknown:
+            raise TypeError(
+                f"unknown EvidenceRecord fields: {sorted(unknown)}"
+            )
+
+        values = {
+            field_name: getattr(self, field_name)
+            for field_name in allowed
+        }
+        values.update(changes)
+        return replace(self, **values)
 
     def to_dict(self) -> dict[str, Any]:
         return {
