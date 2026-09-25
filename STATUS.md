@@ -4,7 +4,10 @@
 
 ## VERIFIED — automated tests
 
-**110 passed** on `feature/bounded-multi-step-planner` (Termux / S25).
+**141 passed** on `feature/bounded-multi-step-planner` @ 9308ce3 (Termux / S25, Python 3.14.6, 7.29 s).
+
+Gate constraint (`tools/gate_constraint.py --mutants`): DIGEST identical on S25 aarch64 and container x86_64;
+19/19 mutants killed. See `docs/GATE_CONSTRAINT.md`.
 
 ---
 

@@ -1,7 +1,7 @@
 # Gate constraint — is the larger system boringly constrained?
 
-Status: **Architecture Self-Tested** (same author wrote instrument and fixes; container only
-until the device run below is recorded). NOT device-verified.
+Status: **Architecture Self-Tested** (same author wrote instrument and fixes). Device-verified
+on the S25 at 9308ce3: decision digest identical to the container run. Not independently reproduced.
 
 ## The invariant
 
@@ -166,5 +166,52 @@ M09), or with the policy check removed (M11) — which is how the masking shippe
   `VerifierRegistry.register(id, verifier)` already stores the object, but the workflow never
   checks `self.verifier is registry.get(verifier_id)`; `test_validated_registry_allows_actual_verifier`
   registers `object()` and relies on that.
-- Device run on the S25 (aarch64, Python 3.14) — record its DIGEST here. A matching digest
-  means identical gate decisions across substrates for this lattice.
+
+## Device measurement — S25 (SM-S938U, Android 16, Termux, aarch64, Python 3.14.6) at 9308ce3
+
+`python -m pytest -q`: **141 passed in 7.29s**, rc=0.
+
+`python tools/gate_constraint.py --target . --mutants` (line breaks restored from terminal wrap; values verbatim):
+
+```
+gate_constraint v2 | python 3.14.6 aarch64
+target /data/data/com.termux/files/home/sovereign-veritas/sovereign_veritas
+  md5 0c753732af5c209260e7a1d6627789d8  decision.py
+  md5 8caf76d162b5aa4a5612232255938a85  runtime.py
+  md5 eb3b178d24bceacf81a46e9707f457b9  verification.py
+  md5 8cc16fb926e426ec185ec992b250f0d6  workflow.py
+LIVENESS  baseline -> ALLOW  ok
+DOC       42/42 documented cases match
+RULE      0 unexpected of 29 fail-closed cases:
+KNOWN     7/7 declared opt-ins still leak (listed in KNOWN_OPT_IN)
+LATTICE   4608 points: 0 spec, 0 monotonicity, 0 nondeterministic
+DIGEST    ab816905b1faf69aeaf24119b207cf7b80fcebd2ffcddac80d3edfa5e4da2d65
+VERDICT   CLEAN
+MUTANTS   differential: KILLED = new failing checks vs the unmutated target
+  M00 SURVIVED digest identical  null mutant (copy only) - must SURVIVE
+  M01 KILLED   +60  control: always ALLOW
+  M02 KILLED   +25  control: always REFUSE (dead gate)
+  M03 KILLED   +3   drop input-digest check
+  M04 KILLED   +1   REFUTED no longer refuses
+  M05 KILLED   +2   authorization by truthiness
+  M06 KILLED   +2   drop action/capability binding
+  M07 KILLED   +5   drop runtime availability check
+  M08 KILLED   +2   INSUFFICIENT short-circuits (masks REFUSE)
+  M09 KILLED   +2   unhealthy runtime short-circuits
+  M10 KILLED   +4   INSUFFICIENT_EVIDENCE allows
+  M11 KILLED   +2   drop policy check
+  M12 KILLED   +14  runtime vocabulary accepts any string
+  M13 KILLED   +3   required evidence by truthiness
+  M14 KILLED   +3   drop quality validity check
+  M15 KILLED   +1   drop policy type check
+  M16 KILLED   +1   omitted verifier_id bypasses registry
+  M17 KILLED   +2   max_steps overrun only defers
+  M18 KILLED   +1   parent authorization by truthiness
+  M19 KILLED   +1   REFUTED loses its distinct reason
+MUTANT VERDICT  instrument can fail both ways (exit 0; gate findings above are reported, not gated, here)
+rc=0
+```
+
+Cross-substrate: DIGEST, all four file md5s, and every per-mutant kill count are identical to the
+container run above. For this 4608-point lattice the gate's decisions do not depend on
+architecture (aarch64 vs x86_64) or Python version (3.14.6 vs 3.12.3).
