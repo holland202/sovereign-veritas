@@ -20,6 +20,7 @@ from .governance import CapabilityGovernor
 from .planner import BoundedMultiStepPlanner, BoundedPlan, PlanResult, PlanStep
 from .runtime import RuntimeState
 from .uncertainty import normalize_uncertainty
+from .validation import ValidationReport, ValidationSuite
 
 __all__ = [
     "AdversarialVerifier",
@@ -49,6 +50,8 @@ __all__ = [
     "FileLedger",
     "RuntimeState",
     "normalize_uncertainty",
+    "ValidationSuite",
+    "ValidationReport",
 ]
 
 # Version stays at 0.1.x until on-device integration evidence is recorded.
