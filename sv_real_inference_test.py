@@ -100,69 +100,17 @@ def memory_info():
 
 
 def thermal_raw():
-    values = []
+    """One pass over every zone, with type and domain (sovereign_veritas.thermal)."""
+    from sovereign_veritas.thermal import read_zones
 
-    root = Path("/sys/class/thermal")
-
-    if not root.exists():
-        return values
-
-    for p in sorted(root.glob("thermal_zone*/temp")):
-        try:
-            raw = int(p.read_text().strip())
-
-            # Reject obvious invalid/unavailable readings.
-            if raw <= 0:
-                valid = False
-            elif raw < 1000:
-                valid = False
-            elif raw > 150000:
-                valid = False
-            else:
-                valid = True
-
-            values.append({
-                "sensor": p.parent.name,
-                "raw": raw,
-                "celsius": raw / 1000.0,
-                "valid": valid,
-            })
-
-        except Exception:
-            pass
-
-    return values
+    return read_zones()
 
 
-def thermal_summary():
-    sensors = thermal_raw()
+def thermal_summary(readings):
+    """Per-domain max and counts from ONE pass. No mean, no device-wide max."""
+    from sovereign_veritas.thermal import summarize
 
-    valid = [
-        x for x in sensors
-        if x["valid"]
-    ]
-
-    if not valid:
-        return {
-            "sensor_count": len(sensors),
-            "valid_count": 0,
-            "min_c": None,
-            "max_c": None,
-            "mean_c": None,
-        }
-
-    temps = [
-        x["celsius"]
-        for x in valid
-    ]
-
-    return {
-        "sensor_count": len(sensors),
-        "valid_count": len(valid),
-        "min_c": round(min(temps), 3),
-        "max_c": round(max(temps), 3),
-        "mean_c": round(sum(temps) / len(temps), 3),
-    }
+    return summarize(readings)
 
 
 def model_info():
@@ -202,7 +150,8 @@ def run_inference(model, name, prompt, max_tokens):
     request_digest = digest(payload)
 
     memory_before = memory_info()
-    thermal_before = thermal_summary()
+    zones_before = thermal_raw()
+    thermal_before = thermal_summary(zones_before)
 
     response, elapsed = post_json(
         BASE + "/v1/chat/completions",
@@ -210,7 +159,8 @@ def run_inference(model, name, prompt, max_tokens):
     )
 
     memory_after = memory_info()
-    thermal_after = thermal_summary()
+    zones_after = thermal_raw()
+    thermal_after = thermal_summary(zones_after)
 
     choices = response.get("choices", [])
 
@@ -238,6 +188,8 @@ def run_inference(model, name, prompt, max_tokens):
         "memory_after": memory_after,
         "thermal_before": thermal_before,
         "thermal_after": thermal_after,
+        "thermal_zones_before": [z.to_dict() for z in zones_before],
+        "thermal_zones_after": [z.to_dict() for z in zones_after],
         "temperature": 0,
         "max_tokens": max_tokens,
     }
