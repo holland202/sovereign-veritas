@@ -15,6 +15,7 @@ from .interfaces.contracts import AdversarialVerifier, Adversary
 from .capability import Capability, CapabilityRegistry
 from .concurrency import ConcurrencyProbe, ConcurrencyReport
 from .decision import Decision, Gate
+from .durability import DurabilityProbe, DurabilityReport
 from .evidence import EvidenceRecord, EvidencePackage, Ledger, LedgerSink
 from .file_ledger import FileLedger
 from .governance import CapabilityGovernor
@@ -44,6 +45,8 @@ __all__ = [
     "PlanResult",
     "ConcurrencyProbe",
     "ConcurrencyReport",
+    "DurabilityProbe",
+    "DurabilityReport",
     "Decision",
     "EvidenceRecord",
     "EvidencePackage",
@@ -57,5 +60,4 @@ __all__ = [
     "ValidationReport",
 ]
 
-# Version stays at 0.1.x until on-device integration evidence is recorded.
 __version__ = "0.1.1"
