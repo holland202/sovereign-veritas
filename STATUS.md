@@ -9,67 +9,50 @@ Only claims supported by recorded runs appear below.
 | Field | Value |
 |-------|-------|
 | Branch | `feature/bounded-multi-step-planner` |
-| Tip at measurement | `e1da8fd` |
-| Command | `pytest -q` |
-| Result | **110 passed in 0.67s** |
+| Result | **110 passed** (Termux; tip at durability harness era) |
 | Host | Galaxy S25 / Termux |
 
 ---
 
 ## MEASURED — Stage-1 concurrency (frozen)
 
-| Metric | Baseline + control |
-|--------|--------------------|
-| Workload | 4 processes × 50 records |
-| Expected unique IDs | 200 |
-| Succeeded / on disk | 100 / 100 |
-| reload_ok | **false** |
-| Error | chain broken at index 2 |
-| file_size_bytes | 44298 |
-
-**Contract:** single-writer SUPPORTED; concurrent writers UNSUPPORTED; corruption → FAIL CLOSED.  
-Option A in force. B/C require re-measure against this baseline.
+4 × 50 → 100/200 unique IDs, `reload_ok=false`, chain broken at index 2.  
+**Single writer SUPPORTED; concurrent writers UNSUPPORTED.** Option A in force.
 
 ---
 
-## MEASURED — Stage-2 software durability (Termux / S25)
+## MEASURED — Stage-2 software durability
 
-### Clean restart
+| Mode | Result |
+|------|--------|
+| clean 100 | reload_ok true, recovered 100 |
+| torn_last_line 50 | reload_ok false, invalid JSON at index 50 |
 
-| Field | Value |
-|-------|-------|
-| mode | `clean` |
-| target_records | 100 |
-| written | 100 |
-| reload_ok | **true** |
-| recovered_count | **100** |
-| file_size_bytes | 43918 |
+---
 
-Allowed claim: under the clean single-writer restart model, 100 records were persisted and fully recovered.
-
-### Torn final line
+## MEASURED — Physical interruption (n=1)
 
 | Field | Value |
 |-------|-------|
-| mode | `torn_last_line` |
-| written (complete) | 50 |
-| reload_ok | **false** |
-| reload_error | `ValueError: invalid JSON at ledger index 50` |
-| notes | partial JSON line appended deliberately |
+| Method | **sigkill** |
+| Device | SM-S938U / Android 16 |
+| manifest_status | running |
+| recovered_ok | **true** |
+| recovered_count | **2226** |
+| ledger_sha256 | `458894656f0d897a4b5b8afcf0a06d222c3a9268e974eff6f0ee4b91d7565c48` |
 
-Allowed claim: incomplete trailing JSON is detected; reload refused (fail closed).
-
-**claim_level:** `durability_characterization` only.  
-**Not measured:** physical power loss, battery pull, sudden device shutdown, FS journal under power loss.
+See `docs/PHYSICAL_DURABILITY_RUNS.md`.  
+**claim:** this SIGKILL class, this run only. Not power-loss; not n≥1.
 
 ---
 
 ## NOT YET MEASURED
 
-- Physical S25 interruption / power-loss durability
-- Long-running soak (1h / 6h / 24h)
-- Multi-writer designs B (flock) / C (per-process + merge)
-- Distribution shift, motivated adversary, real-task end-to-end
+- Repeated SIGKILL matrix (suggested 5)
+- termux-force-stop / device-reboot / genuine power-loss
+- Long-running soak
+- Multi-writer B/C
+- Distribution shift, motivated adversary, real-task E2E
 
 ---
 
