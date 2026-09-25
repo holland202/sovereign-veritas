@@ -96,3 +96,75 @@ confirmed. **Q2 partially REFUTED (kept):** spec>0, monotonicity>0 and 0 nondete
 held, but "every spec violation is REFUSE->DEFER" is false — 788 of 812 are REFUSE masked as
 DEFER; the other 24 are DEFERs that dropped reasons, which the registration did not
 anticipate. Same cause (early DEFER returns), second symptom.
+
+## Fixes (this commit)
+
+| | Defect measured above | Fix |
+|---|---|---|
+| F1 | INSUFFICIENT_EVIDENCE and unhealthy runtime returned DEFER early, masking later REFUSEs and dropping reasons | both accumulate into one DEFER |
+| F2 | `authorized="false"` / `"0"` authorized (capability and parent) | `authorized is True` |
+| F3 | compute/power used denylists: `None`, `"EXHAUSTED"`, `"UNSAFE"`, `"critical"` allowed; a list crashed | recognized vocabulary only; anything else is unavailable -> REFUSE |
+| F4 | required evidence `"FAILED"`, `{"ok": False}`, `"false"` counted as present | attestation must be `True` |
+| F5 | evidence quality NaN, inf, 2.0 passed the threshold | must be finite in [0, 1], else DEFER |
+| F6 | `allow_only` as a str did substring matching; step_count -5 / True accepted | collection required (else REFUSE); step_count int >= 1 |
+| F7 | a configured verifier registry was skipped when `verifier_id` was omitted | omitted id with a registry -> INSUFFICIENT_EVIDENCE |
+
+Values the repo already uses keep their meaning: thermal warning/high/hot/critical defer,
+compute constrained/low stay healthy.
+
+## Post-fix measurement (container x86_64, Python 3.12.3)
+
+```
+gate_constraint v2 | python 3.12.3 x86_64
+target /home/claude/svrepo/sovereign_veritas
+  md5 0c753732af5c209260e7a1d6627789d8  decision.py
+  md5 8caf76d162b5aa4a5612232255938a85  runtime.py
+  md5 eb3b178d24bceacf81a46e9707f457b9  verification.py
+  md5 8cc16fb926e426ec185ec992b250f0d6  workflow.py
+LIVENESS  baseline -> ALLOW  ok
+DOC       42/42 documented cases match
+RULE      0 unexpected of 29 fail-closed cases:
+KNOWN     7/7 declared opt-ins still leak (listed in KNOWN_OPT_IN)
+LATTICE   4608 points: 0 spec, 0 monotonicity, 0 nondeterministic
+DIGEST    ab816905b1faf69aeaf24119b207cf7b80fcebd2ffcddac80d3edfa5e4da2d65
+VERDICT   CLEAN
+MUTANTS   differential: KILLED = new failing checks vs the unmutated target
+  M00 SURVIVED digest identical  null mutant (copy only) - must SURVIVE
+  M01 KILLED   +60  control: always ALLOW
+  M02 KILLED   +25  control: always REFUSE (dead gate)
+  M03 KILLED   +3   drop input-digest check
+  M04 KILLED   +1   REFUTED no longer refuses
+  M05 KILLED   +2   authorization by truthiness
+  M06 KILLED   +2   drop action/capability binding
+  M07 KILLED   +5   drop runtime availability check
+  M08 KILLED   +2   INSUFFICIENT short-circuits (masks REFUSE)
+  M09 KILLED   +2   unhealthy runtime short-circuits
+  M10 KILLED   +4   INSUFFICIENT_EVIDENCE allows
+  M11 KILLED   +2   drop policy check
+  M12 KILLED   +14  runtime vocabulary accepts any string
+  M13 KILLED   +3   required evidence by truthiness
+  M14 KILLED   +3   drop quality validity check
+  M15 KILLED   +1   drop policy type check
+  M16 KILLED   +1   omitted verifier_id bypasses registry
+  M17 KILLED   +2   max_steps overrun only defers
+  M18 KILLED   +1   parent authorization by truthiness
+  M19 KILLED   +1   REFUTED loses its distinct reason
+MUTANT VERDICT  instrument can fail both ways (exit 0; gate findings above are reported, not gated, here)
+```
+
+Outcome against registration: R1 confirmed. R2 confirmed — all 139 pre-existing tests pass
+unmodified; with the 2 new tests the suite is 141 passed (container). R3 confirmed — 19/19
+mutants killed, null mutant survives with an identical digest.
+
+Measured after, not registered: the 139 pre-existing tests kill 9 of these 19 mutants. They
+stay green with the digest check removed (M03), with the early-DEFER masking restored (M08,
+M09), or with the policy check removed (M11) — which is how the masking shipped.
+
+## Still open
+
+- KNOWN opt-ins stay listed, not fixed. `wf_identity_unbound` is the one worth deciding:
+  `VerifierRegistry.register(id, verifier)` already stores the object, but the workflow never
+  checks `self.verifier is registry.get(verifier_id)`; `test_validated_registry_allows_actual_verifier`
+  registers `object()` and relies on that.
+- Device run on the S25 (aarch64, Python 3.14) — record its DIGEST here. A matching digest
+  means identical gate decisions across substrates for this lattice.
