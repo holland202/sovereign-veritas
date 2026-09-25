@@ -87,3 +87,49 @@ genesis record rewritten (unregistered)    -> UNDETECTED
 Anti-vacuity: disabling each verifier check in turn (gate replay, thermal, verifier provenance,
 measurement recompute, freshness, limitations) makes `tests/test_package.py` fail every time (6/6).
 Suite: 152 passed (container).
+
+## Recovery simulation
+
+Question: when a package is damaged, or its writer dies mid-write, does anything false get
+accepted — and can the system produce a valid package again?
+
+### Registered before the simulation code ran (2026-09-25T21:44:58Z, md5 17631b216306f4cd498ae3e5acf60be0)
+
+```
+# Package recovery simulation — registered before the simulation code ran
+Question: when a package is damaged or its writer dies mid-write, does anything false get
+accepted, and can the system produce a valid package again?
+
+R1 truncation: every strict prefix of a valid package is rejected (exit != 0). 0 accepted.
+R2 corruption: 500 seeded single-byte flips of a valid package: 0 accepted.
+R3 current writer (plain open/write, as in make_package.py today): a process killed
+   mid-write (os._exit) leaves a torn file at the FINAL path. The verifier rejects it,
+   but the torn file sits under a name that claims an md5 its content does not have.
+R4 atomic writer (temp file + fsync + os.replace): a process killed mid-write or just before
+   the rename leaves NOTHING at the final path; a rerun writes a package that verifies.
+R5 decision recovery: REFUSE (runtime unknown) then, with a declared valid runtime, ALLOW;
+   both packages verify, and the REFUSE package still verifies afterwards (nothing overwritten).
+```
+
+### Results (container x86_64, Python 3.12.3) — `tests/test_package_recovery.py`
+
+Process deaths are real (`os._exit(9)` in a child process), not raised exceptions.
+
+- **R1 confirmed.** Every strict prefix of a package is rejected: 0 accepted.
+- **R2 confirmed.** 500 seeded single-bit flips: 0 accepted.
+- **R3 confirmed — a defect in the writer this commit replaces.** `make_package.py` wrote straight
+  to its final path. Killed mid-write, it left a torn file under `sv_package_<md5>.json` whose
+  content does not have that md5. The verifier rejected it (exit 2), so nothing false was
+  accepted — but a file sat under a name that lies about it.
+- **R4 confirmed.** `write_package()` writes a temp file, fsyncs, then renames. Killed mid-write
+  or just before the rename, it leaves nothing at the final path (only a `.tmp-<pid>` file); a
+  rerun writes a package that verifies. `make_package.py` now uses it.
+- **R5 confirmed.** REFUSE with runtime unknown, then ALLOW with a declared runtime: both verify,
+  and the REFUSE package still verifies after the second is written.
+
+Anti-vacuity: making the writer non-atomic fails R4; disabling the verifier's package-digest check
+fails R2 — some fields (artifact name, limitation wording, recorded latency) are guarded by the
+package digest alone. Accidental corruption is caught there; deliberate rewrites are the P4 boundary.
+
+`tools/package_recovery_sim.py PACKAGE.json` runs R1 and R2 against a real package. Container run on
+a 4417-byte package: 0 of 4417 prefixes, 0 of 200 flips accepted, 9.5 s.

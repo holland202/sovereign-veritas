@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sovereign_veritas.capability import Capability  # noqa: E402
 from sovereign_veritas.evidence import EvidenceRecord, Ledger, LedgerSink, canonical_json  # noqa: E402
 from sovereign_veritas.interfaces.contracts import ActionProposal, Prediction  # noqa: E402
-from sovereign_veritas.package import build_package, sha256_hex  # noqa: E402
+from sovereign_veritas.package import build_package, sha256_hex, write_package  # noqa: E402
 from sovereign_veritas.runtime import RuntimeState  # noqa: E402
 from sovereign_veritas.thermal import read_zones  # noqa: E402
 from sovereign_veritas.verifier_registry import VerifierRegistry  # noqa: E402
@@ -113,11 +113,8 @@ def main():
                         chain=ledger.all(), capability=capability, runtime=runtime, policy=policy,
                         verifier_id=VERIFIER_ID, validation=registry.validation(VERIFIER_ID),
                         thermal=thermal_after)
-    text = canonical_json(pkg)
-    md5 = hashlib.md5(text.encode()).hexdigest()
-    path = os.path.join(os.path.expanduser("~"), f"sv_package_{md5[:12]}.json")
-    with open(path, "w", encoding="utf-8") as fh:
-        fh.write(text)
+    path = write_package(pkg, os.path.expanduser("~"))
+    md5 = hashlib.md5(canonical_json(pkg).encode("utf-8")).hexdigest()
     print(f"decision {pkg['decision']['decision']} {pkg['decision']['reasons']}")
     print(f"elapsed_ms {measure.elapsed_ms}  zones {len(thermal_after)}  freshness NOT_PROVEN")
     print(f"package {path}  md5 {md5}")

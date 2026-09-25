@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import os
 from typing import Any, Iterable
 
 from .capability import Capability, CapabilityRegistry
@@ -111,3 +112,34 @@ def build_package(
     canonical_json(package)  # fail here, not in the verifier, if anything is not JSON
     package["package_sha256"] = package_digest(package)
     return package
+
+
+def write_package(package: dict[str, Any], directory: str, *, _after_first_half=None) -> str:
+    """Write atomically: temp file, fsync, rename. A crash leaves nothing at the final path.
+
+    The name carries the content's md5, so a file under that name is either complete or absent.
+    `_after_first_half` is a test seam: called after half the bytes are written, so a test can
+    kill the process mid-write.
+    """
+    data = canonical_json(package).encode("utf-8")
+    final = os.path.join(directory, f"sv_package_{hashlib.md5(data).hexdigest()[:12]}.json")
+    tmp = f"{final}.tmp-{os.getpid()}"
+    half = len(data) // 2
+    with open(tmp, "wb") as fh:
+        fh.write(data[:half])
+        fh.flush()
+        if _after_first_half is not None:
+            _after_first_half()
+        fh.write(data[half:])
+        fh.flush()
+        os.fsync(fh.fileno())
+    os.replace(tmp, final)
+    try:  # make the rename itself durable where the platform allows it
+        dfd = os.open(directory, os.O_RDONLY)
+        try:
+            os.fsync(dfd)
+        finally:
+            os.close(dfd)
+    except OSError:
+        pass
+    return final
