@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Any
 
@@ -58,13 +59,11 @@ class Gate:
                 (REFUSAL_REASONS[verification_status],),
             )
 
+        # DEFER conditions accumulate and never short-circuit: an early DEFER
+        # would mask a later REFUSE and drop the other DEFER reasons.
         if verification_status is VerificationStatus.INSUFFICIENT_EVIDENCE:
-            return Decision(
-                "DEFER",
-                ("verification_insufficient_evidence",),
-            )
-
-        if verification_status is not VerificationStatus.PASS:
+            reasons.append("verification_insufficient_evidence")
+        elif verification_status is not VerificationStatus.PASS:
             return Decision(
                 "REFUSE",
                 ("verification_not_passed",),
@@ -73,7 +72,8 @@ class Gate:
         if capability is None:
             return Decision("REFUSE", ("capability_missing",))
 
-        if not capability.authorized:
+        # Identity, not truthiness: "false", "0" and 1 are not authorization.
+        if capability.authorized is not True:
             return Decision("REFUSE", ("capability_not_authorized",))
 
         # Hierarchical check: parent must be authorized if declared.
@@ -83,7 +83,7 @@ class Gate:
             parent = registry.get(capability.parent)
             if parent is None:
                 return Decision("REFUSE", (f"capability_parent_missing:{capability.parent}",))
-            if not parent.authorized:
+            if parent.authorized is not True:
                 return Decision("REFUSE", (f"capability_parent_not_authorized:{capability.parent}",))
 
         requested_capability = (evidence.action or {}).get("capability")
@@ -94,17 +94,21 @@ class Gate:
             return Decision("REFUSE", ("runtime_state_unavailable",))
 
         if not runtime.is_healthy():
-            return Decision("DEFER", ("runtime_not_healthy",))
+            reasons.append("runtime_not_healthy")
 
         for name in capability.required_evidence:
-            if not evidence.metadata.get(name):
+            # Attestation is the boolean True. "FAILED", {"ok": False} and
+            # "false" are truthy, and are not evidence.
+            if evidence.metadata.get(name) is not True:
                 reasons.append(f"missing_required_evidence:{name}")
                 required.append(name)
 
         # Evidence quality threshold (graded decision).
         if capability.min_evidence_quality is not None:
             quality = evidence.quality_or_default(default=0.0)
-            if quality < capability.min_evidence_quality:
+            if not (math.isfinite(quality) and 0.0 <= quality <= 1.0):
+                reasons.append(f"evidence_quality_invalid:{quality!r}")
+            elif quality < capability.min_evidence_quality:
                 reasons.append(
                     f"evidence_quality_below_threshold:{quality:.4f}<{capability.min_evidence_quality:.4f}"
                 )
@@ -113,17 +117,18 @@ class Gate:
         if capability.max_steps is not None:
             step_count = evidence.metadata.get("step_count")
             if step_count is not None:
-                try:
-                    if int(step_count) > capability.max_steps:
-                        return Decision(
-                            "REFUSE",
-                            (f"capability_max_steps_exceeded:{step_count}>{capability.max_steps}",),
-                        )
-                except (TypeError, ValueError):
+                # Steps count from 1 (planner contract); bools and negatives are not counts.
+                if isinstance(step_count, bool) or not isinstance(step_count, int) or step_count < 1:
                     reasons.append("invalid_step_count_metadata")
+                elif step_count > capability.max_steps:
+                    return Decision("REFUSE", (f"capability_max_steps_exceeded:{step_count}>{capability.max_steps}",))
 
         requested = (evidence.action or {}).get("requested")
-        if requested and policy.get("allow_only") is not None and requested not in policy["allow_only"]:
+        allow_only = policy.get("allow_only")
+        # A str allow_only would do substring matching ("read" in "read_raw").
+        if allow_only is not None and not isinstance(allow_only, (list, tuple, set, frozenset)):
+            return Decision("REFUSE", ("policy_invalid:allow_only_must_be_a_collection",), tuple(required))
+        if requested and allow_only is not None and requested not in allow_only:
             return Decision("REFUSE", ("action_not_permitted_by_policy",), tuple(required))
 
         if reasons:

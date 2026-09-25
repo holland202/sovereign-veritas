@@ -101,7 +101,14 @@ class EvidenceWorkflow:
             verify_with_adversarial = None
 
         registry_verification: dict[str, Any] | None = None
-        if verifier_id is not None:
+        if verifier_id is None and self.verifier_registry is not None:
+            # A configured registry cannot be bypassed by omitting the id.
+            registry_verification = {
+                "status": "INSUFFICIENT_EVIDENCE",
+                "verifier_id": None,
+                "registry_reason": "verifier_id_missing",
+            }
+        elif verifier_id is not None:
             if self.verifier_registry is None:
                 registry_verification = {
                     "status": "INSUFFICIENT_EVIDENCE",
