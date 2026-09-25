@@ -9,7 +9,20 @@ from .evidence import EvidenceRecord, Ledger, canonical_json
 
 
 class FileLedger(Ledger):
-    """Append-only JSONL ledger with fail-closed verification on load."""
+    """Append-only JSONL ledger with fail-closed verification on load.
+
+    Support boundary
+    ----------------
+    *Single-writer* use (one process owns the path) is the tested and
+    supported mode.
+
+    *Concurrent multi-writer* use is **UNSUPPORTED**. A Stage-1 Termux
+    measurement (4 processes × 50 records) produced a broken hash chain;
+    reload failed closed. See docs/CONCURRENCY_MEASUREMENT.md.
+
+    Integrity checks detect corruption; they do not serialize writers.
+    Do not treat a green unit suite as a concurrency-safety claim.
+    """
 
     def __init__(self, path: str | Path) -> None:
         super().__init__()
@@ -70,7 +83,11 @@ class FileLedger(Ledger):
         self.verify()
 
     def append(self, record: EvidenceRecord) -> EvidenceRecord:
-        """Durably append one record before advancing in-memory state."""
+        """Durably append one record before advancing in-memory state.
+
+        Supported under single-writer use only. Concurrent callers of
+        append on the same path are unsupported (see class docstring).
+        """
         if not record.record_id or not record.input_digest:
             raise ValueError("record_id and input_digest are required")
 

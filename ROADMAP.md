@@ -20,6 +20,16 @@ Acceptance:
 - independently inspectable evidence packages
 - graded quality decisions by the Gate
 
+**Status:** largely implemented in-kernel; Stage-0 fault injection measured.
+
+### FileLedger writer boundary (measured 2026-09-24)
+
+- Single writer: supported.
+- Concurrent multi-writer: **UNSUPPORTED** (Stage-1: 4×50 → chain broken;
+  reload failed closed). See `docs/CONCURRENCY_MEASUREMENT.md`.
+- Options A (policy) / B (flock) / C (per-process + merge) are open.
+  Choose deliberately; re-measure against the frozen baseline.
+
 ## Phase 2 — Safety and Governance
 
 Integrate:
@@ -29,8 +39,9 @@ Integrate:
 - quality-bounded and step-bounded capabilities
 - containment
 - runtime/resource state
-- Sovereign Evolution
 - Veritas Gate
+- CapabilityGovernor (custody before registry mutation)
+- BoundedMultiStepPlanner (Gate-only sequential steps)
 
 Acceptance:
 
@@ -41,6 +52,9 @@ Acceptance:
 - policy violations REFUSE
 - models cannot self-authorize
 - parent capabilities must be authorized for children
+- planner cannot manufacture ALLOW or bypass Gate
+
+**Status:** implemented and device-tested (107 passed Termux).
 
 ## Phase 3 — Edge Intelligence
 
@@ -78,10 +92,8 @@ Acceptance:
 Integrate as isolated modules:
 
 - principia-artificialis
-- quasar
-- quasar-v2
-- qsleuth
-- qolas-synthesis
+- quasar / quasar-v2
+- qsleuth / qolas-synthesis
 - polytope-explorer
 
 Acceptance:
@@ -95,16 +107,8 @@ Acceptance:
 
 Build the integration layer around stable contracts:
 
-sense
-→ model
-→ predict
-→ uncertainty
-→ propose action
-→ Veritas Gate
-→ bounded execution
-→ verify
-→ record evidence
-→ adapt safely
+sense → model → predict → uncertainty → propose action
+→ Veritas Gate → bounded execution → verify → record evidence → adapt safely
 
 ## Non-goals
 
@@ -114,6 +118,7 @@ sense
 - silent fallback behavior
 - unsupported autonomy claims
 - experimental code masquerading as production capability
+- treating green unit tests as concurrency-safety evidence
 
 ## Promotion Rule
 
