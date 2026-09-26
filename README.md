@@ -24,11 +24,12 @@ Use `python3` if that is your interpreter. What you should see:
 - **pytest:** all tests pass. On Windows the 8 anchored-ledger tests skip — that ledger needs
   POSIX file locking and refuses to write without it (tested on every platform).
 - **make_package:** `decision ALLOW []` and a package path in your home directory.
-- **verify_package:** 16 `PASS` lines and `VERDICT  CONSISTENT`.
+- **verify_package:** 18 `PASS` lines and `VERDICT  CONSISTENT`.
 
 Anything else is a finding. Please open an issue with your OS, Python version and the raw output.
 Without `--thermal-status`, nothing vouches for the runtime state and the Gate REFUSEs: that is
-the fail-closed default, not an error. Linux, macOS and Windows are tested in CI on every push
+the fail-closed default, not an error. `--thermal-status measured` derives the status from the
+device's thermal zones instead of taking your word for it (below). Linux, macOS and Windows are tested in CI on every push
 (GitHub-hosted runners); the author's own device is an Android phone.
 
 Want to break it? Edit a package so the verifier still says CONSISTENT while it claims something
@@ -77,7 +78,12 @@ Every package states these, and the verifier fails a package that drops one:
 - **freshness** — an older valid package is indistinguishable from the newest. A witness log
   checked with `--witness-log` shows whether it is the newest the author made public (see above)
 - **verifier identity** — declared by the caller, not bound to the verifier object that ran
-- **resource state** — runtime fields are declared, not derived from the device's sensors
+- **resource state** — runtime fields are declared, not derived from the device's sensors.
+  With `--thermal-status measured`, `thermal_status` is instead derived from the zones read before
+  the run, under per-domain limits chosen from one S25 probe run (policy `s25-uncalibrated-v0`, not
+  calibrated), and the verifier recomputes it (`thermal_status_derived`); the package then says so.
+  `compute_budget` and `power_status` stay declared. A device without the S25's zone types reads
+  `unknown` and REFUSEs
 
 ## What has been measured
 
@@ -115,6 +121,7 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
 - `tools/field_sweep.py` — lists every field an attacker can rewrite undetected (optionally with a signature)
 - `tools/sign_package.py` — ed25519 signing via `ssh-keygen -Y`; the verifier checks with `--signature`
 - `tools/witness.py` — appends a package to the freshness witness log; the verifier checks with `--witness-log`
+- `sovereign_veritas/thermal_policy.py` — derives `thermal_status` from zones under a named policy
 - `tools/thermal_probe.py`, `tools/physical_durability.py` — device measurements (Android/Linux)
 - `tools/nvidia_challenge.py` — optional, EXPLORATORY, **makes network calls**: an NVIDIA-hosted
   model tries to forge a package; the local verifier judges. Needs your own key in `~/.nvidia_api_key`

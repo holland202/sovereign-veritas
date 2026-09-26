@@ -101,6 +101,12 @@ V0_LIMITATIONS = (
     "verifier identity: the verifier_id is declared by the caller, not bound to the verifier object",
     "resource state: runtime fields are declared by the caller, not derived from thermal zones",
 )
+# A package whose runtime says thermal_status_source == "measured" states this as its fourth line
+# instead, and must pass thermal_status_derived: the status is recomputed here, not trusted.
+MEASURED_RESOURCE_STATEMENT = (
+    "resource state: thermal_status derived from measurement.thermal_before under the uncalibrated "
+    "per-domain limits named in resource_state.thermal_policy; compute_budget and power_status "
+    "declared by the caller")
 
 
 def canon(value):
@@ -251,6 +257,24 @@ def thermal_summary(zones):
             "domains": dict(sorted(domains.items()))}
 
 
+# ---- thermal policy, re-implemented: the limits are this verifier's copy, not the package's --
+THERMAL_POLICIES = {"s25-uncalibrated-v0": {"battery": 45000, "board": 50000, "cpu_core": 95000,
+                                            "cpu_subsystem": 95000, "gpu": 95000, "npu": 95000}}
+
+
+def derive_thermal(zones, limits):
+    hot = False
+    for domain in sorted(limits):
+        members = [z for z in zones if z["domain"] == domain]
+        if any(z["status"] in ("unreadable", "out_of_range") for z in members):
+            return "unknown"
+        ok = [z["raw"] for z in members if z["status"] == "ok"]
+        if not ok:
+            return "unknown"
+        hot = hot or max(ok) >= limits[domain]
+    return "hot" if hot else "normal"
+
+
 # ---- verifier validation rule, re-implemented ------------------------------------------------
 def validation_status(v):
     if v["failed_probes"] > 0:
@@ -360,6 +384,22 @@ def verify(pkg, allow_recorded_only=False):
         check("thermal_before", isinstance(before, list) and zones_derivable(before),
               f"{len(before) if isinstance(before, list) else '?'} zones: domain and status recomputed")
 
+    expected_limitations = list(V0_LIMITATIONS)
+    runtime = rs["runtime"]
+    rmeta = runtime.get("metadata") or {}
+    if rmeta.get("thermal_status_source") == "measured":
+        expected_limitations[3] = MEASURED_RESOURCE_STATEMENT
+        pid, tp = rmeta.get("thermal_policy"), rs.get("thermal_policy") or {}
+        limits = THERMAL_POLICIES.get(pid)
+        ok = (limits is not None and tp.get("id") == pid and tp.get("limits_mdeg") == limits
+              and tp.get("snapshot") == "measurement.thermal_before"
+              and isinstance(before, list) and zones_derivable(before))
+        derived = derive_thermal(before, limits) if ok else None
+        check("thermal_status_derived", ok and derived == runtime.get("thermal_status"),
+              f"{pid}: recomputed {derived}, recorded {runtime.get('thermal_status')}")
+    elif "thermal_policy" in rs:
+        check("thermal_status_derived", False, "thermal_policy on a package whose status is declared")
+
     # An action may only have run under ALLOW. A missing status is allowed (not every package
     # comes from EvidenceWorkflow); a present one must be a known value on an ALLOW record.
     execution = (rec.get("metadata") or {}).get("execution_status")
@@ -371,7 +411,9 @@ def verify(pkg, allow_recorded_only=False):
     check("freshness_not_overclaimed", f.get("status") == "NOT_PROVEN" and f.get("witness") is None,
           f.get("status"))
     lims = pkg.get("known_limitations") or []
-    check("limitations_declared", list(lims) == list(V0_LIMITATIONS), "exactly the four v0 statements")
+    check("limitations_declared", list(lims) == expected_limitations,
+          "exactly the four v0 statements" if expected_limitations == list(V0_LIMITATIONS)
+          else "the four statements, resource state measured")
     return checks
 
 

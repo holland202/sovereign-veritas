@@ -27,3 +27,8 @@ jobs:
         run: |
           f=$(python tools/make_package.py --thermal-status normal | awk '/^package /{print $2}')
           python tools/verify_package.py "$f"
+      - name: Make a measured-thermal package and verify it (no S25 zones here, so REFUSE is expected)
+        run: |
+          python tools/make_package.py --thermal-status measured | tee measured.txt
+          f=$(awk '/^package /{print $2}' measured.txt)
+          python tools/verify_package.py "$f"

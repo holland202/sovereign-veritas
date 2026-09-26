@@ -713,3 +713,47 @@ limits are uncalibrated and fit only the S25 domain map (another device reads `u
 REFUSEs); raw readings are recorded data, so an unsigned rewrite that lowers them consistently
 still verifies (the signature closes that for anyone but the key holder); the key holder can
 still sign false readings. `compute_budget` and `power_status` stay declared.
+
+### Result (container x86_64, Python 3.11.15) — `tests/test_thermal_policy.py`
+
+28 passed; full suite 213 passed. T0-T4 confirmed; T7 confirmed, with a gap found on the way.
+
+- **T0** The published S25 package, with signature and witness: 20 `PASS`, exit 0, no
+  `thermal_status_derived` line. `tests/test_field_sweep.py` and `tests/test_signature.py`
+  (fixture: 119 rewrites, 44 verified unsigned, 0 signed): 10 passed, unchanged.
+- **T1** 14 derivation cases on fake zone trees; the kernel and the verifier's re-implementation
+  agree on every one, including exactly-at-limit -> `hot`.
+- **T2** `make_package.py --thermal-status measured --thermal-root <fake tree>`: cool -> ALLOW [],
+  execution recorded; one CPU zone at 99600 -> DEFER [runtime_not_healthy], no execution;
+  battery unreadable -> REFUSE [runtime_state_unavailable]. All three verify, exit 0.
+- **T3** After a full reseal, hot -> normal with a matching ALLOW fails exactly
+  `thermal_status_derived`. Raising a limit, renaming the policy, deleting `thermal_before`, and
+  relabelling the source as declared each fail. Two rewrites verify, as stated in advance and
+  pinned as tests: removing every trace of "measured" (a fully consistent rewrite), and lowering
+  the recorded raw readings. Only the signature binds those.
+- **T4** This container has no `/sys/class/thermal`:
+
+```
+thermal unknown (battery: no readable zone)  policy s25-uncalibrated-v0  zones 0
+decision REFUSE ['runtime_state_unavailable']
+PASS  gate_replay                        replayed REFUSE ['runtime_state_unavailable']
+PASS  thermal_status_derived             s25-uncalibrated-v0: recomputed unknown, recorded unknown
+PASS  limitations_declared               the four statements, resource state measured
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+exit=0
+```
+
+  Field sweep on that package: `78 single-field rewrites (every digest recomputed): 33 verified,
+  33 distinct fields` (unsigned).
+- **T7** A verifier that uses the recorded status instead of recomputing it fails
+  `test_t3_status_rewritten_to_normal_with_matching_allow_fails` (1 of the 7 T3 tests; the other
+  checks still catch the limit, policy, snapshot and relabel rewrites). Using `>` for `>=` in both
+  derivations fails 3 T1 cases.
+- **Found by sabotage:** deleting the unreadable/out-of-range rule from the verifier failed
+  NO test at first: every case had one zone per domain, so "no ok zone" caught it anyway. Two
+  cases added (a bad zone beside a good one); deleting the rule from either copy now fails both.
+
+Also corrected: the README said a fresh package gives 16 `PASS` lines. It gives 18, and did before
+this change (checked on the previous commit).
+
+Not yet measured: T5 and T6 on the S25.

@@ -21,6 +21,7 @@ from .capability import Capability, CapabilityRegistry
 from .evidence import EvidenceRecord, canonical_json
 from .runtime import RuntimeState
 from .thermal import ZoneReading, summarize
+from .thermal_policy import POLICIES, derive_thermal_status, policy_dict
 from .verifier_registry import VerifierValidation
 
 SCHEMA = "sv.package/0"
@@ -30,6 +31,12 @@ KNOWN_LIMITATIONS = (
     "verifier identity: the verifier_id is declared by the caller, not bound to the verifier object",
     "resource state: runtime fields are declared by the caller, not derived from thermal zones",
 )
+# A package whose runtime says thermal_status_source == "measured" states this instead of the fourth
+# line. The verifier recomputes the status; it does not take this sentence on trust.
+MEASURED_RESOURCE_STATEMENT = (
+    "resource state: thermal_status derived from measurement.thermal_before under the uncalibrated "
+    "per-domain limits named in resource_state.thermal_policy; compute_budget and power_status "
+    "declared by the caller")
 
 
 def sha256_hex(data: bytes) -> str:
@@ -82,6 +89,18 @@ def build_package(
         raise ValueError("decision record input_digest is not the artifact's sha256")
     if measurement.get("artifact_sha256") != art_sha:
         raise ValueError("measurement does not name this artifact")
+    limitations = list(KNOWN_LIMITATIONS)
+    thermal_policy = None
+    if runtime.metadata.get("thermal_status_source") == "measured":
+        policy_id = runtime.metadata.get("thermal_policy")
+        before = measurement.get("thermal_before")
+        if policy_id not in POLICIES or not isinstance(before, list):
+            raise ValueError("measured thermal_status needs a known thermal_policy and thermal_before")
+        thermal_policy = policy_dict(policy_id)
+        derived, _ = derive_thermal_status(before, thermal_policy["limits_mdeg"])
+        if derived != runtime.thermal_status:
+            raise ValueError(f"thermal_status {runtime.thermal_status!r} is not the derived {derived!r}")
+        limitations[3] = MEASURED_RESOURCE_STATEMENT
     snapshot = None
     if capability_registry is not None:
         snapshot = {}
@@ -103,11 +122,12 @@ def build_package(
             "runtime": runtime.to_dict(),
             "thermal": None if thermal is None else {
                 "zones": [z.to_dict() for z in thermal], "summary": summarize(thermal)},
+            **({} if thermal_policy is None else {"thermal_policy": thermal_policy}),
         },
         "freshness": {"status": "NOT_PROVEN", "witness": None},
         "decision": {"decision": decision_record.decision,
                      "reasons": list(decision_record.reasons)},
-        "known_limitations": list(KNOWN_LIMITATIONS),
+        "known_limitations": limitations,
     }
     canonical_json(package)  # fail here, not in the verifier, if anything is not JSON
     package["package_sha256"] = package_digest(package)
