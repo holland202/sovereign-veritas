@@ -535,6 +535,16 @@ def verify(pkg, allow_recorded_only=False):
         check("model_check_bound", not broken, "; ".join(broken) or
               f"verdict {chk.get('verdict')}, asked for {act.get('requested')!r}, note {'written' if ran else 'not written'}")
 
+    mf = m.get("model_file")
+    if mf is not None and m.get("backend") == "llama-server":
+        # The operator's file and the server's own name for its model must agree (docs/MODEL_ACTION.md,
+        # S25 run 1: a stale server answered for a file that was never loaded).
+        mid = m.get("model_id")
+        served = mid.replace("\\", "/").rsplit("/", 1)[-1] if isinstance(mid, str) else None
+        named = mf.get("name") if isinstance(mf, dict) else None
+        check("model_file_named", served is not None and served == named,
+              f"server reports {served!r}, operator's file {named!r}")
+
     # An action may only have run under ALLOW. A missing status is allowed (not every package
     # comes from EvidenceWorkflow); a present one must be a known value on an ALLOW record.
     execution = (rec.get("metadata") or {}).get("execution_status")

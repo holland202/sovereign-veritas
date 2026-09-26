@@ -144,8 +144,10 @@ class FakeLlama(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    model_id = "fake-llama-for-tests"
+
     def do_GET(self):
-        self.reply({"data": [{"id": "fake-llama-for-tests"}]})
+        self.reply({"data": [{"id": self.model_id}]})
 
     def do_POST(self):
         req = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
@@ -197,3 +199,48 @@ def test_an_unreadable_model_file_is_could_not_run(tmp_path):
     pkg, p = run(tmp_path, "--model", "scripted", "--model-file", str(tmp_path / "missing.gguf"))
     assert pkg is None and p.returncode == 2 and "model file unreadable" in p.stdout
 
+
+
+# ---- the server must be serving the file the operator names (S25 run 1, docs/MODEL_ACTION.md) ----------
+def run_against(tmp_path, served_id, *flags):
+    handler = type("Served", (FakeLlama,), {"model_id": served_id})
+    server = http.server.HTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        return run(tmp_path, "--model", "llama", "--server", f"http://127.0.0.1:{server.server_port}", *flags)
+    finally:
+        server.shutdown()
+
+
+def model_file(tmp_path, name="qwen2.5-1.5b-instruct-q4_k_m.gguf"):
+    f = tmp_path / name
+    f.write_bytes(b"stand-in bytes, not a model")
+    return str(f)
+
+
+def test_a_stale_server_on_the_port_is_could_not_run(tmp_path):
+    """What happened on the S25: the operator's file was Qwen, the server answering was TinyLlama."""
+    pkg, p = run_against(tmp_path, "tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf", "--model-file", model_file(tmp_path))
+    assert pkg is None and p.returncode == 2 and "reports model 'tinyllama" in p.stdout
+    assert notes(tmp_path) == []
+
+
+@pytest.mark.parametrize("served", ["qwen2.5-1.5b-instruct-q4_k_m.gguf",
+                                    "/data/data/com.termux/files/home/models/qwen2.5-1.5b-instruct-q4_k_m.gguf"])
+def test_the_right_server_runs_and_model_file_named_passes(tmp_path, served):
+    pkg, p = run_against(tmp_path, served, "--model-file", model_file(tmp_path))
+    assert pkg is not None, p.stdout + p.stderr
+    results = {n: ok for n, ok, _ in vp.verify(pkg)}
+    assert all(results.values()) and results.get("model_file_named") is True
+
+
+def test_without_a_model_file_there_is_nothing_to_compare(tmp_path):
+    pkg, _ = run_against(tmp_path, "anything.gguf")
+    assert "model_file_named" not in {n for n, _, _ in vp.verify(pkg)}
+
+
+def test_resealed_package_whose_server_named_another_model_fails(tmp_path):
+    """Anti-vacuity: the S25 run-1 package shape (Qwen file, TinyLlama answering) fails the check."""
+    pkg, _ = run_against(tmp_path, "qwen2.5-1.5b-instruct-q4_k_m.gguf", "--model-file", model_file(tmp_path))
+    pkg["measurement"]["model_id"] = "tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
+    assert failed(reseal(pkg)) == ["model_file_named"]

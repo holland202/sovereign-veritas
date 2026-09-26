@@ -17,7 +17,8 @@ Registered in docs/MODEL_ACTION.md.
 
 --model-file PATH records the sha256 of the model file the server was started with. That is the
 operator's claim, not proof of which model answered; it names an exact artifact, so anyone with the
-same file can re-run the question and compare the reply.
+same file can re-run the question and compare the reply. With the llama backend the server's own
+name for its model must end in that file's name, or the run stops (COULD NOT RUN) before any package.
 
 --model scripted is a fixed stand-in, NOT a model, for tests and for trying the pipeline without
 one: it answers as --scripted says and asks for whatever --ask-for names.
@@ -115,11 +116,22 @@ def http_json(url, payload=None, timeout=600):
         return json.loads(r.read().decode("utf-8"))
 
 
-def ask_llama(server, prompt, seed, max_tokens):
+def server_model_id(server):
     try:
         model_id = http_json(server + "/v1/models", timeout=10)["data"][0]["id"]
     except (OSError, ValueError, KeyError, IndexError, TypeError) as exc:
         could_not_run(f"no model at {server} ({exc}). Start one: llama-server -m MODEL.gguf --port 8080")
+    if not isinstance(model_id, str):
+        could_not_run(f"{server} names its model with a {type(model_id).__name__}, not a string")
+    return model_id
+
+
+def file_name(model_id):
+    """The last path component, whether the server reports a bare name or the path it was given."""
+    return model_id.replace("\\", "/").rsplit("/", 1)[-1]
+
+
+def ask_llama(server, model_id, prompt, seed, max_tokens):
     params = {"temperature": 0, "seed": seed, "max_tokens": max_tokens}
     payload = {"model": model_id, "messages": [{"role": "system", "content": SYSTEM},
                                                {"role": "user", "content": prompt}], "stream": False, **params}
@@ -230,9 +242,17 @@ def main():
     prompt = prompt_for(task, a.ask_for)
     artifact = canonical_json({"schema": "sv.model_task/0", "task": task, "system": SYSTEM,
                                "prompt": prompt, "ask_for": a.ask_for}).encode("utf-8")
+    model_id = None
+    if a.model == "llama":
+        model_id = server_model_id(a.server.rstrip("/"))
+        # Found on the S25 (2026-09-26): a stale server on the port answered for a file that was never
+        # loaded. The server's own name for its model must be the file's name, or nothing is packaged.
+        if model_file is not None and file_name(model_id) != model_file["name"]:
+            could_not_run(f"the server at {a.server} reports model {model_id!r}, not {model_file['name']!r}. "
+                          "Is another llama-server already on that port?")
     zones = zones_under_load(a.preload_seconds, a.thermal_root) if a.preload_seconds > 0 else read_zones(a.thermal_root)
     if a.model == "llama":
-        raw, model_id, elapsed, params = ask_llama(a.server.rstrip("/"), prompt, a.seed, a.max_tokens)
+        raw, model_id, elapsed, params = ask_llama(a.server.rstrip("/"), model_id, prompt, a.seed, a.max_tokens)
     else:
         raw, model_id, elapsed, params = ask_scripted(task, a.scripted, a.ask_for)
     chk = check(task, raw)
