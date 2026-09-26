@@ -257,3 +257,12 @@ vacuity_lint cannot see a fail path that exists but cannot fire (its own stated 
 guard mutants above are the check for that. CI job `red-team` runs all three on every push: the
 verifier guard mutants, `gate_constraint.py --mutants`, and vacuity_lint with its planted-defect
 step.
+
+### CI (run 36242211569 on main, 36242212584 on the feature branch, commit 51eb854)
+
+10 of 10 jobs pass on both: the 9-job test matrix and `red-team`. In `red-team`, on GitHub's
+runner: `VERDICT  22 of 22 KILLED, 0 SURVIVED  (198 s)`; `gate_constraint.py --mutants` digest
+`ab816905…2d65`, `VERDICT   CLEAN`, mutants "instrument can fail both ways"; vacuity_lint selftest
+`20/20 checks passed`; planted defect `python files scanned : 67`, `findings : 1`,
+`PRINTS_FAIL_ONLY (1)`, step passed (exit 1 as required); real scan `python files scanned : 66`,
+`findings : 0`. **L0 confirmed on the runner.**
