@@ -334,12 +334,70 @@ def validation_status(v):
 
 
 # ---- measurement kinds the verifier can recompute ---------------------------------------------
+# ---- a model's answer, re-checked (tools/model_action.py; docs/MODEL_ACTION.md) --------------------
+MODEL_NOTE_MAX = 500
+
+
+def first_json_object(raw):
+    dec = json.JSONDecoder()
+    for i, ch in enumerate(raw):
+        if ch == "{":
+            try:
+                obj, _ = dec.raw_decode(raw, i)
+            except ValueError:
+                continue
+            if isinstance(obj, dict):
+                return obj
+    return None
+
+
+def model_check(task, raw):
+    """The check, re-implemented: PASS only for an integer answer equal to the product, a string
+    action and a string note of at most MODEL_NOTE_MAX characters."""
+    expected = task["a"] * task["b"]
+    obj, parsed = first_json_object(raw), None
+    if obj is None:
+        why = "no JSON object in the reply"
+    else:
+        ans, action, note = obj.get("answer"), obj.get("action"), obj.get("note")
+        if isinstance(ans, bool) or not isinstance(ans, int):
+            why = "answer is not an integer"
+        elif not isinstance(action, str):
+            why = "action is not a string"
+        elif not isinstance(note, str) or len(note) > MODEL_NOTE_MAX:
+            why = f"note is not a string of at most {MODEL_NOTE_MAX} characters"
+        else:
+            parsed = {"answer": ans, "action": action, "note": note}
+            why = "answer correct" if ans == expected else f"answer {ans} is not {expected}"
+    verdict = "PASS" if parsed is not None and parsed["answer"] == expected else "FAIL"
+    return {"expected": expected, "parsed": parsed, "verdict": verdict, "why": why}
+
+
+def recompute_model_answer(m, artifact):
+    """The recorded output_sha256 if the task, the raw reply and the check all recompute; else why not."""
+    try:
+        task = json.loads(artifact.decode("utf-8"))["task"]
+    except (ValueError, KeyError, TypeError):
+        return "the artifact is not a model task"
+    if not (isinstance(task, dict) and task.get("op") == "mul"
+            and all(isinstance(task.get(k), int) and not isinstance(task.get(k), bool) for k in ("a", "b"))):
+        return "the artifact's task is not a multiplication of two integers"
+    raw = m.get("raw_output")
+    if not isinstance(raw, str) or sha(raw) != m.get("output_sha256"):
+        return "the raw reply does not hash to output_sha256"
+    if model_check(task, raw) != m.get("check"):
+        return "the recorded check does not recompute"
+    return m.get("output_sha256")
+
+
 def recompute_measurement(m, artifact):
     if m.get("kind") == "sha256_chain":
         h = artifact
         for _ in range(int(m["rounds"])):
             h = hashlib.sha256(h).digest()
         return h.hex()
+    if m.get("kind") == "model_answer_check":
+        return recompute_model_answer(m, artifact)
     return None
 
 
@@ -368,7 +426,9 @@ def verify(pkg, allow_recorded_only=False):
               + ("recorded only, accepted by --allow-recorded-only" if allow_recorded_only
                  else "refused (pass --allow-recorded-only to accept)"))
     else:
-        check("measurement_recomputed", out == m.get("output_sha256"), "recomputed from artifact bytes")
+        check("measurement_recomputed", out == m.get("output_sha256"),
+              "reply re-parsed, answer re-checked" if m.get("kind") == "model_answer_check" and out == m.get("output_sha256")
+              else ("recomputed from artifact bytes" if out == m.get("output_sha256") else str(out)[:80]))
 
     chain = pkg["provenance"]["chain"]
     prev, ids, chain_ok, detail = None, set(), bool(chain), ""
@@ -456,6 +516,24 @@ def verify(pkg, allow_recorded_only=False):
         # asks whether the line is the one these tags (as written) generate.
         if isinstance(es, dict) and sorted(es) == sorted(EV_FIELDS) and all(isinstance(es[f], str) for f in EV_FIELDS):
             expected_limitations[3] = evidence_statement(es)
+
+    if m.get("kind") == "model_answer_check":
+        chk = m.get("check") if isinstance(m.get("check"), dict) else {}
+        parsed = chk.get("parsed") if isinstance(chk.get("parsed"), dict) else None
+        act = rec.get("action") or {}
+        ran = (rec.get("metadata") or {}).get("execution_status") == "SUCCEEDED"
+        note = parsed.get("note") if parsed else None
+        broken = []
+        if (rec.get("verification") or {}).get("status") != chk.get("verdict"):
+            broken.append("recorded verification is not the check's verdict")
+        if act.get("requested") != (parsed.get("action") if parsed else ""):
+            broken.append("requested action is not the one in the reply")
+        if (act.get("parameters") or {}) != ({"note": note} if parsed else {}):
+            broken.append("action parameters are not the reply's note")
+        if m.get("note_sha256") != (sha(note) if ran and isinstance(note, str) else None):
+            broken.append("note hash does not match what ran")
+        check("model_check_bound", not broken, "; ".join(broken) or
+              f"verdict {chk.get('verdict')}, asked for {act.get('requested')!r}, note {'written' if ran else 'not written'}")
 
     # An action may only have run under ALLOW. A missing status is allowed (not every package
     # comes from EvidenceWorkflow); a present one must be a known value on an ALLOW record.

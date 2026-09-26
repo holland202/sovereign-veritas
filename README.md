@@ -143,6 +143,8 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
 - `tools/witness.py` — appends a package to the freshness witness log; the verifier checks with `--witness-log`
 - `sovereign_veritas/thermal_policy.py` — derives `thermal_status` from zones under a named policy
 - `sovereign_veritas/evidence_states.py` — where each runtime value came from; no implicit promotion
+- `tools/model_action.py` — a local model (llama-server) proposes an action; the Gate decides; the
+  package lets anyone re-check the model's answer (docs/MODEL_ACTION.md)
 - `tools/verifier_mutants.py` — switches off each verifier guard in turn; the tests must fail
 - `CONTRACT.md`, `contract/gate_vectors.jsonl`, `tools/gate_contract.py` — the Gate's rules, its test
   vectors, and the checker for any implementation
