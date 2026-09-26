@@ -8,7 +8,7 @@
 
 Gate contract (2026-09-26, CONTRACT.md, docs/GATE_CONTRACT.md): **261 passed** (container). The kernel
 and the verifier match all 4690 vectors (conformance digest `44823d0f…0628`); 22 of 23 rules are
-pinned by a vector and the 23rd cannot be reached. Quality is now read only from numbers (F2: `true`
+pinned by a vector and the 23rd cannot be reached. Same digest on the S25 (261 passed, Termux) and all 9 CI jobs. Quality is now read only from numbers (F2: `true`
 used to pass a quality floor); the 4608-case digest is unchanged. No outside implementation yet.
 
 Integration (2026-09-26, docs/INTEGRATION.md): **242 passed** (container). Every verifier guard

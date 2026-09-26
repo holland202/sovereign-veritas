@@ -120,7 +120,7 @@ Every package states these, and the verifier fails a package that drops one:
 | Published evidence re-checked on every push | every package signed and consistent; every witness entry published | CI, 9 jobs |
 | Verifier guards switched off one at a time | 22 of 22 make a test fail (2 needed new tests) | container, CI |
 | Static scan for verification code with no fail path (vacuity_lint) | 0 findings in 66 files | container, CI |
-| Gate contract: kernel and verifier against 4690 vectors | both conform, one digest | container, CI |
+| Gate contract: kernel and verifier against 4690 vectors | both conform, one digest | container, CI, S25 |
 | Contract rules switched off one at a time | 22 of 23 fail a vector; the 23rd cannot be reached | container, CI |
 | Reproduction by anyone else | **none yet** | — |
 

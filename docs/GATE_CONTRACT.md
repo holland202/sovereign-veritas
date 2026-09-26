@@ -240,3 +240,19 @@ test_(windows-latest,_3.14): 253 passed, 8 skipped in 42.09s |  2 44823d0ff70721
 defect and `findings : 0` the real scan. Windows skips the 8 POSIX-lock tests.)
 
 Still open: the same check on the S25, and any implementation by someone other than the author.
+
+### C5 on the S25 (Termux, at 38dfb0e)
+
+```
+261 passed in 29.44s
+gate_contract sv.gate/0 | kernel | 4690 vectors
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+gate_contract sv.gate/0 | verifier | 4690 vectors
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+```
+
+**C5 confirmed on the S25.** The same conformance digest on Android/aarch64 and on the nine CI jobs
+(Linux, macOS, Windows; Python 3.10, 3.12, 3.14). Both implementations are still the author's; the
+open item is an implementation by someone else.
