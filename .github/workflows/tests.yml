@@ -1,0 +1,29 @@
+# Runs on GitHub's machines: the first measurements of this repo on macOS and Windows.
+name: tests
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.10", "3.12", "3.14"]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash  # GitHub runs bash with -eo pipefail: a failing command before a pipe fails the step
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e ".[test]"
+      - run: python -m pytest -q
+      - name: Gate decisions identical to the S25 (4608-case digest)
+        run: |
+          python tools/gate_constraint.py --target . | tee gate.txt
+          grep -q "DIGEST    ab816905b1faf69aeaf24119b207cf7b80fcebd2ffcddac80d3edfa5e4da2d65" gate.txt
+      - name: Make a package and verify it independently
+        run: |
+          f=$(python tools/make_package.py --thermal-status normal | awk '/^package /{print $2}')
+          python tools/verify_package.py "$f"
