@@ -485,3 +485,61 @@ Unsigned, the same sweep of the same package verified 405 of 796. S1 is now conf
 against real data. The public key is committed as `keys/allowed_signers`; the private key stays on
 the phone. Still open: freshness (a signed older package still verifies), and verification by
 anyone other than the author.
+
+## Freshness witness v0 (container)
+
+`tools/witness.py append PACKAGE.json` adds `<seq> <package_sha256>` to `witness/packages.log`
+(append-only, only for packages that verify, never twice). The author commits and pushes it; GitHub's
+copy is the witness. `verify_package.py --witness-log FILE` checks a package against a log the
+challenger pulled themselves: `LATEST_WITNESSED` passes, `STALE` and `NOT_WITNESSED` fail, and a
+malformed log is `COULD NOT LOOK`. The package's own `freshness` field still says `NOT_PROVEN` - a
+package cannot know about later packages; the verdict reports what the log shows.
+
+### Registered before any witness code ran (2026-09-26T10:34:38Z, md5 c84733cda9bfa7ad0c85d27303dc54d9)
+
+```
+# Freshness witness v0 — registered before any witness code ran
+Base: main 41e8b39 (tree 7421493), container.
+Design: witness/packages.log in the repo, append-only, one line per package: "<seq> <package_sha256>".
+The author appends a package's digest and pushes; GitHub's copy of the log is the witness.
+verify_package.py --witness-log FILE (a log the CHALLENGER pulled themselves) reports:
+  LATEST_WITNESSED  - the package is the last entry           -> check passes
+  STALE             - later entries exist (reports how many)  -> check fails
+  NOT_WITNESSED     - the package is absent                   -> check fails
+A malformed log is could-not-look (exit 2), never a pass or a plain fail.
+
+W0 a package appended as the last entry: LATEST_WITNESSED, exit 0.
+W1 after a second package is appended, the first reports STALE (1 later entry), exit 1.
+W2 a package absent from the log: NOT_WITNESSED, exit 1.
+W3 a log with non-increasing seq, a duplicate digest, or a non-hex digest: exit 2.
+W4 without --witness-log, verification is unchanged (freshness=NOT_PROVEN); all prior tests pass.
+W5 witness append refuses a package that does not verify, and refuses a digest already logged.
+W6 the rollback case (restore an older valid, signed package after a newer one was witnessed):
+   STALE, exit 1 — signature still valid, freshness not.
+Stated limits, not tested away: order, not time; latest WITNESSED, not latest MADE (an unlogged
+newer package is invisible); only as strong as the challenger's own copy of the log and the
+remote's history (a force-push to main can rewrite it — branch protection closes that).
+```
+
+### Result (container x86_64, Python 3.11.15) — `tests/test_witness.py`
+
+All of W0-W6 confirmed; 183 passed. The real tools on two packages, witnessed in order (exit codes
+read without a pipe: old 1, new 0):
+
+```
+== old package
+FAIL  freshness_witness                  STALE: entry 1 of 2: 1 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=NOT_PROVEN
+== new package
+PASS  freshness_witness                  LATEST_WITNESSED(2): entry 2 of 2, the last
+VERDICT  CONSISTENT  freshness=LATEST_WITNESSED(2)  authenticity=NOT_PROVEN
+```
+
+W6 is the rollback the anchored-ledger tests found on 2026-09-25: an older package with a valid
+signature restored after a newer one was witnessed reports `PASS signature` and
+`FAIL freshness_witness ... STALE`. Anti-vacuity: forcing "no newer entries" fails 2 tests; skipping
+the sequence validation fails 2 tests.
+
+Not yet measured: a witness log pushed from the S25 and checked by someone else from their own pull.
+The trust boundary is GitHub's history of `main`; it is broken by a force push unless the branch
+is protected.

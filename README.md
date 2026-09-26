@@ -51,6 +51,19 @@ With a valid signature the verdict reads `authenticity=SIGNED:YOUR_NAME`. The pr
 `~/.ssh/sv_package_ed25519` and never goes in the repo. A signature proves who signed the exact
 bytes, not when: freshness is still not proven.
 
+## Prove a package is the newest (optional)
+
+```bash
+python tools/witness.py append /path/to/the/package.json   # adds its digest to witness/packages.log
+git add witness/packages.log && git commit -m "witness package" && git push
+```
+
+GitHub's copy of that append-only log is the witness. A challenger pulls it themselves and runs
+`python tools/verify_package.py /path/to/the/package.json --witness-log witness/packages.log`:
+`LATEST_WITNESSED` passes; `STALE` (a newer package was witnessed) and `NOT_WITNESSED` fail. This
+proves order, not time, and only among packages the author logged. It holds as long as nobody
+rewrites `main`'s history, so turn on branch protection for `main` (no force pushes).
+
 ## What a CONSISTENT package does not prove
 
 Every package states these, and the verifier fails a package that drops one:
@@ -58,7 +71,8 @@ Every package states these, and the verifier fails a package that drops one:
 - **authenticity** — the package carries no signature; a fully consistent rewrite verifies.
   A detached signature checked with `--signature` closes this (see above); the statement inside
   the package still describes the package on its own
-- **freshness** — an older valid package is indistinguishable from the newest
+- **freshness** — an older valid package is indistinguishable from the newest. A witness log
+  checked with `--witness-log` shows whether it is the newest the author made public (see above)
 - **verifier identity** — declared by the caller, not bound to the verifier object that ran
 - **resource state** — runtime fields are declared, not derived from the device's sensors
 
@@ -76,6 +90,7 @@ Every package states these, and the verifier fails a package that drops one:
 | Single-field rewrites of a real S25 package, every digest recomputed | 405 of 796 verify (33 fields: recorded data nothing can recompute) | S25, unsigned |
 | Same sweep, same S25 package, signed | 0 of 796 verify | S25 |
 | Same sweep on the signed fixture package | 0 of 119 verify (44 without the signature) | container |
+| Older package after a newer one is witnessed | `STALE`, exit 1 — even with a valid signature | container |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
@@ -94,6 +109,7 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
 - `tools/package_recovery_sim.py` — feeds the verifier torn and corrupted copies of a package
 - `tools/field_sweep.py` — lists every field an attacker can rewrite undetected (optionally with a signature)
 - `tools/sign_package.py` — ed25519 signing via `ssh-keygen -Y`; the verifier checks with `--signature`
+- `tools/witness.py` — appends a package to the freshness witness log; the verifier checks with `--witness-log`
 - `tools/thermal_probe.py`, `tools/physical_durability.py` — device measurements (Android/Linux)
 - `tools/nvidia_challenge.py` — optional, EXPLORATORY, **makes network calls**: an NVIDIA-hosted
   model tries to forge a package; the local verifier judges. Needs your own key in `~/.nvidia_api_key`

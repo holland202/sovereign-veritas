@@ -7,12 +7,17 @@ documented contract. Same author as the producer, so this is N-version, not inde
 
   python tools/verify_package.py PACKAGE.json [--allow-recorded-only]
          [--signature PACKAGE.json.sig --allowed-signers FILE --identity ID]
-      exit 0 all checks pass | 1 a check failed | 2 unreadable, or a signature check could not run
+         [--witness-log witness/packages.log]
+      exit 0 all checks pass | 1 a check failed | 2 unreadable, or a signature or witness check
+      could not run
 
 A passing package is internally consistent and its decision is the one the documented Gate
 produces from its recorded inputs. Without --signature it is NOT proven authentic. With it, the
 package file's exact bytes must carry a valid ssh-keygen signature (namespace "sv-package") from
-ID's key in the allowed-signers file. Neither proves freshness; see its known_limitations.
+ID's key in the allowed-signers file. With --witness-log, the package must be the LAST entry of an
+append-only witness log that you pulled yourself (a log handed to you by the producer proves
+nothing). That shows it is the newest package the author made public - order, not time, and not
+packages the author never logged.
 """
 import base64, hashlib, json, math, os, shutil, subprocess, sys, tempfile
 
@@ -21,6 +26,54 @@ NAMESPACE = "sv-package"
 
 class SignatureUnavailable(Exception):
     """ssh-keygen missing or unusable: the signature could not be checked at all."""
+
+
+WITNESS_HEADER = "# sv witness log v0"
+
+
+class WitnessUnreadable(Exception):
+    """The witness log is missing or malformed: freshness could not be judged at all."""
+
+
+def read_witness_log(path):
+    """[(seq, sha256)] with seq 1..n strictly increasing and unique 64-hex digests."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            lines = [l.rstrip("\n") for l in fh]
+    except OSError as exc:
+        raise WitnessUnreadable(str(exc))
+    if not lines or lines[0] != WITNESS_HEADER:
+        raise WitnessUnreadable(f"first line must be {WITNESS_HEADER!r}")
+    entries, seen = [], set()
+    for n, line in enumerate(lines[1:], start=2):
+        if not line.strip():
+            continue
+        parts = line.split()
+        if len(parts) != 2 or not parts[0].isdigit():
+            raise WitnessUnreadable(f"line {n}: expected '<seq> <sha256>'")
+        seq, digest = int(parts[0]), parts[1]
+        if seq != len(entries) + 1:
+            raise WitnessUnreadable(f"line {n}: seq {seq}, expected {len(entries) + 1}")
+        if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+            raise WitnessUnreadable(f"line {n}: not a lowercase sha256")
+        if digest in seen:
+            raise WitnessUnreadable(f"line {n}: digest already logged")
+        seen.add(digest)
+        entries.append((seq, digest))
+    return entries
+
+
+def check_witness(pkg, log_path):
+    """(ok, status, detail). ok only when the package is the last witnessed entry."""
+    entries = read_witness_log(log_path)
+    digest = pkg.get("package_sha256")
+    seqs = [s for s, d in entries if d == digest]
+    if not seqs:
+        return False, "NOT_WITNESSED", f"not among {len(entries)} witnessed packages"
+    later = len(entries) - seqs[0]
+    if later:
+        return False, "STALE", f"entry {seqs[0]} of {len(entries)}: {later} newer package(s) witnessed"
+    return True, f"LATEST_WITNESSED({seqs[0]})", f"entry {seqs[0]} of {len(entries)}, the last"
 
 
 def check_signature(data, sig_path, allowed_signers, identity):
@@ -323,19 +376,23 @@ def verify(pkg, allow_recorded_only=False):
 
 
 def parse_args(argv):
-    opts, rest, allow = {}, [], False
+    opts, rest, allow, witness = {}, [], False, None
     it = iter(argv)
     for a in it:
         if a == "--allow-recorded-only":
             allow = True
         elif a in ("--signature", "--allowed-signers", "--identity"):
             opts[a] = next(it, None)
+        elif a == "--witness-log":
+            witness = next(it, None)
+            if witness is None:
+                return None
         else:
             rest.append(a)
     sig = (opts.get("--signature"), opts.get("--allowed-signers"), opts.get("--identity"))
     if len(rest) != 1 or (opts and (len(opts) != 3 or None in sig)):
         return None
-    return rest[0], allow, sig if opts else None
+    return rest[0], allow, sig if opts else None, witness
 
 
 def main():
@@ -343,7 +400,8 @@ def main():
     if parsed is None:
         print("\n".join(__doc__.strip().splitlines()[7:10]))
         sys.exit(2)
-    path, allow, sig = parsed
+    path, allow, sig, witness = parsed
+    freshness = None
     try:
         with open(path, "rb") as fh:
             data = fh.read()
@@ -352,8 +410,14 @@ def main():
         if sig is not None:
             ok, detail = check_signature(data, *sig)
             checks.append(("signature", ok, detail))
+        if witness is not None:
+            ok, freshness, detail = check_witness(pkg, witness)
+            checks.append(("freshness_witness", ok, f"{freshness}: {detail}"))
     except SignatureUnavailable as exc:
         print(f"COULD NOT LOOK: signature requested but not checkable: {exc}")
+        sys.exit(2)
+    except WitnessUnreadable as exc:
+        print(f"COULD NOT LOOK: witness log unusable: {exc}")
         sys.exit(2)
     except (OSError, ValueError, KeyError, TypeError, IndexError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
@@ -363,7 +427,7 @@ def main():
     failed = [c for c in checks if not c[1]]
     authenticity = f"SIGNED:{sig[2]}" if sig is not None and not failed else "NOT_PROVEN"
     print(f"VERDICT  {'CONSISTENT' if not failed else f'{len(failed)} check(s) failed'}"
-          f"  freshness={pkg['freshness']['status']}  authenticity={authenticity}")
+          f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}")
     sys.exit(1 if failed else 0)
 
 
