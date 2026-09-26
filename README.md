@@ -28,7 +28,8 @@ Use `python3` if that is your interpreter. What you should see:
 
 Anything else is a finding. Please open an issue with your OS, Python version and the raw output.
 Without `--thermal-status`, nothing vouches for the runtime state and the Gate REFUSEs: that is
-the fail-closed default, not an error. Windows is untested by the author.
+the fail-closed default, not an error. Linux, macOS and Windows are tested in CI on every push
+(GitHub-hosted runners); the author's own device is an Android phone.
 
 Want to break it? Edit a package so the verifier still says CONSISTENT while it claims something
 false. One way is already known and documented (a fully consistent rewrite, below). Anything
@@ -92,6 +93,7 @@ Every package states these, and the verifier fails a package that drops one:
 | Same sweep on the signed fixture package | 0 of 119 verify (44 without the signature) | container |
 | Older package after a newer one is witnessed | `STALE`, exit 1 — even with a valid signature | container |
 | Published package `evidence/sv_package_5bfc70dfcfa2.json`, all three layers, from a fresh clone of GitHub only | 20 of 20 checks: `CONSISTENT`, `SIGNED:holland202`, `LATEST_WITNESSED(1)` | container x86_64, Python 3.11, OpenSSH 9.6 |
+| CI on every push: Linux, macOS, Windows × Python 3.10 / 3.12 / 3.14 | 9 of 9 jobs pass; gate decision digest identical to the S25's in all 9 | GitHub Actions, run 36236747944 @ `197b0b0` |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),

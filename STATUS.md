@@ -12,6 +12,17 @@ Evidence package, all three layers, on the published S25 package from a fresh cl
 package after a newer one is witnessed: `STALE` (container). Freshness holds only while `main`'s history
 is not rewritten. See `docs/EVIDENCE_PACKAGE.md`.
 
+CI (GitHub Actions run 36236747944 @ `197b0b0`, 2026-09-26): all 9 jobs pass. The S25's gate
+digest `ab816905…2d65` appears in every job's log, so the Gate's 4608 decisions are identical on
+Android/aarch64 (device), Linux, macOS and Windows, Python 3.10-3.14. Windows skips exactly the 8
+anchored-ledger tests (no POSIX `fcntl`); the signature and witness tests run there.
+
+| Job | pytest | gate digest = S25's | fresh package verifies |
+|---|---|---|---|
+| macOS, Python 3.10 / 3.12 / 3.14 | 185 passed | yes | yes |
+| Linux, Python 3.10 / 3.12 / 3.14 | 185 passed | yes | yes |
+| Windows, Python 3.10 / 3.12 / 3.14 | 177 passed, 8 skipped | yes | yes |
+
 Earlier: **157 passed** on `feature/local-inference-measurement` @ ed042e7 (Termux / S25, Python 3.14.6, 9.31 s).
 Fresh clones of ed042e7 in a container: 157 passed on Python 3.10, 3.11, 3.12 and 3.13.
 
