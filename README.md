@@ -15,7 +15,8 @@ cd sovereign-veritas
 python -m pip install -e ".[test]"
 python -m pytest -q
 python tools/make_package.py --thermal-status normal
-python tools/verify_package.py PATH_PRINTED_BY_THE_PREVIOUS_COMMAND
+# Copy the package path printed above, then run:
+python tools/verify_package.py /path/to/the/package.json
 ```
 
 Use `python3` if that is your interpreter. What you should see:
