@@ -44,6 +44,9 @@ python tools/verify_package.py /path/to/the/package.json --signature /path/to/th
     --allowed-signers allowed_signers --identity YOUR_NAME
 ```
 
+Packages signed by this repository's author verify against the committed public key:
+`--allowed-signers keys/allowed_signers --identity holland202`.
+
 With a valid signature the verdict reads `authenticity=SIGNED:YOUR_NAME`. The private key stays in
 `~/.ssh/sv_package_ed25519` and never goes in the repo. A signature proves who signed the exact
 bytes, not when: freshness is still not proven.
@@ -71,7 +74,8 @@ Every package states these, and the verifier fails a package that drops one:
 | Damaged copies of that package | 0 of 17,157 truncations, 0 of 200 bit flips accepted | S25 |
 | Fully consistent rewrite | verifies — the documented limit | container |
 | Single-field rewrites of a real S25 package, every digest recomputed | 405 of 796 verify (33 fields: recorded data nothing can recompute) | S25, unsigned |
-| Same sweep on a signed package | 0 of 119 verify (44 without the signature) | container |
+| Same sweep, same S25 package, signed | 0 of 796 verify | S25 |
+| Same sweep on the signed fixture package | 0 of 119 verify (44 without the signature) | container |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),

@@ -465,3 +465,23 @@ check is wired in and live, not that ed25519 works.
 
 Not yet measured: `ssh-keygen -Y` on the S25 (Termux OpenSSH), and anyone verifying a signature
 with only the published public key.
+
+### Device measurement — the S25 package signed on the S25 (OpenSSH 10.5p1, Python 3.14.6)
+
+At `2c39272`: `python -m pytest -q` gave **172 passed in 11.23s** — the signature tests ran, not
+skipped. Then the author's key was generated on the phone and the ALLOW package attacked overnight
+(`sv_package_5bfc70dfcfa2.json`, 68 zones) was signed and swept. Line breaks restored from
+terminal wrap; values verbatim:
+
+```
+holland202 namespaces="sv-package" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBe8+ScGb9CfAye5A97mGPGpDMTsR+v1kMfYOrSpVyNV
+signature /data/data/com.termux/files/home/sv_package_5bfc70dfcfa2.json.sig
+PASS  signature                          valid sv-package signature by holland202
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+796 single-field rewrites (every digest recomputed): 0 verified, 0 distinct fields
+```
+
+Unsigned, the same sweep of the same package verified 405 of 796. S1 is now confirmed on the device
+against real data. The public key is committed as `keys/allowed_signers`; the private key stays on
+the phone. Still open: freshness (a signed older package still verifies), and verification by
+anyone other than the author.
