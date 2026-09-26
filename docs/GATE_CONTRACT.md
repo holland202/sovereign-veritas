@@ -201,3 +201,42 @@ exit=2
 
 After all of the above: 261 passed; `tools/verifier_mutants.py` 22 of 22 guards killed across 31
 test files; vacuity_lint 0 findings.
+
+### C5 — CI, and what Windows found
+
+First push (77a3f4c, runs 36253012457 / 36253013812): the three Windows jobs failed
+`test_c2_contract_md_states_the_current_digests`. The vector file hashed `c48df55d…` there, not
+`4534d15d…`: Git for Windows converts LF to CRLF on checkout (`core.autocrlf`), so a file whose
+bytes are published was rewritten on the way in. Reproduced here with a checkout made under
+`core.autocrlf=true`:
+
+```
+77a3f4c autocrlf=true: c48df55d41d0bc1d  CRLF lines: 4690
+HEAD autocrlf=true: 4534d15d348e54a2  CRLF lines: 0
+```
+
+Fixed in 037ab74 with `.gitattributes` turning conversion off for every file whose exact bytes are
+hashed or signed: the vectors, the published packages and their signatures, the witness log, the
+signers file. None of those had been converted before (packages are one line with no newline, and
+the signature and witness readers already tolerated CRLF), but they rely on the same property.
+
+**C5 confirmed** at 037ab74 (run 36253330490), read from each job's log:
+
+```
+red-team: VERDICT  22 of 22 KILLED, 0 SURVIVED  (200 s) VERDICT  22 of 23 rules pinned by the vectors, 1 listed as unreachable, 0 SURVIVED findings                : 1 findings                : 0
+test_(windows-latest,_3.10): 253 passed, 8 skipped in 45.23s |  2 44823d0ff707213a  2 CONFORMS
+test_(ubuntu-latest,_3.10): 261 passed in 29.62s |  2 44823d0ff707213a  2 CONFORMS
+test_(macos-latest,_3.10): 261 passed in 29.89s |  2 44823d0ff707213a  2 CONFORMS
+test_(windows-latest,_3.12): 253 passed, 8 skipped in 44.52s |  2 44823d0ff707213a  2 CONFORMS
+test_(ubuntu-latest,_3.12): 261 passed in 27.76s |  2 44823d0ff707213a  2 CONFORMS
+test_(ubuntu-latest,_3.14): 261 passed in 26.47s |  2 44823d0ff707213a  2 CONFORMS
+test_(macos-latest,_3.12): 261 passed in 19.06s |  2 44823d0ff707213a  2 CONFORMS
+test_(macos-latest,_3.14): 261 passed in 21.55s |  2 44823d0ff707213a  2 CONFORMS
+test_(windows-latest,_3.14): 253 passed, 8 skipped in 42.09s |  2 44823d0ff707213a  2 CONFORMS
+```
+
+(Per job: the kernel's and the verifier's conformance digests, first 16 characters, both
+`44823d0f…`, and two `VERDICT  CONFORMS`. In red-team, `findings : 1` is vacuity_lint's planted
+defect and `findings : 0` the real scan. Windows skips the 8 POSIX-lock tests.)
+
+Still open: the same check on the S25, and any implementation by someone other than the author.
