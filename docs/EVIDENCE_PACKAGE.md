@@ -656,3 +656,60 @@ is trusted. A challenger who keeps their own clone of the log detects a rewrite 
 ruleset only stops it happening silently through a push. Deletion blocking was not tested (a
 successful test would delete a branch).
 
+
+## Measured thermal status — registered before any code (2026-09-26)
+
+Until now `thermal_status` is typed in by the caller (`--thermal-status normal`), and every
+package says so: "resource state: runtime fields are declared by the caller, not derived from
+thermal zones". This step derives `thermal_status` from the zones the package already records
+(`measurement.thermal_before`, read before the run) and makes the verifier recompute it.
+
+Policy `s25-uncalibrated-v0`, per-domain limits in millidegrees as the kernel reports them. A domain
+is hot when its hottest `ok` zone is at or above its limit:
+
+| domain | limit | why this number |
+|---|---|---|
+| cpu_core, cpu_subsystem, gpu, npu | 95000 | S25 probe run: cores 39.9-46.3 °C idle, up to 104.2 °C after 30 s all-core load; 95 sits between |
+| battery | 45000 | chosen; battery peaked at 33.3 °C in that run |
+| board | 50000 | chosen; board thermistors peaked at 39.709 °C in that run |
+
+These limits are chosen from one probe run on one device. They are not calibrated and not a
+safety claim. Every other domain (ddr, modem, camera, video, always_on, pmic, rf, bcl, unknown)
+is recorded but does not decide.
+
+Derivation, in order: for each limited domain, any zone `unreadable` or `out_of_range` -> `unknown`;
+no `ok` zone -> `unknown`. Otherwise any domain at or above its limit -> `hot`; else `normal`.
+`offline` zones (powered down, -273000) are skipped. The existing Gate contract is unchanged:
+`normal` -> healthy; `hot` -> degraded -> DEFER `runtime_not_healthy`; `unknown` -> unavailable ->
+REFUSE `runtime_state_unavailable`.
+
+Registered predictions:
+
+- **T0** Declared packages are unchanged: the published S25 package still passes 20 of 20 with
+  signature and witness; the fixture sweep is still 119 rewrites, 44 verified unsigned, 0 signed.
+- **T1** Derivation on synthetic zones: all limited domains below limit -> `normal`; one domain at
+  exactly its limit -> `hot`; a limited domain with no `ok` zone, or with one `unreadable` or
+  `out_of_range` zone -> `unknown`; offline zones and unlimited domains never change the result.
+- **T2** Gate consequence through a real package: `normal` -> ALLOW []; `hot` -> DEFER
+  [runtime_not_healthy] with no execution recorded; `unknown` -> REFUSE [runtime_state_unavailable].
+  All three packages verify CONSISTENT.
+- **T3** Binding against a resealing attacker (every digest recomputed): rewriting
+  `thermal_status` hot -> normal together with a matching ALLOW decision fails
+  `thermal_status_derived`; so does raising a limit, renaming the policy, deleting
+  `thermal_before`, or relabelling a measured package as declared.
+- **T4** No thermal zones (the container, CI): `make_package.py --thermal-status measured` gives
+  REFUSE [runtime_state_unavailable] and the package verifies CONSISTENT, exit 0.
+- **T5** S25 at rest: `measured` gives `normal`, ALLOW [], CONSISTENT, one more PASS line than a
+  declared package (`thermal_status_derived`).
+- **T6** S25 under load (`--preload-seconds 30`: all-core busy loops, `thermal_before` read while
+  they still run): cpu_core at or above 95 °C -> `hot` -> DEFER [runtime_not_healthy], no execution,
+  CONSISTENT. This is the anti-vacuity control on real hardware: the derived status can come back
+  something other than `normal`.
+- **T7** Anti-vacuity of the check: a verifier that trusts the package's recorded status instead of
+  recomputing it fails the T3 tests.
+
+Stated limits, not tested away: the snapshot is one instant before the run, not during it; the
+limits are uncalibrated and fit only the S25 domain map (another device reads `unknown` and
+REFUSEs); raw readings are recorded data, so an unsigned rewrite that lowers them consistently
+still verifies (the signature closes that for anyone but the key holder); the key holder can
+still sign false readings. `compute_budget` and `power_status` stay declared.
