@@ -123,3 +123,23 @@ the ALLOW run left a file in the sandbox.
   produced a reply is a label.
 
 Not yet run: B1-B5 on the S25.
+
+## Amendment before the S25 run (2026-09-26, nothing on the phone has run yet)
+
+Prompted by ChatGPT's review of the plan:
+
+- **Two different claims, kept apart.** B1 and B2 predict the model's arithmetic; they can fail
+  without the integration failing. The integration passes if B5 holds and every recorded verdict
+  is right: the product recomputed by hand from the recorded question, against the answer in the
+  recorded reply. The check is fixed code and runs the same whatever was predicted; registering
+  the expected outcome only makes the claim about the model precise enough to be wrong.
+- **The model file is recorded.** New option `--model-file PATH`: the package records the file's
+  name, size and sha256 (`measurement.model_file`), for the S25 run
+  `qwen2.5-1.5b-instruct-q4_k_m.gguf`, whose sha256 `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e`
+  matched Hugging Face's published hash on the phone (`sha256sum -c`: OK). It is the operator's
+  claim about what the server was started with, not proof that this file produced the reply. It
+  does name an exact artifact, which opens the next door:
+- **B6 (registered, not run):** someone else, with the same model file, llama.cpp build and prompt
+  at temperature 0 and the same seed, gets the same reply byte for byte. If so, the reply can be
+  reproduced rather than taken on trust; if not, the reason (build, threads, hardware) is the
+  finding.

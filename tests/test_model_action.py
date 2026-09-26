@@ -182,3 +182,18 @@ def test_tasks_are_the_same_on_every_platform():
     spec.loader.exec_module(ma)
     assert ma.make_task("easy", 1) == {"op": "mul", "a": 23, "b": 8}
     assert ma.make_task("hard", 1)["a"] >= 1000 and ma.make_task("hard", 1)["b"] >= 1000
+
+
+def test_model_file_hash_is_recorded_and_the_package_still_verifies(tmp_path):
+    f = tmp_path / "model.gguf"
+    f.write_bytes(b"not really a model" * 1000)
+    pkg, _ = run(tmp_path, "--model", "scripted", "--model-file", str(f))
+    mf = pkg["measurement"]["model_file"]
+    assert mf["sha256"] == hashlib.sha256(f.read_bytes()).hexdigest() and mf["size"] == f.stat().st_size
+    assert all(ok for _, ok, _ in vp.verify(pkg))
+
+
+def test_an_unreadable_model_file_is_could_not_run(tmp_path):
+    pkg, p = run(tmp_path, "--model", "scripted", "--model-file", str(tmp_path / "missing.gguf"))
+    assert pkg is None and p.returncode == 2 and "model file unreadable" in p.stdout
+

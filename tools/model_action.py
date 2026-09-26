@@ -15,6 +15,10 @@ Registered in docs/MODEL_ACTION.md.
          [--sandbox ~/sv_sandbox]
   python tools/model_action.py --model scripted --scripted right|wrong|garbage [...same options]
 
+--model-file PATH records the sha256 of the model file the server was started with. That is the
+operator's claim, not proof of which model answered; it names an exact artifact, so anyone with the
+same file can re-run the question and compare the reply.
+
 --model scripted is a fixed stand-in, NOT a model, for tests and for trying the pipeline without
 one: it answers as --scripted says and asks for whatever --ask-for names.
 Exit: 0 a package was written, whatever the Gate decided | 2 could not run (no server, no reply)
@@ -207,7 +211,20 @@ def main():
     ap.add_argument("--server", default="http://127.0.0.1:8080")
     ap.add_argument("--max-tokens", type=int, default=160)
     ap.add_argument("--sandbox", default=os.path.join(os.path.expanduser("~"), "sv_sandbox"))
+    ap.add_argument("--model-file", default=None)
     a = ap.parse_args()
+    model_file = None
+    if a.model_file:
+        path, h, size = os.path.expanduser(a.model_file), hashlib.sha256(), 0
+        try:
+            with open(path, "rb") as fh:
+                for block in iter(lambda: fh.read(1 << 20), b""):
+                    h.update(block)
+                    size += len(block)
+        except OSError as exc:
+            could_not_run(f"model file unreadable: {exc}")
+        model_file = {"name": os.path.basename(path), "size": size, "sha256": h.hexdigest(),
+                      "claim": "the file the operator says the server was started with"}
 
     task = make_task(a.task, a.seed)
     prompt = prompt_for(task, a.ask_for)
@@ -260,6 +277,8 @@ def main():
                    "elapsed_ms": elapsed, "thermal_before": [z.to_dict() for z in zones]}
     if a.preload_seconds > 0:
         measurement["preload_seconds"] = a.preload_seconds
+    if model_file is not None:
+        measurement["model_file"] = model_file
     pkg = build_package(artifact=artifact, artifact_name=f"model_task:{a.task}:{a.seed}", measurement=measurement,
                         chain=ledger.all(), capability=capability, runtime=runtime, policy=policy,
                         verifier_id=VERIFIER_ID, validation=registry.validation(VERIFIER_ID),
@@ -268,6 +287,8 @@ def main():
                                          "power_status": "DEFAULTED"})
     path = write_package(pkg, os.path.expanduser("~"))
     print(f"backend {measurement['backend']}  model {model_id}  task {task['a']} x {task['b']} = {chk['expected']}")
+    if model_file is not None:
+        print(f"model file {model_file['name']}  {model_file['size']} bytes  sha256 {model_file['sha256']}")
     print(f"reply   {raw[:160]!r}")
     print(f"check   {chk['verdict']} ({chk['why']})  asked for {parsed['action'] if parsed else None!r}")
     print(f"thermal {thermal_status} ({why})")
