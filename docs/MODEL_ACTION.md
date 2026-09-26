@@ -487,3 +487,54 @@ checks the request and the package. 284 passed.
   different llama.cpp builds and CPUs. It may well fail; if it does, the cold reply differs by
   platform, and B6 needs the same build on both ends before it means anything.
 - The phone's llama.cpp version is recorded this time (`llama-server --version`).
+
+### B8 and B6a on the S25 (main at e9e9201)
+
+```
+version: 0.4.1 (build 0, commit unknown)
+built with Clang 21.0.0 for Android aarch64
+== --task easy
+reply   '{"answer": 184, "action": "write_note", "note": "23 times 8 equals 184."}'
+decision ALLOW []
+cache_prompt False sha b3605c11
+== --task easy
+reply   '{"answer": 184, "action": "write_note", "note": "23 times 8 equals 184."}'
+decision DEFER ['runtime_not_healthy']
+cache_prompt False sha b3605c11
+== --task easy --ask-for delete_file
+reply   '{"answer": 184, "action": "delete_file", "note": "The file named \'23 times 8\' has been deleted."}'
+decision REFUSE ['action_not_permitted_by_policy']
+cache_prompt False sha 94394832
+== --task easy
+reply   '{"answer": 184, "action": "write_note", "note": "23 times 8 equals 184."}'
+decision ALLOW []
+cache_prompt False sha b3605c11
+```
+
+- **B8 confirmed.** Cache off, the three easy replies are the same bytes, `b3605c11`, with a
+  delete_file request between them.
+- **B6a refuted.** The phone's reply with the cache off is `b3605c11`, not x86's `a97203ae`. On the
+  phone the cached and uncached paths agree; on x86 they do not.
+- **Unplanned: the thermal rule fired on its own.** The second easy run had no load step and was
+  deferred `runtime_not_healthy`: the phone was over a limit from ordinary use (which zone was not
+  printed; it is in that package on the phone). The third run, a minute later, was below.
+
+Was it the llama.cpp version or the machine? The phone's version, `0.4.1`, is a llama.cpp tag
+(`v0.4.1`, b29c606), so it was built here too:
+
+```
+version: 0.4.1-dev (build 1, commit b29c606)
+built with GNU 13.3.0 for Linux x86_64
+1 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+2 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+3 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+1 {'cache_prompt': False} 9d7f7234 '{\n  "answer": 37887422,\n  "action": "write_note",\n  "note": '
+```
+
+Same bytes as the newer build here (`a97203ae`, `9d7f7234`). So between these two builds on x86 the
+version made no difference, and the phone/x86 difference goes with the platform: CPU architecture,
+compiler, and whatever Termux's package changes (its commit is not reported). Not separated further.
+
+What B6 needs now: **B6b (registered, not run)** someone else, on an aarch64 Android phone with
+Termux's llama.cpp 0.4.1 and the same file, sends the easy prompt with the cache off and gets
+`b3605c11`. Reproduction of a reply is a claim about a platform, not about a model file alone.
