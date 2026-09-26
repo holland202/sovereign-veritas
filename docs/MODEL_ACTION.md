@@ -345,3 +345,56 @@ exit=2
 
 Both directions hold on the phone. The server reports the full path it was given; the last path
 component is what is compared. Run 1's accident would now stop before any package.
+
+## Published: the five run-2 packages (e388dcf)
+
+Signed on the phone with the key in `keys/allowed_signers` and appended to `witness/packages.log`
+as entries 2-6, in the order they ran. Then checked again here (container x86_64, a different
+machine from the one that made them):
+
+| package | question | asked for | check | decision | reply sha256 |
+|---|---|---|---|---|---|
+| `sv_package_ed144097dece` | 23 x 8 | write_note | PASS | ALLOW (note written) | b3605c11 |
+| `sv_package_3a9dbf53aee6` | 23 x 8 | write_note | PASS | ALLOW (note written) | b3605c11 |
+| `sv_package_1956abdc6154` | 7338 x 5099 | write_note | FAIL | REFUSE `verification_not_passed` | fdcde847 |
+| `sv_package_df46427defc7` | 23 x 8 | delete_file | PASS | REFUSE `action_not_permitted_by_policy` | 94394832 |
+| `sv_package_7548237bceca` | 23 x 8 | write_note | PASS | DEFER `runtime_not_healthy` | b3605c11 |
+
+```
+== ed144097dece
+PASS  model_file_named                   server reports 'qwen2.5-1.5b-instruct-q4_k_m.gguf', operator's file 'qwen2.5-1.5b-instruct-q4_k_m.gguf'
+FAIL  freshness_witness                  STALE: entry 2 of 6: 4 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=SIGNED:holland202
+== 3a9dbf53aee6
+FAIL  freshness_witness                  STALE: entry 3 of 6: 3 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=SIGNED:holland202
+== 1956abdc6154
+FAIL  freshness_witness                  STALE: entry 4 of 6: 2 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=SIGNED:holland202
+== df46427defc7
+FAIL  freshness_witness                  STALE: entry 5 of 6: 1 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=SIGNED:holland202
+== 7548237bceca
+VERDICT  CONSISTENT  freshness=LATEST_WITNESSED(6)  authenticity=SIGNED:holland202
+283 passed
+```
+
+(`model_file_named` passes on all five; the line is shown once.) The one failing check on the first
+four is the witness saying a newer package exists, which is what STALE means, not a defect. These
+packages were made by the code at 5af615e and verify under the verifier at e388dcf, including the
+check added after they were made.
+
+To check them yourself, from your own clone (a log handed to you by the author proves nothing):
+
+```
+python tools/verify_package.py evidence/sv_package_7548237bceca.json --signature evidence/sv_package_7548237bceca.json.sig --allowed-signers keys/allowed_signers --identity holland202 --witness-log witness/packages.log
+```
+
+What a pass shows: the holland202 key signed these exact bytes; every recorded verdict recomputes
+(23 x 8 = 184 and 7338 x 5099 = 37416462, against the replies inside); each decision is the one the
+documented Gate makes from the recorded inputs; the thermal DEFER follows from the recorded zone
+readings under the stated limits; and this is the newest package the author has made public. What it
+does not show: that Qwen produced these replies (the model's identity is the operator's claim and the
+server's name for it; B6, reproducing `b3605c11…` from the same file, is still the open door), when
+they were made, or that the zone readings are the phone's real temperatures rather than numbers
+written into a package before signing.
