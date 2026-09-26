@@ -224,3 +224,101 @@ What this does and does not show:
 - P2 now has 20 resealed rewrites (the two above added), all caught.
 - `nvidia_challenge.py`: parses the last well-formed edit list in the reply, 4096-token replies,
   streamed with a per-chunk timeout and retries; K3 removed from the known list.
+
+## Red team round 2 — 50 rounds overnight, then a deterministic sweep (EXPLORATORY)
+
+S25, 2026-09-25/26, `nvidia/nemotron-3.5-lightning-30b-a3b`, stopped by hand at API call 240.
+The script run was an edited copy of `nvidia_challenge.py` (it prints "API call N" and "attack k/50",
+labels limits K1-K3, and uses the old first-`[`-to-last-`]` parser), not the committed version.
+Counted from its log:
+
+- 240 API calls: 212 unusable replies, 13 failed requests, **15 usable attacks**.
+- 7 rejected (`measurement_recomputed` 3, `measurement_recomputed + measurement_in_chain` 1,
+  `decision_record_matches + gate_replay` 2, `gate_replay` 1).
+- 8 accepted, all editing a field no check recomputes: `measurement/elapsed_ms`, `artifact/name`,
+  `resource_state/runtime/platform`, the decision record's `prediction/model_id`, a new
+  `metadata/device` key on the decision record, and the genesis record's `decision` and
+  `record_id` (twice). All are within the documented limit "authenticity: none".
+- The replay history grows every round (package + verifier source + every reply), and the
+  late rounds degraded to unusable replies and HTTP 400/404s. The loop is the wrong instrument.
+
+### The cheaper instrument: `tools/field_sweep.py`
+
+Mutates every leaf field one at a time, recomputes every digest, verifies. No model, no network,
+under a second. On the test fixture package (container):
+
+```
+119 single-field rewrites (every digest recomputed): 44 verified, 36 distinct fields
+  artifact/name
+  gate_inputs/capability/description
+  gate_inputs/capability/max_steps
+  gate_inputs/capability_registry/root-off/authorized
+  gate_inputs/capability_registry/root-off/description
+  gate_inputs/capability_registry/root-off/max_steps
+  gate_inputs/capability_registry/root-off/min_evidence_quality
+  gate_inputs/capability_registry/root-off/name
+  gate_inputs/capability_registry/root-off/parent
+  gate_inputs/capability_registry/root-on/authorized
+  gate_inputs/capability_registry/root-on/description
+  gate_inputs/capability_registry/root-on/max_steps
+  gate_inputs/capability_registry/root-on/min_evidence_quality
+  gate_inputs/capability_registry/root-on/name
+  gate_inputs/capability_registry/root-on/parent
+  measurement/elapsed_ms
+  provenance/chain/0/record/action
+  provenance/chain/0/record/capability
+  provenance/chain/0/record/decision
+  provenance/chain/0/record/evidence_quality
+  provenance/chain/0/record/input_digest
+  provenance/chain/0/record/prediction
+  provenance/chain/0/record/record_id
+  provenance/chain/0/record/timestamp
+  provenance/chain/0/record/uncertainty
+  provenance/chain/0/record/verification
+  provenance/chain/1/record/metadata/step_count
+  provenance/chain/1/record/record_id
+  provenance/chain/1/record/timestamp
+  provenance/chain/1/record/uncertainty
+  resource_state/runtime/platform
+  resource_state/runtime/python_version
+  resource_state/thermal/zones/*/raw
+  resource_state/thermal/zones/*/type  (x5)
+  resource_state/thermal/zones/*/zone  (x5)
+  verifier/validation/total_probes
+```
+
+Every field the model found is in this class; the sweep finds all of them at once. Survivors are
+either recorded-only (latency, names, timestamps, platform, earlier chain records, bcl readings)
+or Gate inputs the recorded decision does not depend on (the capability registry when no parent
+is declared, `max_steps` when no step limit is hit). None contradicts a stated limitation.
+`tests/test_field_sweep.py` pins this set: binding a field must remove it on purpose, and losing a
+check grows it and fails (demonstrated with gate replay disabled).
+
+### Which checks carry weight against an attacker who recomputes digests
+
+Each check disabled in turn; the number is how many fields become forgeable:
+
+```
+schema                             +1
+package_digest                     +0
+artifact_digest                    +0
+measurement_names_artifact         +1
+measurement_recomputed             +2
+provenance_chain                   +0
+decision_record_is_artifact        +1
+decision_record_matches            +1
+measurement_in_chain               +1
+capability_named_in_record         +1
+gate_replay                        +13
+verifier_identity_not_overclaimed  +1
+verifier_provenance                +8
+thermal                            +21
+freshness_not_overclaimed          +2
+limitations_declared               +4
+```
+
+`package_digest`, `artifact_digest` and `provenance_chain` add **nothing** against this attacker:
+anyone who can recompute sha256 reseals them. They catch accidental damage (R1/R2: 0 of 17157
+truncations, 0 of 200 bit flips), not a deliberate rewrite. Unkeyed hashes are tamper-evidence
+only against someone who does not recompute them — the "authenticity: none" limitation, measured.
+Closing it needs a key: a signature over `package_sha256`.
