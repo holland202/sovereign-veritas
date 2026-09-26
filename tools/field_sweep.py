@@ -70,7 +70,8 @@ def accepted(vp, p):
 
 def pattern(path):
     """Collapse per-zone and per-byte indices so one field reads as one line."""
-    return "/".join("*" if isinstance(k, int) and "zones" in path else str(k) for k in path)
+    thermal = "zones" in path or "thermal_before" in path
+    return "/".join("*" if isinstance(k, int) and thermal else str(k) for k in path)
 
 
 def sweep(vp, pkg):

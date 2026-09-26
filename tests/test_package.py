@@ -239,6 +239,29 @@ def test_producer_and_verifier_agree_on_limitations():
     assert tuple(KNOWN_LIMITATIONS) == vp.V0_LIMITATIONS
 
 
+def _extended(tmp_path):
+    zones = thermal_fixture(tmp_path)
+    p = roundtrip(make(thermal=zones))
+    p["measurement"]["thermal_before"] = [z.to_dict() for z in zones]
+    p["provenance"]["chain"][-1]["record"]["metadata"]["execution_status"] = "SUCCEEDED"
+    return reseal(p)
+
+
+def test_thermal_before_is_checked(tmp_path):
+    p = _extended(tmp_path)
+    assert failed(p) == []
+    p["measurement"]["thermal_before"][0]["domain"] = "battery"  # cpu zone relabelled
+    assert failed(reseal(p)) == ["thermal_before"]
+
+
+def test_execution_recorded_only_under_allow():
+    """D3: a REFUSE package claiming the action ran is a governance violation, not a record."""
+    p = roundtrip(make({"thermal": "unknown"}))
+    assert p["decision"]["decision"] == "REFUSE"
+    p["provenance"]["chain"][-1]["record"]["metadata"]["execution_status"] = "SUCCEEDED"
+    assert failed(reseal(p)) == ["execution_only_if_allowed"]
+
+
 def test_p3_freshness_is_never_proven_by_default():
     pkg = make()
     assert pkg["freshness"] == {"status": "NOT_PROVEN", "witness": None}

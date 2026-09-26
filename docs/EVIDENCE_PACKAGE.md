@@ -322,3 +322,94 @@ anyone who can recompute sha256 reseals them. They catch accidental damage (R1/R
 truncations, 0 of 200 bit flips), not a deliberate rewrite. Unkeyed hashes are tamper-evidence
 only against someone who does not recompute them — the "authenticity: none" limitation, measured.
 Closing it needs a key: a signature over `package_sha256`.
+
+## The sweep on the real S25 package, and the two derivable fields it exposed
+
+S25 at `b0b82ad` (Python 3.14.6): `python -m pytest -q` gave **163 passed in 9.25s**, and
+`python tools/field_sweep.py ~/sv_package_5bfc70dfcfa2.json` (the ALLOW package the model attacked
+overnight, 68 zones) printed:
+
+```
+796 single-field rewrites (every digest recomputed): 549 verified, 371 distinct fields
+```
+
+The count was inflated by two gaps, not by the documented limits alone. 340 of the 371 lines were
+`measurement/thermal_before/<n>/<field>`: the verifier never looked at the before-snapshot at all,
+though its `domain` and `status` are derivable exactly like the after-snapshot's. And the decision
+record's `metadata/execution_status` could be rewritten freely — including a REFUSE package claiming
+the action ran. Every field the model found overnight is on the list.
+
+### Registered before the fix (2026-09-26T10:06:40Z, md5 84a086880aa72986d28efd2094601000)
+
+```
+# Bind the derivable fields the S25 sweep exposed — registered before the fix ran
+Source: field_sweep on the S25 package sv_package_5bfc70dfcfa2.json (ALLOW, 68 zones):
+796 rewrites, 549 verified, 371 distinct fields (device, 2026-09-26).
+Test object: the fixture package + measurement.thermal_before (5 zones) + decision-record
+metadata.execution_status = "SUCCEEDED" (decision ALLOW), resealed.
+
+D1 before the fix, the sweep on that object lists thermal_before/*/domain, */status, and
+   metadata/execution_status as survivors.
+D2 after the fix: thermal_before/*/domain, */status and execution_status are no longer survivors;
+   thermal_before/*/raw, */type, */zone remain (recorded sensor readings: nothing to derive them from).
+D3 a REFUSE package claiming execution_status SUCCEEDED fails (an action recorded as run without ALLOW).
+D4 every pre-existing test passes unmodified; the pinned UNBOUND set for the plain fixture is unchanged.
+```
+
+### Result (container x86_64, Python 3.12.3)
+
+- **D1 confirmed:** before the fix, all five `thermal_before` fields per zone and
+  `metadata/execution_status` survived.
+- **D2 confirmed:** after it, on the same object:
+
+```
+145 single-field rewrites (every digest recomputed): 58 verified, 39 distinct fields
+  artifact/name
+  gate_inputs/capability/description
+  gate_inputs/capability/max_steps
+  gate_inputs/capability_registry/root-off/authorized
+  gate_inputs/capability_registry/root-off/description
+  gate_inputs/capability_registry/root-off/max_steps
+  gate_inputs/capability_registry/root-off/min_evidence_quality
+  gate_inputs/capability_registry/root-off/name
+  gate_inputs/capability_registry/root-off/parent
+  gate_inputs/capability_registry/root-on/authorized
+  gate_inputs/capability_registry/root-on/description
+  gate_inputs/capability_registry/root-on/max_steps
+  gate_inputs/capability_registry/root-on/min_evidence_quality
+  gate_inputs/capability_registry/root-on/name
+  gate_inputs/capability_registry/root-on/parent
+  measurement/elapsed_ms
+  measurement/thermal_before/*/raw  (x4)
+  measurement/thermal_before/*/type  (x5)
+  measurement/thermal_before/*/zone  (x5)
+  provenance/chain/0/record/action
+  provenance/chain/0/record/capability
+  provenance/chain/0/record/decision
+  provenance/chain/0/record/evidence_quality
+  provenance/chain/0/record/input_digest
+  provenance/chain/0/record/prediction
+  provenance/chain/0/record/record_id
+  provenance/chain/0/record/timestamp
+  provenance/chain/0/record/uncertainty
+  provenance/chain/0/record/verification
+  provenance/chain/1/record/metadata/step_count
+  provenance/chain/1/record/record_id
+  provenance/chain/1/record/timestamp
+  provenance/chain/1/record/uncertainty
+  resource_state/runtime/platform
+  resource_state/runtime/python_version
+  resource_state/thermal/zones/*/raw
+  resource_state/thermal/zones/*/type  (x5)
+  resource_state/thermal/zones/*/zone  (x5)
+  verifier/validation/total_probes
+```
+
+- **D3 confirmed:** a REFUSE package with `execution_status: SUCCEEDED` fails
+  `execution_only_if_allowed`. A missing status still passes: not every package comes from
+  `EvidenceWorkflow`.
+- **D4 confirmed:** 165 passed (163 + 2 new); the pinned `UNBOUND` set is unchanged.
+- Anti-vacuity: disabling either new check fails one test in `tests/test_package.py`.
+
+What remains unbound is recorded sensor data (`raw`, `type`, `zone`) and fields no check can
+recompute. Nothing derives a sensor reading; only a signature binds it.

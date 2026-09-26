@@ -266,14 +266,27 @@ def verify(pkg, allow_recorded_only=False):
         ok = ok and (claimed is None or claimed == vid)
         check("verifier_provenance", ok, f"{vid} {val['status'] if val else None}")
 
+    def zones_derivable(zones):
+        return all(z["domain"] == zone_domain(z["type"])
+                   and z["status"] == zone_status(z["raw"], z["domain"]) for z in zones)
+
     th = rs.get("thermal")
     if th is None:
         check("thermal", True, "not recorded")
     else:
-        zones_ok = all(z["domain"] == zone_domain(z["type"])
-                       and z["status"] == zone_status(z["raw"], z["domain"]) for z in th["zones"])
-        check("thermal", zones_ok and thermal_summary(th["zones"]) == th["summary"],
+        check("thermal", zones_derivable(th["zones"]) and thermal_summary(th["zones"]) == th["summary"],
               "zone statuses and per-domain summary recomputed")
+    before = m.get("thermal_before")
+    if before is not None:
+        check("thermal_before", isinstance(before, list) and zones_derivable(before),
+              f"{len(before) if isinstance(before, list) else '?'} zones: domain and status recomputed")
+
+    # An action may only have run under ALLOW. A missing status is allowed (not every package
+    # comes from EvidenceWorkflow); a present one must be a known value on an ALLOW record.
+    execution = (rec.get("metadata") or {}).get("execution_status")
+    check("execution_only_if_allowed",
+          execution is None or (execution in ("SUCCEEDED", "FAILED") and dec["decision"] == "ALLOW"),
+          "no execution recorded" if execution is None else f"{execution} under {dec['decision']}")
 
     f = pkg["freshness"]
     check("freshness_not_overclaimed", f.get("status") == "NOT_PROVEN" and f.get("witness") is None,
