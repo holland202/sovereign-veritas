@@ -32,3 +32,35 @@ jobs:
           python tools/make_package.py --thermal-status measured | tee measured.txt
           f=$(awk '/^package /{print $2}' measured.txt)
           python tools/verify_package.py "$f"
+
+  red-team:
+    # Checks that the checks can fail (docs/INTEGRATION.md, I1 and I3). One runner is enough: these
+    # test the verifier's and the Gate's own guards, not the platform.
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[test]"
+      - name: Every verifier guard, switched off in turn, must fail a test (method from EACE)
+        run: python tools/verifier_mutants.py
+      - name: Every planted Gate bug must be caught
+        run: python tools/gate_constraint.py --target . --mutants
+      - name: Fetch vacuity_lint, pinned
+        run: |
+          git clone -q https://github.com/holland202/vacuity_lint.py "$RUNNER_TEMP/vl"
+          git -C "$RUNNER_TEMP/vl" checkout -q 68355bb
+          python "$RUNNER_TEMP/vl/vacuity_lint.py" --selftest
+      - name: The scan can fire (a planted file with no fail path must give exit 1, not 0 or 2)
+        run: |
+          printf 'import sys\nok = False\nprint("[FAIL] planted")\nprint("[PASS] ok")\nsys.exit(0)\n' > tools/verify_planted.py
+          set +e; python "$RUNNER_TEMP/vl/vacuity_lint.py" . > planted.txt; rc=$?; set -e
+          rm tools/verify_planted.py
+          cat planted.txt
+          test "$rc" -eq 1 || { echo "expected exit 1 with a planted defect, got $rc"; exit 1; }
+      - name: No verification code in this repository without a fail path
+        run: python "$RUNNER_TEMP/vl/vacuity_lint.py" .

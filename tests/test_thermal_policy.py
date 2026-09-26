@@ -110,7 +110,9 @@ def test_t4_no_zones_refuses_and_verifies(tmp_path):
     assert ver.returncode == 0, ver.stdout
 
 
-def test_declared_mode_is_unchanged(tmp_path):
+def test_declared_mode_has_no_thermal_policy(tmp_path):
+    """Was test_declared_mode_is_unchanged. Since I2 (docs/INTEGRATION.md) a declared package also
+    carries evidence states, so its fourth limitation is generated from them, not the v0 line."""
     home = tmp_path / "home"
     home.mkdir()
     out = subprocess.run([sys.executable, str(ROOT / "tools" / "make_package.py"), "--rounds", "10",
@@ -120,7 +122,8 @@ def test_declared_mode_is_unchanged(tmp_path):
     path = next(line.split()[1] for line in out.splitlines() if line.startswith("package "))
     pkg = json.loads(pathlib.Path(path).read_text())
     assert "thermal_policy" not in pkg["resource_state"]
-    assert pkg["known_limitations"] == list(vp.V0_LIMITATIONS)
+    assert pkg["known_limitations"][:3] == list(vp.V0_LIMITATIONS)[:3]
+    assert pkg["known_limitations"][3] == vp.evidence_statement(pkg["resource_state"]["evidence_states"])
     assert not [n for n, ok, _ in vp.verify(pkg) if n == "thermal_status_derived"]
 
 
@@ -179,7 +182,9 @@ def test_t3_deleted_snapshot_fails(hot_pkg):
 def test_t3_relabelled_declared_fails(hot_pkg):
     p = to_allow(copy.deepcopy(hot_pkg))
     p["resource_state"]["runtime"]["metadata"]["thermal_status_source"] = "declared"
-    assert {"thermal_status_derived", "limitations_declared"} <= set(failed(reseal(p)))
+    # Registered (T3): fails thermal_status_derived. Since I2 the DERIVED tag also fails
+    # evidence_states; limitations_declared now follows the tags as written, so it passes.
+    assert {"thermal_status_derived", "evidence_states"} <= set(failed(reseal(p)))
 
 
 def test_t3_stated_limit_full_relabel_verifies_unsigned(hot_pkg):
@@ -187,6 +192,7 @@ def test_t3_stated_limit_full_relabel_verifies_unsigned(hot_pkg):
     p = to_allow(copy.deepcopy(hot_pkg))
     p["resource_state"]["runtime"]["metadata"] = {"thermal_status_source": "declared"}
     del p["resource_state"]["thermal_policy"]
+    del p["resource_state"]["evidence_states"]  # since I2, "every trace" includes the DERIVED tag
     p["known_limitations"] = list(vp.V0_LIMITATIONS)
     assert failed(reseal(p)) == []
 

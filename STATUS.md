@@ -6,6 +6,12 @@
 
 **213 passed** @ 2033088 (Termux / S25, 16.01 s). Measured thermal status on the S25: at rest `normal` -> ALLOW; after 30 s all-core load `hot` (cpu_core 103.8 °C) -> DEFER; both packages 19 of 19 checks, the verifier recomputing the status. Limits uncalibrated (policy `s25-uncalibrated-v0`). See `docs/EVIDENCE_PACKAGE.md`.
 
+Integration (2026-09-26, docs/INTEGRATION.md): **242 passed** (container). Every verifier guard
+switched off in turn fails a test: 22 of 22, after two survivors (`artifact_digest`,
+`provenance_chain`) got the tests they lacked. New packages carry evidence-ledger evidence states;
+finding F1: `compute_budget` and `power_status` are defaults the Gate counts as healthy (now tagged
+`DEFAULTED`, Gate unchanged). vacuity_lint: 0 findings. CI job `red-team` runs all three.
+
 Published and signed (2026-09-26): the measured pair, `sv_package_118a02b75646` (ALLOW at rest) and
 `sv_package_45c6ad182584` (DEFER under load). From a fresh clone: 20 of 20 each, `SIGNED:holland202`;
 0 of 807 signed rewrites of the DEFER package verify. Not yet witnessed. CI re-checks every published

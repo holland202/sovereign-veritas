@@ -6,16 +6,20 @@ independent verifier can recompute it). Runs the real EvidenceWorkflow: a recomp
 registered and probed both ways (a correct and a corrupted prediction), the fixed Gate, an
 in-memory hash-chained Ledger, and thermal zones read once before and once after.
 
-Runtime state: --thermal-status defaults to 'unknown', which the Gate treats as unavailable and
-REFUSEs. A value such as 'normal' is DECLARED and the package says so. '--thermal-status measured'
-DERIVES it from the zones read before the run under policy s25-uncalibrated-v0
-(sovereign_veritas/thermal_policy.py); the verifier recomputes it. No zones -> unknown -> REFUSE.
+Runtime state: without --thermal-status the thermal status is ABSENT ('unknown'), which the Gate
+treats as unavailable and REFUSEs. A value such as 'normal' is supplied by you (OPERATOR).
+'--thermal-status measured' DERIVES it from the zones read before the run under policy
+s25-uncalibrated-v0 (sovereign_veritas/thermal_policy.py); the verifier recomputes it. No zones ->
+unknown -> REFUSE. --compute-budget and --power-status are OPERATOR when given; otherwise the
+RuntimeState defaults ('available', 'stable') are used and tagged DEFAULTED - the Gate still counts
+them as healthy (docs/INTEGRATION.md, finding F1). Every package records these evidence states.
 
 --preload-seconds N (anti-vacuity, device only): run one busy loop per core for N seconds and read
 the before-snapshot while they still run, so a measured status can come back 'hot'. The package
 records preload_seconds in its measurement.
 
   python tools/make_package.py [--rounds 200000] [--thermal-status normal|measured]
+                               [--compute-budget available] [--power-status stable]
                                [--preload-seconds 30] [--thermal-root /sys/class/thermal]
 """
 import argparse, hashlib, json, os, platform, subprocess, sys, time
@@ -96,7 +100,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rounds", type=int, default=200000)
     ap.add_argument("--seed", default="sv-package-v0")
-    ap.add_argument("--thermal-status", default="unknown")
+    ap.add_argument("--thermal-status", default=None)
+    ap.add_argument("--compute-budget", default=None)
+    ap.add_argument("--power-status", default=None)
     ap.add_argument("--preload-seconds", type=int, default=0)
     ap.add_argument("--thermal-root", default="/sys/class/thermal",
                     help="where to read zones (tests point this at a fake tree)")
@@ -108,8 +114,17 @@ def main():
                                                     POLICIES[POLICY_ID])
         runtime_meta = {"thermal_status_source": "measured", "thermal_policy": POLICY_ID}
         print(f"thermal {thermal_status} ({why})  policy {POLICY_ID}  zones {len(thermal_before)}")
+        thermal_state = "DERIVED"
+    elif a.thermal_status is None:
+        thermal_status, runtime_meta, thermal_state = "unknown", {"thermal_status_source": "absent"}, "ABSENT"
     else:
         thermal_status, runtime_meta = a.thermal_status, {"thermal_status_source": "declared"}
+        thermal_state = "OPERATOR"
+    declared = {k: v for k, v in (("compute_budget", a.compute_budget), ("power_status", a.power_status))
+                if v is not None}
+    evidence_states = {"thermal_status": thermal_state,
+                       "compute_budget": "OPERATOR" if a.compute_budget is not None else "DEFAULTED",
+                       "power_status": "OPERATOR" if a.power_status is not None else "DEFAULTED"}
 
     artifact = hashlib.sha256(a.seed.encode()).digest() * 32  # 1 KiB, deterministic
     verifier = Recompute(a.rounds)
@@ -127,7 +142,7 @@ def main():
     measure = Measure(a.rounds)
     capability = Capability("measure", authorized=True, required_evidence=("verifier_probed",))
     runtime = RuntimeState(platform=platform.platform(), python_version=platform.python_version(),
-                           thermal_status=thermal_status, metadata=runtime_meta)
+                           thermal_status=thermal_status, metadata=runtime_meta, **declared)
     policy = {"allow_only": ["record_result"]}
     wf = EvidenceWorkflow(sensor=Artifact(artifact), predictor=measure, verifier=verifier,
                           executor=NoSideEffect(), evidence_sink=LedgerSink(ledger),
@@ -146,11 +161,12 @@ def main():
     pkg = build_package(artifact=artifact, artifact_name=f"seed:{a.seed}", measurement=measurement,
                         chain=ledger.all(), capability=capability, runtime=runtime, policy=policy,
                         verifier_id=VERIFIER_ID, validation=registry.validation(VERIFIER_ID),
-                        thermal=thermal_after)
+                        thermal=thermal_after, evidence_states=evidence_states)
     path = write_package(pkg, os.path.expanduser("~"))
     md5 = hashlib.md5(canonical_json(pkg).encode("utf-8")).hexdigest()
     print(f"decision {pkg['decision']['decision']} {pkg['decision']['reasons']}")
     print(f"elapsed_ms {measure.elapsed_ms}  zones {len(thermal_after)}  freshness NOT_PROVEN")
+    print("evidence " + " ".join(f"{k}={v}" for k, v in evidence_states.items()))
     print(f"package {path}  md5 {md5}")
 
 

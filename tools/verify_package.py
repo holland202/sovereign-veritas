@@ -276,6 +276,46 @@ def derive_thermal(zones, limits):
     return "hot" if hot else "normal"
 
 
+# ---- evidence states, re-implemented (vocabulary: evidence-ledger SPEC.md section 2 @ ccf9144) ----
+EV_STATES = ("MEASURED", "OPERATOR", "DERIVED", "INFERRED", "ABSENT", "DEFAULTED", "NEVER_WIRED",
+             "UNVERIFIED")
+EV_FIELDS = ("thermal_status", "compute_budget", "power_status")
+EV_DEFAULTS = {"thermal_status": "normal", "compute_budget": "available", "power_status": "stable"}
+EV_ALLOWED = {"thermal_status": ("DERIVED", "OPERATOR", "DEFAULTED", "ABSENT"),
+              "compute_budget": ("OPERATOR", "DEFAULTED", "ABSENT"),
+              "power_status": ("OPERATOR", "DEFAULTED", "ABSENT")}
+
+
+def evidence_state_problems(states, runtime):
+    """No implicit promotion: every tag must be one this package format can honestly carry."""
+    if not isinstance(states, dict) or sorted(states) != sorted(EV_FIELDS):
+        return ["expected exactly the fields " + ", ".join(EV_FIELDS)]
+    found = []
+    measured = (runtime.get("metadata") or {}).get("thermal_status_source") == "measured"
+    for f in EV_FIELDS:
+        state, value = states[f], runtime.get(f)
+        ok_values = VOCAB[f][0] | VOCAB[f][1]
+        if state not in EV_ALLOWED[f]:  # also every string evidence-ledger does not define
+            found.append(f"{f}: {state!r} is not a state this field can carry (no implicit promotion)")
+        elif state == "ABSENT" and value in ok_values:
+            found.append(f"{f}: ABSENT but carries the usable value {value!r}")
+        elif state == "DEFAULTED" and value != EV_DEFAULTS[f]:
+            found.append(f"{f}: DEFAULTED but {value!r} is not the default {EV_DEFAULTS[f]!r}")
+    if states["thermal_status"] == "DERIVED" and not measured:
+        found.append("thermal_status: DERIVED but thermal_status_source is not 'measured'")
+    if measured and states["thermal_status"] != "DERIVED":
+        found.append(f"thermal_status: source 'measured' but tagged {states['thermal_status']}")
+    return found
+
+
+def evidence_statement(states):
+    parts = [("thermal_status DERIVED from measurement.thermal_before under resource_state.thermal_policy"
+              if f == "thermal_status" and states[f] == "DERIVED" else f"{f} {states[f]}") for f in EV_FIELDS]
+    return ("resource state: " + "; ".join(parts) + " (evidence states as in evidence-ledger SPEC "
+            "section 2; the verifier recomputes only DERIVED, and the Gate counts a DEFAULTED value "
+            "as if it had been declared)")
+
+
 # ---- verifier validation rule, re-implemented ------------------------------------------------
 def validation_status(v):
     if v["failed_probes"] > 0:
@@ -400,6 +440,15 @@ def verify(pkg, allow_recorded_only=False):
               f"{pid}: recomputed {derived}, recorded {runtime.get('thermal_status')}")
     elif "thermal_policy" in rs:
         check("thermal_status_derived", False, "thermal_policy on a package whose status is declared")
+    if "evidence_states" in rs:
+        es = rs["evidence_states"]
+        broken = evidence_state_problems(es, runtime)
+        check("evidence_states", not broken,
+              "; ".join(broken) if broken else " ".join(f"{f}={es[f]}" for f in EV_FIELDS))
+        # Judged separately: evidence_states asks whether the tags are honest; limitations_declared
+        # asks whether the line is the one these tags (as written) generate.
+        if isinstance(es, dict) and sorted(es) == sorted(EV_FIELDS) and all(isinstance(es[f], str) for f in EV_FIELDS):
+            expected_limitations[3] = evidence_statement(es)
 
     # An action may only have run under ALLOW. A missing status is allowed (not every package
     # comes from EvidenceWorkflow); a present one must be a known value on an ALLOW record.
@@ -412,9 +461,15 @@ def verify(pkg, allow_recorded_only=False):
     check("freshness_not_overclaimed", f.get("status") == "NOT_PROVEN" and f.get("witness") is None,
           f.get("status"))
     lims = pkg.get("known_limitations") or []
-    check("limitations_declared", list(lims) == expected_limitations,
-          "exactly the four v0 statements" if expected_limitations == list(V0_LIMITATIONS)
-          else "the four statements, resource state measured")
+    if expected_limitations == list(V0_LIMITATIONS):
+        lim_detail = "exactly the four v0 statements"
+    elif "evidence_states" not in rs:
+        lim_detail = "the four statements, resource state measured"
+    elif rmeta.get("thermal_status_source") == "measured":
+        lim_detail = "the four statements, resource state measured, from its evidence states"
+    else:
+        lim_detail = "the four statements, resource state from its evidence states"
+    check("limitations_declared", list(lims) == expected_limitations, lim_detail)
     return checks
 
 

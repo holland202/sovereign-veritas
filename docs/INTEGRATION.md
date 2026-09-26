@@ -143,3 +143,117 @@ The 1 skip is `test_committed_log_path_is_not_git_ignored`, which needs a `.git`
 does not have. Twelve guards are killed first by the same test, the pinned fixture sweep: one
 broad test standing behind many guards. That is coverage, but thin; a guard that only that sweep
 protects is one careless re-pin away from inert.
+
+### I2 — evidence states (container x86_64, Python 3.11.15)
+
+`tools/make_package.py` in each mode, then the verifier on the package it wrote:
+
+```
+== make_package.py --thermal-status normal
+decision ALLOW []
+evidence thermal_status=OPERATOR compute_budget=DEFAULTED power_status=DEFAULTED
+PASS  evidence_states                    thermal_status=OPERATOR compute_budget=DEFAULTED power_status=DEFAULTED
+PASS  limitations_declared               the four statements, resource state from its evidence states
+exit=0 PASS=19 FAIL=0
+== make_package.py 
+decision REFUSE ['runtime_state_unavailable']
+evidence thermal_status=ABSENT compute_budget=DEFAULTED power_status=DEFAULTED
+PASS  evidence_states                    thermal_status=ABSENT compute_budget=DEFAULTED power_status=DEFAULTED
+PASS  limitations_declared               the four statements, resource state from its evidence states
+exit=0 PASS=19 FAIL=0
+== make_package.py --thermal-status measured
+decision REFUSE ['runtime_state_unavailable']
+evidence thermal_status=DERIVED compute_budget=DEFAULTED power_status=DEFAULTED
+PASS  evidence_states                    thermal_status=DERIVED compute_budget=DEFAULTED power_status=DEFAULTED
+PASS  limitations_declared               the four statements, resource state measured, from its evidence states
+exit=0 PASS=20 FAIL=0
+== make_package.py --thermal-status normal --compute-budget exhausted
+decision DEFER ['runtime_not_healthy']
+evidence thermal_status=OPERATOR compute_budget=OPERATOR power_status=DEFAULTED
+PASS  evidence_states                    thermal_status=OPERATOR compute_budget=OPERATOR power_status=DEFAULTED
+PASS  limitations_declared               the four statements, resource state from its evidence states
+exit=0 PASS=19 FAIL=0
+```
+
+(`measured` REFUSEs here because the container has no thermal zones.)
+
+- **E1 confirmed.** Tags as registered; every package verifies; declared packages now print 19
+  `PASS` lines (was 18), measured ones 20.
+- **E2 confirmed**, with a stronger attacker than first written. The first version of these tests
+  left the limitation line stale, so `limitations_declared` did half the work; switching off a
+  rule then still failed the test for the wrong reason. The attacker now rewrites the tags and
+  regenerates the line, and every case fails exactly `evidence_states`: DEFAULTED -> MEASURED,
+  OPERATOR -> DERIVED, DERIVED -> OPERATOR, ABSENT carrying `normal` with the matching ALLOW,
+  DEFAULTED carrying `constrained`, and a state evidence-ledger does not define (`VERIFIED`).
+- **E3 confirmed.** A valid tag changed without the line, or the line without the tags: each fails
+  exactly `limitations_declared`. To keep the two questions apart, the verifier generates the
+  expected line from the tags as written even when the tags are dishonest.
+- **E4 confirmed.** The three published packages and the fixture carry no tags and verify as before
+  (`tests/test_published_evidence.py`, `tests/test_field_sweep.py`: fixture 119 / 44 / 0 unchanged).
+- **E5 confirmed** as a stated limit: deleting the tags and restoring the v0 line verifies unsigned.
+- **Each rule switched off in turn** (verifier copy): 5 rules, 5 fail a test. A sixth rule ("is it
+  an evidence-ledger state at all") failed no test because it was redundant: any such value also
+  fails "may this field carry it". The two were merged into one rule.
+- **Tests changed by I2, and why:** `test_declared_mode_is_unchanged` became
+  `test_declared_mode_has_no_thermal_policy` (declared packages now carry tags, so their fourth line
+  is generated); the T3 full-relabel test also deletes the DERIVED tag ("every trace of measured");
+  the T3 declared-relabel test now expects `evidence_states` beside `thermal_status_derived` (the
+  registered T3 claim named only `thermal_status_derived`, which still fails).
+
+F1 is now visible in every new package (`compute_budget DEFAULTED; power_status DEFAULTED ... the
+Gate counts a DEFAULTED value as if it had been declared`) and unchanged in the Gate. The next
+decision, not taken: should a DEFAULTED input block ALLOW, and should `make_package.py` stop
+defaulting to healthy values? Both change what the quick start produces, so they wait for the
+outside reproduction to finish.
+
+### I1 re-run with the evidence_states guard (22 guards)
+
+```
+verifier_mutants | 22 guards | 30 test files
+  (null mutant)                      SURVIVED  241 passed, 1 skipped in 16.11s
+  artifact_digest                    KILLED    tests/test_verifier_guards.py::test_artifact_bytes_swapped_under_the_old_digest
+  capability_named_in_record         KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  decision_record_is_artifact        KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  decision_record_matches            KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  evidence_states                    KILLED    tests/test_evidence_states.py::test_e2_defaulted_compute_budget_relabelled_measured
+  execution_only_if_allowed          KILLED    tests/test_package.py::test_execution_recorded_only_under_allow
+  freshness_not_overclaimed          KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  gate_replay                        KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  limitations_declared               KILLED    tests/test_evidence_states.py::test_e3_tags_changed_without_the_line
+  measurement_in_chain               KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  measurement_names_artifact         KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  measurement_recomputed             KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  package_digest                     KILLED    tests/test_package_recovery.py::test_r2_no_single_bit_flip_is_accepted
+  provenance_chain                   KILLED    tests/test_verifier_guards.py::test_record_edited_and_only_the_package_digest_recomputed
+  schema                             KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  thermal                            KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  thermal_before                     KILLED    tests/test_package.py::test_thermal_before_is_checked
+  thermal_status_derived             KILLED    tests/test_thermal_policy.py::test_t3_status_rewritten_to_normal_with_matching_allow_fails
+  verifier_identity_not_overclaimed  KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  verifier_provenance                KILLED    tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set
+  freshness_witness                  KILLED    tests/test_witness.py::test_w1_earlier_entry_becomes_stale
+  signature                          KILLED    tests/test_signature.py::test_s2_wrong_key_identity_namespace_or_package_fails
+VERDICT  22 of 22 KILLED, 0 SURVIVED  (163 s)
+```
+
+### I3 — vacuity_lint @ 68355bb on this repository
+
+- **L0 confirmed locally:** `--selftest` 20/20; a planted `tools/verify_planted.py` that prints
+  `[FAIL]` and exits 0, in a copy of the tree, makes the scan exit 1 (`PRINTS_FAIL_ONLY (1)`).
+  On the CI runner: see the `red-team` job.
+- **L1:** no findings.
+
+```
+python files scanned    : 66
+verification-shaped     : 36
+findings                : 0
+declared intentional    : 0
+
+no vacuous verification found
+scan exit=0
+```
+
+vacuity_lint cannot see a fail path that exists but cannot fire (its own stated blind spot); the
+guard mutants above are the check for that. CI job `red-team` runs all three on every push: the
+verifier guard mutants, `gate_constraint.py --mutants`, and vacuity_lint with its planted-defect
+step.

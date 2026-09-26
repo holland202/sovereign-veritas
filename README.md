@@ -24,7 +24,7 @@ Use `python3` if that is your interpreter. What you should see:
 - **pytest:** all tests pass. On Windows the 8 anchored-ledger tests skip — that ledger needs
   POSIX file locking and refuses to write without it (tested on every platform).
 - **make_package:** `decision ALLOW []` and a package path in your home directory.
-- **verify_package:** 18 `PASS` lines and `VERDICT  CONSISTENT`.
+- **verify_package:** 19 `PASS` lines and `VERDICT  CONSISTENT`.
 
 Anything else is a finding. Please open an issue with your OS, Python version and the raw output.
 Without `--thermal-status`, nothing vouches for the runtime state and the Gate REFUSEs: that is
@@ -80,12 +80,15 @@ Every package states these, and the verifier fails a package that drops one:
 - **freshness** — an older valid package is indistinguishable from the newest. A witness log
   checked with `--witness-log` shows whether it is the newest the author made public (see above)
 - **verifier identity** — declared by the caller, not bound to the verifier object that ran
-- **resource state** — runtime fields are declared, not derived from the device's sensors.
-  With `--thermal-status measured`, `thermal_status` is instead derived from the zones read before
-  the run, under per-domain limits chosen from one S25 probe run (policy `s25-uncalibrated-v0`, not
-  calibrated), and the verifier recomputes it (`thermal_status_derived`); the package then says so.
-  `compute_budget` and `power_status` stay declared. A device without the S25's zone types reads
-  `unknown` and REFUSEs
+- **resource state** — every package made now records where each runtime value came from, in
+  evidence-ledger's vocabulary: `OPERATOR` (you supplied it), `DEFAULTED` (nobody did; a default
+  was used), `ABSENT`, or `DERIVED`. With `--thermal-status measured`, `thermal_status` is derived
+  from the zones read before the run under per-domain limits chosen from one S25 probe run (policy
+  `s25-uncalibrated-v0`, not calibrated), and the verifier recomputes it. Unless you pass
+  `--compute-budget` / `--power-status`, those two are `DEFAULTED` to healthy values, and the Gate
+  counts a default as if it had been declared (docs/INTEGRATION.md, finding F1). The verifier
+  refuses a tag that claims more than the package can support (`evidence_states`). A device
+  without the S25's zone types reads `unknown` and REFUSEs
 
 ## What has been measured
 
@@ -109,6 +112,8 @@ Every package states these, and the verifier fails a package that drops one:
 | The two measured packages, signed and published, checked from a fresh clone | 20 of 20 each, `SIGNED:holland202` | container |
 | Single-field rewrites of the published DEFER package | 0 of 807 verify signed (408 unsigned) | container |
 | Published evidence re-checked on every push | every package signed and consistent; every witness entry published | CI, 9 jobs |
+| Verifier guards switched off one at a time | 22 of 22 make a test fail (2 needed new tests) | container, CI |
+| Static scan for verification code with no fail path (vacuity_lint) | 0 findings in 66 files | container, CI |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
@@ -129,10 +134,23 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
 - `tools/sign_package.py` — ed25519 signing via `ssh-keygen -Y`; the verifier checks with `--signature`
 - `tools/witness.py` — appends a package to the freshness witness log; the verifier checks with `--witness-log`
 - `sovereign_veritas/thermal_policy.py` — derives `thermal_status` from zones under a named policy
+- `sovereign_veritas/evidence_states.py` — where each runtime value came from; no implicit promotion
+- `tools/verifier_mutants.py` — switches off each verifier guard in turn; the tests must fail
 - `tools/thermal_probe.py`, `tools/physical_durability.py` — device measurements (Android/Linux)
 - `tools/nvidia_challenge.py` — optional, EXPLORATORY, **makes network calls**: an NVIDIA-hosted
   model tries to forge a package; the local verifier judges. Needs your own key in `~/.nvidia_api_key`
 - `sv_real_inference_test.py` — exploratory; needs a local llama-server; not part of the tests
+
+## Related repositories
+
+This repository is the kernel. The author's other work stays in its own repositories; what this
+one takes from them is named in `docs/INTEGRATION.md` with the commit it came from:
+
+- [eace](https://github.com/holland202/eace) — the method behind `tools/verifier_mutants.py`
+- [evidence-ledger](https://github.com/holland202/evidence-ledger) — the evidence-state vocabulary
+- [vacuity_lint.py](https://github.com/holland202/vacuity_lint.py) — run in CI, pinned
+
+Nothing else is merged in. Each of those has its own status and tests.
 
 ## Core ideas
 

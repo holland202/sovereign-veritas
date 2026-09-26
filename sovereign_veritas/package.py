@@ -19,6 +19,7 @@ from typing import Any, Iterable
 
 from .capability import Capability, CapabilityRegistry
 from .evidence import EvidenceRecord, canonical_json
+from .evidence_states import FIELDS as EVIDENCE_FIELDS, problems as evidence_state_problems, resource_statement
 from .runtime import RuntimeState
 from .thermal import ZoneReading, summarize
 from .thermal_policy import POLICIES, derive_thermal_status, policy_dict
@@ -76,8 +77,12 @@ def build_package(
     verifier_id: str | None = None,
     validation: VerifierValidation | None = None,
     thermal: tuple[ZoneReading, ...] | None = None,
+    evidence_states: dict[str, str] | None = None,
 ) -> dict[str, Any]:
-    """Package one gated run. The last record of `chain` must be the decision record."""
+    """Package one gated run. The last record of `chain` must be the decision record.
+
+    evidence_states (optional): one evidence-ledger state per runtime field (evidence_states.py).
+    When given, the package carries them and its fourth known limitation is generated from them."""
     records = list(chain)
     if not records:
         raise ValueError("chain is empty")
@@ -101,6 +106,12 @@ def build_package(
         if derived != runtime.thermal_status:
             raise ValueError(f"thermal_status {runtime.thermal_status!r} is not the derived {derived!r}")
         limitations[3] = MEASURED_RESOURCE_STATEMENT
+    if evidence_states is not None:
+        broken = evidence_state_problems(evidence_states, runtime.to_dict())
+        if broken:
+            raise ValueError("evidence states: " + "; ".join(broken))
+        evidence_states = {f: evidence_states[f] for f in EVIDENCE_FIELDS}
+        limitations[3] = resource_statement(evidence_states)
     snapshot = None
     if capability_registry is not None:
         snapshot = {}
@@ -123,6 +134,7 @@ def build_package(
             "thermal": None if thermal is None else {
                 "zones": [z.to_dict() for z in thermal], "summary": summarize(thermal)},
             **({} if thermal_policy is None else {"thermal_policy": thermal_policy}),
+            **({} if evidence_states is None else {"evidence_states": evidence_states}),
         },
         "freshness": {"status": "NOT_PROVEN", "witness": None},
         "decision": {"decision": decision_record.decision,
