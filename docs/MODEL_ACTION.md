@@ -329,3 +329,19 @@ Still open: B6 (someone else reproduces `b3605c11…` from the same file, build 
 Afterwards the phone was moved to main. Its local main had been 72 commits behind (`Updating
 dfdeee7..1cfe706`); the phone's work had all been on the feature branch. On main at 1cfe706:
 `283 passed in 36.91s`, the same count as the container.
+
+### `model_file_named` on the S25 (main at 6fcb6da)
+
+Fresh Qwen server; once with the right file, once with the TinyLlama file on purpose:
+
+```
+== right file
+PASS  model_file_named                   server reports 'qwen2.5-1.5b-instruct-q4_k_m.gguf', operator's file 'qwen2.5-1.5b-instruct-q4_k_m.gguf'
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+== wrong file: /data/data/com.termux/files/home/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+COULD NOT RUN: the server at http://127.0.0.1:8080 reports model '/data/data/com.termux/files/home/models/qwen2.5-1.5b-instruct-q4_k_m.gguf', not 'tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf'. Is another llama-server already on that port?
+exit=2
+```
+
+Both directions hold on the phone. The server reports the full path it was given; the last path
+component is what is compared. Run 1's accident would now stop before any package.
