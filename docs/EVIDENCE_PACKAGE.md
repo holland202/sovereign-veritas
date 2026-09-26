@@ -756,4 +756,45 @@ exit=0
 Also corrected: the README said a fresh package gives 16 `PASS` lines. It gives 18, and did before
 this change (checked on the previous commit).
 
-Not yet measured: T5 and T6 on the S25.
+### Result (S25, Termux) — T5 and T6
+
+`git pull` to 2033088, then `213 passed in 16.01s`, `sleep 30`, then two runs. Verbatim:
+
+```
+thermal normal (all limited domains below limit)  policy s25-uncalibrated-v0  zones 68
+decision ALLOW []
+elapsed_ms 76.071  zones 68  freshness NOT_PROVEN
+package /data/data/com.termux/files/home/sv_package_118a02b75646.json  md5 118a02b756462c4c7b1e17067e1e8d7b
+PASS  gate_replay                        replayed ALLOW []
+PASS  thermal_before                     68 zones: domain and status recomputed
+PASS  thermal_status_derived             s25-uncalibrated-v0: recomputed normal, recorded normal
+PASS  execution_only_if_allowed          SUCCEEDED under ALLOW
+PASS  limitations_declared               the four statements, resource state measured
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+rest exit=0
+thermal hot (cpu_core 103800>=95000; cpu_subsystem 95300>=95000)  policy s25-uncalibrated-v0  zones 68
+decision DEFER ['runtime_not_healthy']
+elapsed_ms 88.852  zones 68  freshness NOT_PROVEN
+package /data/data/com.termux/files/home/sv_package_45c6ad182584.json  md5 45c6ad1825848d003931561c398a6281
+PASS  gate_replay                        replayed DEFER ['runtime_not_healthy']
+PASS  thermal_before                     68 zones: domain and status recomputed
+PASS  thermal_status_derived             s25-uncalibrated-v0: recomputed hot, recorded hot
+PASS  execution_only_if_allowed          no execution recorded
+PASS  limitations_declared               the four statements, resource state measured
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+load exit=0
+```
+
+Each run printed 19 `PASS` lines (the other 14 are the unchanged checks, all PASS); a declared
+package prints 18.
+
+- **T5 confirmed.** At rest: `normal`, ALLOW [], executed, CONSISTENT, 19 `PASS` = 18 + 1.
+- **T6 confirmed.** After 30 s of all-core load: `hot` from cpu_core 103.8 °C, DEFER
+  [runtime_not_healthy], nothing executed, CONSISTENT. The Gate's decision on this device now
+  changes with a sensor reading, and the verifier recomputed the reason.
+- Worth noting, not a finding: cpu_subsystem reached 95.3 °C, 0.3 °C over its limit. The CPU core
+  zones alone decided it (103.8). One run; the limits are still uncalibrated.
+
+Both packages stay on the device and are not signed or witnessed. The resource-state limitation
+is now narrower on the S25: `thermal_status` is measured; `compute_budget` and `power_status`
+are still declared.

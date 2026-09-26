@@ -4,7 +4,9 @@
 
 ## VERIFIED — automated tests
 
-**185 passed** on `main` = `feature/local-inference-measurement`, code as at 5b64d8e (Termux / S25, Python 3.14.6, 12.59 s).
+**213 passed** @ 2033088 (Termux / S25, 16.01 s). Measured thermal status on the S25: at rest `normal` -> ALLOW; after 30 s all-core load `hot` (cpu_core 103.8 °C) -> DEFER; both packages 19 of 19 checks, the verifier recomputing the status. Limits uncalibrated (policy `s25-uncalibrated-v0`). See `docs/EVIDENCE_PACKAGE.md`.
+
+Earlier: **185 passed** on `main` = `feature/local-inference-measurement`, code as at 5b64d8e (Termux / S25, Python 3.14.6, 12.59 s).
 
 Evidence package, all three layers, on the published S25 package from a fresh clone of GitHub only
 (container x86_64): 20 of 20 checks, `CONSISTENT`, `authenticity=SIGNED:holland202`,

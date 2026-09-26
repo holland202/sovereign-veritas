@@ -102,6 +102,8 @@ Every package states these, and the verifier fails a package that drops one:
 | Older package after a newer one is witnessed | `STALE`, exit 1 — even with a valid signature | container |
 | Published package `evidence/sv_package_5bfc70dfcfa2.json`, all three layers, from a fresh clone of GitHub only | 20 of 20 checks: `CONSISTENT`, `SIGNED:holland202`, `LATEST_WITNESSED(1)` | container x86_64, Python 3.11, OpenSSH 9.6 |
 | CI on every push: Linux, macOS, Windows × Python 3.10 / 3.12 / 3.14 | 9 of 9 jobs pass; gate decision digest identical to the S25's in all 9 | GitHub Actions, run 36236747944 @ `197b0b0` |
+| Thermal status derived from the zones, at rest | `normal`, ALLOW, 19 of 19 checks | S25 |
+| Same, after 30 s all-core load | `hot` (cpu_core 103.8 °C), DEFER, 19 of 19 checks | S25 |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
