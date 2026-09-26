@@ -17,7 +17,8 @@ package file's exact bytes must carry a valid ssh-keygen signature (namespace "s
 ID's key in the allowed-signers file. With --witness-log, the package must be the LAST entry of an
 append-only witness log that you pulled yourself (a log handed to you by the producer proves
 nothing). That shows it is the newest package the author made public - order, not time, and not
-packages the author never logged.
+packages the author never logged. The VERDICT line reports each layer separately: authenticity is
+SIGNED whenever the signature check passed, even if another check failed.
 """
 import base64, hashlib, json, math, os, shutil, subprocess, sys, tempfile
 
@@ -467,7 +468,10 @@ def main():
     for name, ok, detail in checks:
         print(f"{'PASS' if ok else 'FAIL'}  {name:<34} {detail}")
     failed = [c for c in checks if not c[1]]
-    authenticity = f"SIGNED:{sig[2]}" if sig is not None and not failed else "NOT_PROVEN"
+    # Each layer is reported on its own. A valid signature stays SIGNED when another check fails:
+    # then the named key holder signed exactly these failing bytes, which is itself worth knowing.
+    signed = sig is not None and any(n == "signature" and ok for n, ok, _ in checks)
+    authenticity = f"SIGNED:{sig[2]}" if signed else "NOT_PROVEN"
     print(f"VERDICT  {'CONSISTENT' if not failed else f'{len(failed)} check(s) failed'}"
           f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}")
     sys.exit(1 if failed else 0)

@@ -200,15 +200,18 @@ def test_t3_stated_limit_lowered_readings_verify_unsigned(hot_pkg):
     assert failed(reseal(p)) == []
 
 
-# ---- T0: the published declared package is unchanged ------------------------------------------
+# ---- T0: the published declared package is unchanged -----------------------------------------
 def test_t0_published_package_still_verifies():
+    """Consistency and signature only. Its witness status belongs to test_published_evidence.py: it
+    is LATEST_WITNESSED(1) until a newer package is witnessed, then STALE - by design."""
     pkg = ROOT / "evidence" / "sv_package_5bfc70dfcfa2.json"
-    args = [sys.executable, str(ROOT / "tools" / "verify_package.py"), str(pkg),
-            "--witness-log", str(ROOT / "witness" / "packages.log")]
+    args = [sys.executable, str(ROOT / "tools" / "verify_package.py"), str(pkg)]
     if shutil.which("ssh-keygen"):
         args += ["--signature", f"{pkg}.sig", "--allowed-signers", str(ROOT / "keys" / "allowed_signers"),
                  "--identity", "holland202"]
     out = subprocess.run(args, capture_output=True, text=True)
     assert out.returncode == 0, out.stdout
-    assert out.stdout.count("\nPASS") + out.stdout.startswith("PASS") == (20 if shutil.which("ssh-keygen") else 19)
+    lines = out.stdout.splitlines()
+    assert sum(l.startswith("PASS") for l in lines) == (19 if shutil.which("ssh-keygen") else 18)
+    assert not any(l.startswith("FAIL") for l in lines)
     assert "thermal_status_derived" not in out.stdout

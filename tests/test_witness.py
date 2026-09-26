@@ -125,3 +125,31 @@ def test_append_refuses_a_git_ignored_log(two):
     r = append(a, tmp / "ignored.log")
     assert r.returncode == 1 and "git ignores" in r.stdout
     assert not (tmp / "ignored.log").exists()
+
+
+@needs_ssh
+def test_w7_verdict_keeps_a_valid_signature_when_freshness_fails(two):
+    """R1: a STALE package with a valid signature printed authenticity=NOT_PROVEN (found 2026-09-26)."""
+    tmp, a, b, log = two
+    key = keygen(tmp, "chad")
+    signers = allowed(tmp, [("chad", key, "sv-package")])
+    sig_a = sign(key, a)
+    append(a, log)
+    append(b, log)
+    rc, out = verify(a, "--signature", sig_a, "--allowed-signers", signers, "--identity", "chad",
+                     "--witness-log", log)
+    assert rc == 1 and "1 check(s) failed" in out
+    assert "freshness=STALE" in out and "authenticity=SIGNED:chad" in out
+
+
+@needs_ssh
+def test_w7_invalid_signature_is_still_not_proven(two):
+    tmp, a, b, log = two
+    key, other = keygen(tmp, "chad"), keygen(tmp, "mallory")
+    signers = allowed(tmp, [("chad", key, "sv-package")])
+    sig_a = sign(other, a)  # signed by a key the signers file does not trust
+    append(a, log)
+    rc, out = verify(a, "--signature", sig_a, "--allowed-signers", signers, "--identity", "chad",
+                     "--witness-log", log)
+    assert rc == 1 and "FAIL  signature" in out and "authenticity=NOT_PROVEN" in out
+

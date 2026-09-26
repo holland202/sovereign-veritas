@@ -847,3 +847,28 @@ Registered predictions:
 - **R5** Field sweep on the published DEFER package: with its signature, 0 rewrites verify. Without
   it some survive (recorded data); that number is measured, not predicted.
 - **R6** All 9 CI jobs pass on the commit that adds the pair.
+
+### Result (container x86_64, Python 3.11.15) — R1 and R2
+
+- **R1 confirmed.** The same case after the fix:
+
+```
+PASS  signature                          valid sv-package signature by chad
+FAIL  freshness_witness                  STALE: entry 1 of 2: 1 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=SIGNED:chad
+exit=1
+```
+
+  `test_w7_verdict_keeps_a_valid_signature_when_freshness_fails` fails when the old line is put
+  back; `test_w7_invalid_signature_is_still_not_proven` holds the other side.
+- **R2 confirmed in the container** for the one package published so far:
+  `tests/test_published_evidence.py`, 8 passed; full suite 223 passed. The checker is proven on a
+  synthetic tree first: intact passes; one changed byte, swapped signature files, a missing
+  signature file and a witness entry with no published package each fail it.
+- **Found by sabotage, again:** replacing the checker's witness comparison with "accept anything"
+  failed no test at first, because the checker and `check_witness` read the same log and agreed.
+  Added a case where `check_witness` is replaced by one that lies; it now fails. The comparison is
+  a cross-check of the verifier's freshness logic, not a second source of truth.
+- `test_t0_published_package_still_verifies` no longer passes `--witness-log`: T0 was confirmed
+  with 20 of 20 at 2033088, but that package is `LATEST_WITNESSED(1)` only until a newer one is
+  witnessed. It now checks consistency and signature (19 `PASS`); witness status moved to R2.
