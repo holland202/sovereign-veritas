@@ -325,3 +325,7 @@ arithmetic is right. Here it was, so they did. A version that does not depend on
 
 Still open: B6 (someone else reproduces `b3605c11…` from the same file, build and prompt); the
 `model_file_named` check on the phone (needs the phone on main); signing these packages.
+
+Afterwards the phone was moved to main. Its local main had been 72 commits behind (`Updating
+dfdeee7..1cfe706`); the phone's work had all been on the feature branch. On main at 1cfe706:
+`283 passed in 36.91s`, the same count as the container.
