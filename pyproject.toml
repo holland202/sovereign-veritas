@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "Evidence-first sovereign edge-AI governance and verification runtime"
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [{name = "Chad Holland"}]
 dependencies = []
 
 [project.optional-dependencies]

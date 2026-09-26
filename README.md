@@ -66,7 +66,7 @@ Every package states these, and the verifier fails a package that drops one:
 
 | What | Result | Where |
 |---|---|---|
-| Test suite | 165 passed @ `f4989ac` | S25, Python 3.14.6 (device) |
+| Test suite | 172 passed @ `22ee3c5` | S25, Python 3.14.6 (device) |
 | Test suite, fresh clones | 157 passed @ `ed042e7` | container, Python 3.10, 3.11, 3.12, 3.13 |
 | Gate: 4608-case decision lattice | identical decision digest | S25 3.14.6; container 3.10 and 3.12 |
 | Gate: deliberate bugs planted | 19 of 19 caught | S25 and container |
@@ -134,6 +134,11 @@ registry mutation
 
 If custody fails, the registry does not change.
 
-## License
+## License and credit
 
-MIT
+MIT. You may use, change, share and sell this, including commercially, on one condition: keep the
+copyright notice (`Copyright (c) 2026 Chad Holland`) and the license text with every copy or
+substantial portion. That is the credit the license requires.
+
+If you use Sovereign Veritas in work you publish — a paper, a product, a post — please also cite
+it. GitHub's **Cite this repository** button gives the format (from `CITATION.cff`).
