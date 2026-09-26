@@ -588,3 +588,39 @@ VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
 
 Freshness reads `NOT_PROVEN` here because the witness log is not public yet. This is still the author's
 own verifier; a reproduction by someone else remains open.
+
+## All three layers from GitHub alone
+
+Fresh clone of `5b64d8e` (container x86_64, Python 3.11.15, OpenSSH 9.6p1): the published package,
+its signature, `keys/allowed_signers` and `witness/packages.log`, nothing from the phone. Exit code 0,
+read without a pipe; 20 PASS, 0 FAIL:
+
+```
+PASS  schema                             sv.package/0
+PASS  package_digest                     
+PASS  artifact_digest                    
+PASS  measurement_names_artifact         
+PASS  measurement_recomputed             recomputed from artifact bytes
+PASS  provenance_chain                   
+PASS  decision_record_is_artifact        
+PASS  decision_record_matches            
+PASS  measurement_in_chain               
+PASS  capability_named_in_record         
+PASS  gate_replay                        replayed ALLOW []
+PASS  verifier_identity_not_overclaimed  
+PASS  verifier_provenance                sha256-chain-recompute-v0 VALIDATED
+PASS  thermal                            zone statuses and per-domain summary recomputed
+PASS  thermal_before                     68 zones: domain and status recomputed
+PASS  execution_only_if_allowed          SUCCEEDED under ALLOW
+PASS  freshness_not_overclaimed          NOT_PROVEN
+PASS  limitations_declared               exactly the four v0 statements
+PASS  signature                          valid sv-package signature by holland202
+PASS  freshness_witness                  LATEST_WITNESSED(1): entry 1 of 1, the last
+VERDICT  CONSISTENT  freshness=LATEST_WITNESSED(1)  authenticity=SIGNED:holland202
+```
+
+This closes the milestone as scoped on 2026-09-25: an end-to-end package whose artifact, measurement,
+provenance, verifier, freshness, resource state and Gate decision can be reconstructed and challenged
+from public files. What it still is not: independently reproduced (every check so far ran on the
+author's verifier, by the author or his AI tools), time-stamped (the witness gives order, not time),
+or protected against a rewrite of `main`'s history unless the branch is protected.

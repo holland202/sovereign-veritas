@@ -80,7 +80,7 @@ Every package states these, and the verifier fails a package that drops one:
 
 | What | Result | Where |
 |---|---|---|
-| Test suite | 172 passed @ `22ee3c5` | S25, Python 3.14.6 (device) |
+| Test suite | 185 passed, code as at `5b64d8e` | S25, Python 3.14.6 (device) |
 | Test suite, fresh clones | 157 passed @ `ed042e7` | container, Python 3.10, 3.11, 3.12, 3.13 |
 | Gate: 4608-case decision lattice | identical decision digest | S25 3.14.6; container 3.10 and 3.12 |
 | Gate: deliberate bugs planted | 19 of 19 caught | S25 and container |
@@ -91,6 +91,7 @@ Every package states these, and the verifier fails a package that drops one:
 | Same sweep, same S25 package, signed | 0 of 796 verify | S25 |
 | Same sweep on the signed fixture package | 0 of 119 verify (44 without the signature) | container |
 | Older package after a newer one is witnessed | `STALE`, exit 1 — even with a valid signature | container |
+| Published package `evidence/sv_package_5bfc70dfcfa2.json`, all three layers, from a fresh clone of GitHub only | 20 of 20 checks: `CONSISTENT`, `SIGNED:holland202`, `LATEST_WITNESSED(1)` | container x86_64, Python 3.11, OpenSSH 9.6 |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
