@@ -798,3 +798,52 @@ package prints 18.
 Both packages stay on the device and are not signed or witnessed. The resource-state limitation
 is now narrower on the S25: `thermal_status` is measured; `compute_budget` and `power_status`
 are still declared.
+
+## Publishing the measured pair — registered before the phone step (2026-09-26)
+
+Plan: sign the two S25 packages from T5 and T6 (`sv_package_118a02b75646`, ALLOW at rest;
+`sv_package_45c6ad182584`, DEFER under load) with the committed key and publish them in
+`evidence/` beside the first package.
+
+**Not witnessed yet, on purpose.** Someone outside the project is reproducing the published
+package (`sv_package_5bfc70dfcfa2`) against `witness/packages.log`. Appending entries now would turn
+that package's result from `LATEST_WITNESSED(1)` into `STALE` while it is being checked. The pair is
+witnessed after the reproduction comes back; until then its freshness is `NOT_PROVEN`, and the
+verifier says so.
+
+**Defect found while preparing.** Container, test key, two packages witnessed in order, the older
+one verified with its valid signature:
+
+```
+PASS  signature                          valid sv-package signature by chad
+FAIL  freshness_witness                  STALE: entry 1 of 2: 1 newer package(s) witnessed
+VERDICT  1 check(s) failed  freshness=STALE  authenticity=NOT_PROVEN
+exit=1
+```
+
+The verdict reports authenticity `NOT_PROVEN` for a signature the same output reports valid:
+`authenticity` was `SIGNED` only when every check passed. W6 asserted the PASS and FAIL lines, not
+the verdict, so no test caught it. It would be the public output for the first package as soon as a
+newer one is witnessed.
+
+Registered predictions:
+
+- **R1** Verdict fix: authenticity comes from the signature check alone. The case above prints
+  `authenticity=SIGNED:chad` with `1 check(s) failed`, exit 1; an invalid signature still prints
+  `NOT_PROVEN`. Reverting the fix fails the new test.
+- **R2** Published-evidence invariants, as a test on every push: every package in `evidence/` has a
+  signature that verifies as `holland202` against `keys/allowed_signers` and passes every
+  consistency check; every witness entry names a package published in `evidence/` (the log claims
+  "made public", so that must be true); the last entry verifies `LATEST_WITNESSED`, earlier ones
+  `STALE` with the right count, unlogged packages `NOT_WITNESSED`. On copies, each of these
+  sabotages fails the test: one flipped byte, swapped signature files, a log entry with no
+  published package.
+- **R3** After the phone push, from a fresh clone of GitHub: each new package verifies with its
+  signature, exit 0, 20 `PASS` (19 + signature), `authenticity=SIGNED:holland202`,
+  `freshness=NOT_PROVEN`; the DEFER package replays DEFER [runtime_not_healthy] with no execution.
+- **R4** Same clone, with `--witness-log`: both new packages fail `freshness_witness` as
+  `NOT_WITNESSED`, exit 1, still `authenticity=SIGNED:holland202`; the first package is still
+  `LATEST_WITNESSED(1)`, exit 0. Publishing is not witnessing, and the check tells them apart.
+- **R5** Field sweep on the published DEFER package: with its signature, 0 rewrites verify. Without
+  it some survive (recorded data); that number is measured, not predicted.
+- **R6** All 9 CI jobs pass on the commit that adds the pair.
