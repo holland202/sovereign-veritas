@@ -108,3 +108,20 @@ def test_w6_rolled_back_signed_package_is_stale(two):
     rc, out = verify(a, "--signature", sig_a, "--allowed-signers", signers, "--identity", "chad",
                      "--witness-log", log)
     assert rc == 1 and "PASS  signature" in out and "FAIL  freshness_witness" in out and "STALE" in out
+
+
+def test_committed_log_path_is_not_git_ignored():
+    """The first real witness entry never reached GitHub: a *.log rule in .gitignore hid it."""
+    if not (ROOT / ".git").exists():
+        pytest.skip("not a git checkout")
+    p = subprocess.run(["git", "check-ignore", "-q", "witness/packages.log"], cwd=ROOT)
+    assert p.returncode == 1  # 1 = not ignored
+
+
+def test_append_refuses_a_git_ignored_log(two):
+    tmp, a, _, _ = two
+    subprocess.run(["git", "init", "-q", str(tmp)], check=True)
+    (tmp / ".gitignore").write_text("*.log\n")
+    r = append(a, tmp / "ignored.log")
+    assert r.returncode == 1 and "git ignores" in r.stdout
+    assert not (tmp / "ignored.log").exists()

@@ -12,7 +12,7 @@ What it proves: this package is the newest one the author made public. Not when 
 nothing about packages the author never logged. A force-push to main can rewrite the log, so protect
 the branch. Exit: 0 appended | 1 refused | 2 could not run (usage, unreadable package or log)
 """
-import json, os, sys, importlib.util
+import json, os, subprocess, sys, importlib.util
 
 sys.dont_write_bytecode = True
 DEFAULT_LOG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "witness", "packages.log")
@@ -24,6 +24,19 @@ def load_verifier():
     vp = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(vp)
     return vp
+
+
+def git_ignores(path):
+    """True if git would silently skip this file (e.g. a *.log rule). None if not in a git repo."""
+    d = os.path.dirname(os.path.abspath(path)) or "."
+    while not os.path.isdir(d):
+        d = os.path.dirname(d)
+    try:
+        p = subprocess.run(["git", "check-ignore", "-q", os.path.abspath(path)], cwd=d,
+                           capture_output=True)
+    except OSError:
+        return None
+    return {0: True, 1: False}.get(p.returncode)
 
 
 def main():
@@ -44,6 +57,9 @@ def main():
         failed = [n for n, ok, _ in vp.verify(pkg) if not ok]
     except (OSError, ValueError, KeyError, TypeError, IndexError) as exc:
         print(f"COULD NOT RUN: {type(exc).__name__}: {exc}"); sys.exit(2)
+    if git_ignores(log):
+        print(f"REFUSED: git ignores {log}; it would never reach GitHub, so it could not witness anything")
+        sys.exit(1)
     if failed:
         print(f"REFUSED: package does not verify ({', '.join(failed)}); only consistent packages are witnessed")
         sys.exit(1)

@@ -543,3 +543,48 @@ the sequence validation fails 2 tests.
 Not yet measured: a witness log pushed from the S25 and checked by someone else from their own pull.
 The trust boundary is GitHub's history of `main`; it is broken by a force push unless the branch
 is protected.
+
+## First real witness entry — and the defect that kept it off GitHub
+
+S25, 2026-09-26: the signed ALLOW package was copied to `evidence/` with its signature, appended to
+the witness log (`witnessed 1 6888cbf2f5f450af32aeeac93f7f6ceafd990677ac912ef184f5308164b2a1f6`), and
+verified on the phone with all three layers: `CONSISTENT  freshness=LATEST_WITNESSED(1)
+authenticity=SIGNED:holland202`, then committed and pushed as `6589904`.
+
+**Defect:** the commit carried 2 files, not 3. `.gitignore` line 57 is `*.log`, so
+`witness/packages.log` was silently ignored: `git add witness` added nothing and printed nothing. The
+phone's `LATEST_WITNESSED(1)` was checked against a log that existed only on the phone - not a
+witness. The name was chosen without checking the ignore rules. Fixed here: `.gitignore` now
+un-ignores `witness/packages.log`; `witness.py` refuses to append to any log git would ignore; a test
+fails if the committed log path is ignored (it fails against the old `.gitignore`).
+
+### Verified from a fresh public clone of `6589904` (container x86_64, Python 3.11.15, OpenSSH 9.6p1)
+
+Only files from the repository - the package, its signature, `keys/allowed_signers` - on a machine
+the package never touched. Exit code 0 (read without a pipe):
+
+```
+PASS  schema                             sv.package/0
+PASS  package_digest                     
+PASS  artifact_digest                    
+PASS  measurement_names_artifact         
+PASS  measurement_recomputed             recomputed from artifact bytes
+PASS  provenance_chain                   
+PASS  decision_record_is_artifact        
+PASS  decision_record_matches            
+PASS  measurement_in_chain               
+PASS  capability_named_in_record         
+PASS  gate_replay                        replayed ALLOW []
+PASS  verifier_identity_not_overclaimed  
+PASS  verifier_provenance                sha256-chain-recompute-v0 VALIDATED
+PASS  thermal                            zone statuses and per-domain summary recomputed
+PASS  thermal_before                     68 zones: domain and status recomputed
+PASS  execution_only_if_allowed          SUCCEEDED under ALLOW
+PASS  freshness_not_overclaimed          NOT_PROVEN
+PASS  limitations_declared               exactly the four v0 statements
+PASS  signature                          valid sv-package signature by holland202
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+```
+
+Freshness reads `NOT_PROVEN` here because the witness log is not public yet. This is still the author's
+own verifier; a reproduction by someone else remains open.

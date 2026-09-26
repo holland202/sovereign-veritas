@@ -55,6 +55,8 @@ cover/
 
 # Django stuff:
 *.log
+# The freshness witness must be committed: it is only a witness once GitHub has it.
+!witness/packages.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
