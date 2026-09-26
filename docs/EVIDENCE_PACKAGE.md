@@ -184,3 +184,43 @@ rc=0
 This package was written by the pre-atomic writer (it predates `ed042e7`); it is complete, which is
 what the verifier and the simulation confirm. The S25 package, the verifier's 16 checks, and the
 recovery simulation all agree with the container runs above. Same author throughout.
+
+## Red team round 1 — an NVIDIA-hosted model attacks the verifier (EXPLORATORY)
+
+`tools/nvidia_challenge.py` (the run below used md5 c6a553f031564d3d73f4a9461613725d, kept outside the
+repo; the committed version has the fixes listed after it). The model gets the S25 package and the
+verifier's source, proposes edits; the tool applies them, recomputes every digest, and the verifier on
+the phone judges. Accepted forgeries are also rebuilt with the real Gate. S25, 2026-09-25:
+
+```
+EXPLORATORY nvidia_challenge | model nvidia/nemotron-3.5-lightning-30b-a3b | 5 rounds | local verifier judges
+log /data/data/com.termux/files/home/sv_challenge_1790389990.json  (written after every round)
+round 1: UNUSABLE reply (JSONDecodeError: Extra data: line 1 column 30 (char 29))
+round 2: UNUSABLE reply (JSONDecodeError: Expecting value: line 1 column 2 (char 1))
+round 3: REJECTED by measurement_in_chain  (2 edits, 48.4s)
+round 4: UNUSABLE reply (JSONDecodeError: Expecting value: line 1 column 2 (char 1))
+round 5: ACCEPTED - within known limits K1-K3  paths [['measurement', 'kind'], ['measurement', 'output_sha256'], ['provenance', 'chain', -1, 'record', 'prediction', 'value', 'output_sha256']]
+log /data/data/com.termux/files/home/sv_challenge_1790389990.json
+VERDICT 0 forgery(ies) outside the known limits accepted
+```
+
+What this does and does not show:
+
+- The pipeline works end to end against a real hosted model (the API key had to be replaced first:
+  the NGC-console key returned 403 on every model).
+- **Round 5 is not an independent discovery.** The prompt listed K1-K3 as known limits; the model
+  used K3 (relabel the measurement kind so the verifier cannot recompute it, then forge the output).
+- 3 of 5 rounds were unusable: this model writes its reasoning into the reply, brackets included, and
+  the tool's parser took the first `[` to the last `]`. Two usable attempts is weak evidence of anything.
+
+### Fixes that followed (container: 160 passed)
+
+- **K3 closed, fail-closed.** A measurement kind the verifier cannot recompute now fails
+  `measurement_recomputed` unless `--allow-recorded-only` is passed. Reverting this fails 2 tests.
+- **Limitations must be exactly the four v0 statements.** Before, the verifier only checked that each
+  required prefix appeared, so an appended line such as "authenticity: signed by device hardware" -
+  contradicting the real one - verified. Found by the red-team tool's own mock test, not by the model.
+  Reverting this fails 1 test. A test also pins producer and verifier to the same four statements.
+- P2 now has 20 resealed rewrites (the two above added), all caught.
+- `nvidia_challenge.py`: parses the last well-formed edit list in the reply, 4096-token replies,
+  streamed with a per-chunk timeout and retries; K3 removed from the known list.

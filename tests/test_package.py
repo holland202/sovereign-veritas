@@ -145,6 +145,13 @@ def test_p1_every_lattice_decision_replays_exactly():
     assert len(points) == 2304 and bad == []
 
 
+def _downgrade(p):
+    """K3: relabel the measurement kind so the verifier cannot recompute it, then forge the output."""
+    p["measurement"]["kind"] = "remote"
+    p["measurement"]["output_sha256"] = "f" * 64
+    p["provenance"]["chain"][-1]["record"]["prediction"]["value"]["output_sha256"] = "f" * 64
+
+
 def _mutations():
     def set_path(*path_and_value):
         *path, value = path_and_value
@@ -202,6 +209,9 @@ def _mutations():
             set_path("resource_state", "thermal", "summary", "domains", "cpu_core", "max_c", 40.0),
         "freshness claimed PROVEN": set_path("freshness", "status", "PROVEN"),
         "limitation deleted": lambda p: p["known_limitations"].pop(1),
+        "contradicting limitation appended":
+            lambda p: p["known_limitations"].append("authenticity: signed by device hardware"),
+        "measurement kind downgraded, output forged": _downgrade,
     }
 
 
@@ -214,6 +224,19 @@ def test_p2_every_inconsistent_rewrite_is_caught_after_full_reseal(tmp_path):
         if not failed(reseal(p)):
             survivors.append(name)
     assert survivors == []
+
+
+def test_recorded_only_kind_needs_explicit_opt_in():
+    p = roundtrip(make())
+    p["measurement"]["kind"] = "remote"
+    reseal(p)
+    assert failed(p) == ["measurement_recomputed"]
+    assert all(ok for _, ok, _ in vp.verify(roundtrip(p), allow_recorded_only=True))
+
+
+def test_producer_and_verifier_agree_on_limitations():
+    from sovereign_veritas.package import KNOWN_LIMITATIONS
+    assert tuple(KNOWN_LIMITATIONS) == vp.V0_LIMITATIONS
 
 
 def test_p3_freshness_is_never_proven_by_default():

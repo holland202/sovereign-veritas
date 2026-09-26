@@ -4,8 +4,8 @@ A fail-closed permission gate for AI actions. Before an action runs, the Gate de
 ALLOW, DEFER or REFUSE, and the decision can be written into an evidence package that a
 separate verifier, sharing no code with this package, rebuilds and checks from the file alone.
 
-Developed and run on a Galaxy S25 in Termux. Standard library only: no network calls, no
-telemetry, no model weights.
+Developed and run on a Galaxy S25 in Termux. Standard library only. The kernel makes no network
+calls and has no telemetry; one optional red-team tool (below) calls NVIDIA's API when you run it.
 
 ## Try it — about 5 minutes, Python 3.10+
 
@@ -69,6 +69,8 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
   (`--mutants` checks that the check itself can fail)
 - `tools/package_recovery_sim.py` — feeds the verifier torn and corrupted copies of a package
 - `tools/thermal_probe.py`, `tools/physical_durability.py` — device measurements (Android/Linux)
+- `tools/nvidia_challenge.py` — optional, EXPLORATORY, **makes network calls**: an NVIDIA-hosted
+  model tries to forge a package; the local verifier judges. Needs your own key in `~/.nvidia_api_key`
 - `sv_real_inference_test.py` — exploratory; needs a local llama-server; not part of the tests
 
 ## Core ideas
