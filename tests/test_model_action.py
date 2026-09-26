@@ -151,6 +151,7 @@ class FakeLlama(http.server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         req = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+        FakeLlama.last_request = req
         a, b = map(int, re.search(r"What is (\d+) times (\d+)", req["messages"][-1]["content"]).groups())
         text = "```json\n" + json.dumps({"answer": a * b, "action": "write_note", "note": f"{a*b}."}) + "\n```"
         self.reply({"choices": [{"message": {"content": text}}]})
@@ -244,3 +245,11 @@ def test_resealed_package_whose_server_named_another_model_fails(tmp_path):
     pkg, _ = run_against(tmp_path, "qwen2.5-1.5b-instruct-q4_k_m.gguf", "--model-file", model_file(tmp_path))
     pkg["measurement"]["model_id"] = "tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
     assert failed(reseal(pkg)) == ["model_file_named"]
+
+
+def test_every_request_turns_off_prompt_cache_reuse_and_the_package_says_so(tmp_path):
+    """B6 finding: with the cache on, the same prompt got three different replies on one x86 server."""
+    FakeLlama.last_request = None
+    pkg, p = run_against(tmp_path, "anything.gguf")
+    assert FakeLlama.last_request["cache_prompt"] is False and FakeLlama.last_request["temperature"] == 0
+    assert pkg["measurement"]["params"]["cache_prompt"] is False

@@ -132,7 +132,9 @@ def file_name(model_id):
 
 
 def ask_llama(server, model_id, prompt, seed, max_tokens):
-    params = {"temperature": 0, "seed": seed, "max_tokens": max_tokens}
+    # cache_prompt False: llama-server otherwise reuses the KV cache of earlier requests, and the reply
+    # to the same prompt then depends on what the server was asked before (docs/MODEL_ACTION.md, B6).
+    params = {"temperature": 0, "seed": seed, "max_tokens": max_tokens, "cache_prompt": False}
     payload = {"model": model_id, "messages": [{"role": "system", "content": SYSTEM},
                                                {"role": "user", "content": prompt}], "stream": False, **params}
     t0 = time.perf_counter()

@@ -398,3 +398,92 @@ does not show: that Qwen produced these replies (the model's identity is the ope
 server's name for it; B6, reproducing `b3605c11…` from the same file, is still the open door), when
 they were made, or that the zone readings are the phone's real temperatures rather than numbers
 written into a package before signing.
+
+## B6 attempted on a second machine: not reproduced, and the reason is the server's prompt cache
+
+Same model file, downloaded from Hugging Face here (container x86_64, 2 cores, CPU only):
+
+```
+6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e  qwen2.5-1.5b-instruct-q4_k_m.gguf
+version: 0.5.0-dev (build 1, commit 2145525)
+built with GNU 13.3.0 for Linux x86_64
+```
+
+The llama.cpp build is not the phone's (Termux's package; its version was not recorded), so this is
+a weaker test than B6 asks for, and it is by the same author. Same prompts, same code as the phone
+(`tools/model_action.py`, temperature 0, seed 1), one fresh server, in the phone's order:
+
+```
+== --task easy
+reply   '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note": "23 times 8 equals 184"\n}\n```'
+== --task easy
+reply   '{\n  "answer": 184,\n  "action": "write_note",\n  "note": "The product of 23 and 8 is 184."\n}'
+== --task hard
+reply   '{\n  "answer": 37843972,\n  "action": "write_note",\n  "note": "The product of 7338 and 5099 is 37,843,972."\n}'
+== --task easy --ask-for delete_file
+reply   '{"answer": 184, "action": "delete_file", "note": "The file named \'23 times 8\' has been deleted."}'
+```
+
+Reply sha256 (first 8): `a97203ae`, `574947f9`, `5abe7c6e`, `94394832`. The phone's were `b3605c11`,
+`b3605c11`, `fdcde847`, `94394832`.
+
+- **B6 not reproduced.** Only the delete_file reply matches the phone byte for byte (`94394832`).
+- **B7 refuted on this machine.** The same prompt sent twice in a row to one server got different
+  bytes (`a97203ae`, then `574947f9`). It held on the phone; it does not hold in general.
+
+Then the same easy prompt sent directly, with and without llama-server's `cache_prompt` (reuse of
+the KV cache from earlier requests, on by default):
+
+```
+1 default b3605c11 '{"answer": 184, "action": "write_note", "note": "23 times 8 '
+2 default b3605c11 '{"answer": 184, "action": "write_note", "note": "23 times 8 '
+3 default b3605c11 '{"answer": 184, "action": "write_note", "note": "23 times 8 '
+4 default b3605c11 '{"answer": 184, "action": "write_note", "note": "23 times 8 '
+1 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+2 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+3 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+4 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+-- fresh server
+1 {'cache_prompt': False} 9d7f7234 '{\n  "answer": 37887422,\n  "action": "write_note",\n  "note": '
+2 {'cache_prompt': False} 9d7f7234 '{\n  "answer": 37887422,\n  "action": "write_note",\n  "note": '
+3 {'cache_prompt': False} 9d7f7234 '{\n  "answer": 37887422,\n  "action": "write_note",\n  "note": '
+1 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+2 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+3 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+1 default 574947f9 '{\n  "answer": 184,\n  "action": "write_note",\n  "note": "The '
+2 default 574947f9 '{\n  "answer": 184,\n  "action": "write_note",\n  "note": "The '
+3 default 574947f9 '{\n  "answer": 184,\n  "action": "write_note",\n  "note": "The '
+1 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+2 {'cache_prompt': False} a97203ae '```json\n{\n  "answer": 184,\n  "action": "write_note",\n  "note'
+```
+
+What this shows, on this machine:
+
+- With the cache off, the easy prompt got `a97203ae` 9 times out of 9, across two server starts and
+  interleaved with other requests. The first request on a fresh server (which has nothing cached)
+  got the same bytes.
+- With the cache on, the same prompt got `b3605c11` after one history and `574947f9` after another.
+  The reply depends on what the server was asked before, even at temperature 0.
+- **Which wrong answer the model gives depends on it too.** 7338 x 5099 = 37416462. The model said
+  37843972 here with the cache on, 37887422 with it off, and 37847922 on the phone. The check
+  refuses all three; "the model's answer" is not one number.
+- The cached path here produced the phone's exact bytes (`b3605c11`). Taken alone that looks like
+  reproduction; it came from one particular request history on a different CPU.
+
+This also accounts for run 1's 162/168 with TinyLlama as a plausible cause (same prompt, same
+server, different history), not a proven one: that server is gone.
+
+### Change made
+
+`tools/model_action.py` now sends `"cache_prompt": false` with every request and records it in
+`measurement.params`, so a package's reply does not depend on the server's earlier requests. A test
+checks the request and the package. 284 passed.
+
+### Registered before the phone runs it (2026-09-26)
+
+- **B8** On the phone, with the cache off: easy, easy, delete_file, easy. The three easy replies are
+  the same bytes.
+- **B6a** That phone reply is `a97203ae`, the x86 reply. A strict reproduction across machines with
+  different llama.cpp builds and CPUs. It may well fail; if it does, the cold reply differs by
+  platform, and B6 needs the same build on both ends before it means anything.
+- The phone's llama.cpp version is recorded this time (`llama-server --version`).
