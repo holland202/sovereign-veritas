@@ -6,12 +6,38 @@ thermal classification and verifier-validation rules are re-implemented here fro
 documented contract. Same author as the producer, so this is N-version, not independent.
 
   python tools/verify_package.py PACKAGE.json [--allow-recorded-only]
-      exit 0 all checks pass | 1 a check failed | 2 unreadable
+         [--signature PACKAGE.json.sig --allowed-signers FILE --identity ID]
+      exit 0 all checks pass | 1 a check failed | 2 unreadable, or a signature check could not run
 
 A passing package is internally consistent and its decision is the one the documented Gate
-produces from its recorded inputs. It is NOT proven authentic or fresh; see its known_limitations.
+produces from its recorded inputs. Without --signature it is NOT proven authentic. With it, the
+package file's exact bytes must carry a valid ssh-keygen signature (namespace "sv-package") from
+ID's key in the allowed-signers file. Neither proves freshness; see its known_limitations.
 """
-import base64, hashlib, json, math, sys
+import base64, hashlib, json, math, os, shutil, subprocess, sys, tempfile
+
+NAMESPACE = "sv-package"
+
+
+class SignatureUnavailable(Exception):
+    """ssh-keygen missing or unusable: the signature could not be checked at all."""
+
+
+def check_signature(data, sig_path, allowed_signers, identity):
+    """(ok, detail) for a detached ssh-keygen signature over `data` (bytes)."""
+    exe = shutil.which("ssh-keygen")
+    if exe is None:
+        raise SignatureUnavailable("ssh-keygen not found (Termux: pkg install openssh)")
+    try:
+        p = subprocess.run([exe, "-Y", "verify", "-f", allowed_signers, "-I", identity,
+                            "-n", NAMESPACE, "-s", sig_path], input=data, capture_output=True,
+                           timeout=60)
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise SignatureUnavailable(str(exc))
+    if p.returncode == 0:
+        return True, f"valid {NAMESPACE} signature by {identity}"
+    msg = (p.stderr or p.stdout).decode("utf-8", "replace").strip().splitlines()
+    return False, msg[0] if msg else f"ssh-keygen exit {p.returncode}"
 
 SCHEMA = "sv.package/0"
 # v0 packages carry exactly these four statements. Exact match: an appended line could contradict
@@ -296,24 +322,48 @@ def verify(pkg, allow_recorded_only=False):
     return checks
 
 
+def parse_args(argv):
+    opts, rest, allow = {}, [], False
+    it = iter(argv)
+    for a in it:
+        if a == "--allow-recorded-only":
+            allow = True
+        elif a in ("--signature", "--allowed-signers", "--identity"):
+            opts[a] = next(it, None)
+        else:
+            rest.append(a)
+    sig = (opts.get("--signature"), opts.get("--allowed-signers"), opts.get("--identity"))
+    if len(rest) != 1 or (opts and (len(opts) != 3 or None in sig)):
+        return None
+    return rest[0], allow, sig if opts else None
+
+
 def main():
-    args = [a for a in sys.argv[1:] if a != "--allow-recorded-only"]
-    allow = len(args) != len(sys.argv) - 1
-    if len(args) != 1:
-        print(__doc__.strip().splitlines()[2])
+    parsed = parse_args(sys.argv[1:])
+    if parsed is None:
+        print("\n".join(__doc__.strip().splitlines()[7:10]))
         sys.exit(2)
+    path, allow, sig = parsed
     try:
-        with open(args[0], encoding="utf-8") as fh:
-            pkg = json.load(fh)
+        with open(path, "rb") as fh:
+            data = fh.read()
+        pkg = json.loads(data.decode("utf-8"))
         checks = verify(pkg, allow_recorded_only=allow)
+        if sig is not None:
+            ok, detail = check_signature(data, *sig)
+            checks.append(("signature", ok, detail))
+    except SignatureUnavailable as exc:
+        print(f"COULD NOT LOOK: signature requested but not checkable: {exc}")
+        sys.exit(2)
     except (OSError, ValueError, KeyError, TypeError, IndexError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
     for name, ok, detail in checks:
         print(f"{'PASS' if ok else 'FAIL'}  {name:<34} {detail}")
     failed = [c for c in checks if not c[1]]
+    authenticity = f"SIGNED:{sig[2]}" if sig is not None and not failed else "NOT_PROVEN"
     print(f"VERDICT  {'CONSISTENT' if not failed else f'{len(failed)} check(s) failed'}"
-          f"  freshness={pkg['freshness']['status']}  authenticity=NOT_PROVEN")
+          f"  freshness={pkg['freshness']['status']}  authenticity={authenticity}")
     sys.exit(1 if failed else 0)
 
 

@@ -34,11 +34,27 @@ Want to break it? Edit a package so the verifier still says CONSISTENT while it 
 false. One way is already known and documented (a fully consistent rewrite, below). Anything
 else is a real bug and will be credited.
 
+## Sign a package (optional — needs `ssh-keygen`; Termux: `pkg install openssh`)
+
+```bash
+python tools/sign_package.py keygen YOUR_NAME   # once; prints your allowed_signers line
+# Save that line in a file, e.g. allowed_signers, and share it: it holds only the public key.
+python tools/sign_package.py sign /path/to/the/package.json
+python tools/verify_package.py /path/to/the/package.json --signature /path/to/the/package.json.sig \
+    --allowed-signers allowed_signers --identity YOUR_NAME
+```
+
+With a valid signature the verdict reads `authenticity=SIGNED:YOUR_NAME`. The private key stays in
+`~/.ssh/sv_package_ed25519` and never goes in the repo. A signature proves who signed the exact
+bytes, not when: freshness is still not proven.
+
 ## What a CONSISTENT package does not prove
 
 Every package states these, and the verifier fails a package that drops one:
 
-- **authenticity** — there is no signature; a fully consistent rewrite verifies
+- **authenticity** — the package carries no signature; a fully consistent rewrite verifies.
+  A detached signature checked with `--signature` closes this (see above); the statement inside
+  the package still describes the package on its own
 - **freshness** — an older valid package is indistinguishable from the newest
 - **verifier identity** — declared by the caller, not bound to the verifier object that ran
 - **resource state** — runtime fields are declared, not derived from the device's sensors
@@ -47,12 +63,15 @@ Every package states these, and the verifier fails a package that drops one:
 
 | What | Result | Where |
 |---|---|---|
-| Test suite | 157 passed @ `ed042e7` | S25, Python 3.14.6 (device); fresh clones on Python 3.10, 3.11, 3.12, 3.13 (container) |
+| Test suite | 165 passed @ `f4989ac` | S25, Python 3.14.6 (device) |
+| Test suite, fresh clones | 157 passed @ `ed042e7` | container, Python 3.10, 3.11, 3.12, 3.13 |
 | Gate: 4608-case decision lattice | identical decision digest | S25 3.14.6; container 3.10 and 3.12 |
 | Gate: deliberate bugs planted | 19 of 19 caught | S25 and container |
 | A real package made on the S25 | 16 of 16 checks, `CONSISTENT` | S25 |
 | Damaged copies of that package | 0 of 17,157 truncations, 0 of 200 bit flips accepted | S25 |
 | Fully consistent rewrite | verifies — the documented limit | container |
+| Single-field rewrites of a real S25 package, every digest recomputed | 405 of 796 verify (33 fields: recorded data nothing can recompute) | S25, unsigned |
+| Same sweep on a signed package | 0 of 119 verify (44 without the signature) | container |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
@@ -69,6 +88,8 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
 - `tools/gate_constraint.py` — checks the Gate's ALLOW set against a fail-closed spec
   (`--mutants` checks that the check itself can fail)
 - `tools/package_recovery_sim.py` — feeds the verifier torn and corrupted copies of a package
+- `tools/field_sweep.py` — lists every field an attacker can rewrite undetected (optionally with a signature)
+- `tools/sign_package.py` — ed25519 signing via `ssh-keygen -Y`; the verifier checks with `--signature`
 - `tools/thermal_probe.py`, `tools/physical_durability.py` — device measurements (Android/Linux)
 - `tools/nvidia_challenge.py` — optional, EXPLORATORY, **makes network calls**: an NVIDIA-hosted
   model tries to forge a package; the local verifier judges. Needs your own key in `~/.nvidia_api_key`

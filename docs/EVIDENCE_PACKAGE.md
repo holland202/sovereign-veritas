@@ -413,3 +413,55 @@ D4 every pre-existing test passes unmodified; the pinned UNBOUND set for the pla
 
 What remains unbound is recorded sensor data (`raw`, `type`, `zone`) and fields no check can
 recompute. Nothing derives a sensor reading; only a signature binds it.
+
+## Signatures — closing "authenticity: none" (container)
+
+`tools/sign_package.py` signs the package file's exact bytes with an ed25519 key through
+`ssh-keygen -Y sign` (namespace `sv-package`). `tools/verify_package.py ... --signature SIG
+--allowed-signers FILE --identity ID` checks it through `ssh-keygen -Y verify`; the verifier still
+needs no Python packages. The private key stays on the device; `allowed_signers` holds only the
+public key. A signature binds who signed these bytes. It says nothing about when: freshness stays
+NOT_PROVEN, and a signed older package is still a valid older package.
+
+### Registered before any signing code ran (2026-09-26T10:15:46Z, md5 cc59634fdf63908b6e5534c463e73bd1)
+
+```
+# Package signature (ssh-keygen -Y, ed25519) — registered before any signing code ran
+Base: main f4989ac (tree 1792ebc), container. Signature is detached, over the package file's
+exact bytes, namespace "sv-package", checked against an allowed_signers file by identity.
+verify_package.py calls ssh-keygen; it stays free of Python dependencies.
+
+S0 liveness: an untouched signed package verifies (exit 0) and reports authenticity=SIGNED:<id>.
+S1 the fixture package's 119 single-field rewrites, each resealed: 44 verify without the signature
+   check (the pinned UNBOUND set); 0 verify with it.
+S2 each of these fails: a key not in allowed_signers; the right key under another identity;
+   the right key, wrong namespace; a signature over a different package.
+S3 signature requested but ssh-keygen absent: exit 2 (could not look), never a pass.
+S4 a package verified without --signature behaves exactly as before (authenticity=NOT_PROVEN);
+   every pre-existing test passes unmodified.
+Expected by construction: S1's 0 follows from signing the bytes. What S1 measures is that the
+check is wired in and live, not that ed25519 works.
+```
+
+### Result (container x86_64, Python 3.11.15, OpenSSH 9.6p1) — `tests/test_signature.py`
+
+- **S0 confirmed:** untouched signed package verifies, `authenticity=SIGNED:chad`.
+- **S1 confirmed**, the real tools end to end on the fixture package:
+
+```
+== unsigned sweep
+119 single-field rewrites (every digest recomputed): 44 verified, 36 distinct fields
+== signed sweep
+119 single-field rewrites (every digest recomputed): 0 verified, 0 distinct fields
+```
+
+- **S2 confirmed:** an unlisted key, the right key under another identity, a wrong namespace, and a
+  signature over another package's bytes each fail.
+- **S3 confirmed:** with `ssh-keygen` off the PATH, a requested signature check exits 2
+  (`COULD NOT LOOK`), never a pass.
+- **S4 confirmed:** unsigned verification unchanged (`authenticity=NOT_PROVEN`); 165 pre-existing
+  tests pass unmodified; 172 with the new ones.
+- Anti-vacuity: a signature check that always accepts fails 2 of the 7 new tests.
+
+Not yet measured: `ssh-keygen -Y` on the S25 (Termux OpenSSH), and anyone verifying a signature
+with only the published public key.

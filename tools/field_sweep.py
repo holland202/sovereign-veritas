@@ -61,9 +61,17 @@ def reseal(vp, p):
     return p
 
 
-def accepted(vp, p):
+def accepted(vp, p, signature=None):
+    """signature: (sig_path, allowed_signers, identity) - also require the ORIGINAL signature to
+    hold over the rewritten package's bytes, as a verifier would."""
     try:
-        return all(ok for _, ok, _ in vp.verify(p))
+        if not all(ok for _, ok, _ in vp.verify(p)):
+            return False
+        if signature is None:
+            return True
+        return vp.check_signature(vp.canon(p).encode("utf-8"), *signature)[0]
+    except vp.SignatureUnavailable:
+        raise
     except Exception:  # a crash is a rejection, never an acceptance
         return False
 
@@ -74,7 +82,7 @@ def pattern(path):
     return "/".join("*" if isinstance(k, int) and thermal else str(k) for k in path)
 
 
-def sweep(vp, pkg):
+def sweep(vp, pkg, signature=None):
     total, survivors = 0, {}
     for path, val in leaves(pkg):
         new = mutated(val)
@@ -86,27 +94,40 @@ def sweep(vp, pkg):
             node = node[k]
         node[path[-1]] = new
         total += 1
-        if accepted(vp, reseal(vp, p)):
+        if accepted(vp, reseal(vp, p), signature):
             key = pattern(path)
             survivors[key] = survivors.get(key, 0) + 1
     return total, survivors
 
 
 def main():
-    if len(sys.argv) != 2:
+    args = sys.argv[1:]
+    signature = None
+    if len(args) == 4:  # PACKAGE SIG ALLOWED_SIGNERS IDENTITY
+        signature = tuple(args[1:])
+    elif len(args) != 1:
         print(__doc__.strip().splitlines()[5])
+        print("  python tools/field_sweep.py PACKAGE.json PACKAGE.json.sig ALLOWED_SIGNERS IDENTITY")
         sys.exit(2)
     vp = load_verifier()
     try:
-        with open(sys.argv[1], encoding="utf-8") as fh:
-            pkg = json.load(fh)
+        with open(args[0], "rb") as fh:
+            raw = fh.read()
+        pkg = json.loads(raw.decode("utf-8"))
     except (OSError, ValueError) as exc:
         print(f"COULD NOT LOOK: {exc}")
         sys.exit(2)
-    if not accepted(vp, copy.deepcopy(pkg)):
-        print("COULD NOT LOOK: the input package does not verify")
+    try:
+        if signature is not None and vp.canon(pkg).encode("utf-8") != raw:
+            print("COULD NOT LOOK: package file is not canonical JSON; rewrites could not be re-signed-checked")
+            sys.exit(2)
+        if not accepted(vp, copy.deepcopy(pkg), signature):
+            print("COULD NOT LOOK: the input package does not verify" + (" with its signature" if signature else ""))
+            sys.exit(2)
+        total, survivors = sweep(vp, pkg, signature)
+    except vp.SignatureUnavailable as exc:
+        print(f"COULD NOT LOOK: {exc}")
         sys.exit(2)
-    total, survivors = sweep(vp, pkg)
     n = sum(survivors.values())
     print(f"{total} single-field rewrites (every digest recomputed): {n} verified, "
           f"{len(survivors)} distinct fields")
