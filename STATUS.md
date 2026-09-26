@@ -10,7 +10,8 @@ Evidence package, all three layers, on the published S25 package from a fresh cl
 (container x86_64): 20 of 20 checks, `CONSISTENT`, `authenticity=SIGNED:holland202`,
 `freshness=LATEST_WITNESSED(1)`. Signed: 0 of 796 single-field rewrites verify (S25). An older signed
 package after a newer one is witnessed: `STALE` (container). Freshness holds only while `main`'s history
-is not rewritten. See `docs/EVIDENCE_PACKAGE.md`.
+is not rewritten; the `protect-main` ruleset blocks force pushes and deletions (a test force push
+was rejected by GitHub, GH013, 2026-09-26). See `docs/EVIDENCE_PACKAGE.md`.
 
 CI (GitHub Actions run 36236747944 @ `197b0b0`, 2026-09-26): all 9 jobs pass. The S25's gate
 digest `ab816905…2d65` appears in every job's log, so the Gate's 4608 decisions are identical on

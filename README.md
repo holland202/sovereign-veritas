@@ -63,7 +63,9 @@ GitHub's copy of that append-only log is the witness. A challenger pulls it them
 `python tools/verify_package.py /path/to/the/package.json --witness-log witness/packages.log`:
 `LATEST_WITNESSED` passes; `STALE` (a newer package was witnessed) and `NOT_WITNESSED` fail. This
 proves order, not time, and only among packages the author logged. It holds as long as nobody
-rewrites `main`'s history, so turn on branch protection for `main` (no force pushes).
+rewrites `main`'s history. This repository's `main` is protected by the ruleset `protect-main`
+(force pushes and deletions blocked on every branch, no bypass); a test force push was rejected by
+GitHub on 2026-09-26 (`docs/EVIDENCE_PACKAGE.md`). Forks need their own protection.
 
 ## What a CONSISTENT package does not prove
 

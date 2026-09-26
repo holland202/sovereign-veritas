@@ -624,3 +624,35 @@ provenance, verifier, freshness, resource state and Gate decision can be reconst
 from public files. What it still is not: independently reproduced (every check so far ran on the
 author's verifier, by the author or his AI tools), time-stamped (the witness gives order, not time),
 or protected against a rewrite of `main`'s history unless the branch is protected.
+
+## Branch protection on `main` — registered and tested (2026-09-26)
+
+The witness log is only as strong as GitHub's history of `main`. Prediction, registered before the
+test: with the ruleset active, a non-fast-forward push to `main` is refused by GitHub and `main` does
+not move. The test can fail: had the push been accepted, `main` would have moved back one commit
+(recoverable by a fast-forward push of the old head).
+
+Ruleset as read back from the GitHub API (not from the settings page):
+
+```
+active {'ref_name': {'exclude': [], 'include': ['~ALL']}} ['deletion', 'non_fast_forward'] [] 2026-09-26T06:06:47.735-05:00
+```
+
+`rules/branches/main` lists `deletion` and `non_fast_forward` from ruleset 24038678; bypass list empty.
+
+The test, from the container, `main` at e6d2c3a, pushing its parent 197b0b0 with `--force`:
+
+```
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: - Cannot force-push to this branch
+ ! [remote rejected] HEAD~1 -> main (push declined due to repository rule violations)
+exit=1
+```
+
+`origin/main` after the attempt: `e6d2c3a3aaebe39055bb1832ff6ac37da082d3b2` (unchanged). Confirmed.
+
+What this does not cover: the repository owner can disable or delete the ruleset, and GitHub itself
+is trusted. A challenger who keeps their own clone of the log detects a rewrite regardless; the
+ruleset only stops it happening silently through a push. Deletion blocking was not tested (a
+successful test would delete a branch).
+
