@@ -1,7 +1,7 @@
 # Evidence package (sv.package/0) — reconstruct and challenge one gated run
 
-Status: **Architecture Self-Tested** (same author wrote producer, verifier and tests; container
-only until the S25 run is recorded here).
+Status: **Architecture Self-Tested** (same author wrote producer, verifier and tests).
+Device-verified on the S25 — see the end of this file. Not independently reproduced.
 
 One JSON document carries a gated run: artifact bytes, measurement, the provenance chain up to the
 decision record, verifier validation, every Gate input, resource state (runtime + thermal zones),
@@ -133,3 +133,54 @@ package digest alone. Accidental corruption is caught there; deliberate rewrites
 
 `tools/package_recovery_sim.py PACKAGE.json` runs R1 and R2 against a real package. Container run on
 a 4417-byte package: 0 of 4417 prefixes, 0 of 200 flips accepted, 9.5 s.
+
+## Device measurement — S25 (SM-S938U, Android 16, Termux, aarch64, Python 3.14.6)
+
+Line breaks restored from terminal wrap; values verbatim.
+
+At `0e86c65` (package commit), `python tools/make_package.py` (runtime left undeclared):
+
+```
+decision REFUSE ['runtime_state_unavailable']
+elapsed_ms 91.507  zones 68  freshness NOT_PROVEN
+package /data/data/com.termux/files/home/sv_package_de9fee31b190.json  md5 de9fee31b190cfa5accaf24bd03ab6d8
+rc=0
+```
+
+`python tools/verify_package.py ~/sv_package_de9fee31b190.json`:
+
+```
+PASS  schema                             sv.package/0
+PASS  package_digest
+PASS  artifact_digest
+PASS  measurement_names_artifact
+PASS  measurement_recomputed             recomputed from artifact bytes
+PASS  provenance_chain
+PASS  decision_record_is_artifact
+PASS  decision_record_matches
+PASS  measurement_in_chain
+PASS  capability_named_in_record
+PASS  gate_replay                        replayed REFUSE ['runtime_state_unavailable']
+PASS  verifier_identity_not_overclaimed
+PASS  verifier_provenance                sha256-chain-recompute-v0 VALIDATED
+PASS  thermal                            zone statuses and per-domain summary recomputed
+PASS  freshness_not_overclaimed          NOT_PROVEN
+PASS  limitations_declared
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+rc=0
+```
+
+At `ed042e7` (recovery commit): `python -m pytest -q` gave **157 passed in 9.31s**, rc=0, and
+`python tools/package_recovery_sim.py ~/sv_package_de9fee31b190.json`:
+
+```
+package 17157 bytes, seed 7
+TRUNCATION  0 of 17157 strict prefixes accepted
+CORRUPTION  0 of 200 single-bit flips accepted []
+VERDICT     nothing damaged was accepted
+rc=0
+```
+
+This package was written by the pre-atomic writer (it predates `ed042e7`); it is complete, which is
+what the verifier and the simulation confirm. The S25 package, the verifier's 16 checks, and the
+recovery simulation all agree with the container runs above. Same author throughout.

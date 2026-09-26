@@ -3,7 +3,13 @@ import json
 import pytest
 
 from sovereign_veritas.anchored_file_ledger import AnchoredFileLedger
+from sovereign_veritas import anchored_file_ledger as _afl
 from sovereign_veritas.evidence import EvidenceRecord
+
+pytestmark = pytest.mark.skipif(
+    _afl.fcntl is None,
+    reason="AnchoredFileLedger needs POSIX fcntl.flock (absent on Windows); it fails closed there - see test_anchored_file_ledger_platform.py",
+)
 
 
 def record(record_id, value):
