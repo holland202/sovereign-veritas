@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 import hashlib
 import json
 from dataclasses import dataclass, field, replace
@@ -51,6 +53,16 @@ def _validate_jsonable(value: Any, path: str = "value") -> None:
         json.dumps(_thaw(value), sort_keys=True, ensure_ascii=False)
     except (TypeError, ValueError) as exc:
         raise TypeError(f"non-JSON-serializable value at {path}") from exc
+
+
+def _as_quality(value: Any) -> float | None:
+    """A JSON number as a float; None for anything else. Too large for a float: signed infinity."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    try:
+        return float(value)
+    except OverflowError:
+        return math.inf if value > 0 else -math.inf
 
 
 @dataclass(frozen=True)
@@ -147,16 +159,18 @@ class EvidenceRecord:
         return _digest(self.to_dict())
 
     def quality_or_default(self, default: float = 0.0) -> float:
-        """Return evidence_quality if set, else look in metadata, else default."""
+        """The record's evidence_quality if present, else metadata's, else default.
+
+        Only a number counts, never a boolean or a string: True is not 1.0 and "0.9" is not 0.9
+        (docs/GATE_CONTRACT.md, Q1). A present top-level value that is not a number counts as not
+        supplied; it does not fall through to metadata. NaN, infinities and values outside [0, 1]
+        are returned as they are, for the Gate to report as invalid.
+        """
         if self.evidence_quality is not None:
-            return float(self.evidence_quality)
-        meta_q = self.metadata.get("evidence_quality") if self.metadata else None
-        if meta_q is not None:
-            try:
-                return float(meta_q)
-            except (TypeError, ValueError):
-                return default
-        return default
+            q = _as_quality(self.evidence_quality)
+            return default if q is None else q
+        meta_q = _as_quality(self.metadata.get("evidence_quality")) if self.metadata else None
+        return default if meta_q is None else meta_q
 
 
 @dataclass(frozen=True)

@@ -36,6 +36,12 @@ Want to break it? Edit a package so the verifier still says CONSISTENT while it 
 false. One way is already known and documented (a fully consistent rewrite, below). Anything
 else is a real bug and will be credited.
 
+Want to build it? [CONTRACT.md](CONTRACT.md) states the Gate's rules precisely enough to implement
+in any language, and 4690 test vectors check the result: write a program that reads one case per
+line and prints one decision per line, then run
+`python tools/gate_contract.py --check-command <your program>`. A second implementation by someone
+other than the author is the most useful thing this repository could get.
+
 ## Sign a package (optional — needs `ssh-keygen`; Termux: `pkg install openssh`)
 
 ```bash
@@ -114,6 +120,8 @@ Every package states these, and the verifier fails a package that drops one:
 | Published evidence re-checked on every push | every package signed and consistent; every witness entry published | CI, 9 jobs |
 | Verifier guards switched off one at a time | 22 of 22 make a test fail (2 needed new tests) | container, CI |
 | Static scan for verification code with no fail path (vacuity_lint) | 0 findings in 66 files | container, CI |
+| Gate contract: kernel and verifier against 4690 vectors | both conform, one digest | container, CI |
+| Contract rules switched off one at a time | 22 of 23 fail a vector; the 23rd cannot be reached | container, CI |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
@@ -136,6 +144,8 @@ Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
 - `sovereign_veritas/thermal_policy.py` — derives `thermal_status` from zones under a named policy
 - `sovereign_veritas/evidence_states.py` — where each runtime value came from; no implicit promotion
 - `tools/verifier_mutants.py` — switches off each verifier guard in turn; the tests must fail
+- `CONTRACT.md`, `contract/gate_vectors.jsonl`, `tools/gate_contract.py` — the Gate's rules, its test
+  vectors, and the checker for any implementation
 - `tools/thermal_probe.py`, `tools/physical_durability.py` — device measurements (Android/Linux)
 - `tools/nvidia_challenge.py` — optional, EXPLORATORY, **makes network calls**: an NVIDIA-hosted
   model tries to forge a package; the local verifier judges. Needs your own key in `~/.nvidia_api_key`

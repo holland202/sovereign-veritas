@@ -6,6 +6,11 @@
 
 **213 passed** @ 2033088 (Termux / S25, 16.01 s). Measured thermal status on the S25: at rest `normal` -> ALLOW; after 30 s all-core load `hot` (cpu_core 103.8 °C) -> DEFER; both packages 19 of 19 checks, the verifier recomputing the status. Limits uncalibrated (policy `s25-uncalibrated-v0`). See `docs/EVIDENCE_PACKAGE.md`.
 
+Gate contract (2026-09-26, CONTRACT.md, docs/GATE_CONTRACT.md): **261 passed** (container). The kernel
+and the verifier match all 4690 vectors (conformance digest `44823d0f…0628`); 22 of 23 rules are
+pinned by a vector and the 23rd cannot be reached. Quality is now read only from numbers (F2: `true`
+used to pass a quality floor); the 4608-case digest is unchanged. No outside implementation yet.
+
 Integration (2026-09-26, docs/INTEGRATION.md): **242 passed** (container). Every verifier guard
 switched off in turn fails a test: 22 of 22, after two survivors (`artifact_digest`,
 `provenance_chain`) got the tests they lacked. New packages carry evidence-ledger evidence states;

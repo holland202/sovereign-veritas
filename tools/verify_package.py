@@ -146,16 +146,23 @@ def runtime_healthy(rt):
     return all(isinstance(rt.get(f), str) and rt[f] in ok for f, (ok, _) in VOCAB.items())
 
 
+def as_quality(value):
+    """A JSON number as a float; None for anything else (booleans and strings included)."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    try:
+        return float(value)
+    except OverflowError:
+        return math.inf if value > 0 else -math.inf
+
+
 def quality_of(rec):
+    """Top-level evidence_quality if present (not a number: 0.0), else metadata's, else 0.0."""
     if rec.get("evidence_quality") is not None:
-        return float(rec["evidence_quality"])
-    q = (rec.get("metadata") or {}).get("evidence_quality")
-    if q is not None:
-        try:
-            return float(q)
-        except (TypeError, ValueError):
-            return 0.0
-    return 0.0
+        q = as_quality(rec["evidence_quality"])
+        return 0.0 if q is None else q
+    q = as_quality((rec.get("metadata") or {}).get("evidence_quality"))
+    return 0.0 if q is None else q
 
 
 def replay_gate(rec, cap, registry, runtime, policy):

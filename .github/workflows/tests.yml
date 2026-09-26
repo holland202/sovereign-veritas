@@ -23,6 +23,10 @@ jobs:
         run: |
           python tools/gate_constraint.py --target . | tee gate.txt
           grep -q "DIGEST    ab816905b1faf69aeaf24119b207cf7b80fcebd2ffcddac80d3edfa5e4da2d65" gate.txt
+      - name: Gate contract - kernel and verifier match all vectors, same digest everywhere (CONTRACT.md)
+        run: |
+          python tools/gate_contract.py --check kernel
+          python tools/gate_contract.py --check verifier
       - name: Make a package and verify it independently
         run: |
           f=$(python tools/make_package.py --thermal-status normal | awk '/^package /{print $2}')
@@ -50,6 +54,8 @@ jobs:
         run: python tools/verifier_mutants.py
       - name: Every planted Gate bug must be caught
         run: python tools/gate_constraint.py --target . --mutants
+      - name: Every reachable rule of the Gate is pinned by a contract vector
+        run: python tools/gate_contract.py --mutants
       - name: Fetch vacuity_lint, pinned
         run: |
           git clone -q https://github.com/holland202/vacuity_lint.py "$RUNNER_TEMP/vl"

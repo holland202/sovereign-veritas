@@ -102,6 +102,8 @@ dmypy.json
 
 # Runtime evidence ledgers and disposable experiments
 *.jsonl
+# ...but the Gate contract's vectors are the contract (CONTRACT.md); tests fail if this is ignored
+!contract/gate_vectors.jsonl
 runtime-*/
 runtime_*/
 **/SESSION.json
