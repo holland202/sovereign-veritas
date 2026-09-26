@@ -1,0 +1,8 @@
+# Files whose exact bytes are hashed or signed: never convert line endings on checkout.
+# Without this, Git for Windows (core.autocrlf) rewrote LF as CRLF in the contract vectors and their
+# sha256 no longer matched CONTRACT.md (docs/GATE_CONTRACT.md, 2026-09-26).
+contract/gate_vectors.jsonl -text
+evidence/*.json -text
+evidence/*.sig -text
+witness/packages.log -text
+keys/allowed_signers -text
