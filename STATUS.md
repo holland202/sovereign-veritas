@@ -6,6 +6,11 @@
 
 **213 passed** @ 2033088 (Termux / S25, 16.01 s). Measured thermal status on the S25: at rest `normal` -> ALLOW; after 30 s all-core load `hot` (cpu_core 103.8 °C) -> DEFER; both packages 19 of 19 checks, the verifier recomputing the status. Limits uncalibrated (policy `s25-uncalibrated-v0`). See `docs/EVIDENCE_PACKAGE.md`.
 
+Published and signed (2026-09-26): the measured pair, `sv_package_118a02b75646` (ALLOW at rest) and
+`sv_package_45c6ad182584` (DEFER under load). From a fresh clone: 20 of 20 each, `SIGNED:holland202`;
+0 of 807 signed rewrites of the DEFER package verify. Not yet witnessed. CI re-checks every published
+package and witness entry on each push (223 passed; Windows 215 + 8 skipped).
+
 Earlier: **185 passed** on `main` = `feature/local-inference-measurement`, code as at 5b64d8e (Termux / S25, Python 3.14.6, 12.59 s).
 
 Evidence package, all three layers, on the published S25 package from a fresh clone of GitHub only

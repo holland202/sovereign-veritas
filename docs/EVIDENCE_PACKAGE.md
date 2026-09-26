@@ -872,3 +872,58 @@ exit=1
 - `test_t0_published_package_still_verifies` no longer passes `--witness-log`: T0 was confirmed
   with 20 of 20 at 2033088, but that package is `LATEST_WITNESSED(1)` only until a newer one is
   witnessed. It now checks consistency and signature (19 `PASS`); witness status moved to R2.
+
+### Result — R3 to R6 (fresh clone of GitHub at 211b703, container x86_64, Python 3.11.15)
+
+The pair was signed on the S25 and pushed from Termux (`223 passed` there before the commit).
+From a fresh clone, with `--signature evidence/<pkg>.sig --allowed-signers keys/allowed_signers
+--identity holland202`:
+
+```
+== R3 118a02b75646 (signature)
+PASS  gate_replay                        replayed ALLOW []
+PASS  thermal_status_derived             s25-uncalibrated-v0: recomputed normal, recorded normal
+PASS  execution_only_if_allowed          SUCCEEDED under ALLOW
+PASS  signature                          valid sv-package signature by holland202
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+exit=0 PASS=20 FAIL=0
+== R3 45c6ad182584 (signature)
+PASS  gate_replay                        replayed DEFER ['runtime_not_healthy']
+PASS  thermal_status_derived             s25-uncalibrated-v0: recomputed hot, recorded hot
+PASS  execution_only_if_allowed          no execution recorded
+PASS  signature                          valid sv-package signature by holland202
+VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+exit=0 PASS=20 FAIL=0
+== R4 118a02b75646 (signature + witness)
+FAIL  freshness_witness                  NOT_WITNESSED: not among 1 witnessed packages
+VERDICT  1 check(s) failed  freshness=NOT_WITNESSED  authenticity=SIGNED:holland202
+exit=1
+== R4 45c6ad182584 (signature + witness)
+FAIL  freshness_witness                  NOT_WITNESSED: not among 1 witnessed packages
+VERDICT  1 check(s) failed  freshness=NOT_WITNESSED  authenticity=SIGNED:holland202
+exit=1
+== R4 5bfc70dfcfa2 (signature + witness)
+PASS  freshness_witness                  LATEST_WITNESSED(1): entry 1 of 1, the last
+VERDICT  CONSISTENT  freshness=LATEST_WITNESSED(1)  authenticity=SIGNED:holland202
+exit=0
+```
+
+- **R3 confirmed.** Both 20 of 20, `SIGNED:holland202`; the DEFER package replays DEFER with no
+  execution.
+- **R4 confirmed.** Both new packages `NOT_WITNESSED`, exit 1, signature still reported; the first
+  package still `LATEST_WITNESSED(1)`. Without R1's fix these two lines would have read
+  `authenticity=NOT_PROVEN`.
+- **R5 confirmed.** `tools/field_sweep.py` on the published DEFER package: unsigned,
+  `807 single-field rewrites (every digest recomputed): 408 verified, 33 distinct fields`; with its
+  signature, `807 single-field rewrites (every digest recomputed): 0 verified, 0 distinct fields`.
+  The unsigned survivors include `measurement/thermal_before/*/raw (x61)` and
+  `measurement/preload_seconds`. The sweep adds 1 to a reading, which never crosses a limit; the 7
+  readings it cannot change are the offline zones (+1 turns the -273000 sentinel into
+  `out_of_range`). So without the signature the readings are recorded data, as stated before the
+  code, and `preload_seconds` could be edited to hide that the heat was induced. Signed, neither can.
+- **R6 confirmed.** Run 36240440331 on 211b703: 9 of 9 jobs pass. Logs read for three: ubuntu 3.12
+  and macOS 3.12 `223 passed`; windows 3.14 `215 passed, 8 skipped` (the 8 POSIX-lock tests), so
+  the signature half of the published-evidence check ran on Windows too. The measured-thermal CI
+  step read `zones 0` on all three, `thermal unknown`, REFUSE, `CONSISTENT`.
+
+Still open: witnessing the pair, after the outside reproduction of `sv_package_5bfc70dfcfa2` is back.

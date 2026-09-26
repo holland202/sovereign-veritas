@@ -46,7 +46,9 @@ python tools/verify_package.py /path/to/the/package.json --signature /path/to/th
     --allowed-signers allowed_signers --identity YOUR_NAME
 ```
 
-Packages signed by this repository's author verify against the committed public key:
+`evidence/` holds three packages signed by this repository's author: the first S25 package
+(witnessed) and the measured pair, ALLOW at rest and DEFER under load (not yet witnessed; see
+`docs/EVIDENCE_PACKAGE.md`). They verify against the committed public key:
 `--allowed-signers keys/allowed_signers --identity holland202`.
 
 With a valid signature the verdict reads `authenticity=SIGNED:YOUR_NAME`. The private key stays in
@@ -104,6 +106,9 @@ Every package states these, and the verifier fails a package that drops one:
 | CI on every push: Linux, macOS, Windows × Python 3.10 / 3.12 / 3.14 | 9 of 9 jobs pass; gate decision digest identical to the S25's in all 9 | GitHub Actions, run 36236747944 @ `197b0b0` |
 | Thermal status derived from the zones, at rest | `normal`, ALLOW, 19 of 19 checks | S25 |
 | Same, after 30 s all-core load | `hot` (cpu_core 103.8 °C), DEFER, 19 of 19 checks | S25 |
+| The two measured packages, signed and published, checked from a fresh clone | 20 of 20 each, `SIGNED:holland202` | container |
+| Single-field rewrites of the published DEFER package | 0 of 807 verify signed (408 unsigned) | container |
+| Published evidence re-checked on every push | every package signed and consistent; every witness entry published | CI, 9 jobs |
 | Reproduction by anyone else | **none yet** | — |
 
 Details and raw output: [docs/GATE_CONSTRAINT.md](docs/GATE_CONSTRAINT.md),
