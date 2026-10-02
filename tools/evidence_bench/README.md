@@ -1,3 +1,27 @@
+---
+license: mit
+pretty_name: Sovereign Evidence-Boundary Bench
+task_categories:
+- text-classification
+language:
+- en
+tags:
+- evaluation
+- llm-safety
+- prompt-injection
+- provenance
+- on-device
+- llama.cpp
+- gguf
+size_categories:
+- n<1K
+configs:
+- config_name: cases
+  data_files: cases.jsonl
+- config_name: container_results
+  data_files: results/container/*.jsonl
+---
+
 # evidence_bench — evidence-boundary benchmark for small local models
 
 Can a small local language model hold an **evidence boundary** — admissibility, provenance,
@@ -86,3 +110,20 @@ Qwen3.5 file is a third-party quantization.
 ## Credits
 Chad Edward Holland — direction, research program. Claude (Opus 5.5, Anthropic) — case set,
 harness, container run. Experimental framing drew on a plan drafted with ChatGPT.
+
+## Publish to Hugging Face (from Termux)
+
+Create a **write** token at huggingface.co/settings/tokens. Type it only into Termux, never into a chat.
+
+```
+pip install -U huggingface_hub
+```
+```
+hf auth login
+```
+```
+cd ~/sovereign-veritas/tools/evidence_bench
+```
+```
+hf upload holland202/sovereign-evidence-bench . . --repo-type dataset --exclude "*.server.log" --exclude "__pycache__/*"
+```
