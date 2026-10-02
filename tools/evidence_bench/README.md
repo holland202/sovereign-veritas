@@ -43,6 +43,32 @@ Full numbers and the failures: [`RESULTS.md`](RESULTS.md).
 | Qwen3.5-2B | 53.8% | 26.7% | narrowly |
 | always NOT_SUPPORTED | 46.2% | 0% | — |
 
+> A model's benchmark performance does not authorize the model to act as the evidence
+> boundary. This experiment evaluates whether model *proposals* can be safely constrained by
+> an independent deterministic gate (Sovereign Veritas); it does not validate that architecture.
+
+## Status and scope
+
+- **Container-only. NOT VALIDATED on the S25 Ultra.** No phone run exists yet (prediction P7 is unrun).
+- CPU only, x86_64, 2 threads, llama.cpp `b1-bed0a85`. No GPU or NPU offload.
+- Temperature 0, seed 0, max 16 tokens, 2 repetitions per case. Outputs were identical
+  across repetitions for all three models.
+- Preregistration commit `1ae3cb6`, made in a local working repo before any model output.
+  It was not publicly timestamped, so the ordering is stated, not proven.
+- **Model roles.** Qwen3.5-2B Q4_K_M is the *candidate selected for the next evaluation*. It
+  is not "the best model": it beats the constant baseline by 3 of 39 cases. Qwen2.5-1.5B
+  Q4_K_M is the prior baseline. LFM2.5-1.2B Q4_K_M is a comparison model. Model weights are
+  not included; the hashes are below.
+- **REFUTED collapse.** Across 36 gold-REFUTED predictions (12 cases × 3 models), REFUTED was
+  produced once. The Qwen models answer NOT_SUPPORTED; LFM2.5 answers SUPPORTED.
+- **Injection.** LFM2.5-1.2B's answer matched the injected label on 4 of 4 injection cases,
+  Qwen2.5-1.5B on 2 of 4, and Qwen3.5-2B on 1 of 4.
+- **Known instrument defect (provenance confound).** Provenance scored highest (3/4, 4/4, 4/4),
+  but 3 of the 4 provenance cases have NOT_SUPPORTED as gold, which the Qwen models answer by
+  habit. This set cannot yet separate "rejected the unverified source" from "abstained anyway".
+  See `RESULTS.md`.
+- `SHA256SUMS` covers every file in this package.
+
 ## Files
 | file | what it does |
 |---|---|
@@ -61,35 +87,33 @@ pkg install python git llama-cpp
 ```
 If `llama-cpp` is not in your Termux repo, build llama.cpp from source instead.
 
+Download this dataset (it contains `cases.jsonl`). If you work from the GitHub branch
+`bench/evidence-boundary-pilot` instead, regenerate the cases first: that repo's `.gitignore`
+excludes `*.jsonl`. The output is byte-identical (SHA-256 `76714497…9e19`).
+
 ```
-cd ~/sovereign-veritas
-```
-```
-git fetch origin bench/evidence-boundary-pilot
-```
-```
-git checkout bench/evidence-boundary-pilot
+python make_cases.py
 ```
 ```
 mkdir -p ~/models
 ```
 ```
-curl -L -o ~/models/LFM2.5-1.2B-Instruct-Q4_K_M.gguf https://huggingface.co/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/resolve/main/LFM2.5-1.2B-Instruct-Q4_K_M.gguf
+curl -L -o ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf https://huggingface.co/bartowski/Qwen_Qwen3.5-2B-GGUF/resolve/main/Qwen_Qwen3.5-2B-Q4_K_M.gguf
 ```
 ```
-sha256sum ~/models/LFM2.5-1.2B-Instruct-Q4_K_M.gguf
+sha256sum ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf
 ```
-Must print `b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5`. A size check is
+Must print `57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8`. A size check is
 not enough on Android (null-byte downloads have the right size).
 
 ```
 termux-wake-lock
 ```
 ```
-cd ~/sovereign-veritas/tools/evidence_bench
+cd ~/sovereign-evidence-bench
 ```
 ```
-python run_bench.py --model ~/models/LFM2.5-1.2B-Instruct-Q4_K_M.gguf --label s25 --threads 6
+python run_bench.py --model ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf --label s25 --threads 6
 ```
 If Android kills the run, re-run the same command: finished cases are skipped.
 
@@ -97,12 +121,12 @@ If Android kills the run, re-run the same command: finished cases are skipped.
 python score.py s25
 ```
 
-The other two models (same pattern):
+The candidate (Qwen3.5-2B) is shown above. The other two models follow the same pattern:
 
 | file | Hub repo | SHA-256 |
 |---|---|---|
 | `qwen2.5-1.5b-instruct-q4_k_m.gguf` | `Qwen/Qwen2.5-1.5B-Instruct-GGUF` | `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e` |
-| `Qwen_Qwen3.5-2B-Q4_K_M.gguf` | `bartowski/Qwen_Qwen3.5-2B-GGUF` | `57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8` |
+| `LFM2.5-1.2B-Instruct-Q4_K_M.gguf` | `LiquidAI/LFM2.5-1.2B-Instruct-GGUF` | `b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5` |
 
 A hash match proves you have the file the Hub serves. It does not prove who made it — the
 Qwen3.5 file is a third-party quantization.
@@ -122,8 +146,11 @@ pip install -U huggingface_hub
 hf auth login
 ```
 ```
-cd ~/sovereign-veritas/tools/evidence_bench
+cd ~/sovereign-evidence-bench
 ```
 ```
-hf upload holland202/sovereign-evidence-bench . . --repo-type dataset --exclude "*.server.log" --exclude "__pycache__/*"
+sha256sum -c SHA256SUMS
+```
+```
+hf upload holland202/sovereign-evidence-bench . . --repo-type dataset --exclude "results/s25/*.server.log"
 ```
