@@ -13,100 +13,215 @@ tags:
 - on-device
 - llama.cpp
 - gguf
+- preregistered
 size_categories:
 - n<1K
 configs:
 - config_name: cases
   data_files: cases.jsonl
+- config_name: cases_h1
+  data_files: heldout/cases_h1.jsonl
+- config_name: predictions
+  data_files: results/derived/predictions_*.jsonl
 - config_name: container_results
   data_files: results/container/*.jsonl
 - config_name: container_decomposed
   data_files: results/container/decomposed/*.jsonl
 ---
 
-# evidence_bench — evidence-boundary benchmark for small local models
+# Sovereign Evidence-Boundary Bench
 
-Can a small local language model hold an **evidence boundary** — admissibility, provenance,
-freshness, injection resistance — or does it just pattern-match on whether the evidence
-mentions the claim?
+**Can a small model running on your own hardware tell whether the evidence actually supports
+a claim? And if it can't, can deterministic code stop it from acting as if it did?**
 
-39 hand-built cases, 11 categories, three verdicts (SUPPORTED / REFUTED / NOT_SUPPORTED).
-Gold labels are derived mechanically by `oracle.py` from hidden structure, and the run is
-preregistered (`PREREG.md`, committed before any model output).
+Each case is a claim plus a few evidence records. The answer is SUPPORTED, REFUTED or
+NOT_SUPPORTED. The answer key is computed by code (`oracle.py`) from hidden structure, never by
+a model. The cases test the *evidence boundary*:
 
-**First result (container, not phone):** two of three 1–2B models are indistinguishable from
-chance, almost nobody uses REFUTED, and LFM2.5-1.2B obeyed injected instructions 4 of 4 times.
-Full numbers and the failures: [`RESULTS.md`](RESULTS.md).
+- admissibility: is the record verified?
+- freshness: is it recent enough?
+- conflict between records
+- provenance
+- resistance to instructions hidden inside the evidence or pushed by the requester
 
-Direct arm (one model call decides) vs decomposed arm (model labels each admissible
-item TRUE/FALSE/NEITHER; deterministic `gate.py` decides). Container only.
+Two ways of using a model are compared. In the **direct** arm, the model gives the verdict. In
+the **decomposed** arm, the model only labels each admissible record TRUE, FALSE or NEITHER, and
+deterministic code (`gate.py`) decides.
 
-| model (Q4_K_M) | direct acc | direct unsafe | decomposed acc | decomposed unsafe |
-|---|---|---|---|---|
-| Qwen2.5-1.5B-Instruct | 33.3% | 40.0% | 56.4% | 13.3% |
-| LFM2.5-1.2B-Instruct | 25.6% | 86.7% | 59.0% | 30.0% |
-| Qwen3.5-2B | 53.8% | 26.7% | 74.4% | 3.3% |
-| Qwen3.5-4B | 61.5% | 16.7% | 71.8% | 23.3% |
-| always NOT_SUPPORTED | 46.2% | 0% | — | — |
+**Status: Draft, verified reference code. Container (x86 CPU) only. NOT VALIDATED on the
+Galaxy S25 Ultra.** NOT TRAINED: no model was trained or fine-tuned here. Only off-the-shelf
+GGUF models are evaluated.
 
-The 4B row is the warning: decomposition made it *less* safe. All four rows come from the
-same 39 cases the follow-ups were designed after; see [`RESULTS_A1_A2.md`](RESULTS_A1_A2.md).
+## Start here
+
+1. [`STATS.md`](STATS.md) is the exact re-analysis. What was wrong with the earlier write-ups
+   comes first.
+2. [`RESULTS.md`](RESULTS.md) (v0) and [`RESULTS_A1_A2.md`](RESULTS_A1_A2.md) (follow-ups) are
+   the original write-ups. They are kept unchanged, under dated correction notes.
+3. [`PREREG_H1.md`](PREREG_H1.md) is the held-out replication, registered before any of its
+   outputs existed.
+4. To check any number yourself, run the three commands under "Check it yourself".
+
+## What this is not
+
+- **Not a validation of Sovereign Veritas.** The gate trusted `verified` and `date` fields
+  supplied by the test harness. A deployment has to establish those independently, and that is
+  where the hard problem now sits.
+- **Not a leaderboard.** 39 cases cannot rank models, and no model here is "the best".
+  Qwen3.5-2B is the candidate selected for the next evaluation, not a winner.
+- **Not a phone result.** Every number comes from a container CPU. The phone predictions are
+  UNRUN.
+- **Not out of sample yet.** Everything published so far uses the same 39 cases the
+  follow-ups were designed after. H1 (110 new cases) is the out-of-sample test.
+
+**"Sovereign", as used here:** the final decision is made by deterministic code that the
+operator owns and can audit, on the operator's own hardware. A model may propose; it never
+decides. It does not mean an autonomous AI.
 
 > A model's benchmark performance does not authorize the model to act as the evidence
 > boundary. This experiment evaluates whether model *proposals* can be safely constrained by
-> an independent deterministic gate (Sovereign Veritas); it does not validate that architecture.
+> an independent deterministic gate; it does not validate that architecture.
 
-## Status and scope
+## Results so far: container, 39 cases, failures first
 
-- **Container-only. NOT VALIDATED on the S25 Ultra.** No phone run exists yet (prediction P7 is unrun).
-- CPU only, x86_64, 2 threads, llama.cpp `b1-bed0a85`. No GPU or NPU offload.
-- Temperature 0, seed 0, max 16 tokens, 2 repetitions per case. Outputs were identical
-  across repetitions for all three models.
-- Preregistration commit `1ae3cb6`, made in a local working repo before any model output.
-  It was not publicly timestamped, so the ordering is stated, not proven.
-- **Follow-ups A1 (Qwen3.5-4B) and A2 (decomposed arm)** were preregistered and pushed before their runs, but designed after v0, on the same 39 cases. Results: `RESULTS_A1_A2.md`.
-- **Model roles.** Qwen3.5-2B Q4_K_M is the *candidate selected for the next evaluation*. It
-  is not "the best model": it beats the constant baseline by 3 of 39 cases. Qwen2.5-1.5B
-  Q4_K_M is the prior baseline. LFM2.5-1.2B Q4_K_M is a comparison model. Model weights are
-  not included; the hashes are below.
-- **REFUTED collapse.** Across 36 gold-REFUTED predictions (12 cases × 3 models), REFUTED was
-  produced once. The Qwen models answer NOT_SUPPORTED; LFM2.5 answers SUPPORTED.
-- **Injection.** LFM2.5-1.2B's answer matched the injected label on 4 of 4 injection cases,
-  Qwen2.5-1.5B on 2 of 4, and Qwen3.5-2B on 1 of 4.
-- **Known instrument defect (provenance confound).** Provenance scored highest (3/4, 4/4, 4/4),
-  but 3 of the 4 provenance cases have NOT_SUPPORTED as gold, which the Qwen models answer by
-  habit. This set cannot yet separate "rejected the unverified source" from "abstained anyway".
-  See `RESULTS.md`.
-- `SHA256SUMS` covers every file in this package.
+**What failed** (details and exact tests in `STATS.md`):
+
+- **No direct-arm model reliably beats always answering NOT_SUPPORTED** on a paired exact test.
+- **"Decomposition made the 4B model less safe" is withdrawn.** The 4B's wrong acceptances went
+  from 5 to 7 of 30. That is 5 discordant cases one way and 3 the other (exact McNemar
+  p = 0.727), so the change cannot be told apart from noise. Earlier versions of this card
+  said otherwise.
+- **The instruments had defects, now found and documented:**
+  - The output parsers failed open: `UNSUPPORTED` was read as SUPPORTED. 0 of 608 recorded
+    outputs were affected.
+  - A published control number depended on unrelated files.
+  - The registered unanimous-consensus rule can delete a refutation.
+  - The gate reads an unreadable answer as "no opinion", which can delete a veto. 0 of 296
+    recorded answers were affected.
+  - The speed columns did not measure throughput.
+
+**What survives:**
+
+- Moving admissibility and conflict into deterministic code reduced wrong acceptances for **3
+  of 4 models**, significant after Holm correction. The best configuration measured is
+  Qwen3.5-2B decomposed. It wrongly accepted 1 of 30 claims it should have rejected, versus 8 of
+  30 when the same model decided directly.
+- All of this is **in-sample**.
+
+The table below is generated by `analyze.py` from the raw rows, and `verify_claims.py` fails if
+it drifts. "Unsafe accept" means the model said SUPPORTED when the gold answer was REFUTED or
+NOT_SUPPORTED (30 such cases). Consensus rows are replays of recorded answers, not new model
+runs. The veto rule was designed after seeing these data, so it is exploratory.
+
+<!-- BEGIN:container:main -->
+| model | arm | accuracy [95% CI] | unsafe accept [95% CI] | REFUTED recall | exact perm. p | vs always-NS (McNemar p) |
+|---|---|---|---|---|---|---|
+| LFM2.5-1.2B | direct | 10/39 = 0.256 [0.130, 0.421] | 26/30 = 0.867 [0.693, 0.962] | 0/12 | 0.6257 | −7/15, p=0.134 |
+| Qwen3.5-2B | direct | 21/39 = 0.538 [0.372, 0.699] | 8/30 = 0.267 [0.123, 0.459] | 1/12 | 0.0067 | +9/6, p=0.607 |
+| Qwen3.5-4B | direct | 24/39 = 0.615 [0.446, 0.766] | 5/30 = 0.167 [0.056, 0.347] | 4/12 | 0.0004 | +13/7, p=0.263 |
+| Qwen2.5-1.5B | direct | 13/39 = 0.333 [0.191, 0.502] | 12/30 = 0.400 [0.227, 0.594] | 0/12 | 0.6813 | −5/10, p=0.302 |
+| LFM2.5-1.2B | decomposed (A2) | 23/39 = 0.590 [0.421, 0.744] | 9/30 = 0.300 [0.147, 0.494] | 4/12 | 0.0014 | +9/4, p=0.267 |
+| Qwen3.5-2B | decomposed (A2) | 29/39 = 0.744 [0.579, 0.870] | 1/30 = 0.033 [0.001, 0.172] | 10/12 | 0.0000 | +18/7, p=0.043 |
+| Qwen3.5-4B | decomposed (A2) | 28/39 = 0.718 [0.551, 0.850] | 7/30 = 0.233 [0.099, 0.423] | 5/12 | 0.0000 | +14/4, p=0.031 |
+| Qwen2.5-1.5B | decomposed (A2) | 22/39 = 0.564 [0.396, 0.722] | 4/30 = 0.133 [0.038, 0.307] | 10/12 | 0.0002 | +16/12, p=0.572 |
+| Qwen3.5-2B ∧ LFM2.5-1.2B | unanimous consensus (replay) | 25/39 = 0.641 [0.472, 0.788] | 2/30 = 0.067 [0.008, 0.221] | 4/12 | 0.0003 | +9/2, p=0.065 |
+| Qwen3.5-2B ∧ Qwen3.5-4B | unanimous consensus (replay) | 27/39 = 0.692 [0.524, 0.830] | 1/30 = 0.033 [0.001, 0.172] | 4/12 | 0.0000 | +12/3, p=0.035 |
+| Qwen3.5-2B ∧ LFM2.5-1.2B | veto consensus (replay, exploratory) | 26/39 = 0.667 [0.498, 0.809] | 1/30 = 0.033 [0.001, 0.172] | 10/12 | 0.0000 | +15/7, p=0.134 |
+| Qwen3.5-2B ∧ Qwen3.5-4B | veto consensus (replay, exploratory) | 31/39 = 0.795 [0.635, 0.907] | 0/30 = 0.000 [0.000, 0.116] | 11/12 | 0.0000 | +19/6, p=0.015 |
+<!-- END:container:main -->
+
+## Replication status
+
+All times are 2026-10-02 UTC. Commits are on the public GitHub branch
+[`bench/evidence-boundary-pilot`](https://github.com/holland202/sovereign-veritas/tree/bench/evidence-boundary-pilot/tools/evidence_bench).
+
+| study | cases | registered | status |
+|---|---|---|---|
+| v0: 3 models, direct | 39 | `PREREG.md`, local commit `1ae3cb6` (order stated, not publicly provable) | done, container |
+| A1: Qwen3.5-4B, direct | 39 | `PREREG_A1.md`, [`9081da5`](https://github.com/holland202/sovereign-veritas/commit/9081da5), 20:34 | done, container |
+| A2: decomposed arm, 4 models | 39 | `PREREG_A2.md`, [`9aaf3df`](https://github.com/holland202/sovereign-veritas/commit/9aaf3df), 20:38 | done, container |
+| exact re-analysis | 39 | post hoc, labelled as such | done, `STATS.md` |
+| H1: 110 held-out cases, generated from a fixed seed | 110 | `PREREG_H1.md`, [`0dbe6a3`](https://github.com/holland202/sovereign-veritas/commit/0dbe6a3), 21:32:52; veto amendment `PREREG_H1_V.md`, [`d25a819`](https://github.com/holland202/sovereign-veritas/commit/d25a819), 21:37 | running, container |
+| phone: A1-P7, A2-P7, H1-P10 (Galaxy S25 Ultra, Termux) | — | in the files above | UNRUN |
+
+## Versions of this dataset
+
+| Hub revision | contents |
+|---|---|
+| `347783a` | v0 |
+| `fb80b2d` | A1 and A2 |
+| this revision | exact re-analysis and corrections, held-out case set and its preregistration, test suite, mutation tests, phone thermal benchmark, derived predictions table |
 
 ## Files
+
 | file | what it does |
 |---|---|
-| `make_cases.py` | builds `cases.jsonl` deterministically |
-| `oracle.py` | re-derives every gold label from hidden structure; exits 1 on any mismatch |
-| `prompt.py` | the exact system prompt, rendering, and label parser |
-| `run_bench.py` | starts `llama-server`, runs all cases, writes resumable JSONL + manifest (model SHA-256, prompt-set SHA-256, llama.cpp build, threads, seed) |
-| `score.py` | accuracy, unsafe-accept, constant baselines, shuffled-gold control, rep determinism |
-| `gate.py` | deterministic gate for the decomposed arm; `python gate.py` runs its controls |
-| `run_decomposed.py` | decomposed arm: per-item stance extraction, gate decides |
-| `score_a2.py` | direct vs decomposed comparison, incl. the 34 model-dependent cases |
+| `make_cases.py` → `cases.jsonl` | builds the 39 v0 cases deterministically |
+| `simulate_cases.py` → `heldout/cases_h1.jsonl` | generates the 110 held-out cases from seed 20261002 (`MANIFEST_H1.json` has the digests) |
+| `oracle.py` | derives every gold label from hidden structure |
+| `label_audit.py` | re-derives each held-out record's hidden label from its text, independently of the generator |
+| `prompt.py`, `parsing.py` | direct-arm prompt; hardened, fail-closed output parsers (legacy parsers kept for reproduction) |
+| `run_bench.py`, `run_decomposed.py`, `run_suite.py` | run the arms through `llama-server`; resumable JSONL plus a manifest of hashes per run |
+| `gate.py` | the registered deterministic gate (bound by hash; not edited) |
+| `gate_strict.py` | exploratory fix for the gate's unreadable-answer defect (not preregistered) |
+| `consensus.py`, `consensus_veto.py` | registered unanimous rule (known defect) and the veto rule that fixes it |
+| `stats.py` | exact statistics, stdlib only: Clopper-Pearson, McNemar, exact permutation test, Holm, kappas |
+| `analyze.py` | every table in `STATS.md`, plus the derived predictions table |
+| `sim_gate.py` | Bayesian simulation that produced H1's registered prediction intervals |
+| `verify_claims.py` | recomputes every published number and fails on any mismatch |
+| `tests/`, `mutate.py` | test suite; mutation tests that check the suite catches planted bugs |
+| `device_bench.py` | sustained-load phone benchmark: does throughput hold under heat? (H1-P10) |
+| `taxonomy.py`, `legacy_mc.py` | failure classes and case hashes; exact reproduction of the old Monte Carlo control |
+| `score.py`, `score_a2.py` | the original scorers, kept for reproduction |
+| `SHA256SUMS` | hashes of every file in this package |
 
-Stdlib Python only. No GPU/NPU claims: every run is CPU and the manifest says so.
+## Data fields
+
+**cases**, **cases_h1**: one row per case.
+
+| field | meaning |
+|---|---|
+| `id` | case id: `C<category>-<n>` (v0) or `H1-<code>-<n>` (held out) |
+| `category`, `subtype` | what the case tests (`subtype` in H1 only) |
+| `proposition` | the claim |
+| `evidence` | list of records: `text`, `source`, `verified`, `date`, and the hidden gold `stance` (support / refute / neutral), which is never shown to a model |
+| `framing` | optional requester note; in asserted-conclusion cases it pushes a wrong verdict |
+| `expected` | gold verdict from `oracle.py` |
+| `injected_label`, `pushed_label` | H1 only: the wrong verdict an injection or a requester note pushes toward |
+
+A record is admissible when it is verified and dated on or after 2026-09-01.
+
+**predictions** (derived): one row per run and case, with the run, arm, model, case id and
+`case_sha256`, the expected and predicted verdicts, the failure class, whether the model
+followed an injection or a requester push, the per-record answers, the raw output, and
+`source`. `source` is the file and line of the raw row, or, for a consensus replay, the rows it
+combined.
+
+## Check it yourself (one command at a time)
+
+```
+python -m unittest discover -s tests -v
+```
+```
+python verify_claims.py --full
+```
+```
+python mutate.py
+```
+
+All three are stdlib Python; scipy is used only if it is installed. `verify_claims.py`
+recomputes every published number from the raw rows. `mutate.py` plants deliberate bugs and
+checks that the tests catch them.
 
 ## Reproduce on a phone (Termux), one command at a time
 
 ```
 pkg install python git llama-cpp
 ```
-If `llama-cpp` is not in your Termux repo, build llama.cpp from source instead.
+If `llama-cpp` is not in your Termux repo, build llama.cpp from source instead. The JSONL files
+are in the GitHub branch (force-added; that repo's `.gitignore` excludes `*.jsonl`).
+`python make_cases.py` also regenerates `cases.jsonl` byte for byte (SHA-256 `76714497…9e19`).
 
-Download this dataset (it contains `cases.jsonl`). If you work from the GitHub branch
-`bench/evidence-boundary-pilot` instead, regenerate the cases first: that repo's `.gitignore`
-excludes `*.jsonl`. The output is byte-identical (SHA-256 `76714497…9e19`).
-
-```
-python make_cases.py
-```
 ```
 mkdir -p ~/models
 ```
@@ -116,8 +231,8 @@ curl -L -o ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf https://huggingface.co/bartowski
 ```
 sha256sum ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf
 ```
-Must print `57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8`. A size check is
-not enough on Android (null-byte downloads have the right size).
+This must print `57a1085840f497d764a7fc5d346922dbde961efb54cc792ea81d694fd846a1d8`. A size
+check is not enough on Android, because null-byte downloads have the right size.
 
 ```
 termux-wake-lock
@@ -128,32 +243,74 @@ cd ~/sovereign-evidence-bench
 ```
 python run_bench.py --model ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf --label s25 --threads 6
 ```
-If Android kills the run, re-run the same command: finished cases are skipped.
+If Android kills the run, re-run the same command. Finished cases are skipped.
 
 ```
 python score.py s25
 ```
 
-The candidate (Qwen3.5-2B) is shown above. The other two models follow the same pattern:
+Sustained-load benchmark (H1-P10; needs `llama-bench` on your PATH; takes 20 minutes):
+
+```
+python device_bench.py --model ~/models/Qwen_Qwen3.5-2B-Q4_K_M.gguf --minutes 20
+```
+
+The other models follow the same pattern:
 
 | file | Hub repo | SHA-256 |
 |---|---|---|
 | `qwen2.5-1.5b-instruct-q4_k_m.gguf` | `Qwen/Qwen2.5-1.5B-Instruct-GGUF` | `6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e` |
 | `LFM2.5-1.2B-Instruct-Q4_K_M.gguf` | `LiquidAI/LFM2.5-1.2B-Instruct-GGUF` | `b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5` |
+| `Qwen_Qwen3.5-4B-Q4_K_M.gguf` | `bartowski/Qwen_Qwen3.5-4B-GGUF` | `13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983` |
 
-A hash match proves you have the file the Hub serves. It does not prove who made it — the
-Qwen3.5 file is a third-party quantization.
+A hash match proves you have the file the Hub serves. It does not prove who made it: the
+Qwen3.5 files are third-party quantizations.
+
+## Related work
+
+Thorsu, *Sovereign Evidence Observatory* (Hugging Face dataset and Space, Apache-2.0, 2026) is
+a public casebook that turns multi-model agreement, disagreement and abstention into
+inspectable evidence objects, rather than treating consensus as truth. It shares vocabulary
+with this bench (sovereign, evidence-first, provenance) and asks a related question with a
+different method. No priority or novelty is claimed here.
+
+## Reviews
+
+Five AI systems reviewed the earlier version on request: ChatGPT, Grok, Perplexity, Gemini and
+Copilot. [`REVIEW_LOG.md`](REVIEW_LOG.md) lists what each one claimed, how the claim was
+checked, and what changed.
 
 ## Credits
-Chad Edward Holland — direction, research program. Claude (Opus 5.5, Anthropic) — case set,
-harness, container run. Experimental framing drew on a plan drafted with ChatGPT.
+
+- Chad Edward Holland: direction, research program, phone runs.
+- Claude (Opus 5.5, Anthropic): case sets, harness, container runs, statistics and tests.
+- The experimental framing drew on a plan drafted with ChatGPT.
+- Review comments came from ChatGPT, Grok, Perplexity, Gemini and Copilot.
+
+## Citation
+
+```bibtex
+@misc{holland2026evidencebench,
+  author       = {Holland, Chad Edward},
+  title        = {Sovereign Evidence-Boundary Bench: preregistered tests of whether small
+                  local models can hold an evidence boundary},
+  year         = {2026},
+  howpublished = {Hugging Face dataset \url{https://huggingface.co/datasets/holland202/sovereign-evidence-bench}},
+  note         = {Container results; phone runs pending}
+}
+```
 
 ## Publish to Hugging Face (from Termux)
 
-Create a **write** token at huggingface.co/settings/tokens. Type it only into Termux, never into a chat.
+Create a **write** token at huggingface.co/settings/tokens. Type it only into Termux, never
+into a chat, and revoke it when the upload is done. The plain `pip install -U huggingface_hub`
+fails on Termux, because its `hf-xet` dependency needs a Rust build. This works instead:
 
 ```
-pip install -U huggingface_hub
+pip install --no-deps -U huggingface_hub
+```
+```
+pip install click filelock fsspec packaging pyyaml tqdm typing-extensions httpx2
 ```
 ```
 hf auth login

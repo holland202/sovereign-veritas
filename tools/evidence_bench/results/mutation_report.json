@@ -1,0 +1,134 @@
+{
+  "mutants": 17,
+  "KILLED": 17,
+  "ERRORED": 0,
+  "SURVIVED": 0,
+  "suites": [
+    "test_gate_properties",
+    "test_parsers",
+    "test_oracle_and_cases",
+    "test_stats",
+    "test_taxonomy"
+  ],
+  "report": [
+    {
+      "id": "G1",
+      "file": "gate.py",
+      "bug": "verified OR fresh is enough to count",
+      "outcome": "KILLED",
+      "first_failing_test": "test_freshness_boundary_is_inclusive"
+    },
+    {
+      "id": "G2",
+      "file": "gate.py",
+      "bug": "evidence dated on the cutoff day is dropped",
+      "outcome": "KILLED",
+      "first_failing_test": "test_freshness_boundary_is_inclusive"
+    },
+    {
+      "id": "G3",
+      "file": "gate.py",
+      "bug": "inadmissible evidence counts",
+      "outcome": "KILLED",
+      "first_failing_test": "test_freshness_boundary_is_inclusive"
+    },
+    {
+      "id": "G4",
+      "file": "gate.py",
+      "bug": "an unreadable answer counts as support",
+      "outcome": "KILLED",
+      "first_failing_test": "test_supported_needs_an_admissible_true_and_no_admissible_false"
+    },
+    {
+      "id": "G5",
+      "file": "gate.py",
+      "bug": "conflicting evidence is accepted",
+      "outcome": "KILLED",
+      "first_failing_test": "test_unanimous_defect_on_v0_case_C5_02"
+    },
+    {
+      "id": "G6",
+      "file": "gate.py",
+      "bug": "conflicting evidence is refuted",
+      "outcome": "KILLED",
+      "first_failing_test": "test_unanimous_defect_on_v0_case_C5_02"
+    },
+    {
+      "id": "G7",
+      "file": "gate.py",
+      "bug": "the gate never accepts anything",
+      "outcome": "KILLED",
+      "first_failing_test": "test_unanimous_defect_on_v0_case_C5_02"
+    },
+    {
+      "id": "S1",
+      "file": "gate_strict.py",
+      "bug": "strict gate only catches missing answers, not unreadable ones",
+      "outcome": "KILLED",
+      "first_failing_test": "test_unreadable_answer_deletes_a_veto_in_the_bound_gate"
+    },
+    {
+      "id": "S2",
+      "file": "gate_strict.py",
+      "bug": "strict veto ignores FALSE",
+      "outcome": "KILLED",
+      "first_failing_test": "test_strict_veto_accepts_only_if_every_member_accepts"
+    },
+    {
+      "id": "V1",
+      "file": "consensus_veto.py",
+      "bug": "a veto needs every extractor to object",
+      "outcome": "KILLED",
+      "first_failing_test": "test_unanimous_defect_on_v0_case_C5_02"
+    },
+    {
+      "id": "V2",
+      "file": "consensus_veto.py",
+      "bug": "one extractor's TRUE is enough",
+      "outcome": "KILLED",
+      "first_failing_test": "test_veto_acceptance_implies_every_member_accepts_random"
+    },
+    {
+      "id": "P1",
+      "file": "parsing.py",
+      "bug": "no left word boundary: UNSUPPORTED reads as SUPPORTED",
+      "outcome": "KILLED",
+      "first_failing_test": "test_affixed_or_negated_labels_never_accept"
+    },
+    {
+      "id": "P2",
+      "file": "parsing.py",
+      "bug": "negation before a label is ignored",
+      "outcome": "KILLED",
+      "first_failing_test": "test_a3_vocabulary"
+    },
+    {
+      "id": "P3",
+      "file": "parsing.py",
+      "bug": "an answer with two labels picks one",
+      "outcome": "KILLED",
+      "first_failing_test": "test_verdict_table"
+    },
+    {
+      "id": "P4",
+      "file": "parsing.py",
+      "bug": "'NOT SUPPORTED' with a space is not recognised",
+      "outcome": "KILLED",
+      "first_failing_test": "test_verdict_table"
+    },
+    {
+      "id": "T1",
+      "file": "stats.py",
+      "bug": "McNemar p-value one-sided",
+      "outcome": "KILLED",
+      "first_failing_test": "test_mcnemar_is_a_two_sided_binomial_test"
+    },
+    {
+      "id": "T2",
+      "file": "stats.py",
+      "bug": "Holm adjustment loses monotonicity",
+      "outcome": "KILLED",
+      "first_failing_test": "test_holm"
+    }
+  ]
+}

@@ -7,6 +7,14 @@ both before the corresponding outputs existed. Both amendments were designed **a
 seeing v0 results, on the **same 39 cases**: they are follow-up probes, and any gain here
 is at risk of being tuned to this case set until it is checked on held-out cases.
 
+> **Correction, 2026-10-02 (exact re-analysis — `STATS.md`).** The text below is unchanged.
+> Failure 1 overstates. Qwen3.5-4B unsafe accept going 5/30 → 7/30 is 5 discordant cases one
+> way and 3 the other (exact McNemar p = 0.727): decomposition *did not make the 4B safer*; it
+> is not shown to have made it less safe. A2-P2 stays refuted by its registered rule. The
+> safety gains for Qwen3.5-2B, LFM2.5 and Qwen2.5 are significant after Holm correction.
+> A1-P7's "gen tok/s" was badly operationalised (3–6 generated tokens per call); see H1-P10.
+> The consensus idea in "Open doors" has a defect found later: see `consensus_veto.py`.
+
 ## What failed (read this first)
 
 1. **A2-P2 REFUTED: decomposition made the 4B model *less* safe.** UNSAFE_ACCEPT rose from

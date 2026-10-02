@@ -4,6 +4,14 @@
 Run 2026-10-02 on a 2-core x86_64 Linux container, llama.cpp `bed0a85`, CPU, 2 threads,
 temperature 0, seed 0, 2 reps. Preregistration: `PREREG.md`, committed `1ae3cb6` in the working repo before any output. That commit was local, so the public record is this branch, not an external timestamp — treat the ordering as stated, not proven.
 
+> **Correction, 2026-10-02 (exact re-analysis — `STATS.md`).** The text below is unchanged.
+> (1) The scorecard's "beats" verdicts are point-estimate comparisons. On a paired exact test
+> no direct model beats always-NOT_SUPPORTED (Qwen3.5-2B: 9 better / 6 worse, p = 0.607).
+> (2) The "shuffle p95" column was drawn from a random stream shared across result files; the
+> exact 95th percentiles are LFM2.5 0.3333, Qwen3.5-2B 0.4615, Qwen2.5-1.5B 0.4615 (published
+> 0.4359). Every verdict is unchanged. (3) The tok/s columns are not throughput: each call
+> generated 3–6 tokens, and prompt caching made the models process different prompt lengths.
+
 ## What failed (read this first)
 
 1. **Two of three models are indistinguishable from chance.** LFM2.5-1.2B (25.6%) and
