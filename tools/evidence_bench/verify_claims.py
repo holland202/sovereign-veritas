@@ -53,24 +53,46 @@ def blocks_for(label):
     return _cache[label]
 
 
+BLOCK_RE = re.compile(r"<!-- BEGIN:([\w:]+) -->\n(.*?)\n?<!-- END:\1 -->", re.S)
+
+
+def want_for(key):
+    """The generated text a `<!-- BEGIN:key -->` block must contain."""
+    if key == "sim_h1":
+        import sim_gate
+        return sim_gate.markdown(load_json("results", "sim_h1_predictions.json")["predictions"])
+    label, block = key.split(":")
+    if block in ("scorecard", "simcheck", "findings"):
+        import score_h1
+        if block == "findings":
+            return score_h1.findings(label, LABEL_CASES[label])
+        res = blocks_for(label)
+        return score_h1.markdown(score_h1.evaluate(res)) if block == "scorecard" else score_h1.simcheck(res)
+    return analyze.BLOCKS[block](blocks_for(label))
+
+
 def check_blocks():
-    import sim_gate
     for doc in DOCS:
         s = read(doc)
         if s is None:
             continue
-        for m in re.finditer(r"<!-- BEGIN:([\w:]+) -->\n(.*?)\n<!-- END:\1 -->", s, re.S):
+        for m in BLOCK_RE.finditer(s):
             key, body = m.group(1), m.group(2)
-            if key == "sim_h1":
-                sim = load_json("results", "sim_h1_predictions.json")
-                want = sim_gate.markdown(sim["predictions"])
-            else:
-                label, block = key.split(":")
-                want = analyze.BLOCKS[block](blocks_for(label))
+            want = want_for(key)
             check(body == want, f"{doc}: block {key}")
             if body != want:
                 import difflib
                 print("\n".join(difflib.unified_diff(body.splitlines(), want.splitlines(), "doc", "code", lineterm="", n=0)))
+
+
+def fill(doc):
+    """Write generated content into every block of `doc` (python verify_claims.py --fill DOC)."""
+    path = os.path.join(HERE, doc)
+    s = read(doc)
+    out = BLOCK_RE.sub(lambda m: f"<!-- BEGIN:{m.group(1)} -->\n{want_for(m.group(1))}\n<!-- END:{m.group(1)} -->", s)
+    with open(path, "w") as fh:
+        fh.write(out)
+    print(f"filled {len(BLOCK_RE.findall(s))} blocks in {doc}")
 
 
 def check_results_md():
@@ -200,6 +222,42 @@ def check_readme():
     imp = gate_strict.recorded_impact("container", "cases.jsonl")
     check(f"{imp['unreadable']} of {imp['admissible_answers']} recorded answers were affected" in f, "README prose: unreadable answers")
     check("0 of 608 recorded outputs were affected" in f, "README prose: parser (608 pinned in tests/test_parsers.py)")
+    if read("RESULTS_H1.md") is not None:
+        check_h1_prose(f, "README.md")
+
+
+def check_h1_prose(f, doc):
+    """H1 numbers quoted in hand-written prose (README summary; RESULTS_H1 table notes)."""
+    import score_h1
+    res = blocks_for("container_h1")
+    R, P = res["runs"], res["paired"]
+    Q2, Q4, LFM = score_h1.Q2, score_h1.Q4, score_h1.LFM
+    if doc == "README.md":
+        sc = score_h1.evaluate(res)
+        reg = [r for r in sc if r["id"].startswith("H1-")]
+        conf = sum(r["verdict"] == "CONFIRMED" for r in reg)
+        refu = sum(r["verdict"] == "REFUTED" for r in reg)
+        unrun = sum(r["verdict"] == "UNRUN" for r in reg)
+        check(f"Of {len(reg)} registered predictions, {conf} were confirmed (one only at the boundary of its interval), "
+              f"{refu} was refuted, and {unrun} are unrun" in f, "README prose: H1 scorecard tally")
+        d, a = R[f"direct/{Q2}"], R[f"decomposed_a2/{Q2}"]
+        p1 = P["decomposed_a2 vs direct / Qwen3.5-2B"]["unsafe"]
+        check(f"fell from {d['unsafe_k']} to {a['unsafe_k']} of 83 (exact McNemar p = {p1['p']:.4f})" in f, "README prose: H1-P1")
+        u = R[f"consensus/{Q2}+{LFM}"]
+        check(f"({u['unsafe_k']} vs {a['unsafe_k']} of 83)" in f, "README prose: H1-P6")
+        a4, b4, a2_, b2 = R[f"decomposed_a2/{Q4}"], R[f"decomposed_a3/{Q4}"], R[f"decomposed_a2/{Q2}"], R[f"decomposed_a3/{Q2}"]
+        check(f"cut Qwen3.5-4B's wrong acceptances from {a4['unsafe_k']} to {b4['unsafe_k']} of 83 but raised Qwen3.5-2B's from "
+              f"{a2_['unsafe_k']} to {b2['unsafe_k']}" in f, "README prose: A3 wording effect")
+        check(f"LFM2.5-1.2B in {R[f'decomposed_a2/{LFM}']['inj_follow_k']} of 10 injection cases" in f, "README prose: H1 injection")
+        check(f"{a['unsafe_n']} such cases here, {blocks_for('container')['runs'][f'direct/{Q2}']['unsafe_n']} in the original set" in f,
+              "README prose: unsafe denominators")
+    else:
+        cases = [json.loads(l) for l in read(os.path.join("heldout", "cases_h1.jsonl")).splitlines()]
+        import gate
+        ns = sum(c["expected"] == "NOT_SUPPORTED" for c in cases)
+        adm = sum(gate.admissible(it) for c in cases for it in c["evidence"])
+        check(f"({ns}/{len(cases)} on this set)" in f, f"{doc} prose: always-NS baseline")
+        check(f"on the {adm} admissible records" in f, f"{doc} prose: admissible record count")
 
 
 def check_review_log():
@@ -251,12 +309,17 @@ def check_sim_determinism():
 
 
 def main():
+    if "--fill" in sys.argv:
+        fill(sys.argv[sys.argv.index("--fill") + 1])
+        return 0
     check_blocks()
     check_results_md()
     check_results_a1a2()
     check_stats_prose()
     check_readme()
     check_review_log()
+    if read("RESULTS_H1.md") is not None:
+        check_h1_prose(flat(read("RESULTS_H1.md")), "RESULTS_H1.md")
     check_derived()
     if "--full" in sys.argv:
         check_sim_determinism()

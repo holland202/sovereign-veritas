@@ -1,0 +1,78 @@
+[
+  {
+    "plan": "h1",
+    "finished_utc": "2026-10-02T22:25:43Z",
+    "steps": [
+      {
+        "arm": "direct",
+        "model": "qwen2.5-1.5b",
+        "prompt": null,
+        "rc": 0,
+        "seconds": 162.6
+      },
+      {
+        "arm": "direct",
+        "model": "lfm2.5-1.2b",
+        "prompt": null,
+        "rc": 0,
+        "seconds": 299.4
+      },
+      {
+        "arm": "direct",
+        "model": "qwen3.5-2b",
+        "prompt": null,
+        "rc": 0,
+        "seconds": 249.5
+      },
+      {
+        "arm": "direct",
+        "model": "qwen3.5-4b",
+        "prompt": null,
+        "rc": 0,
+        "seconds": 795.1
+      },
+      {
+        "arm": "decomposed",
+        "model": "qwen2.5-1.5b",
+        "prompt": "a2",
+        "rc": 0,
+        "seconds": 97.0
+      },
+      {
+        "arm": "decomposed",
+        "model": "lfm2.5-1.2b",
+        "prompt": "a2",
+        "rc": 0,
+        "seconds": 189.1
+      },
+      {
+        "arm": "decomposed",
+        "model": "qwen3.5-2b",
+        "prompt": "a2",
+        "rc": 0,
+        "seconds": 210.7
+      },
+      {
+        "arm": "decomposed",
+        "model": "qwen3.5-4b",
+        "prompt": "a2",
+        "rc": 0,
+        "seconds": 452.8
+      },
+      {
+        "arm": "decomposed",
+        "model": "qwen3.5-2b",
+        "prompt": "a3",
+        "rc": 0,
+        "seconds": 216.1
+      },
+      {
+        "arm": "decomposed",
+        "model": "qwen3.5-4b",
+        "prompt": "a3",
+        "rc": 0,
+        "seconds": 494.3
+      }
+    ]
+  }
+]

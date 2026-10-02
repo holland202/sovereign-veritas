@@ -62,7 +62,7 @@ No raw result was changed. What changed is how much the numbers are allowed to m
 - Qwen3.5-2B decomposed is the first configuration that beats always-NOT_SUPPORTED on a
   paired test (18 better / 7 worse, p = 0.043, not multiplicity-adjusted).
 - All of it is in-sample: A1 and A2 were designed after seeing v0 on these same 39 cases.
-  H1 (`PREREG_H1.md`) is the out-of-sample test.
+  H1 (`PREREG_H1.md`) is the out-of-sample test; its results are in `RESULTS_H1.md`.
 
 ## Testing the instruments
 

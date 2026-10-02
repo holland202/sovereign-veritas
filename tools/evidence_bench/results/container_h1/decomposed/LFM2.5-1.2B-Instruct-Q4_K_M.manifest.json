@@ -1,0 +1,20 @@
+{
+  "arm": "decomposed (A2)",
+  "backend_claim": "CPU (no GPU/NPU offload flags passed; -ngl not set)",
+  "cases_sha256": "f131b458a72ce1e7f14d52a0579d07cd6a07e152ed0b85971cfb236609c5c31c",
+  "ctx": 2048,
+  "extract_prompt_set_sha256": "ae3cafafcfdef3982a0621f28cd0cc330b315b87a81c6324a2a7c58aeac14e96",
+  "gate_sha256": "831f99f84b177c555343cc82acb63ea545629620dc9fde5c7ccdbdfe0ac67fb9",
+  "label": "container_h1",
+  "llama_cpp_build": "b1-bed0a85",
+  "load_seconds": 1.03,
+  "max_tokens": 8,
+  "model_file": "LFM2.5-1.2B-Instruct-Q4_K_M.gguf",
+  "model_sha256": "b1b3de114215d9507409a662a501a631095a479a419584e8a2ded6304b19b4f5",
+  "parser": "parsing.parse_stance (hardened)",
+  "reps": 1,
+  "seed": 0,
+  "started_utc": "2026-10-02T21:59:42Z",
+  "temperature": 0.0,
+  "threads": 2
+}

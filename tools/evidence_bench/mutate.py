@@ -22,7 +22,7 @@ Writes results/mutation_report.json; STATS.md quotes it and verify_claims.py che
 import json, os, re, shutil, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SUITES = ["test_gate_properties", "test_parsers", "test_oracle_and_cases", "test_stats", "test_taxonomy"]
+SUITES = ["test_gate_properties", "test_parsers", "test_oracle_and_cases", "test_stats", "test_taxonomy", "test_h1_scoring"]
 
 MUTANTS = [  # (id, file, exact text, replacement, the bug in words)
     ("G1", "gate.py", 'return bool(item["verified"]) and item["date"] >= CUTOFF',

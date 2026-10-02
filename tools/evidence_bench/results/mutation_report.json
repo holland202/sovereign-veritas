@@ -8,7 +8,8 @@
     "test_parsers",
     "test_oracle_and_cases",
     "test_stats",
-    "test_taxonomy"
+    "test_taxonomy",
+    "test_h1_scoring"
   ],
   "report": [
     {
