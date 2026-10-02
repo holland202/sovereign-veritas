@@ -20,6 +20,8 @@ configs:
   data_files: cases.jsonl
 - config_name: container_results
   data_files: results/container/*.jsonl
+- config_name: container_decomposed
+  data_files: results/container/decomposed/*.jsonl
 ---
 
 # evidence_bench — evidence-boundary benchmark for small local models
@@ -36,12 +38,19 @@ preregistered (`PREREG.md`, committed before any model output).
 chance, almost nobody uses REFUTED, and LFM2.5-1.2B obeyed injected instructions 4 of 4 times.
 Full numbers and the failures: [`RESULTS.md`](RESULTS.md).
 
-| model (Q4_K_M) | accuracy | unsafe accept | beats controls |
-|---|---|---|---|
-| Qwen2.5-1.5B-Instruct | 33.3% | 40.0% | no |
-| LFM2.5-1.2B-Instruct | 25.6% | 86.7% | no |
-| Qwen3.5-2B | 53.8% | 26.7% | narrowly |
-| always NOT_SUPPORTED | 46.2% | 0% | — |
+Direct arm (one model call decides) vs decomposed arm (model labels each admissible
+item TRUE/FALSE/NEITHER; deterministic `gate.py` decides). Container only.
+
+| model (Q4_K_M) | direct acc | direct unsafe | decomposed acc | decomposed unsafe |
+|---|---|---|---|---|
+| Qwen2.5-1.5B-Instruct | 33.3% | 40.0% | 56.4% | 13.3% |
+| LFM2.5-1.2B-Instruct | 25.6% | 86.7% | 59.0% | 30.0% |
+| Qwen3.5-2B | 53.8% | 26.7% | 74.4% | 3.3% |
+| Qwen3.5-4B | 61.5% | 16.7% | 71.8% | 23.3% |
+| always NOT_SUPPORTED | 46.2% | 0% | — | — |
+
+The 4B row is the warning: decomposition made it *less* safe. All four rows come from the
+same 39 cases the follow-ups were designed after; see [`RESULTS_A1_A2.md`](RESULTS_A1_A2.md).
 
 > A model's benchmark performance does not authorize the model to act as the evidence
 > boundary. This experiment evaluates whether model *proposals* can be safely constrained by
@@ -55,6 +64,7 @@ Full numbers and the failures: [`RESULTS.md`](RESULTS.md).
   across repetitions for all three models.
 - Preregistration commit `1ae3cb6`, made in a local working repo before any model output.
   It was not publicly timestamped, so the ordering is stated, not proven.
+- **Follow-ups A1 (Qwen3.5-4B) and A2 (decomposed arm)** were preregistered and pushed before their runs, but designed after v0, on the same 39 cases. Results: `RESULTS_A1_A2.md`.
 - **Model roles.** Qwen3.5-2B Q4_K_M is the *candidate selected for the next evaluation*. It
   is not "the best model": it beats the constant baseline by 3 of 39 cases. Qwen2.5-1.5B
   Q4_K_M is the prior baseline. LFM2.5-1.2B Q4_K_M is a comparison model. Model weights are
@@ -77,6 +87,9 @@ Full numbers and the failures: [`RESULTS.md`](RESULTS.md).
 | `prompt.py` | the exact system prompt, rendering, and label parser |
 | `run_bench.py` | starts `llama-server`, runs all cases, writes resumable JSONL + manifest (model SHA-256, prompt-set SHA-256, llama.cpp build, threads, seed) |
 | `score.py` | accuracy, unsafe-accept, constant baselines, shuffled-gold control, rep determinism |
+| `gate.py` | deterministic gate for the decomposed arm; `python gate.py` runs its controls |
+| `run_decomposed.py` | decomposed arm: per-item stance extraction, gate decides |
+| `score_a2.py` | direct vs decomposed comparison, incl. the 34 model-dependent cases |
 
 Stdlib Python only. No GPU/NPU claims: every run is CPU and the manifest says so.
 

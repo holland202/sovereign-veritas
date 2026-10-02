@@ -1,0 +1,19 @@
+{
+  "arm": "decomposed (A2)",
+  "backend_claim": "CPU (no GPU/NPU offload flags passed; -ngl not set)",
+  "cases_sha256": "76714497fbd7c2fcf0307e49585b4ca304d38311675b754b9bdc1df2b8789e19",
+  "ctx": 2048,
+  "extract_prompt_set_sha256": "6c8e81e79b895070167362104d295bb780bad2af52def7060017ce62990cb1d6",
+  "gate_sha256": "831f99f84b177c555343cc82acb63ea545629620dc9fde5c7ccdbdfe0ac67fb9",
+  "label": "container",
+  "llama_cpp_build": "b1-bed0a85",
+  "load_seconds": 4.55,
+  "max_tokens": 8,
+  "model_file": "Qwen_Qwen3.5-4B-Q4_K_M.gguf",
+  "model_sha256": "13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983",
+  "reps": 2,
+  "seed": 0,
+  "started_utc": "2026-10-02T20:50:45Z",
+  "temperature": 0.0,
+  "threads": 2
+}

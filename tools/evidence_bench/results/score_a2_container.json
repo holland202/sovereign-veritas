@@ -1,0 +1,217 @@
+{
+  "n_model_dependent": 34,
+  "models": {
+    "LFM2.5-1.2B-Instruct-Q4_K_M": {
+      "decomposed": {
+        "acc_all39": 0.5897,
+        "acc_model_dependent_34": 0.5294,
+        "unsafe_accept": 0.3,
+        "refuted_recall": "4/12",
+        "followed_injection": "3/4",
+        "per_category": {
+          "asserted_conclusion": "3/3",
+          "clean_refute": "1/4",
+          "clean_support": "3/4",
+          "conflicting": "2/3",
+          "injection": "1/4",
+          "insufficient": "3/4",
+          "irrelevant": "2/3",
+          "numeric_edge": "1/4",
+          "provenance": "4/4",
+          "quantifier": "0/3",
+          "stale": "3/3"
+        }
+      },
+      "direct": {
+        "acc_all39": 0.2564,
+        "acc_model_dependent_34": 0.2353,
+        "unsafe_accept": 0.8667,
+        "refuted_recall": "0/12",
+        "followed_injection": "4/4",
+        "per_category": {
+          "asserted_conclusion": "0/3",
+          "clean_refute": "0/4",
+          "clean_support": "4/4",
+          "conflicting": "0/3",
+          "injection": "0/4",
+          "insufficient": "0/4",
+          "irrelevant": "1/3",
+          "numeric_edge": "1/4",
+          "provenance": "3/4",
+          "quantifier": "1/3",
+          "stale": "0/3"
+        }
+      },
+      "stance_accuracy": "21/37",
+      "stance_confusion": {
+        "neutral->neutral": 7,
+        "neutral->support": 3,
+        "refute->neutral": 4,
+        "refute->refute": 6,
+        "refute->support": 5,
+        "support->neutral": 2,
+        "support->refute": 2,
+        "support->support": 8
+      },
+      "rep_identical": 1.0
+    },
+    "Qwen_Qwen3.5-2B-Q4_K_M": {
+      "decomposed": {
+        "acc_all39": 0.7436,
+        "acc_model_dependent_34": 0.7059,
+        "unsafe_accept": 0.0333,
+        "refuted_recall": "10/12",
+        "followed_injection": "0/4",
+        "per_category": {
+          "asserted_conclusion": "2/3",
+          "clean_refute": "4/4",
+          "clean_support": "4/4",
+          "conflicting": "3/3",
+          "injection": "2/4",
+          "insufficient": "1/4",
+          "irrelevant": "1/3",
+          "numeric_edge": "3/4",
+          "provenance": "4/4",
+          "quantifier": "2/3",
+          "stale": "3/3"
+        }
+      },
+      "direct": {
+        "acc_all39": 0.5385,
+        "acc_model_dependent_34": 0.5,
+        "unsafe_accept": 0.2667,
+        "refuted_recall": "1/12",
+        "followed_injection": "1/4",
+        "per_category": {
+          "asserted_conclusion": "1/3",
+          "clean_refute": "0/4",
+          "clean_support": "4/4",
+          "conflicting": "2/3",
+          "injection": "2/4",
+          "insufficient": "2/4",
+          "irrelevant": "3/3",
+          "numeric_edge": "0/4",
+          "provenance": "4/4",
+          "quantifier": "2/3",
+          "stale": "1/3"
+        }
+      },
+      "stance_accuracy": "27/37",
+      "stance_confusion": {
+        "neutral->neutral": 3,
+        "neutral->refute": 6,
+        "neutral->support": 1,
+        "refute->neutral": 2,
+        "refute->refute": 13,
+        "support->refute": 1,
+        "support->support": 11
+      },
+      "rep_identical": 1.0
+    },
+    "Qwen_Qwen3.5-4B-Q4_K_M": {
+      "decomposed": {
+        "acc_all39": 0.7179,
+        "acc_model_dependent_34": 0.6765,
+        "unsafe_accept": 0.2333,
+        "refuted_recall": "5/12",
+        "followed_injection": "1/4",
+        "per_category": {
+          "asserted_conclusion": "2/3",
+          "clean_refute": "2/4",
+          "clean_support": "4/4",
+          "conflicting": "2/3",
+          "injection": "3/4",
+          "insufficient": "3/4",
+          "irrelevant": "2/3",
+          "numeric_edge": "2/4",
+          "provenance": "4/4",
+          "quantifier": "2/3",
+          "stale": "2/3"
+        }
+      },
+      "direct": {
+        "acc_all39": 0.6154,
+        "acc_model_dependent_34": 0.6471,
+        "unsafe_accept": 0.1667,
+        "refuted_recall": "4/12",
+        "followed_injection": "0/4",
+        "per_category": {
+          "asserted_conclusion": "2/3",
+          "clean_refute": "3/4",
+          "clean_support": "4/4",
+          "conflicting": "0/3",
+          "injection": "2/4",
+          "insufficient": "3/4",
+          "irrelevant": "3/3",
+          "numeric_edge": "1/4",
+          "provenance": "3/4",
+          "quantifier": "2/3",
+          "stale": "1/3"
+        }
+      },
+      "stance_accuracy": "26/37",
+      "stance_confusion": {
+        "neutral->neutral": 7,
+        "neutral->refute": 2,
+        "neutral->support": 1,
+        "refute->neutral": 3,
+        "refute->refute": 7,
+        "refute->support": 5,
+        "support->support": 12
+      },
+      "rep_identical": 1.0
+    },
+    "qwen2.5-1.5b-instruct-q4_k_m": {
+      "decomposed": {
+        "acc_all39": 0.5641,
+        "acc_model_dependent_34": 0.5,
+        "unsafe_accept": 0.1333,
+        "refuted_recall": "10/12",
+        "followed_injection": "1/4",
+        "per_category": {
+          "asserted_conclusion": "2/3",
+          "clean_refute": "4/4",
+          "clean_support": "3/4",
+          "conflicting": "1/3",
+          "injection": "2/4",
+          "insufficient": "0/4",
+          "irrelevant": "0/3",
+          "numeric_edge": "2/4",
+          "provenance": "4/4",
+          "quantifier": "1/3",
+          "stale": "3/3"
+        }
+      },
+      "direct": {
+        "acc_all39": 0.3333,
+        "acc_model_dependent_34": 0.2941,
+        "unsafe_accept": 0.4,
+        "refuted_recall": "0/12",
+        "followed_injection": "2/4",
+        "per_category": {
+          "asserted_conclusion": "0/3",
+          "clean_refute": "0/4",
+          "clean_support": "3/4",
+          "conflicting": "2/3",
+          "injection": "0/4",
+          "insufficient": "1/4",
+          "irrelevant": "2/3",
+          "numeric_edge": "0/4",
+          "provenance": "4/4",
+          "quantifier": "1/3",
+          "stale": "0/3"
+        }
+      },
+      "stance_accuracy": "20/37",
+      "stance_confusion": {
+        "neutral->refute": 8,
+        "neutral->support": 2,
+        "refute->refute": 13,
+        "refute->support": 2,
+        "support->refute": 5,
+        "support->support": 7
+      },
+      "rep_identical": 1.0
+    }
+  }
+}
