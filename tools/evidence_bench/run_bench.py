@@ -140,6 +140,7 @@ def main():
             "python": platform.python_version(), "cpu_count": os.cpu_count(),
             "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "backend_claim": "CPU (no GPU/NPU offload flags passed; -ngl not set)",
+            "parser": "parsing.parse (hardened, fail-closed)",
         }
         json.dump(manifest, open(os.path.join(outdir, f"{stem}.manifest.json"), "w"), indent=2, sort_keys=True)
 

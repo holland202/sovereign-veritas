@@ -13,6 +13,7 @@ per-item stances) and a manifest. Resumable like run_bench.py.
 import argparse, hashlib, json, os, signal, subprocess, sys, time
 
 import gate
+from parsing import parse_stance as _parse_stance, parse_stance_legacy  # noqa: F401
 from run_bench import sha256, http, peak_rss_mb, thermal_c, atomic_append
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -33,10 +34,18 @@ def render(prop, text):
     return f"CLAIM: {prop}\n\nEXCERPT: {text}\n\nAnswer (one word):"
 
 
-def parse_stance(text):
-    t = text.upper()
-    found = {w for w in ("TRUE", "FALSE", "NEITHER") if w in t}
-    return found.pop() if len(found) == 1 else "INVALID"
+# A3 (H1): minimal-pair variant of SYSTEM. Only the two directional label words change
+# (TRUE -> CONFIRMS, FALSE -> CONTRADICTS); NEITHER and every other byte are identical.
+# Tests the unregistered A2 hypothesis that TRUE/FALSE is read as "is this record genuine".
+SYSTEM_A3 = (SYSTEM.replace("Answer TRUE if", "Answer CONFIRMS if")
+                   .replace("Answer FALSE if", "Answer CONTRADICTS if")
+                   .replace("exactly one word: TRUE, FALSE, or NEITHER", "exactly one word: CONFIRMS, CONTRADICTS, or NEITHER"))
+PROMPTS = {"a2": SYSTEM, "a3": SYSTEM_A3}
+
+
+def parse_stance(text, vocab="a2"):
+    """Hardened, fail-closed (see parsing.py). The A2 run used parse_stance_legacy."""
+    return _parse_stance(text, vocab)
 
 
 def main():
@@ -49,11 +58,14 @@ def main():
     ap.add_argument("--reps", type=int, default=2)
     ap.add_argument("--port", type=int, default=8090)
     ap.add_argument("--cases", default=os.path.join(HERE, "cases.jsonl"))
+    ap.add_argument("--extract-prompt", choices=sorted(PROMPTS), default="a2",
+                    help="a2 = TRUE/FALSE/NEITHER (as run in A2); a3 = CONFIRMS/CONTRADICTS/NEITHER")
     a = ap.parse_args()
+    system = PROMPTS[a.extract_prompt]
 
     cases = [json.loads(l) for l in open(a.cases)]
     stem = os.path.basename(a.model).rsplit(".gguf", 1)[0]
-    outdir = os.path.join(HERE, "results", a.label, "decomposed")
+    outdir = os.path.join(HERE, "results", a.label, "decomposed" if a.extract_prompt == "a2" else f"decomposed_{a.extract_prompt}")
     os.makedirs(outdir, exist_ok=True)
     out = os.path.join(outdir, f"{stem}.jsonl")
     done = set()
@@ -67,7 +79,7 @@ def main():
 
     print(f"hashing {a.model} ...", flush=True)
     model_sha = sha256(a.model)
-    prompt_sha = hashlib.sha256((SYSTEM + "".join(
+    prompt_sha = hashlib.sha256((system + "".join(
         render(c["proposition"], it["text"]) for c in cases for it in c["evidence"]
         if gate.admissible(it))).encode()).hexdigest()
 
@@ -93,7 +105,7 @@ def main():
         except Exception:
             pass
         json.dump({
-            "arm": "decomposed (A2)", "label": a.label, "model_file": os.path.basename(a.model),
+            "arm": f"decomposed ({a.extract_prompt.upper()})", "parser": "parsing.parse_stance (hardened)", "label": a.label, "model_file": os.path.basename(a.model),
             "model_sha256": model_sha, "cases_sha256": sha256(a.cases),
             "extract_prompt_set_sha256": prompt_sha, "gate_sha256": sha256(os.path.join(HERE, "gate.py")),
             "reps": a.reps, "threads": a.threads, "ctx": a.ctx, "temperature": 0.0, "seed": 0,
@@ -115,14 +127,14 @@ def main():
                         continue
                     ts = time.time()
                     r = http(base + "/v1/chat/completions", {
-                        "messages": [{"role": "system", "content": SYSTEM},
+                        "messages": [{"role": "system", "content": system},
                                      {"role": "user", "content": render(c["proposition"], it["text"])}],
                         "temperature": 0.0, "top_k": 1, "seed": 0, "max_tokens": 8,
                         "chat_template_kwargs": {"enable_thinking": False}})
                     lat += time.time() - ts
                     text = r["choices"][0]["message"].get("content") or ""
                     raws.append(text[:80])
-                    stances.append(parse_stance(text))
+                    stances.append(parse_stance(text, a.extract_prompt))
                     if r.get("timings", {}).get("predicted_per_second"):
                         gtps.append(r["timings"]["predicted_per_second"])
                 pred = gate.decide(c, stances)

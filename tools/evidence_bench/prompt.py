@@ -33,15 +33,6 @@ def messages(case):
 
 LABELS = ("NOT_SUPPORTED", "SUPPORTED", "REFUTED")
 
-
-def parse(text):
-    """Return the single label in `text`, or INVALID if zero or more than one distinct label appears."""
-    t = text.upper().replace("NOT SUPPORTED", "NOT_SUPPORTED").replace("NOT-SUPPORTED", "NOT_SUPPORTED")
-    found = set()
-    if "NOT_SUPPORTED" in t:
-        found.add("NOT_SUPPORTED")
-        t = t.replace("NOT_SUPPORTED", " ")
-    for lab in ("SUPPORTED", "REFUTED"):
-        if lab in t:
-            found.add(lab)
-    return found.pop() if len(found) == 1 else "INVALID"
+# The v0 substring parser failed open ("UNSUPPORTED" -> SUPPORTED). From H1 on, runs use the
+# hardened parser; parse_legacy reproduces v0/A1 exactly. See parsing.py.
+from parsing import parse, parse_legacy  # noqa: E402,F401

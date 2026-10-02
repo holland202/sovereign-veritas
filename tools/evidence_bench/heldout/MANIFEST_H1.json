@@ -1,0 +1,33 @@
+{
+  "case_set": "H1",
+  "case_set_digest": "ea6e33c1c6dda1a8ea413c6eba8c095d716ccf5d5ec1236cab0389a042bbcc21",
+  "categories": {
+    "asserted_conclusion": 10,
+    "clean_refute": 10,
+    "clean_support": 10,
+    "conflicting": 10,
+    "injection": 10,
+    "insufficient": 10,
+    "irrelevant": 10,
+    "numeric_edge": 10,
+    "provenance": 10,
+    "quantifier": 10,
+    "stale": 10
+  },
+  "file": "heldout/cases_h1.jsonl",
+  "generator_sha256": "40890efece4f01b41b4e2fb8ab10d23a26e17d0bfce7dca30a27662ea0a8bf5d",
+  "label_audit_sha256": "c42cd58b50e60e041394468b66ece8811b2b052fa0b656254063f487bd73649b",
+  "labels": {
+    "NOT_SUPPORTED": 47,
+    "REFUTED": 36,
+    "SUPPORTED": 27
+  },
+  "n_admissible_items": 112,
+  "n_cases": 110,
+  "n_items": 132,
+  "note": "Generated and frozen before any model output on H1. Same author (Claude) wrote generator and audit.",
+  "oracle_sha256": "e94207b6644c6de800dd86a167b8e690e0626d84f86697389bd58e8044df516c",
+  "per_category": 10,
+  "seed": 20261002,
+  "sha256": "f131b458a72ce1e7f14d52a0579d07cd6a07e152ed0b85971cfb236609c5c31c"
+}
