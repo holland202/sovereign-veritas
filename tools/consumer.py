@@ -73,7 +73,7 @@ def main():
     try:
         with open(a.package, "rb") as fh:
             data = fh.read()
-        pkg = json.loads(data)
+        pkg = vp.loads_bounded(data.decode("utf-8"))  # same strict parser as the verifier (DK)
         checks = vp.verify(pkg)
         if a.signature:
             checks.append(("signature", *vp.check_signature(data, a.signature, a.allowed_signers, a.identity)))

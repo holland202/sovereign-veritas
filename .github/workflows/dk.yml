@@ -1,0 +1,25 @@
+name: dk
+on:
+  push:
+  pull_request:
+jobs:
+  dk:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[test]"
+      - name: DK probe reproduces the recorded outcome
+        run: python tools/dk_probe.py
+      - name: DK sabotage (old parser) must exit 1
+        run: |
+          if python tools/dk_probe.py --sabotage > /dev/null; then echo "sabotage passed: probe is vacuous"; exit 1; fi

@@ -67,12 +67,27 @@ def json_depth(text):
     return deepest
 
 
+def _no_duplicate_keys(pairs):
+    # DK (docs/DK_PREREG.md): json.loads keeps the LAST of two equal keys and the digests are computed over the
+    # parsed object, so a planted first value was invisible here while a first-wins parser elsewhere would read it.
+    obj = {}
+    for k, v in pairs:
+        if k in obj:
+            raise ValueError(f"duplicate JSON key {k!r}")
+        obj[k] = v
+    return obj
+
+
+def _no_nonfinite(name):
+    raise ValueError(f"non-standard JSON literal {name} (NaN and Infinity are not JSON)")
+
+
 def loads_bounded(text):
-    """json.loads with a platform-independent nesting limit; deeper input raises ValueError."""
+    """Strict json.loads: nesting limit, no duplicate keys, no NaN/Infinity. Each raises ValueError."""
     d = json_depth(text)
     if d > MAX_JSON_DEPTH:
         raise ValueError(f"JSON nesting depth {d} exceeds the verifier limit {MAX_JSON_DEPTH}")
-    return json.loads(text)
+    return json.loads(text, object_pairs_hook=_no_duplicate_keys, parse_constant=_no_nonfinite)
 
 
 def read_witness_log(path):
