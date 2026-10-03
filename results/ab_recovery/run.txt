@@ -1,0 +1,45 @@
+Amos Tipton's A/B Recovery Challenge | unmodified code at facadc2 | L = 25.0 m
+case A                        B                        prior        xcheck goto        goto_centre rtl         land       
+1    trusted                  fresh, agrees            valid        on     ALLOW       ALLOW       ALLOW       ALLOW      
+1    trusted                  fresh, agrees            valid        off    ALLOW       ALLOW       ALLOW       ALLOW      
+2    spoofed (truly 111 m N)  fresh, true position     valid        on     REFUSE      REFUSE      REFUSE      ALLOW      
+2    spoofed (truly 111 m N)  fresh, true position     valid        off    ALLOW       ALLOW       ALLOW       ALLOW      
+2g   EKF GPS-glitch flag      fresh, agrees            valid        on     REFUSE      REFUSE      REFUSE      ALLOW      
+2g   EKF GPS-glitch flag      fresh, agrees            valid        off    REFUSE      REFUSE      REFUSE      ALLOW      
+3    spoofed, no flag         unavailable              valid        on     REFUSE      REFUSE      REFUSE      ALLOW      
+3    spoofed, no flag         unavailable              valid        off    ALLOW       ALLOW       ALLOW       ALLOW      
+4    spoofed, no flag         stale (600 s, labelled)  valid        on     ALLOW       ALLOW       ALLOW       ALLOW      
+4    spoofed, no flag         stale (600 s, labelled)  valid        off    ALLOW       ALLOW       ALLOW       ALLOW      
+5    spoofed, no flag         unavailable              invalidated  on     REFUSE      REFUSE      REFUSE      ALLOW      
+5    spoofed, no flag         unavailable              invalidated  off    ALLOW       ALLOW       ALLOW       ALLOW      
+6    spoofed, no flag         stale (600 s, labelled)  invalidated  on     ALLOW       ALLOW       ALLOW       ALLOW      
+6    spoofed, no flag         stale (600 s, labelled)  invalidated  off    ALLOW       ALLOW       ALLOW       ALLOW      
+7    spoofed, no flag         derived from A           invalidated  on     ALLOW       ALLOW       ALLOW       ALLOW      
+7    spoofed, no flag         derived from A           invalidated  off    ALLOW       ALLOW       ALLOW       ALLOW      
+8    spoofed, no flag         cached case-1 snapshot   invalidated  on     ALLOW       ALLOW       ALLOW       ALLOW      
+8    spoofed, no flag         cached case-1 snapshot   invalidated  off    ALLOW       ALLOW       ALLOW       ALLOW      
+
+why case 1 goto (on): PASS - all goto rules hold -> ALLOW []
+why case 2 goto (on): FAIL - autopilot and independent position disagree by 111.2 m > 25.0 m -> REFUSE ['verification_not_passed']
+why case 2g goto (on): FAIL - ekf reports a gps glitch (flags 33599) -> REFUSE ['verification_not_passed']
+why case 3 goto (on): FAIL - no independent position to cross-check -> REFUSE ['verification_not_passed']
+why case 4 goto (on): PASS - all goto rules hold -> ALLOW []
+why case 5 goto (on): FAIL - no independent position to cross-check -> REFUSE ['verification_not_passed']
+why case 6 goto (on): PASS - all goto rules hold -> ALLOW []
+why case 7 goto (on): PASS - all goto rules hold -> ALLOW []
+why case 8 goto (on): PASS - all goto rules hold -> ALLOW []
+
+C0 wiring = main()                       held
+C1 anti-vacuity: case 2 goto REFUSE      held
+AB-P1                                    held
+AB-P2                                    held
+AB-P3                                    held
+AB-P4                                    held
+AB-P5                                    held
+AB-P6                                    held
+AB-P7                                    held
+AB-P8                                    held
+AB-P9                                    held
+AB-P10                                   held
+VERDICT  12 of 12 as registered
+DIGEST   a06a43c285be84d87504fba8552489ec1956510f79954f7069fdd28752ca9d47

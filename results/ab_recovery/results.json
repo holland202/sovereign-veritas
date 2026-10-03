@@ -1,0 +1,1173 @@
+{
+ "digest": "a06a43c285be84d87504fba8552489ec1956510f79954f7069fdd28752ca9d47",
+ "limit_m": 25.0,
+ "pinned_commit": "facadc22d5d62e8288f6a6c97c0de90ff3a0e61a",
+ "predictions": {
+  "AB-P1": true,
+  "AB-P10": true,
+  "AB-P2": true,
+  "AB-P3": true,
+  "AB-P4": true,
+  "AB-P5": true,
+  "AB-P6": true,
+  "AB-P7": true,
+  "AB-P8": true,
+  "AB-P9": true,
+  "C0 wiring = main()": true,
+  "C1 anti-vacuity: case 2 goto REFUSE": true
+ },
+ "rows": [
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "goto",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "goto_centre",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "rtl",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "land",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "goto",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "goto_centre",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "rtl",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "trusted",
+   "B": "fresh, agrees",
+   "action": "land",
+   "case": "1",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "goto",
+   "case": "2",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "autopilot and independent position disagree by 111.2 m > 25.0 m"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "goto_centre",
+   "case": "2",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "autopilot and independent position disagree by 111.2 m > 25.0 m"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "rtl",
+   "case": "2",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "autopilot and independent position disagree by 111.2 m > 25.0 m"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "land",
+   "case": "2",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "goto",
+   "case": "2",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "goto_centre",
+   "case": "2",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "rtl",
+   "case": "2",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed (truly 111 m N)",
+   "B": "fresh, true position",
+   "action": "land",
+   "case": "2",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "617bfd9ab57bd027717eeb55f93f65f462e79804afb2501b25c203244f103ffd",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "goto",
+   "case": "2g",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "ekf reports a gps glitch (flags 33599)"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "goto_centre",
+   "case": "2g",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "ekf reports a gps glitch (flags 33599)"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "rtl",
+   "case": "2g",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "ekf reports a gps glitch (flags 33599)"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "land",
+   "case": "2g",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "goto",
+   "case": "2g",
+   "check": "FAIL",
+   "cross_check": false,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "ekf reports a gps glitch (flags 33599)"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "goto_centre",
+   "case": "2g",
+   "check": "FAIL",
+   "cross_check": false,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "ekf reports a gps glitch (flags 33599)"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "rtl",
+   "case": "2g",
+   "check": "FAIL",
+   "cross_check": false,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "ekf reports a gps glitch (flags 33599)"
+  },
+  {
+   "A": "EKF GPS-glitch flag",
+   "B": "fresh, agrees",
+   "action": "land",
+   "case": "2g",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "24ce3d3d8e3ec4b10f3002c2a8f81704831b6aca3caa89e430581343ee9fbeaa",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto",
+   "case": "3",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "no independent position to cross-check"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto_centre",
+   "case": "3",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "no independent position to cross-check"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "rtl",
+   "case": "3",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "valid",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "no independent position to cross-check"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "land",
+   "case": "3",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto",
+   "case": "3",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto_centre",
+   "case": "3",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "rtl",
+   "case": "3",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "land",
+   "case": "3",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto_centre",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "rtl",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "land",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto_centre",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "rtl",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "land",
+   "case": "4",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "valid",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto",
+   "case": "5",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "no independent position to cross-check"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto_centre",
+   "case": "5",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "no independent position to cross-check"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "rtl",
+   "case": "5",
+   "check": "FAIL",
+   "cross_check": true,
+   "decision": "REFUSE",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [
+    "verification_not_passed"
+   ],
+   "sent": [],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "no independent position to cross-check"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "land",
+   "case": "5",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto",
+   "case": "5",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "goto_centre",
+   "case": "5",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "rtl",
+   "case": "5",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "unavailable",
+   "action": "land",
+   "case": "5",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "19b51165c372a563f46ecf890065d5a2b4f03136e8aff7ee57c34d34b9c7a628",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto_centre",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "rtl",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "land",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "goto_centre",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "rtl",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "stale (600 s, labelled)",
+   "action": "land",
+   "case": "6",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "f845df0f9926437c21249fb6041fade738a16e16d32c506116bd59e660d05aaa",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "goto",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "goto_centre",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "rtl",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "land",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "goto",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "goto_centre",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "rtl",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "derived from A",
+   "action": "land",
+   "case": "7",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "4595e999d8a9db2a41dc75a9f20f44b8935718d915514856d772ee2817228a21",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "goto",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "goto_centre",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "rtl",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "land",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": true,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all land rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "goto",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "goto_centre",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353632000,\"lon_e7\":-969270000}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all goto rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "rtl",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "rtl {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all rtl rules hold"
+  },
+  {
+   "A": "spoofed, no flag",
+   "B": "cached case-1 snapshot",
+   "action": "land",
+   "case": "8",
+   "check": "PASS",
+   "cross_check": false,
+   "decision": "ALLOW",
+   "prior_approval": "invalidated (no input exists)",
+   "reasons": [],
+   "sent": [
+    "land {}"
+   ],
+   "snapshot_sha256": "532cc8916e830eec65c57e98f4029a1758e58958690442e8a12a4e9aea5ea67c",
+   "why": "all land rules hold"
+  }
+ ]
+}
