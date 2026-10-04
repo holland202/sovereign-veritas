@@ -95,3 +95,48 @@ byte-identical files, and no other line named a path, a time or a version.
 - The same eight files computed on the S25 itself and compared with the legs.
 - Real IBM hardware rather than emulation; Intel macOS; Windows on Arm.
 - A real Arm server outside GitHub (Works on Arm cloud instances).
+
+---
+
+## Amendment 1 — 2026-10-04 (UTC), first run, all six legs
+
+Run A: GitHub Actions run 37211950455 on `025f4ed` (the workflow commit, after the registration `08237a0`).
+Nothing above this line was edited. `tests.yml` (P0) was still running at the time of writing; its outcome goes in
+Amendment 2.
+
+Platforms as each leg reported them (`platform.platform()`, machine, `sys.byteorder`, Python):
+
+| Leg | Reported | Byte order | Python |
+|---|---|---|---|
+| L1 | Linux x86_64 (Azure) | little | 3.14.7 |
+| L2 | Linux aarch64 (Azure, GitHub Arm runner) | little | 3.14.7 |
+| L3 | macOS 26.6.2 arm64 | little | 3.14.7 |
+| L4 | Windows Server 2025 AMD64 | little | 3.14.7 |
+| L5 | Linux s390x, QEMU | **big** | 3.12.3 |
+| L6 | Linux ppc64le, QEMU | little | 3.12.3 |
+
+No leg was VOID. The comparator selftest passed (agreement on legs differing only in platform lines and `\r\n`; a
+split on one added byte; a P2 failure on a missing pinned digest).
+
+| | Result |
+|---|---|
+| **P1** every leg runs | holds on all six: every command exited 0 |
+| **P2** pinned digests | holds on all six: gate `ab816905…`, conformance `44823d0f…` (kernel and verifier), corridor `4f09350e…` |
+| **P3** one sha256 per file | **fails on L4 for `attacks.txt`**; holds for the other seven files on all six legs |
+| **P4** big-endian (L5) | holds |
+
+**Finding (L4), kept:** the only difference is the first line of `tools/attack_harness.py`'s output:
+
+    L1..L3, L5, L6:  corpus 21 packages, latest runs/vehicle_sitl_v13/sv_package_a911244dfcf7.json
+    L4:              corpus 21 packages, latest runs\vehicle_sitl_v13\sv_package_a911244dfcf7.json
+
+The harness prints a path built with `os.path.relpath`, which uses the platform's separator. Every result line
+(GENUINE, A1–A10, D3 rows, P0–P15) is identical on all six legs, and the same package is chosen as latest. So this
+is a reporting difference, not a different verdict. But P3 as registered compares whole files, and on L4 it fails.
+No normalization rule is added for it (the registration forbids that). The fix goes in the tool, in a separate
+commit, and is judged by a fresh run in Amendment 2. This amendment does not count the fixed run as a pass for the
+code as registered.
+
+Correction to the PR description: five, not four, of these outputs (`contract_kernel`, `contract_verifier`,
+`attacks`, `corridor`, `xb1`) have the same sha256 as the matching logs in Amos Tipton's reproduction bundle.
+Exploratory, not a registered prediction.
