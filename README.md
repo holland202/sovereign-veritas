@@ -187,7 +187,7 @@ Every package states these, and the verifier fails a package that drops one:
 | Gate: 4608-case decision lattice | identical decision digest | S25 3.14.6; container 3.10 and 3.12 |
 | Gate: deliberate bugs planted | 19 of 19 caught | S25 and container |
 | A real package made on the S25 | 16 of 16 checks, `CONSISTENT` | S25 |
-| Damaged copies of that package | 0 of 17,157 truncations, 0 of 200 bit flips accepted | S25, on a package kept only on the device; not reproducible from this repository. The same tool on published `sv_package_5bfc70dfcfa2.json` gave 0 of 17,131 truncations and 0 of 200 bit flips (reviewer run, [docs/external](docs/external/amos-tipton_2026-10-04_reproduction_README.md)). The tool calls `verify()` directly, so it does not exercise the hardened parser or the signature and witness path |
+| Damaged copies of that package | 0 of 17,157 truncations, 0 of 200 bit flips accepted | S25 (2026-09-25, and rerun 2026-10-04 with main's verifier); same result in a Linux container. The package is now published, unsigned: `evidence/device/sv_package_de9fee31b190.json` (`python tools/package_recovery_sim.py evidence/device/sv_package_de9fee31b190.json`). Until 2026-10-04 it was on the device only, which an outside reproduction ([docs/external](docs/external/amos-tipton_2026-10-04_reproduction_README.md)) pointed out. The tool calls `verify()` directly, so it does not exercise the hardened parser or the signature and witness path |
 | Fully consistent rewrite | verifies — the documented limit | container |
 | Single-field rewrites of a real S25 package, every digest recomputed | 405 of 796 verify (33 fields: recorded data nothing can recompute) | S25, unsigned |
 | Same sweep, same S25 package, signed | 0 of 796 verify | S25 |

@@ -42,7 +42,10 @@ Written by Chad Holland with Claude (Opus 5.5) on 2026-10-04. The bundles above 
 
 1. **The README's "0 of 17,157 truncations" row cannot be reproduced from this repository.** It was measured on
    a package kept only on the S25. The reviewer ran the same tool on a published package: 0 of 17,131 strict
-   prefixes and 0 of 200 bit flips accepted. The README row now says where the result was measured.
+   prefixes and 0 of 200 bit flips accepted. Response: the package is now published at
+   `evidence/device/sv_package_de9fee31b190.json` (unsigned; md5 `de9fee31b190cfa5accaf24bd03ab6d8`, 17,157 bytes).
+   Rerun 2026-10-04 on the S25 with main's verifier and in a Linux container: `CONSISTENT`, and 0 of 17,157 truncations,
+   0 of 200 bit flips accepted, on both.
 2. **The corruption tool does not exercise the hardened parser or the signature and witness path.** It calls
    `verify()` directly with ordinary `json.loads`. The README row now says so.
 3. **Two skipped tests in the first run** (git-checkout-only tests) were the mutants-tool defect fixed in PR #35.
