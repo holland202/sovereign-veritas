@@ -19,7 +19,9 @@ import threading
 import time
 import urllib.request
 
-PROMPT = "Q: What is 7338 * 5099? Reply with only the number.\nA:"
+PROMPTS = {"hard": "Q: What is 7338 * 5099? Reply with only the number.\nA:",
+           "easy": "Q: What is 23 * 8? Reply with only the number.\nA:"}
+PROMPT = PROMPTS["hard"]
 FIELDS = ("clock_mhz", "gpu_busy_percentage", "temp", "throttling", "thermal_pwrlevel")
 
 
@@ -65,11 +67,11 @@ def complete(server, n_predict, temperature, seed, prompt=PROMPT):
         return json.load(r)["content"]
 
 
-def measured(server, kgsl, n_predict, temperature, seed):
+def measured(server, kgsl, n_predict, temperature, seed, prompt=PROMPT):
     s = Sampler(kgsl)
     s.start()
     try:
-        content = complete(server, n_predict, temperature, seed)
+        content = complete(server, n_predict, temperature, seed, prompt)
     finally:
         s.stop.set()
         s.join()
@@ -83,7 +85,8 @@ def line(phase, i, sha, st, content):
           f"throttling max {th[1]}  pwrlevel max {pl[1]}  reply {content.strip()[:40]!r}")
 
 
-def run(server, kgsl, model_file, heat_cap_s, log_path, cold_n=5, hot_n=5):
+def run(server, kgsl, model_file, heat_cap_s, log_path, cold_n=5, hot_n=5, prompt_id="hard", cpu=False):
+    prompt = PROMPTS[prompt_id]
     if not os.path.isdir(kgsl):
         could_not_run(f"no kgsl directory at {kgsl}")
     try:
@@ -98,32 +101,34 @@ def run(server, kgsl, model_file, heat_cap_s, log_path, cold_n=5, hot_n=5):
                 h.update(chunk)
         mf = h.hexdigest()
     start = read_kgsl(kgsl)
+    print(f"PROMPT {prompt_id}  backend {'cpu (not judged on kgsl)' if cpu else 'gpu'}")
     print(f"START  model {props.get('model_path') or props.get('default_generation_settings', {}).get('model')}  "
           f"file sha256 {mf}  temp {start['temp']}  clock {start['clock_mhz']}  pwrlevel {start['thermal_pwrlevel']}")
     rec = {"props_model": props.get("model_path"), "model_sha256": mf, "start": start, "cold": [], "heat": [], "hot": []}
 
     for i in range(cold_n):
-        content, sha, st = measured(server, kgsl, 32, 0, 1)
+        content, sha, st = measured(server, kgsl, 32, 0, 1, prompt)
         rec["cold"].append({"sha": sha, "content": content, "state": st})
         line("cold", i + 1, sha, st, content)
 
     t0, k = time.time(), 0
     throttled = False
-    while time.time() - t0 < heat_cap_s:
+    while not cpu and time.time() - t0 < heat_cap_s:
         k += 1
-        _, _, st = measured(server, kgsl, 256, 0.7, 100 + k)
+        _, _, st = measured(server, kgsl, 256, 0.7, 100 + k, prompt)
         rec["heat"].append(st)
         if (st["throttling"][1] or 0) > 0 or (st["thermal_pwrlevel"][1] or 0) > 0:
             throttled = True
             break
-    print(f"HEAT   {k} long generations, {time.time() - t0:.0f} s, throttle seen: {throttled}")
+    if not cpu:
+        print(f"HEAT   {k} long generations, {time.time() - t0:.0f} s, throttle seen: {throttled}")
 
-    for i in range(hot_n):
-        content, sha, st = measured(server, kgsl, 32, 0, 1)
+    for i in range(0 if cpu else hot_n):
+        content, sha, st = measured(server, kgsl, 32, 0, 1, prompt)
         rec["hot"].append({"sha": sha, "content": content, "state": st})
         line("hot", i + 1, sha, st, content)
 
-    ccontent, csha, cst = measured(server, kgsl, 32, 0.8, 2)
+    ccontent, csha, cst = measured(server, kgsl, 32, 0.8, 2, prompt)
     rec["control"] = {"sha": csha, "content": ccontent, "state": cst}
     line("control", 1, csha, cst, ccontent)
 
@@ -134,9 +139,15 @@ def run(server, kgsl, model_file, heat_cap_s, log_path, cold_n=5, hot_n=5):
     p2 = any(((r["state"]["throttling"][1] or 0) > 0 or (r["state"]["thermal_pwrlevel"][1] or 0) > 0) for r in rec["hot"])
     p5 = csha not in cold
     verdict = {}
-    verdict["P4"] = "HELD" if p4 else "REFUTED"
+    if cpu:
+        verdict = {"P1": "HELD" if p1 else "REFUTED", "P2": "NOT RUN (cpu)", "P3": "NOT RUN (cpu)",
+                   "P4": "NOT RUN (cpu)", "P5": "HELD" if p5 else "REFUTED"}
+        p4 = True
+    verdict["P4"] = verdict.get("P4") or ("HELD" if p4 else "REFUTED")
     verdict["P5"] = "HELD" if p5 else "REFUTED"
-    if not p4:
+    if cpu:
+        pass
+    elif not p4:
         verdict.update(P1="NOT JUDGED", P2="NOT JUDGED", P3="NOT JUDGED")
     else:
         verdict["P1"] = "HELD" if p1 else "REFUTED"
@@ -147,6 +158,7 @@ def run(server, kgsl, model_file, heat_cap_s, log_path, cold_n=5, hot_n=5):
     rec["verdict"] = verdict
     with open(log_path, "w") as fh:
         json.dump(rec, fh, indent=1)
+    print(f"SHA    cold {sorted(cold)}  hot {sorted(hot)}  control {csha}")
     print(f"LOG    {log_path}")
     refuted = [p for p, v in verdict.items() if v == "REFUTED" and p != "P2"]
     return 1 if refuted else 0
@@ -211,9 +223,14 @@ def main():
 
     def opt(name, default):
         return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
+    prompt_id, cpu = opt("--prompt", "hard"), "--cpu" in sys.argv
+    if prompt_id not in PROMPTS:
+        could_not_run(f"--prompt must be one of {sorted(PROMPTS)}")
+    default_log = "~/gpu2_run.json" if (prompt_id == "hard" and not cpu and "--prompt" not in sys.argv) else \
+        f"~/gpu3_{prompt_id}_{'cpu' if cpu else 'gpu'}.json"
     sys.exit(run(opt("--server", "http://127.0.0.1:8080"), opt("--kgsl", "/sys/class/kgsl/kgsl-3d0"),
                  opt("--model-file", None), int(opt("--heat-cap", "600")),
-                 os.path.expanduser(opt("--log", "~/gpu2_run.json"))))
+                 os.path.expanduser(opt("--log", default_log)), prompt_id=prompt_id, cpu=cpu))
 
 
 if __name__ == "__main__":
