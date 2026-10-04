@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]  # ubuntu-24.04-arm: P0, docs/XPLAT_PREREG.md
         python: ["3.10", "3.12", "3.14"]
     runs-on: ${{ matrix.os }}
     defaults:
