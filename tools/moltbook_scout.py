@@ -60,6 +60,24 @@ QUESTIONS = {
                       "agent memory needs types for doubt, inference stored as fact"),
 }
 
+# Feed pass (added 2026-10-04 after the first scheduled run): semantic search keeps returning the same top matches,
+# so new hot posts were missed. The scout also reads the hot and new feeds and keeps posts whose title or text
+# matches these words. An entry is a word (any match) or a tuple (all words must appear). Edit freely.
+FEED_SORTS = ("hot", "new")
+FEED_LIMIT = 50
+KEYWORDS = {
+    "Q1-defaulted": ["default", "missing evidence", "fallback", "unmeasured", "assumed value"],
+    "Q2-retry": ["retry", "retries", "timeout", "idempoten", "duplicate", "exactly-once", "replay key"],
+    "Q3-verify-write": ["verify-after-write", "verify after write", "postcondition", "claimed success", "not visible"],
+    "Q4-freshness": ["stale", "freshness", "witness", "rollback"],
+    "Q5-approval": ["approval", "rubber-stamp", "rubber stamp", "human-in-the-loop", "escalat", "permission prompt"],
+    "Q6-independence": ["self-verif", "independent verif", "grades its own", "its own tests", "same model"],
+    "Q7-provenance": ["provenance", ("memory", "measured"), ("memory", "inferred"), ("memory", "condition"), "doubt"],
+    "Q8-authority": ["authoriz", "ambient authority", "capabilit", "permission boundary", "privilege"],
+}
+QUESTIONS.setdefault("Q8-authority", ("Gate capability/authorization scope: delegated or inherited authority",
+                                      "agent inherits authorization from a session it should not"))
+
 CTRL = re.compile(r"[\x00-\x08\x0b-\x1f\x7f​-‏‪-‮⁦-⁩]")
 
 
@@ -153,6 +171,44 @@ def main():
                 lines.append(f"- {'[comment on] ' if rec['kind'] == 'comment' else ''}**{rec['title']}** by {rec['author']} in m/{rec['submolt']}, "
                              f"{rec['upvotes']} up, relevance {rec['relevance']}, id {rec['post_id'][:8]}")
                 lines.append(f"  > {snip}")
+            lines.append("")
+
+        if not asked:
+            fresh_feed, seen_ids = {}, set()
+            for sort in FEED_SORTS:
+                d = get("posts?" + urllib.parse.urlencode({"sort": sort, "limit": FEED_LIMIT}))
+                if "posts" not in d:
+                    errors.append(f"feed {sort}: {d}")
+                    continue
+                for r in d["posts"]:
+                    pid, author = r.get("id"), (r.get("author") or {}).get("name")
+                    if not pid or pid in seen_ids or author == ME or author in MUTE:
+                        continue
+                    seen_ids.add(pid)
+                    text = ((r.get("title") or "") + " " + (r.get("content") or "")).lower()
+                    for fq, words in KEYWORDS.items():
+                        hit = any((all(w in text for w in k) if isinstance(k, tuple) else k in text) for k in words)
+                        if not hit or (pid, fq) in seen:
+                            continue
+                        rec = {"seen_at": now.isoformat(), "question": fq, "post_id": pid, "via": f"feed:{sort}",
+                               "title": clean(r.get("title"), 200), "author": clean(author, 60),
+                               "submolt": clean((r.get("submolt") or {}).get("name"), 40),
+                               "created_at": r.get("created_at"), "upvotes": r.get("upvotes"),
+                               "comment_count": r.get("comment_count"),
+                               "content_sha256": hashlib.sha256((r.get("content") or "").encode()).hexdigest(),
+                               "status": "LEAD"}
+                        led.write(json.dumps(rec) + "\n")
+                        seen.add((pid, fq))
+                        fresh_feed.setdefault(fq, []).append((rec, clean(r.get("content"), 200)))
+            n_feed = sum(len(v) for v in fresh_feed.values())
+            new_total += n_feed
+            lines.append(f"## From the hot/new feeds (keyword match): {n_feed} new")
+            for fq, items in fresh_feed.items():
+                lines.append(f"### {fq}")
+                for rec, snip in items:
+                    lines.append(f"- **{rec['title']}** by {rec['author']}, {rec['upvotes']} up, "
+                                 f"{rec['comment_count']} comments, {rec['via']}, id {rec['post_id'][:8]}")
+                    lines.append(f"  > {snip}")
             lines.append("")
 
     if "--no-replies" not in sys.argv:
