@@ -169,7 +169,7 @@ class FileReservations:
         return token
 
     def _late_path(self, key: str) -> Path:
-        return self._dir / (hashlib.sha256(key.encode("utf-8")).hexdigest() + ".late.jsonl")
+        return self._path(key).with_suffix(".late.jsonl")  # no new hash site (JG-2 P1)
 
     def _move(self, key: str, to: str, why: str | None = None, token: str | None = None) -> None:
         if token is not None:
