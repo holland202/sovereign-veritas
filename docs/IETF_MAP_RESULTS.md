@@ -126,3 +126,23 @@ exit 1
 ## Door (unrun)
 Fix the probe's own control (register a control that changes behaviour, as the post-hoc one did) before this probe
 is pinned in CI. Then consider M5 and M6 as registered changes.
+
+## Correction (2026-10-04, after review by the draft's author; the text above is unchanged)
+
+M13's wording, "the draft specifies no nonce or jti replay protection", understated the draft. Joe Krausz
+pointed this out in an email to Chad Holland on 2026-10-04. Checked against `draft-krausz-verification-state-03`
+§11.2 ("Replay attacks"): receipts carry `iat` and `exp`, which relying parties MUST verify against current time,
+and "claim-binding via v_claim.hash provides resistance to receipt-reuse against a different claim payload."
+
+What still stands: the draft does not require single-use consumption of a receipt **for the same claim**. That
+is the case M13 tested (the consumer refuses the same package a second time). The author separates three things
+that this repository had run together:
+
+- verifying a receipt again, which is not an error;
+- authorizing an action again, which is where an at-most-once policy belongs;
+- "latest in a witness log", which is relative order, not wall-clock freshness.
+
+M13 stays BEYOND THE DRAFT for the same-claim case only. The author's independent pass at `d37779c` reproduced
+CONSISTENT / LATEST_WITNESSED(6) / SIGNED:holland202 and the tampering controls. In his words, that pass is "checks
+of your published implementation, not an independent reimplementation or a broad audit." He has not endorsed this
+repository.
