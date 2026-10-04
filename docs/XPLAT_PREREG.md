@@ -140,3 +140,45 @@ code as registered.
 Correction to the PR description: five, not four, of these outputs (`contract_kernel`, `contract_verifier`,
 `attacks`, `corridor`, `xb1`) have the same sha256 as the matching logs in Amos Tipton's reproduction bundle.
 Exploratory, not a registered prediction.
+
+---
+
+## Amendment 2 — 2026-10-04 (UTC), both runs, verdict
+
+Nothing above this line was edited.
+
+**Run A** — 37211950455 on `025f4ed` (code as registered). **Run B** — 37212453203 on `340298d` (the
+`attack_harness.py` path-separator fix from Amendment 1). Same six legs, same reported platforms; no leg VOID.
+
+| | Run A (as registered) | Run B (path fix) |
+|---|---|---|
+| **P0** Arm in `tests.yml` (3.10, 3.12, 3.14) | holds: run 37211950437, 14 of 14 jobs succeeded, incl. 3 on `ubuntu-24.04-arm` | holds: run 37212453226, 14 of 14 |
+| **P1** every leg runs | holds on all six | holds on all six |
+| **P2** pinned digests | holds on all six | holds on all six |
+| **P3** one sha256 per file | **fails on L4 for `attacks.txt`** (Amendment 1); 7 of 8 files agree | holds: all 8 files agree on all six legs |
+| **P4** big-endian (L5) | holds | holds |
+
+Normalized sha256 per file, run B, identical on all six legs:
+
+    gate.txt               46f1cc049a69
+    contract_kernel.txt    eb1d00298082
+    contract_verifier.txt  36b3e2dad609
+    packages.txt           4335a4ce7693
+    attacks.txt            e9062c8ea3cb
+    corridor.txt           a2c7f9e7a53f
+    recovery.txt           ebdeb2b614ba
+    xb1.txt                1053393f276c
+
+**Verdict as registered:** P0, P1, P2 and P4 hold. P3 does **not** hold for the code as registered (Windows printed
+a path with `\`). It holds after the separate fix in `340298d`, and the fixed run is evidence for the fixed code
+only. No verdict differed on any leg in either run: the eight published packages, the 4,690 contract vectors, the
+4,608-point gate lattice, the attack harness, the corridor, recovery admissibility and XB-1 gave the same results
+on Linux x86_64 and aarch64, macOS arm64, Windows x86_64 and emulated s390x (big-endian) and ppc64le.
+
+**Exploratory, not registered (do not cite as a prediction):**
+- The emulated legs ran Python 3.12.3 and the native legs 3.14.7; outputs agreed byte for byte.
+- Five of the eight files (`contract_kernel`, `contract_verifier`, `attacks`, `corridor`, `xb1`) have the same
+  sha256 as the matching logs in Amos Tipton's reproduction bundle (PR #40), run on another machine at `d37779c`.
+
+**Still not shown:** real IBM hardware (L5 and L6 are emulation), Intel macOS, Windows on Arm, a cloud Arm server,
+and the S25 computing these eight files itself.
