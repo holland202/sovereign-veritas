@@ -1,0 +1,22 @@
+FILES    createAdapter 11, ArpWrapper-only 36
+ARP      total 245 passed 243 failed 1 skipped 1  load errors 0
+SILENT   total 245 passed 192 failed 52 skipped 1  load errors 0 []
+ECHO     total 245 passed 192 failed 52 skipped 1  load errors 0 []
+FLAG     total 245 passed 180 failed 64 skipped 1  load errors 0 []
+HELD     P2  153 tests in 36 ArpWrapper-only files; 0 (adapter, test) results differ from ARP
+REFUTED  P3  createAdapter files with >=1 failure under silent: 0 of 11
+            no failure under silent: src/atomic/ai-layer/AT-AI-001.prompt-input-scan.test.ts  {'passed': 11}
+            no failure under silent: src/atomic/ai-layer/AT-AI-002.prompt-output-scan.test.ts  {'passed': 6}
+            no failure under silent: src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts  {'passed': 11}
+            no failure under silent: src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts  {'passed': 7}
+            no failure under silent: src/atomic/ai-layer/AT-AI-005.pattern-coverage.test.ts  {'passed': 5}
+            no failure under silent: src/atomic/intelligence/AT-INT-002.l1-anomaly-score.test.ts  {'passed': 4}
+            no failure under silent: src/atomic/intelligence/AT-INT-004.budget-exhaustion.test.ts  {'passed': 5}
+            no failure under silent: src/atomic/intelligence/AT-INT-005.baseline-learning.test.ts  {'passed': 5}
+            no failure under silent: src/baseline/BL-002.anomaly-injection.test.ts  {'passed': 5}
+            no failure under silent: src/baseline/BL-003.baseline-persistence.test.ts  {'passed': 4}
+            no failure under silent: src/integration/INT-007.budget-exhaustion-attack.test.ts  {'passed': 6}
+HELD     P4  createAdapter tests passing under echo: 69 of 69
+         (for comparison) createAdapter tests passing under silent: 69
+REFUTED  P5  baseline tests failing under flag-everything: 0
+SABOTAGE caught (P3 or P5 refuted)

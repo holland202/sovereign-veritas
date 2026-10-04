@@ -1,0 +1,19 @@
+FILES    createAdapter 11, ArpWrapper-only 36
+ARP      total 245 passed 243 failed 1 skipped 1  load errors 0
+SILENT   total 245 passed 192 failed 52 skipped 1  load errors 0 []
+ECHO     total 245 passed 192 failed 52 skipped 1  load errors 0 []
+FLAG     total 245 passed 180 failed 64 skipped 1  load errors 0 []
+HELD     P2  153 tests in 36 ArpWrapper-only files; 0 (adapter, test) results differ from ARP
+HELD     P3  createAdapter files with >=1 failure under silent: 11 of 11
+HELD     P4  createAdapter tests passing under echo: 18 of 69
+         (for comparison) createAdapter tests passing under silent: 18
+HELD     P5  baseline tests failing under flag-everything: 9
+            src/baseline/BL-002.anomaly-injection.test.ts | BL-002: Controlled Anomaly Injection should build a baseline from normal observations
+            src/baseline/BL-002.anomaly-injection.test.ts | BL-002: Controlled Anomaly Injection should detect anomalous burst after baseline is established
+            src/baseline/BL-002.anomaly-injection.test.ts | BL-002: Controlled Anomaly Injection should reset baselines completely
+            src/baseline/BL-002.anomaly-injection.test.ts | BL-002: Controlled Anomaly Injection should return z-score 0 before baseline is established
+            src/baseline/BL-002.anomaly-injection.test.ts | BL-002: Controlled Anomaly Injection should track baselines independently per source
+            src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should accumulate baseline data during a session
+            src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should lose all baselines when a new detector is created (simulated restart)
+            src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should lose baselines for all sources on restart
+            src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should require full re-learning after restart (cold start problem)

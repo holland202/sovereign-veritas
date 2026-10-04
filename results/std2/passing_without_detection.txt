@@ -1,0 +1,36 @@
+silent	src/atomic/ai-layer/AT-AI-001.prompt-input-scan.test.ts	AT-AI-001: Prompt Input Scanning should not flag benign input
+silent	src/atomic/ai-layer/AT-AI-001.prompt-input-scan.test.ts	AT-AI-001: Prompt Input Scanning should not flag technical questions about security
+silent	src/atomic/ai-layer/AT-AI-002.prompt-output-scan.test.ts	AT-AI-002: Prompt Output Scanning should not flag normal assistant responses
+silent	src/atomic/ai-layer/AT-AI-002.prompt-output-scan.test.ts	AT-AI-002: Prompt Output Scanning should not flag technical code examples
+silent	src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts	AT-AI-003: MCP Tool Call Scanning should allow tool in allowlist with clean parameters
+silent	src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts	AT-AI-003: MCP Tool Call Scanning should not flag normal commands
+silent	src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts	AT-AI-003: MCP Tool Call Scanning should not flag normal file reads
+silent	src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts	AT-AI-004: A2A Message Scanning should allow trusted sender with clean message
+silent	src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts	AT-AI-004: A2A Message Scanning should not flag normal inter-agent communication
+silent	src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts	AT-AI-004: A2A Message Scanning should not flag task delegation without abuse patterns
+silent	src/atomic/ai-layer/AT-AI-005.pattern-coverage.test.ts	AT-AI-005: AI-Layer Pattern Coverage clean text should produce zero matches across all pattern sets
+silent	src/atomic/ai-layer/AT-AI-005.pattern-coverage.test.ts	AT-AI-005: AI-Layer Pattern Coverage input patterns should not false positive on security discussions
+silent	src/atomic/intelligence/AT-INT-002.l1-anomaly-score.test.ts	AT-INT-002: L1 Statistical Anomaly Scoring should return 0 when insufficient data points exist
+silent	src/atomic/intelligence/AT-INT-002.l1-anomaly-score.test.ts	AT-INT-002: L1 Statistical Anomaly Scoring should return low score for normal frequency patterns
+silent	src/atomic/intelligence/AT-INT-004.budget-exhaustion.test.ts	AT-INT-004: Budget Exhaustion should allow spending when budget is available
+silent	src/atomic/intelligence/AT-INT-005.baseline-learning.test.ts	AT-INT-005: Baseline Learning should return low anomaly score for events matching the baseline
+silent	src/baseline/BL-002.anomaly-injection.test.ts	BL-002: Controlled Anomaly Injection should return z-score 0 before baseline is established
+silent	src/integration/INT-007.budget-exhaustion-attack.test.ts	INT-007: Budget Exhaustion Attack should create a budget controller with tiny budget
+echo	src/atomic/ai-layer/AT-AI-001.prompt-input-scan.test.ts	AT-AI-001: Prompt Input Scanning should not flag benign input
+echo	src/atomic/ai-layer/AT-AI-001.prompt-input-scan.test.ts	AT-AI-001: Prompt Input Scanning should not flag technical questions about security
+echo	src/atomic/ai-layer/AT-AI-002.prompt-output-scan.test.ts	AT-AI-002: Prompt Output Scanning should not flag normal assistant responses
+echo	src/atomic/ai-layer/AT-AI-002.prompt-output-scan.test.ts	AT-AI-002: Prompt Output Scanning should not flag technical code examples
+echo	src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts	AT-AI-003: MCP Tool Call Scanning should allow tool in allowlist with clean parameters
+echo	src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts	AT-AI-003: MCP Tool Call Scanning should not flag normal commands
+echo	src/atomic/ai-layer/AT-AI-003.mcp-tool-scan.test.ts	AT-AI-003: MCP Tool Call Scanning should not flag normal file reads
+echo	src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts	AT-AI-004: A2A Message Scanning should allow trusted sender with clean message
+echo	src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts	AT-AI-004: A2A Message Scanning should not flag normal inter-agent communication
+echo	src/atomic/ai-layer/AT-AI-004.a2a-message-scan.test.ts	AT-AI-004: A2A Message Scanning should not flag task delegation without abuse patterns
+echo	src/atomic/ai-layer/AT-AI-005.pattern-coverage.test.ts	AT-AI-005: AI-Layer Pattern Coverage clean text should produce zero matches across all pattern sets
+echo	src/atomic/ai-layer/AT-AI-005.pattern-coverage.test.ts	AT-AI-005: AI-Layer Pattern Coverage input patterns should not false positive on security discussions
+echo	src/atomic/intelligence/AT-INT-002.l1-anomaly-score.test.ts	AT-INT-002: L1 Statistical Anomaly Scoring should return 0 when insufficient data points exist
+echo	src/atomic/intelligence/AT-INT-002.l1-anomaly-score.test.ts	AT-INT-002: L1 Statistical Anomaly Scoring should return low score for normal frequency patterns
+echo	src/atomic/intelligence/AT-INT-004.budget-exhaustion.test.ts	AT-INT-004: Budget Exhaustion should allow spending when budget is available
+echo	src/atomic/intelligence/AT-INT-005.baseline-learning.test.ts	AT-INT-005: Baseline Learning should return low anomaly score for events matching the baseline
+echo	src/baseline/BL-002.anomaly-injection.test.ts	BL-002: Controlled Anomaly Injection should return z-score 0 before baseline is established
+echo	src/integration/INT-007.budget-exhaustion-attack.test.ts	INT-007: Budget Exhaustion Attack should create a budget controller with tiny budget
