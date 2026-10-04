@@ -12,7 +12,8 @@ between approval and execution, confirmed failure before any effect, and an unce
 observation before retrying. Credit for that design is his. Before the freeze he also supplied the
 reconciliation requirement for retries after `UNKNOWN`, the `ALREADY_COMPLETED` distinction, the round-1
 decisions listed below, the separation of fence permission from write permission, fence events in the
-observer's log with atomic ordering against writes, and the per-attempt observation-availability setting.
+observer's log with atomic ordering against writes, the per-attempt observation-availability setting, and the
+checkpoint-sequenced delayed-write fault.
 This draft, the implementation and any results are this project's. Naming his design does not imply he
 endorses or has reviewed them.
 
@@ -74,7 +75,8 @@ event is appended while that lock is held. So every write is either before a fen
   does not land.
 
 Store invariant, checked by the comparator before anything else: `seq` runs 1, 2, 3… with no gaps; each `write`
-raises `version` by exactly 1; no `write` by T has a higher `seq` than a `fence` of T. A case whose log breaks the
+raises `version` by exactly 1; no `write` by T has a higher `seq` than a `fence` of T; every `rejected`
+(`"fenced"`) event for T has a lower-`seq` `fence` of T. A case whose log breaks the
 invariant is reported as `STORE_DEFECT`, with no outcome class: the store failed, not the system. Before the
 run, the invariant check is shown able to fail on a deliberately broken store (anti-vacuity).
 
@@ -104,6 +106,8 @@ One JSON object per case.
   - `"fail_before_effect"` — the store rejects the write (`rejected`, `"fault"`); nothing lands.
   - `"lose_ack_after_effect"` — the write lands, then the reply to the system is lost (the system sees a timeout).
   - `"fail_record_after_effect"` — the write lands and the reply arrives, then the system's own ledger write fails.
+  - `"hold_write_until_fence"` — the **delayed-write** fault; see "The delayed-write fault" below. Needs
+    `attempts` of at least 2.
 - `attempts`: how many times the caller tries the same intent with the **same** `idempotency_key`. A retry is a
   new call, not a loop inside the system.
 - `attempt_conditions`: one entry per attempt, in order. If omitted, every attempt gets the defaults
@@ -114,6 +118,37 @@ One JSON object per case.
     `set_value` and `fence` are unaffected. This setting **never** affects the observer, which always reads the
     store's files directly after the case. It exists to test the unresolved path: a retry that cannot
     establish what happened must be `HELD`, not written.
+
+## The delayed-write fault (`hold_write_until_fence`)
+
+This fault tests the guarantee the reconciled path relies on: that a fence stops an earlier write which is still
+in flight. It is sequenced by explicit checkpoints, never by timing delays.
+
+1. **Hold.** Attempt 1's `set_value` is intercepted by the store's fault layer **before** it reaches the store.
+   It is not applied and not logged. The system receives a timeout, so the expected report for attempt 1 is
+   `UNKNOWN`.
+2. **Retry.** The harness then starts attempt 2 (and any later attempts) as normal.
+3. **Release, checkpoint A (fence).** When the store applies `fence(t1)` for attempt 1's token `t1`, it releases
+   the held write **inside the same locked step, immediately after the fence event**, before the `fence` call
+   returns to its caller. The released write therefore always has `seq` = the fence's `seq` + 1 and must be
+   logged as `rejected` (`"fenced"`). The store rejecting it is the thing being tested; if it lands instead, the
+   store invariant fails and the case is `STORE_DEFECT`.
+4. **Release, checkpoint B (end of attempts).** If the last attempt has returned its report and no `fence(t1)`
+   has been applied, the harness releases the held write then. It reaches the store unfenced and lands (a
+   `write` by `t1`), so the log shows what the missing fence allowed. The case is marked
+   `LATE_WRITE_UNFENCED` (below), a reported failure.
+
+The held write is released exactly once, at whichever checkpoint comes first. The case never waits for a fence
+that may not come: checkpoint B always ends it. A per-attempt wall-clock limit exists only as a backstop for a
+system that never returns its report; hitting it ends the case as `HARNESS_TIMEOUT`, reported, never skipped. It
+plays no part in ordering.
+
+A new write by attempt 2 counts as reconciled only under the ordinary rule below: `t1` fenced, then a successful
+`read` by attempt 2's token (which will show the rejected late write), then the write, with write permission in
+force.
+
+The harness records, per case: `{"held_token": "t1", "released_at": "fence" | "end_of_attempts", "released_seq":
+int, "result": "rejected" | "write"}`.
 
 ## Who establishes what (attribution and permission)
 
@@ -202,6 +237,7 @@ invariant passes and after the last attempt:
 | `UNKNOWN_RECONCILED_RETRY` | an attempt reported `UNKNOWN`, a later attempt W wrote, and all of these hold **before W's write** (lower `seq`): (a) a `fence` of every earlier token of the case, each called by an attributed token with fence permission in force; (b) after the last of those fences, a `read` by W's token with `result: "ok"`; (c) no earlier token of the case has any `write`; (d) W's token had write permission in force |
 | `UNKNOWN_UNRESOLVED_RETRY` | an attempt reported `UNKNOWN` and a later attempt wrote **without** all of (a)–(d). This applies even if the case ends with only one write, and even if the earlier attempt in fact never wrote: a write made without the evidence is unresolved, whether or not it turned out harmless. |
 | `UNKNOWN_HELD` | an attempt reported `UNKNOWN` and no later attempt wrote |
+| `LATE_WRITE_UNFENCED` | delayed-write fault only: the held write was released at checkpoint B because no attempt fenced its token |
 
 More than one class can apply; all that apply are reported, in this table's order.
 
@@ -262,7 +298,12 @@ Answered by Amos Tipton before freezing:
   `HELD`.
 - **Fencing is a control action:** it needs fence permission, separate from write permission. The observer
   stays strictly read-only.
-- **Scope:** one store and one record per case.
+- **Scope:** one store and one record per case. Four core scenarios; the delayed-write fault is a variant of
+  the uncertainty/recovery scenario, not a fifth.
+- **Delayed write:** in round 1, sequenced by checkpoints as described above. The late write must be rejected
+  after the fence and recorded in the store log; a missing fence ends the case as a reported failure.
+- **Coexisting classes:** `AUTHORIZED_COMPLETION` and `UNKNOWN_HELD` can both apply: the first describes the
+  actual effect, the second the system's unresolved knowledge and its decision to hold further action.
 - **Revocation timing:** revocation between approval and execution is tested now. Revocation **during** execution
   is reserved for a later round; it needs the store to record the permission in force at the moment of each write.
 
@@ -271,6 +312,5 @@ Answered by Amos Tipton before freezing:
 - Revocation during execution (above).
 - More than one record per case, and more than one store.
 - What a person's fence, read or release of a `HELD` key must record to count as evidence (`"by": "person"`).
-- A fault in which an earlier attempt's write reaches the store **after** a later attempt has started. Without
-  it, round 1 never exercises the fence's reject path against a write that is actually in flight. (Raised with
-  the case author; whether it belongs in round 1 is his call before the freeze.)
+- A late write released at other points (for example between a retry's read and its write, which a correct
+  fence must still stop). Round 1 releases only at the two checkpoints above.
