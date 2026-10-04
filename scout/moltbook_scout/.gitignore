@@ -1,0 +1,3 @@
+# The root .gitignore excludes *.jsonl. The scout ledger must be committed, or every run dedupes
+# against nothing and re-reports old leads as new (happened 2026-10-04).
+!ledger.jsonl
