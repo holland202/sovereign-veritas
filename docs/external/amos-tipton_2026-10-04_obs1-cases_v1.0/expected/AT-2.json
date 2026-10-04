@@ -1,0 +1,17 @@
+{
+  "case_id": "AT-2",
+  "expected": {
+    "attempts": [
+      {
+        "permission_at_execution": "REVOKED",
+        "decision": "REFUSE",
+        "system_status": "REFUSED"
+      }
+    ],
+    "effect_count": 0,
+    "classes": [
+      "CONFIRMED_FAILURE"
+    ],
+    "status_mismatches": 0
+  }
+}

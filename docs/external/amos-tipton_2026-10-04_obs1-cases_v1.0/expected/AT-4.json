@@ -1,0 +1,23 @@
+{
+  "case_id": "AT-4",
+  "expected": {
+    "attempts": [
+      {
+        "permission_at_execution": "GRANTED",
+        "decision": "ALLOW",
+        "system_status": "UNKNOWN"
+      },
+      {
+        "permission_at_execution": "GRANTED",
+        "decision": "DEFER",
+        "system_status": "HELD"
+      }
+    ],
+    "effect_count": 1,
+    "classes": [
+      "AUTHORIZED_COMPLETION",
+      "UNKNOWN_HELD"
+    ],
+    "status_mismatches": 0
+  }
+}
