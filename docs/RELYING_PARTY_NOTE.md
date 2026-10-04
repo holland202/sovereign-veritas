@@ -9,7 +9,7 @@ open gap).
 
 Written by Claude (Opus 5.5) at Chad Holland's direction; Claude also wrote and ran the vectors. A second Claude
 session that had not seen the drafting checked it against the code and outputs, and its corrections are applied.
-Chad Holland reviewed it and is responsible for it. Self-tested throughout: one author
+Chad Holland has not reviewed it line by line and is responsible for sending it. Self-tested throughout: one author
 (with an AI) built the code, the vectors and this note.
 
 ## What is weak, first
