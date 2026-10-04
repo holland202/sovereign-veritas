@@ -1,0 +1,93 @@
+name: xplat
+
+# Same verdicts on six legs, including GitHub's Arm runner and a big-endian machine.
+# Registration: docs/XPLAT_PREREG.md (committed alone, before this file).
+# L5/L6 are QEMU emulation of the IBM instruction sets, not IBM hardware.
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  native:
+    name: ${{ matrix.leg }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { leg: L1-linux-x86_64,   os: ubuntu-latest }
+          - { leg: L2-linux-aarch64,  os: ubuntu-24.04-arm }
+          - { leg: L3-macos-arm64,    os: macos-latest }
+          - { leg: L4-windows-x86_64, os: windows-latest }
+    steps:
+      - name: keep line endings as committed (file hashes and gate_constraint's md5 lines depend on it)
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: run leg
+        shell: bash
+        run: PY=python bash .github/xplat_leg.sh "$RUNNER_TEMP/${{ matrix.leg }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.leg }}
+          path: ${{ runner.temp }}/${{ matrix.leg }}
+
+  emulated:
+    name: ${{ matrix.leg }} (QEMU, not IBM hardware)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { leg: L5-s390x-bigendian, arch: s390x }
+          - { leg: L6-ppc64le,         arch: ppc64le }
+    steps:
+      - uses: actions/checkout@v5
+      - run: mkdir -p "${{ runner.temp }}/out"
+      - uses: uraimo/run-on-arch-action@v3
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ubuntu24.04
+          dockerRunArgs: --volume "${{ runner.temp }}/out:/out"
+          install: |
+            apt-get update -q
+            apt-get install -q -y python3 openssh-client git
+          shell: /bin/bash
+          run: PY=python3 bash .github/xplat_leg.sh "/out/${{ matrix.leg }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.leg }}
+          path: ${{ runner.temp }}/out/${{ matrix.leg }}
+
+  compare:
+    name: P2+P3 across legs
+    needs: [native, emulated]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - uses: actions/download-artifact@v4
+        with:
+          path: legs
+          pattern: L*
+      - name: the comparator must be able to fail
+        run: python tools/xplat_digest.py --selftest
+      - name: legs present (absent = VOID, per registration)
+        run: |
+          for l in L1-linux-x86_64 L2-linux-aarch64 L3-macos-arm64 L4-windows-x86_64 L5-s390x-bigendian L6-ppc64le; do
+            if [ -d "legs/$l" ]; then echo "PRESENT $l | $(cat legs/$l/platform.info)"; cat legs/$l/exits.info; else echo "VOID    $l"; fi
+          done
+      - name: P2 pinned digests and P3 one answer per file
+        run: python tools/xplat_digest.py compare legs/*/
