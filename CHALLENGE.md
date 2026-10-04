@@ -12,7 +12,8 @@ Get `tools/verify_package.py` to print `VERDICT  CONSISTENT` **with** `--signatu
 - is older than the newest package in a witness log you did not write.
 
 A break of `tools/consumer.py` also counts: it accepting the same package twice, or accepting a log
-that does not extend one it has already seen.
+that does not extend one it has already seen. Two ways of doing the first are already measured and do not
+count (see the list below): concurrent processes, and a second package for the same action.
 
 ## Already known: these do not count (they are published limits)
 
@@ -22,11 +23,49 @@ that does not extend one it has already seen.
 - Rolling back the witness log against a consumer that has never seen the newer log (A10, round 3).
 - Anything that needs the signing key. Key custody is out of scope.
 - The companion route check trusts the companion's own labels (`docs/COMPANION_ACTION.md`).
+- `tools/consumer.py` accepting one package twice when several processes race on its state file (4 of 100
+  trials in `docs/RP1_RESULTS.md`, P6-P7), accepting a second, different package for the same action (P3), or
+  stopping on a torn state file (P8). Published, not yet fixed. A **sequential** repeat of the same package
+  against an intact state file still counts.
 - A repeated `record_id`, a concurrent race, or a record write that fails after `execute()` producing
   more external effects than ledger records in `EvidenceWorkflow.run()` (XB-1,
   `docs/EXECUTION_BOUNDARY_RESULTS.md`; credited to Davorin Popović). Exception: the sequential case is
   fixed (PR #8), so getting a second external effect from a **sequential** repeat of a `record_id` through a
   sink that implements `has_record` **does** count as a break.
+
+## One action, two effects (RK-2 / MP-1, a separate track, also credited)
+
+**Claim.** Through `EvidenceWorkflow.run()` with an `idempotency_key` and a `FileReservations` store, one key
+produces at most one external effect, including when separate processes race, when a holder is killed, and when
+the response is lost after the effect. The retry is refused before it executes.
+
+**What is measured** (`docs/RK2_RESULTS.md`, `docs/MP1_PREREG.md` Amendment 1; run both probes yourself):
+
+    python tools/rk2_probe.py          # R1-R10; --sabotage must exit 1
+    python tools/mp1_probe.py          # 0 of 200 / 100 / 30 trials doubled at N = 2 / 8 / 32 processes
+
+A deliberately non-atomic store doubled 100 of 100 trials in the same harness, so the harness can see a double.
+
+**A break.** A program (any language) that gets **two or more external effects for one idempotency key** through
+`EvidenceWorkflow.run()` with `FileReservations` on one local filesystem, counted at the executor, outside the
+reservation store and the ledger as the two probes do. Send the program and the output.
+
+**These do not count.** They are published limits:
+
+- A **fresh key per attempt** (RK-2 case A3, `effects=2`). The key must be chosen when the intent is created,
+  before the first attempt. A caller that breaks that rule gets what it asked for.
+- A key left `UNKNOWN` or `IN_FLIGHT` stays blocked until `release()` is called. That is a liveness cost, and
+  `release()` does not check who calls it. Releasing a key and running again is the intended path.
+- `MemoryReservations` across processes (it is in-process by design).
+- Anything that needs write access to the reservation directory.
+
+**Not tested, and welcome.** Each is a registered "left unrun" item, so a reproduction is credited and a null
+result is a useful result too:
+
+- A holder whose lease expires while it is still running, racing a late `complete()` against the expiry write
+  (a suspected lost update, from reading `FileReservations._move` and `reserve()`; not tested).
+- Android storage (Termux's own folder and FUSE shared storage), network filesystems, and separate machines.
+  These are outside the claim above (one local filesystem); a double there is credited as a limit of the claim.
 
 ## Reimplement the Gate (also credited)
 
