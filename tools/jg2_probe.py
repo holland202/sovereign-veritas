@@ -49,8 +49,11 @@ def ssh_verify(data, sig):
     return p.returncode == 0
 
 
+FILE_NAME_LINE = 'return self._dir / (hashlib.sha256(key.encode("utf-8")).hexdigest() + ".json")'
+
+
 def p1():
-    sites, bad = [], []
+    sites, bad, names = [], [], []
     for path in sorted(glob.glob(os.path.join(ROOT, "sovereign_veritas", "**", "*.py"), recursive=True)):
         for n, line in enumerate(open(path, encoding="utf-8"), 1):
             if "hashlib.sha256(" in line or re.search(r"\bsha256_hex\(", line):
@@ -59,14 +62,20 @@ def p1():
                 rel = f"{os.path.relpath(path, ROOT)}:{n}"
                 ok = ("canonical_json(" in line or "sha256_hex(artifact)" in line
                       or ("hashlib.sha256(data)" in line and "package.py" in path))
+                # Amendment 1 (2026-10-04): a third kind, a hash used only to name a reservation file, never stored
+                # as evidence. Matched to this exact line in this one file; any other new hash is still refused.
+                name_only = (path.endswith(os.path.join("sovereign_veritas", "idempotency.py"))
+                             and line.strip() == FILE_NAME_LINE)
                 sites.append(rel)
-                if not ok:
+                if name_only:
+                    names.append(rel)
+                elif not ok:
                     bad.append(rel)
     rec = EvidenceRecord(record_id="jg2", input_digest="d", metadata={"note": "Ω non-ASCII ü"})
     canon = hashlib.sha256(canonical_json(rec.to_dict()).encode("utf-8")).hexdigest()
     ascii_ = hashlib.sha256(json.dumps(rec.to_dict(), sort_keys=True, separators=(",", ":"),
                                        ensure_ascii=True).encode("utf-8")).hexdigest()
-    detail = {"sha256_sites": sites, "sites_not_canonical_or_artifact": bad,
+    detail = {"sha256_sites": sites, "file_name_only_sites": names, "sites_not_canonical_or_artifact": bad,
               "digest_is_canonical": rec.record_digest == canon, "differs_from_ascii_json": canon != ascii_}
     return detail, (not bad and detail["digest_is_canonical"] and detail["differs_from_ascii_json"])
 
