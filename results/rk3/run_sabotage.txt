@@ -1,0 +1,6 @@
+Q2   lease 1 s, holder 2 s, release at 1.2 s: {"a_token": "4da494fcaad34ada", "effects": 2, "effects_at_check": 0, "errors": {}, "final_state": "COMPLETED", "history": ["IN_FLIGHT", "COMPLETED", "COMPLETED"], "late": [], "release": "accepted", "seconds": 2.0, "state_at_check": "UNKNOWN"}
+
+  Q2   REFUTED
+mode: SABOTAGE (complete() ignores the holder token); Q5 holds if Q2 is REFUTED and the exit is 1
+VERDICT  0 of 1 under sabotage
+exit 1
