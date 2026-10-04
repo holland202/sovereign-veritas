@@ -1,0 +1,4 @@
+SITES  54 _reject(...) call sites in verifiers/python/verify.py
+CONTROL unmutated: exit 0, failing 0  summary: 43 pass, 0 fail (43 fixtures)
+CONTROL signature check removed (line 828): exit 0, failing []
+VERDICT  HARNESS CONTROL FAILED: P2 refuted; P3/P4 not judged

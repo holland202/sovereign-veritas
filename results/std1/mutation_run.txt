@@ -1,0 +1,59 @@
+SITES  54 _reject(...) call sites in verifiers/python/verify.py
+CONTROL unmutated: exit 0, failing 0  summary: 43 pass, 0 fail (43 fixtures)
+CONTROL signature check removed (line 828): exit 1, failing ['fixtures/cgt-compact-bad-signature.json']
+SURVIVED line  155  category               in _b64url_decode                     by 0: 
+CRASHED  line  219  MALFORMED_HEADER       in check_header                       by 0: 
+SURVIVED line  221  MALFORMED_HEADER       in check_header                       by 0: 
+KILLED   line  224  UNKNOWN_HEADER_PARAM   in check_header                       by 1: cgt-compact-crit-header.json
+SURVIVED line  230  MALFORMED_HEADER       in check_header                       by 0: 
+KILLED   line  232  UNKNOWN_ALG            in check_header                       by 2: cgt-compact-unknown-alg.json cgt-mldsa44-compact-unknown-alg.json
+SURVIVED line  237  MALFORMED_HEADER       in check_header                       by 0: 
+SURVIVED line  240  MALFORMED_HEADER       in check_header                       by 0: 
+SURVIVED line  242  UNKNOWN_KEY            in check_header                       by 0: 
+SURVIVED line  246  UNKNOWN_KEY            in check_header                       by 0: 
+SURVIVED line  508  CLAIM_SCHEMA           in check_claims                       by 0: 
+KILLED   line  512  CLAIM_SCHEMA           in check_claims                       by 1: cgt-compact-missing-trust-class.json
+KILLED   line  516  CLAIM_SCHEMA           in check_claims                       by 3: cgt-compact-crit-empty.json cgt-compact-jti-uppercase.json cgt-compact-trust-class-scope-shaped.json
+KILLED   line  529  CLAIM_SCHEMA           in check_claims                       by 1: bac-compact-l3-missing-drift-score.json
+SURVIVED line  532  CLAIM_SCHEMA           in check_claims                       by 0: 
+KILLED   line  547  CRIT_UNLISTED          in check_crit                         by 1: cgt-compact-cnf-unlisted.json
+KILLED   line  554  CRIT_NOT_UNDERSTOOD    in check_crit                         by 1: cgt-compact-crit-unsupported-claim.json
+KILLED   line  560  CRIT_NOT_UNDERSTOOD    in check_crit                         by 1: cgt-compact-crit-names-absent-claim.json
+KILLED   line  568  CRIT_NOT_UNDERSTOOD    in check_crit                         by 1: cgt-compact-crit-unknown-entry-type.json
+CRASHED  line  593  CNF_MISMATCH           in check_presenter_binding            by 0: 
+SURVIVED line  597  CNF_MISMATCH           in check_presenter_binding            by 0: 
+SURVIVED line  600  CNF_MISMATCH           in check_presenter_binding            by 0: 
+SURVIVED line  604  CNF_MISMATCH           in check_presenter_binding            by 0: 
+KILLED   line  606  CNF_MISMATCH           in check_presenter_binding            by 1: cgt-compact-cnf-mismatch.json
+SURVIVED line  612  CNF_MISMATCH           in check_presenter_binding            by 0: 
+SURVIVED line  618  CNF_MISMATCH           in check_presenter_binding            by 0: 
+SURVIVED line  622  CNF_MISMATCH           in check_presenter_binding            by 0: 
+SURVIVED line  728  NOT_ATTENUATED         in check_attenuation                  by 0: 
+KILLED   line  735  NOT_ATTENUATED         in check_attenuation                  by 1: da-compact-authorization-details-widened.json
+KILLED   line  746  DELEGATOR_INVALID      in check_delegation                   by 1: da-compact-delegator-mismatch.json
+SURVIVED line  751  DELEGATOR_INVALID      in check_delegation                   by 0: 
+KILLED   line  756  SCOPE_NOT_SUBSET       in check_delegation                   by 1: da-compact-scope-superset.json
+KILLED   line  762  SCOPE_NOT_SUBSET       in check_delegation                   by 1: da-compact-trust-class-widened.json
+KILLED   line  772  NOT_ATTENUATED         in check_delegation                   by 1: da-compact-outlives-delegator.json
+SURVIVED line  783  NOT_ATTENUATED         in check_delegation                   by 0: 
+KILLED   line  789  NOT_ATTENUATED         in check_delegation                   by 1: da-compact-depth-exceeds-remaining.json
+KILLED   line  803  NOT_ATTENUATED         in check_delegation                   by 1: da-compact-depth-exceeds-peer-cap.json
+SURVIVED line  815  MALFORMED_TOKEN        in verify_compact_structure           by 0: 
+SURVIVED line  818  MALFORMED_TOKEN        in verify_compact_structure           by 0: 
+KILLED   line  828  BAD_SIGNATURE          in verify_compact_structure           by 1: cgt-compact-bad-signature.json
+SURVIVED line  834  MALFORMED_PAYLOAD      in verify_compact_structure           by 0: 
+SURVIVED line  836  MALFORMED_PAYLOAD      in verify_compact_structure           by 0: 
+SURVIVED line  844  MALFORMED_TOKEN        in verify_general_structure           by 0: 
+SURVIVED line  849  MALFORMED_TOKEN        in verify_general_structure           by 0: 
+SURVIVED line  853  MALFORMED_TOKEN        in verify_general_structure           by 0: 
+KILLED   line  865  BAD_SIGNATURE          in verify_general_structure           by 3: cgt-general-one-bad-signature.json cgt-hybrid-ed25519-bad-signature.json cgt-hybrid-mldsa-bad-signature.json
+KILLED   line  877  HYBRID_INCOMPLETE      in verify_general_structure           by 1: cgt-hybrid-missing-ed25519.json
+KILLED   line  888  HYBRID_INCOMPLETE      in verify_general_structure           by 1: cgt-hybrid-missing-mldsa65.json
+SURVIVED line  899  MALFORMED_PAYLOAD      in verify_general_structure           by 0: 
+SURVIVED line  901  MALFORMED_PAYLOAD      in verify_general_structure           by 0: 
+KILLED   line  949  EXPIRED                in verify_presentation                by 1: cgt-compact-expired.json
+KILLED   line  951  TTL_WINDOW             in verify_presentation                by 1: bac-compact-ttl-exceeded.json
+SURVIVED line  965  DELEGATOR_INVALID      in verify_presentation                by 0: 
+KILLED   line  975  REPLAYED_JTI           in verify_presentation                by 1: cgt-compact-replayed.json
+TOTAL    54 sites: 24 killed, 2 crashed only, 28 survived
+SPREAD   most kills by one fixture: 1 of 24 (cgt-compact-crit-header.json)
