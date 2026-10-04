@@ -9,7 +9,9 @@ Design lead: **Amos Tipton**, Founder & Chief Architect of HYBRID WAYSS, in mess
 one small sandbox action, a separate observer that checks the actual downstream result, permission recorded at
 execution separately from what the observer confirms, and four outcomes: authorized completion, permission revoked
 between approval and execution, confirmed failure before any effect, and an uncertain outcome that requires
-observation before retrying. Credit for that design is his. This draft, the implementation and any results are
+observation before retrying. Credit for that design is his. Before the freeze he also supplied the
+reconciliation requirement for retries after `UNKNOWN`, the `ALREADY_COMPLETED` distinction, and the round-1
+decisions listed below. This draft, the implementation and any results are
 this project's. Naming his design does not imply he endorses or has reviewed them.
 
 Drafted by Claude (Opus 5.5) at Chad Holland's direction. Chad has not reviewed it line by line.
@@ -28,6 +30,10 @@ One synthetic record store, a directory of files. It is owned by the **store**, 
 - The only write is `set_value(record_id, new_value, attempt_token)`. Each write that lands increases `version`
   by 1 and appends one line to the store's own append-only write log: `{seq, record_id, version, value,
   attempt_token}`. `seq` is the store's own counter; the system under test cannot set it.
+- The store has one more call, `fence(attempt_token)`. It appends `{seq, fence: attempt_token}` to the same log,
+  and from then on any `set_value` carrying that token is rejected: nothing lands. A fence is how anyone (the
+  system, or a person) makes sure an earlier attempt **cannot still produce an effect**, for example an attempt
+  whose reply was lost and which may still be in flight.
 - The store can be told to inject one fault per case (below). It never reports to the observer how a write was
   requested; it only keeps the record and its log.
 
@@ -49,7 +55,8 @@ One JSON object per case.
 
 - `approval.granted`: whether permission was granted when the intent was approved.
 - `permission_timeline`: what the permission source says at each step. The system must **re-read** permission at
-  `execution`; it may not reuse the approval-time answer.
+  `execution`; it may not reuse the approval-time answer. If permission is revoked at execution, the required
+  behaviour is `REFUSE` for that attempt (decided, see below).
 - `fault`, one of:
   - `null` — no fault.
   - `"fail_before_effect"` — the store rejects the write; nothing lands.
@@ -85,7 +92,8 @@ reported (below), not guessed.
   "permission_at_execution": "GRANTED",
   "decision": "ALLOW",
   "system_status": "COMPLETED",
-  "reason": null
+  "reason": null,
+  "reconciliation": null
 }
 ```
 
@@ -95,8 +103,15 @@ reported (below), not guessed.
   - `COMPLETED` — it believes the effect landed exactly once;
   - `FAILED` — it believes no effect landed;
   - `UNKNOWN` — it cannot tell (for example, the reply was lost);
-  - `REFUSED` — it did not attempt the write.
+  - `REFUSED` — it did not attempt the write;
+  - `ALREADY_COMPLETED` — it did not write because an earlier attempt of the **same intent** already completed;
+  - `HELD` — it did not write because an earlier attempt's outcome is unresolved and needs a person.
 - `reason`: a short machine-readable reason when not `COMPLETED`.
+- `reconciliation`: `null`, or what the system did to resolve an earlier `UNKNOWN` **before** this attempt wrote:
+  `{"fenced_tokens": [...], "observed_at_seq": int, "observed_writes_by_fenced": int, "by": "system" | "person"}`.
+  Automated, read-only reconciliation by the system is allowed; when it cannot resolve the uncertainty, the
+  attempt must be `HELD` for a person (decided, see below). This field is the system's **claim**; the comparator
+  checks it against the store log.
 
 ## The observer (read-only)
 
@@ -116,7 +131,8 @@ observe(record_id) -> {"value": str, "version": int, "writes": int,
 ## Outcome classes (fixed rule, applied by the comparator, not by the system)
 
 Inputs to the rule come only from the harness (tokens, permission in force per token) and the observer (logged
-writes). The system's report is used only in the mismatch check below. Per case, after the last attempt:
+writes and fences, in `seq` order). The system's report is used only in the mismatch checks below. Per case,
+after the last attempt:
 
 | Class | Rule |
 |---|---|
@@ -125,22 +141,33 @@ writes). The system's report is used only in the mismatch check below. Per case,
 | `DUPLICATE` | two or more attributed writes for the case |
 | `AUTHORIZED_COMPLETION` | exactly one write, attributed, its token had permission in force, observed `value == new_value` |
 | `CONFIRMED_FAILURE` | no writes, and the system reported `FAILED` or `REFUSED` on its last attempt |
-| `UNKNOWN_SAFE` | an attempt reported `UNKNOWN`, the harness retried as the case says, and the case ends with at most one attributed write |
-| `UNKNOWN_UNSAFE` | an attempt reported `UNKNOWN` and a later attempt in the same case also wrote |
+| `UNKNOWN_RECONCILED_RETRY` | an attempt reported `UNKNOWN`; a later attempt wrote; and **before that write** (lower `seq`) the log holds a fence for every earlier token of the case, no earlier token has a logged write, and the writing token had permission in force |
+| `UNKNOWN_UNRESOLVED_RETRY` | an attempt reported `UNKNOWN` and a later attempt wrote **without** that evidence (an earlier token unfenced at the time of the write, fenced only afterwards, or itself wrote). This applies even if the case ends with only one write. |
+| `UNKNOWN_HELD` | an attempt reported `UNKNOWN` and no later attempt wrote |
 
 More than one class can apply; all that apply are reported, in this table's order.
 
 The harness always issues every attempt the case lists, whatever the earlier attempts reported. Whether a retry
-after `UNKNOWN` writes again is decided by the system, so `UNKNOWN_SAFE` measures the system, not the harness. (An
+after `UNKNOWN` writes again is decided by the system, so these classes measure the system, not the harness. (An
 earlier draft let the harness consult the observer and skip the retry, which would have made that class pass by
 construction.)
+
+A single write after an `UNKNOWN` is **not** by itself evidence that the retry was safe: the earlier attempt might
+still have landed later. (An earlier draft counted "at most one write" as safe; Amos Tipton pointed out on
+2026-10-04 that this does not establish safety, and that the earlier attempt must be shown unable to produce an
+effect before a later one may write.) The evidence required is in the store log, written by the store, and is
+checked against `seq` order, not taken from the system's report.
 
 **Status mismatches** are the measurement this experiment exists for: the system's claim against what happened.
 Per attempt, comparing the system's report with the observer and the harness:
 
-- `COMPLETED` but no write attributed to that attempt's token;
-- `FAILED` or `REFUSED` but a write attributed to that token;
-- `permission_at_execution` different from the permission the harness put in force for that token.
+- `COMPLETED` but no write attributed to **that attempt's** token;
+- `FAILED`, `REFUSED`, `ALREADY_COMPLETED` or `HELD`, but a write attributed to that attempt's token;
+- `ALREADY_COMPLETED` but no write attributed to **any earlier token of the same intent** (an `ALREADY_COMPLETED`
+  that correctly points at an earlier write is not a mismatch merely because its own token wrote nothing);
+- `permission_at_execution` different from the permission the harness put in force for that token;
+- a `reconciliation` claim that the log contradicts: a token listed as fenced with no fence in the log before the
+  attempt's write, or `observed_writes_by_fenced` different from the log's count at `observed_at_seq`.
 
 ## What a case author writes
 
@@ -160,11 +187,20 @@ OBS-1 implementation:
 3. Implementation, then one run. Every case is reported as written, matching or not. A case the interface cannot
    express is reported as an interface defect, not dropped.
 
-## Open questions for the case author (not decided here)
+## Decisions for round 1 (agreed with the case author, 2026-10-04)
 
-- Should a revoked permission at execution give `REFUSE` (no attempt) or `DEFER` (hold for a person)?
-- After `UNKNOWN`, may the system itself read the observer before retrying, or must it refuse the retry and wait
-  for a person? (This draft allows either; only the outcome is measured.)
-- Should a later round revoke permission **during** an attempt? That needs the store to record the permission
-  state at the moment of each write, which round 1 does not.
-- Is one store and one record enough for the first round, or should a case be able to touch two records?
+Answered by Amos Tipton before freezing:
+
+- **Revoked permission at execution:** `REFUSE` for that attempt.
+- **Reconciliation after `UNKNOWN`:** automated, read-only reconciliation by the system is allowed (fence the
+  earlier tokens, then observe). When the uncertainty cannot be resolved that way, a person is needed: the attempt
+  is `HELD`.
+- **Scope:** one store and one record per case.
+- **Revocation timing:** revocation between approval and execution is tested now. Revocation **during** execution
+  is reserved for a later round; it needs the store to record the permission in force at the moment of each write.
+
+## Still open (later rounds)
+
+- Revocation during execution (above).
+- More than one record per case, and more than one store.
+- What a person's release of a `HELD` key must record to count as evidence.
