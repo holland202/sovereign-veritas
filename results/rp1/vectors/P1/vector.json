@@ -1,0 +1,33 @@
+{
+ "id": "P1",
+ "title": "verifying the same package again is not an error; a changed decision is",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [
+  {
+   "label": "verify A",
+   "command": "python tools/verify_package.py results/rp1/vectors/P1/A.json",
+   "expected_exit": 0,
+   "expected_substring": "VERDICT  CONSISTENT",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "verify A again",
+   "command": "python tools/verify_package.py results/rp1/vectors/P1/A.json",
+   "expected_exit": 0,
+   "expected_substring": "VERDICT  CONSISTENT",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "verify A with decision changed",
+   "command": "python tools/verify_package.py results/rp1/vectors/P1/A_decision_changed.json",
+   "expected_exit": 1,
+   "expected_substring": "VERDICT",
+   "observed_exit": 1,
+   "as_expected": true
+  }
+ ],
+ "identical_output": true
+}

@@ -1,0 +1,4 @@
+UNREGISTERED diagnostic, N=8, 100 trials
+accepted-per-trial distribution: {1: 99, 2: 1}
+trials doubled: 1
+exit 2 x2: COULD NOT LOOK: JSONDecodeError: Expecting value: line 1 column 1 (char 0)

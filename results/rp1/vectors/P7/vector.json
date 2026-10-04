@@ -1,0 +1,22 @@
+{
+ "id": "P7",
+ "title": "8 consumer processes, one package, one fresh state file per trial",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [],
+ "P7": {
+  "trials": 100,
+  "procs": 8,
+  "doubled": 4,
+  "zero": 0,
+  "errors": 1
+ },
+ "P7c": {
+  "trials": 20,
+  "procs": 8,
+  "pause_s": 0.2,
+  "doubled": 20,
+  "zero": 0,
+  "errors": 0
+ }
+}
