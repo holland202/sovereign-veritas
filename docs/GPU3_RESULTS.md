@@ -1,4 +1,4 @@
-# GPU-3 results (partial): runs A and B done on the GPU; the CPU runs crashed Termux twice
+# GPU-3 results: GPU and CPU give byte-identical temperature-0 replies for this model; P5 refuted
 
 Registration: [`GPU3_PREREG.md`](GPU3_PREREG.md), `037a51a`. Probe `31f819f`. Run by Chad Holland on the
 S25 Ultra, 2026-10-04, about 14:25–14:33 CT. Same model file as GPU-2 (sha256 `6c1a2b41…28ff`).
@@ -80,8 +80,8 @@ LOG    /data/data/com.termux/files/home/gpu3_hard_gpu.json
 | P1 easy answered right on the GPU | **HELD.** The reply starts `184`. The model then keeps going (`\nQ: What is 17 * 9? ...`) because the request has no stop sequence. "Contains 184" is met. |
 | P2 easy: hot bytes = cold bytes | **HELD**, but see the weak throttle above: `dfe8453d9d7d` ×10, with only the last hot request below 1100 MHz |
 | P3 hard repeats GPU-2 | **HELD.** `a01b977adab9` ×10, the same hash as GPU-2. Throttled to 525 MHz from hot request 2 |
-| P4 CPU = GPU, easy | **NOT RUN** (Termux crashed) |
-| P5 CPU ≠ GPU, hard | **NOT RUN** (Termux crashed) |
+| P4 CPU = GPU, easy | **HELD.** Run C `dfe8453d9d7d` ×5 = run A. Context settings differ (Amendment 1) |
+| P5 CPU ≠ GPU, hard | **REFUTED.** Run D `a01b977adab9` ×5 = run B and GPU-2. For this model, the CPU and the Adreno OpenCL path give the same wrong answer, byte for byte. The 2026-09-26 Qwen pattern (Q1') did not carry over |
 | P6 instrument checks | **HELD** for A and B: busy 95–97 %; each control differs |
 
 Across GPU-2 and GPU-3, three GPU runs (30 temperature-0 replies across thermal states from `pwrlevel` 0 to 9)
@@ -103,7 +103,45 @@ outside. The `ggml_opencl` line is expected for plain `llama-server` (no Adreno 
 cause. Inference, **not established**: Android ended Termux when 8 CPU threads started on a phone whose GPU had
 just been at 100–105 °C. CPU runs on a cool phone worked on 2026-09-26. Android's own logs were not read.
 
+## Runs C and D (after Amendment 1: `-c 2048 -np 1`), verbatim
+
+The first three CPU attempts crashed Termux (above). With the amendment the server started (`{"status":"ok"}`).
+The first attempt at C and D under the amendment failed for an operator reason: a `cd` inside a backgrounded
+command left the shell in `~` (`can't open file`). It was rerun with the full probe path.
+
+```
+PROMPT easy  backend cpu (not judged on kgsl)
+START  model /data/data/com.termux/files/home/llama-3.2-3b.gguf  file sha256 None  temp 36500  clock 222  pwrlevel 0
+cold    1  dfe8453d9d7d  clock 222-222 MHz  busy max 0%  temp max 57.6C  throttling max 0  pwrlevel max 0  reply '184\nQ: What is 17 * 9? Reply with only t'
+cold    2  dfe8453d9d7d  clock 222-222 MHz  busy max 0%  temp max 62.6C  throttling max 0  pwrlevel max 0  reply '184\nQ: What is 17 * 9? Reply with only t'
+cold    3  dfe8453d9d7d  clock 222-222 MHz  busy max 0%  temp max 65.7C  throttling max 0  pwrlevel max 0  reply '184\nQ: What is 17 * 9? Reply with only t'
+cold    4  dfe8453d9d7d  clock 222-222 MHz  busy max 0%  temp max 67.2C  throttling max 0  pwrlevel max 0  reply '184\nQ: What is 17 * 9? Reply with only t'
+cold    5  dfe8453d9d7d  clock 222-222 MHz  busy max 0%  temp max 69.2C  throttling max 0  pwrlevel max 0  reply '184\nQ: What is 17 * 9? Reply with only t'
+control 1  fe4f4e099fe3  clock 222-222 MHz  busy max 0%  temp max 69.9C  throttling max 0  pwrlevel max 0  reply '184 \nQ: What is 11 * 4? Reply with only '
+SHA    cold ['dfe8453d9d7dd18db272c21469345d8970b0b23cb617e52a1e5f82568b095d0e']  hot []  control fe4f4e099fe38192b6e8ed2f9464a6b1aa81144cc63bf146c021fafdd43c6fcb
+
+PROMPT hard  backend cpu (not judged on kgsl)
+START  model /data/data/com.termux/files/home/llama-3.2-3b.gguf  file sha256 None  temp 44200  clock 222  pwrlevel 0
+cold    1  a01b977adab9  clock 222-222 MHz  busy max 0%  temp max 64.2C  throttling max 0  pwrlevel max 0  reply '37, 191, 502, 722, 000, 000, 000, 000, 0'
+cold    2  a01b977adab9  clock 222-222 MHz  busy max 4%  temp max 68.0C  throttling max 0  pwrlevel max 0  reply '37, 191, 502, 722, 000, 000, 000, 000, 0'
+cold    3  a01b977adab9  clock 222-222 MHz  busy max 0%  temp max 69.9C  throttling max 0  pwrlevel max 0  reply '37, 191, 502, 722, 000, 000, 000, 000, 0'
+cold    4  a01b977adab9  clock 222-222 MHz  busy max 0%  temp max 71.5C  throttling max 0  pwrlevel max 0  reply '37, 191, 502, 722, 000, 000, 000, 000, 0'
+cold    5  a01b977adab9  clock 222-222 MHz  busy max 0%  temp max 72.2C  throttling max 0  pwrlevel max 0  reply '37, 191, 502, 722, 000, 000, 000, 000, 0'
+control 1  5a9ce8d5ac2c  clock 222-222 MHz  busy max 0%  temp max 73.0C  throttling max 0  pwrlevel max 0  reply '37278442\nQ: What is 7309 * 4999? Reply w'
+SHA    cold ['a01b977adab95c605438bbb99ecb2fc9d3aea4bc1557ef13c0c090af3d8b37f0']  hot []  control 5a9ce8d5ac2c9991c2f8adda5b3529a6f82b609e8f033daceb1ece7e74eb742b
+```
+
+In C and D the GPU stayed at 222 MHz and 0–4 % busy, against 95–97 % in A and B, so those runs did not use the
+GPU. `kgsl temp` still rose to 73 °C, so it is not a GPU-only sensor; which sensor it reads was not checked.
+
+**Not registered, an observation to test later:** at temperature 0 the CPU and GPU replies are identical, but the
+temperature-0.8 control replies differ between them for the same seed (easy: GPU `f12f45edfb93`, CPU
+`fe4f4e099fe3`; hard: GPU `9d11bfd1ba29`, CPU `5a9ce8d5ac2c`). One explanation, not tested: the two backends
+produce slightly different numbers that leave the top choice unchanged (temperature 0 picks only the top token)
+but shift the probabilities sampling uses. If so, "same reply at temperature 0" would not mean "same
+computation".
+
 ## Next
 
-Find the crash cause (the tail of `~/gpu3_cpu.log`) before retrying C and D. Retry them only on a phone that has
-cooled (`kgsl temp` under about 45 °C), with no GPU run immediately before.
+Register the temperature-0.8 observation as its own test: compare the token probabilities (`n_probs`) from the
+CPU and the GPU for the same request. Then repeat with a second model (Qwen2.5-1.5B).
