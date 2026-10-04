@@ -48,6 +48,7 @@ class EvidenceWorkflow:
         evidence_sink: EvidenceSink,
         gate: Gate | None = None,
         verifier_registry: VerifierRegistry | None = None,
+        reservations: Any | None = None,
     ) -> None:
         self.sensor = sensor
         self.predictor = predictor
@@ -57,6 +58,8 @@ class EvidenceWorkflow:
         self.evidence_sink = evidence_sink
         self.gate = gate or Gate()
         self.verifier_registry = verifier_registry
+        # RK-2 (docs/RK2_PREREG.md): optional idempotency-key store (sovereign_veritas/idempotency.py).
+        self.reservations = reservations
 
     def run(
         self,
@@ -69,6 +72,7 @@ class EvidenceWorkflow:
         policy: dict[str, Any] | None = None,
         metadata: dict[str, Any] | None = None,
         verifier_id: str | None = None,
+        idempotency_key: str | None = None,
     ) -> WorkflowResult:
         # XB-1 (docs/EXECUTION_BOUNDARY_RESULTS.md): the sink's duplicate check runs inside record(),
         # i.e. after execute(), so a repeated record_id produced a second external effect before the
@@ -77,6 +81,9 @@ class EvidenceWorkflow:
         has_record = getattr(self.evidence_sink, "has_record", None)
         if has_record is not None and has_record(record_id):
             raise ValueError(f"duplicate record_id refused before execution: {record_id}")
+        # RK-2: a key without a store would silently protect nothing. Refuse before anything runs.
+        if idempotency_key is not None and self.reservations is None:
+            raise ValueError("idempotency_key given but no reservation store: refused before execution")
 
         observation = self.sensor.observe()
         prediction = self.predictor.predict(observation)
@@ -237,11 +244,24 @@ class EvidenceWorkflow:
             if action is None:
                 raise ValueError("ALLOW requires an action proposal")
 
+            if idempotency_key is not None:
+                # RK-2: reserved before the effect. Raises ReservationRefused if the key exists in any state.
+                self.reservations.reserve(idempotency_key)
             try:
                 execution_result = self.executor.execute(action)
             except Exception as exc:
                 failed_metadata = dict(evidence.metadata)
-                failed_metadata["execution_status"] = "FAILED"
+                if idempotency_key is None:
+                    failed_metadata["execution_status"] = "FAILED"
+                else:
+                    # RK-1 found FAILED recorded where the effect had happened. With a key the honest label is
+                    # UNKNOWN; the key is held until a person releases it.
+                    failed_metadata["execution_status"] = "UNKNOWN"
+                    failed_metadata["idempotency_key"] = idempotency_key
+                    try:
+                        self.reservations.unknown(idempotency_key, str(exc))
+                    except Exception:
+                        pass  # the reservation stays IN_FLIGHT, then UNKNOWN when its lease ends: still refused
                 failed_metadata["execution_error"] = str(exc)
 
                 evidence = EvidenceRecord(
@@ -260,8 +280,12 @@ class EvidenceWorkflow:
                 self.evidence_sink.record(evidence)
                 raise
 
+            if idempotency_key is not None:
+                self.reservations.complete(idempotency_key)  # before the record: a failed record write cannot free the key
             success_metadata = dict(evidence.metadata)
             success_metadata["execution_status"] = "SUCCEEDED"
+            if idempotency_key is not None:
+                success_metadata["idempotency_key"] = idempotency_key
 
             evidence = EvidenceRecord(
                 record_id=evidence.record_id,

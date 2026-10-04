@@ -79,6 +79,13 @@ jobs:
         run: python tools/gate_contract.py --mutants
       - name: XB-1 execution boundary - refuse-before-effect fix reaches X1-X3 only, X4/X5 stay open (docs/EXECUTION_BOUNDARY_RESULTS.md)
         run: python tools/execution_boundary_probe.py --expect-fix
+      - name: RK-2 reserved idempotency key - 10/10 as registered (docs/RK2_RESULTS.md)
+        run: python tools/rk2_probe.py | tail -3
+      - name: RK-2 probe can fail (--sabotage non-atomic store -> exit 1)
+        run: |
+          set +e; python tools/rk2_probe.py --sabotage > rk2_sab.txt; rc=$?; set -e
+          tail -3 rk2_sab.txt
+          test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
       - name: XB-2 durable-once boundary - 35/35 cells as registered (docs/XB2_RESULTS.md)
         run: python tools/xb2_boundary_probe.py
       - name: XB-2 probe can fail (A4 external stops cooperating -> exit 1)
