@@ -27,6 +27,21 @@
 
 ---
 
+## CREDITED reproductions
+
+- **Amos Tipton**, Founder & Chief Architect of HYBRID WAYSS (AI-assisted using OpenAI tools) — two reproduction
+  bundles (2026-10-04) at `d37779c` and `2c825b8`, stored unedited under
+  [docs/external/](docs/external/amos-tipton_2026-10-04_reproduction_README.md) with his permission. Every
+  recorded file hash matches this repository and the results agree with this project's own runs. The run found
+  that the README's 17,157-truncation result could not be reproduced from the repository (measured on a package
+  kept on the S25), that the corruption tool bypasses the hardened parser and the signature/witness path, and
+  that two published packages took an action under ALLOW with DEFAULTED inputs. It also confirmed, with no
+  skipped tests, the PR #35 fix to `verifier_mutants.py`. This is a reproduction of the referenced
+  implementation: **not an endorsement, not a certification and not an independent implementation.** No new
+  break was found.
+
+---
+
 ## VERIFIED — automated tests
 
 **Latest (2026-09-30, later): adversarial review of `595446c`** ([docs/REVIEW_595446C.md](docs/REVIEW_595446C.md)).

@@ -1,0 +1,28 @@
+{
+  "commit": "2c825b8b02083bf3373b9bd857f699507029b865",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+  "python": "Python 3.12.14",
+  "sha256": {
+    "evidence/sv_package_45c6ad182584.json": "0b2e1465549474c23b20018c62c1daa6aab5483a5eac57920bf979f667eb2aa3",
+    "evidence/sv_package_45c6ad182584.json.sig": "924798621689f173f28db77435f46c88f210787dcd7028192abf425394edcc45",
+    "evidence/sv_package_df46427defc7.json.sig": "b448c78f2a37b61583762e5ee58fa20b0fc980b5c18e9302c873cd0b2234d6cb",
+    "evidence/sv_package_1956abdc6154.json.sig": "03d1136cfa9bba94ff08ab43af007f2eb2835ca4be2238786c052792fabaeb57",
+    "evidence/sv_package_5bfc70dfcfa2.json": "4035238565592e81a06a7baf41a1d0a98650c10191b71338a562ce5f7d3db05b",
+    "evidence/sv_package_ed144097dece.json": "04f4f399b20aab43f969b3b9571a043a4ca9c6e1a38a9a4ad43005835478c8d2",
+    "evidence/sv_package_118a02b75646.json": "3c766bbdd75f39e933af0bc29cb54342c2105a457a199190aecf1da0a21120b5",
+    "evidence/sv_package_1956abdc6154.json": "b8bd93b1a2a0548237e0296de369d35e49fa62738839778821d06c5c989462b3",
+    "evidence/sv_package_3a9dbf53aee6.json.sig": "fdd26d1349a9fe5fc0a8b0eec99a99d9c724de313bb111e21889cf192f10dd8a",
+    "evidence/sv_package_118a02b75646.json.sig": "fd6fd64a10b2d916d7beacaebe00b3613a9ae0facae6f2f5cbc476324b01f196",
+    "evidence/sv_package_ed144097dece.json.sig": "74a28866f5b4f6ad6b16f524fd8ff8ab32b0c339b395edcaf2587e9ad527c129",
+    "evidence/sv_package_df46427defc7.json": "b4cd5c4fb76fd3e89fd9d45e3b89f806a38bdc4d4f703d501d6efa5bd176c133",
+    "evidence/sv_package_7548237bceca.json": "a760e5e0c2d17c7cf5d9453e140a6818b6019d6a3c5ab9d03f0e65791c4e914a",
+    "evidence/sv_package_7548237bceca.json.sig": "59fd11be9dff6ece03d60ebfaaa8a4350656bdfe6765765de2e17cf84d3028b8",
+    "evidence/sv_package_5bfc70dfcfa2.json.sig": "9d4f96c087e38b903df908e52a1c0899bc45975aec21b481472c44c4421be734",
+    "evidence/sv_package_3a9dbf53aee6.json": "b6fddb0aeb93bb14b2bd72e202d30552b0d46e044bac15b915e53b27daaef732",
+    "tools/verify_package.py": "15cf86ecab7df0cd791a1a521bdce47c7ac9fafaa547072432148bdb97df879a",
+    "tools/verifier_mutants.py": "b43f05ced1b92692a14a5b5cd06c4563d18c1af6ed6351aa8bcaedcdb4c7d265",
+    "witness/packages.log": "8c2f28489ae3d2a4670b66696e59cabcd543d1875a9e4769924c207304a71622",
+    "keys/allowed_signers": "484a83919d3b7c6c6c601953a6261bae0de0c9e0bf0288e64ed4c1b35cfe0e0f",
+    "contract/gate_vectors.jsonl": "4534d15d348e54a29897677234fd3c8b28984fd836ea855dff2fafc4377edf68"
+  }
+}

@@ -1,0 +1,172 @@
+diff --git a/.github/workflows/tests.yml b/.github/workflows/tests.yml
+index 799efdd..215d919 100644
+--- a/.github/workflows/tests.yml
++++ b/.github/workflows/tests.yml
+@@ -68,7 +68,9 @@ jobs:
+       - uses: actions/setup-python@v6
+         with:
+           python-version: "3.12"
+-      - run: python -m pip install -e ".[test]"
++      - run: python -m pip install -e ".[test]" pymavlink
++      # pymavlink so test_vehicle_action runs in full: a mutant that passes while tests are
++      # skipped is UNDECIDED, so SURVIVED is only reachable when nothing is skipped here.
+       - name: Every verifier guard, switched off in turn, must fail a test (method from EACE)
+         run: python tools/verifier_mutants.py
+       - name: Every planted Gate bug must be caught
+diff --git a/README.md b/README.md
+index feb90e9..16023f5 100644
+--- a/README.md
++++ b/README.md
+@@ -200,7 +200,7 @@ Every package states these, and the verifier fails a package that drops one:
+ | The two measured packages, signed and published, checked from a fresh clone | 20 of 20 each, `SIGNED:holland202` | container |
+ | Single-field rewrites of the published DEFER package | 0 of 807 verify signed (408 unsigned) | container |
+ | Published evidence re-checked on every push | every package signed and consistent; every witness entry published | CI, 9 jobs |
+-| Verifier guards switched off one at a time | 22 of 22 make a test fail (2 needed new tests) | container, CI |
++| Verifier guards switched off one at a time | 27 of 27 make a test fail (2 needed new tests; full run 2026-10-03, ssh-keygen and pymavlink installed so no test skipped) | container, CI |
+ | Static scan for verification code with no fail path (vacuity_lint) | 0 findings in 66 files | container, CI |
+ | Gate contract: kernel and verifier against 4690 vectors | both conform, one digest | container, CI, S25 |
+ | Contract rules switched off one at a time | 22 of 23 fail a vector; the 23rd cannot be reached | container, CI |
+diff --git a/tests/test_verifier_mutants_verdict.py b/tests/test_verifier_mutants_verdict.py
+new file mode 100644
+index 0000000..7d41c18
+--- /dev/null
++++ b/tests/test_verifier_mutants_verdict.py
+@@ -0,0 +1,39 @@
++"""verifier_mutants.py must not read a skipped killing test as an inert guard.
++
++2026-10-03: on a host without ssh-keygen the `signature` mutant read SURVIVED because the tests
++that kill it were skipped; with ssh-keygen installed it read KILLED. A pass with skips is UNDECIDED.
++The last case is the anti-vacuity control: a pass with no skips must still read SURVIVED, or the
++tool could no longer report an inert guard at all.
++"""
++import importlib.util, os
++
++ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
++spec = importlib.util.spec_from_file_location("verifier_mutants",
++                                              os.path.join(ROOT, "tools", "verifier_mutants.py"))
++vm = importlib.util.module_from_spec(spec)
++spec.loader.exec_module(vm)
++
++
++def test_failing_tests_kill_the_mutant_whatever_was_skipped():
++    assert vm.classify(1, 0) == "KILLED"
++    assert vm.classify(1, 7) == "KILLED"
++
++
++def test_pass_with_skips_is_undecided_not_survived():
++    assert vm.classify(0, 1) == "UNDECIDED"
++    assert vm.classify(0, 11) == "UNDECIDED"
++
++
++def test_pass_with_no_skips_still_reports_survived():
++    assert vm.classify(0, 0) == "SURVIVED"
++
++
++def test_pytest_errors_stay_errors():
++    assert vm.classify(2, 0).startswith("ERROR")
++    assert vm.classify(5, 3).startswith("ERROR")
++
++
++def test_skip_count_reads_the_pytest_summary_line():
++    assert vm.skip_count("....\n440 passed, 13 skipped in 37.11s\n") == 13
++    assert vm.skip_count("....\n452 passed in 39.52s\n") == 0
++    assert vm.skip_count("") == 0
+diff --git a/tools/verifier_mutants.py b/tools/verifier_mutants.py
+index 57d1b33..50c4015 100644
+--- a/tools/verifier_mutants.py
++++ b/tools/verifier_mutants.py
+@@ -14,8 +14,13 @@ test_field_sweep.py, which loads the verifier indirectly).
+ The null mutant applies the same rewrite but names no guard. It must pass, or KILLED would mean
+ nothing: the tool has to be able to report SURVIVED.
+ 
++A mutant that passes while tests were SKIPPED is UNDECIDED, not SURVIVED: the skipped test may be
++the one that kills it (seen 2026-10-03: `signature` read SURVIVED on a host without ssh-keygen,
++and KILLED once ssh-keygen was installed). Skip reasons are printed so the gap is visible.
++
+   python tools/verifier_mutants.py [--only GUARD ...] [--list]
+-Exit: 0 every guard KILLED and the null mutant passed | 1 a guard SURVIVED | 2 could not run
++Exit: 0 every guard KILLED and the null mutant passed | 1 a guard SURVIVED | 2 could not run, or a
++guard is UNDECIDED (survived only while tests were skipped)
+ Stdlib only (pytest runs the tests).
+ """
+ import os, re, shutil, subprocess, sys, tempfile, time
+@@ -65,6 +70,20 @@ def verifier_tests(files):
+                   and p.endswith(".py"))
+ 
+ 
++def classify(returncode, skipped):
++    """pytest exit + skip count -> verdict. A pass with skips is not evidence the guard is inert."""
++    if returncode == 1:
++        return "KILLED"
++    if returncode == 0:
++        return "UNDECIDED" if skipped else "SURVIVED"
++    return f"ERROR(pytest exit {returncode})"
++
++
++def skip_count(stdout):
++    m = re.search(r"(\d+) skipped", (stdout.strip().splitlines() or [""])[-1])
++    return int(m.group(1)) if m else 0
++
++
+ def run_mutant(files, tests, source, guard):
+     with tempfile.TemporaryDirectory(prefix="sv_mutant_") as tmp:
+         for p in files:
+@@ -74,13 +93,17 @@ def run_mutant(files, tests, source, guard):
+                 shutil.copy2(src, os.path.join(tmp, p))
+         with open(os.path.join(tmp, TARGET), "w", encoding="utf-8") as fh:
+             fh.write(mutate(source, guard))
++        # A bare `git init` so the repo-hygiene tests (git check-ignore) run instead of skipping:
++        # a skip the tool itself causes would make every mutant UNDECIDED and SURVIVED unreachable.
++        subprocess.run(["git", "init", "-q", tmp], check=True)
+         env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+-        p = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "-p", "no:cacheprovider", *tests],
++        p = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "-rs", "-p", "no:cacheprovider", *tests],
+                            cwd=tmp, capture_output=True, text=True, env=env, timeout=900)
+     first = next((l.split()[1] for l in p.stdout.splitlines() if l.startswith("FAILED ")), "")
+     last = (p.stdout.strip().splitlines() or [""])[-1]
+-    verdict = {0: "SURVIVED", 1: "KILLED"}.get(p.returncode, f"ERROR(pytest exit {p.returncode})")
+-    return verdict, first or last
++    verdict = classify(p.returncode, skip_count(p.stdout))
++    reasons = sorted({l.split(": ", 1)[-1] for l in p.stdout.splitlines() if l.startswith("SKIPPED ")})
++    return verdict, first or last, reasons
+ 
+ 
+ def main():
+@@ -106,24 +129,29 @@ def main():
+         could_not_run("verifier or its tests not found among tracked files")
+     t0 = time.time()
+     print(f"verifier_mutants | {len(names)} guards | {len(tests)} test files")
+-    verdict, detail = run_mutant(files, tests, source, NULL)
++    verdict, detail, reasons = run_mutant(files, tests, source, NULL)
+     print(f"  {'(null mutant)':<34} {verdict:<9} {detail}")
+-    if verdict != "SURVIVED":
++    for r in reasons:
++        print(f"    skipped on this host: {r}")
++    if verdict not in ("SURVIVED", "UNDECIDED"):
+         could_not_run("the null mutant did not pass, so a KILLED verdict would mean nothing")
+-    survived, errors = [], []
++    survived, undecided, errors = [], [], []
+     for g in (only or names):
+-        verdict, detail = run_mutant(files, tests, source, g)
++        verdict, detail, _ = run_mutant(files, tests, source, g)
+         print(f"  {g:<34} {verdict:<9} {detail}")
+         if verdict == "SURVIVED":
+             survived.append(g)
++        elif verdict == "UNDECIDED":
++            undecided.append(g)
+         elif verdict != "KILLED":
+             errors.append(g)
+     n = len(only or names)
+-    print(f"VERDICT  {n - len(survived) - len(errors)} of {n} KILLED, {len(survived)} SURVIVED"
++    print(f"VERDICT  {n - len(survived) - len(undecided) - len(errors)} of {n} KILLED, {len(survived)} SURVIVED"
++          f"{', ' + str(len(undecided)) + ' UNDECIDED (tests skipped)' if undecided else ''}"
+           f"{', ' + str(len(errors)) + ' ERROR' if errors else ''}  ({time.time() - t0:.0f} s)")
+-    if errors:
+-        sys.exit(2)
+-    sys.exit(1 if survived else 0)
++    if survived:
++        sys.exit(1)
++    sys.exit(2 if errors or undecided else 0)
+ 
+ 
+ if __name__ == "__main__":
