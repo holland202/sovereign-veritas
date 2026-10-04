@@ -1,0 +1,32 @@
+{
+ "id": "P5",
+ "title": "retained state detects a rolled-back log; a consumer without it cannot",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [
+  {
+   "label": "accept B (log: A,B): anchor 2 entries",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P5/B.json --witness-log results/rp1/vectors/P5/log_AB.txt --state results/rp1/vectors/P5/S.state.json",
+   "expected_exit": 0,
+   "expected_substring": "ACCEPTED",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "A with the log cut to 1 entry, anchored S",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P5/A.json --witness-log results/rp1/vectors/P5/log_A.txt --state results/rp1/vectors/P5/S.state.json",
+   "expected_exit": 1,
+   "expected_substring": "rollback",
+   "observed_exit": 1,
+   "as_expected": true
+  },
+  {
+   "label": "A with the log cut to 1 entry, fresh S2",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P5/A.json --witness-log results/rp1/vectors/P5/log_A.txt --state results/rp1/vectors/P5/S2.state.json",
+   "expected_exit": 0,
+   "expected_substring": "ACCEPTED",
+   "observed_exit": 0,
+   "as_expected": true
+  }
+ ]
+}

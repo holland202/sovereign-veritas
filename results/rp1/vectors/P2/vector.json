@@ -1,0 +1,26 @@
+{
+ "id": "P2",
+ "title": "the consumer refuses the same package a second time and leaves its state unchanged",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [
+  {
+   "label": "accept A, fresh state",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P2/A.json --witness-log results/rp1/vectors/P2/log_A.txt --state results/rp1/vectors/P2/S.state.json",
+   "expected_exit": 0,
+   "expected_substring": "CONSUMER",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "accept A again, same state",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P2/A.json --witness-log results/rp1/vectors/P2/log_A.txt --state results/rp1/vectors/P2/S.state.json",
+   "expected_exit": 1,
+   "expected_substring": "replay",
+   "observed_exit": 1,
+   "as_expected": true
+  }
+ ],
+ "state_unchanged_by_refusal": true,
+ "flipped": false
+}

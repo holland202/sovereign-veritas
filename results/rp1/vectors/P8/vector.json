@@ -1,0 +1,34 @@
+{
+ "id": "P8",
+ "title": "a torn consumer state file fails closed for every package",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [
+  {
+   "label": "accept A (builds a real state)",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P8/A.json --witness-log results/rp1/vectors/P8/log_A.txt --state results/rp1/vectors/P8/S.state.json",
+   "expected_exit": 0,
+   "expected_substring": "ACCEPTED",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "B with the torn state T",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P8/B.json --witness-log results/rp1/vectors/P8/log_AB.txt --state results/rp1/vectors/P8/T.state.json",
+   "expected_exit": 2,
+   "expected_substring": "COULD NOT LOOK",
+   "observed_exit": 2,
+   "as_expected": true
+  },
+  {
+   "label": "B with the intact state S",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P8/B.json --witness-log results/rp1/vectors/P8/log_AB.txt --state results/rp1/vectors/P8/S.state.json",
+   "expected_exit": 0,
+   "expected_substring": "ACCEPTED",
+   "observed_exit": 0,
+   "as_expected": true
+  }
+ ],
+ "torn_bytes": 104,
+ "intact_bytes": 209
+}

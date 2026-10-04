@@ -1,0 +1,13 @@
+{
+ "id": "P6",
+ "title": "two consumers that read the same state before either writes both accept",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [],
+ "interleaved": [
+  true,
+  true
+ ],
+ "sequential_second": false,
+ "how": "in-process, tools/consumer.py consumer_check"
+}

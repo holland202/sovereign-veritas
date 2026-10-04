@@ -1,0 +1,33 @@
+{
+ "id": "P3",
+ "title": "a second package for the same action is accepted: at-most-once is per package, not per action",
+ "baseline": "sovereign-veritas main 16850f6",
+ "note": "Run from the repository root. Consumer state files start absent; delete *.state.json to rerun.",
+ "steps": [
+  {
+   "label": "accept A (log: A)",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P3/A.json --witness-log results/rp1/vectors/P3/log_A.txt --state results/rp1/vectors/P3/S.state.json",
+   "expected_exit": 0,
+   "expected_substring": "ACCEPTED",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "accept B, same action (log: A,B), same state",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P3/B.json --witness-log results/rp1/vectors/P3/log_AB.txt --state results/rp1/vectors/P3/S.state.json",
+   "expected_exit": 0,
+   "expected_substring": "ACCEPTED",
+   "observed_exit": 0,
+   "as_expected": true
+  },
+  {
+   "label": "accept A again (log: A,B), same state",
+   "command": "python tools/consumer.py accept results/rp1/vectors/P3/A.json --witness-log results/rp1/vectors/P3/log_AB.txt --state results/rp1/vectors/P3/S.state.json",
+   "expected_exit": 1,
+   "expected_substring": "replay",
+   "observed_exit": 1,
+   "as_expected": true
+  }
+ ],
+ "same_artifact_gate_inputs_and_decision": true
+}

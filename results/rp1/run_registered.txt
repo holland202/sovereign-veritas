@@ -1,0 +1,34 @@
+A 273d8055c74f  B d6eb8df882dc  same artifact, gate inputs and decision: True  decision ALLOW
+  P1 verify A                                     exit 0 (expected 0) ok | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+  P1 verify A again                               exit 0 (expected 0) ok | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+  P1 verify A with decision changed               exit 1 (expected 1) ok | VERDICT  4 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+  P2 accept A, fresh state                        exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P2 accept A again, same state                   exit 1 (expected 1) ok | CONSUMER  REFUSED  (state unchanged)
+  P3 accept A (log: A)                            exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P3 accept B, same action (log: A,B), same state exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P3 accept A again (log: A,B), same state        exit 1 (expected 1) ok | CONSUMER  REFUSED  (state unchanged)
+  P4 A latest, fresh consumer S1                  exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P4 A after B witnessed, fresh consumer S2       exit 1 (expected 1) ok | CONSUMER  REFUSED  (state unchanged)
+  P5 accept B (log: A,B): anchor 2 entries        exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P5 A with the log cut to 1 entry, anchored S    exit 1 (expected 1) ok | CONSUMER  REFUSED  (state unchanged)
+  P5 A with the log cut to 1 entry, fresh S2      exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P6 interleaved: first True (first use; anchor now 1 entries); second on the same snapshot True (first use; anchor now 1 entries)
+  P6 sequential:  second given the first's new state False (already acted on this package (replay))
+  P7  real     N=8 trials=100 doubled=4 zero=0 errors=1 (25 s)
+  P7c paused   N=8 trials=20 doubled=20 zero=0 errors=0 (pause 0.2 s between read and write)
+  P8 accept A (builds a real state)               exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+  P8 B with the torn state T                      exit 2 (expected 2) ok | COULD NOT LOOK: JSONDecodeError: Unterminated string starting at: line 4 column 20 (char 50)
+  P8 B with the intact state S                    exit 0 (expected 0) ok | CONSUMER  ACCEPTED  (state updated)
+
+  P1   HELD
+  P2   HELD
+  P3   HELD
+  P4   HELD
+  P5   HELD
+  P6   HELD
+  P7   REFUTED
+  P7c  HELD
+  P8   HELD
+mode: registered
+VERDICT  8 of 9 as registered
+exit 1
