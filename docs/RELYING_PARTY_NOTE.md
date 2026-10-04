@@ -9,7 +9,7 @@ open gap).
 
 Written by Claude (Opus 5.5) at Chad Holland's direction; Claude also wrote and ran the vectors. A second Claude
 session that had not seen the drafting checked it against the code and outputs, and its corrections are applied.
-Chad Holland has not reviewed it line by line and is responsible for sending it. Self-tested throughout: one author
+Chad Holland read the whole note and is responsible for it; he did not rerun the vectors himself. Self-tested throughout: one author
 (with an AI) built the code, the vectors and this note.
 
 ## What is weak, first
@@ -106,7 +106,7 @@ What the replay protection above needs, and whether this code meets it:
 | State writes are atomic (no torn file) | **no** for the consumer: `open(path, "w")` truncates first | P8; the unregistered P7 rerun saw a reader hit an empty file |
 | A crash before the consumer's state write means no authorization | yes, for a caller that acts only on exit 0: the state is written before the consumer exits 0 | read from the code, not run |
 | A crash after the consumer accepts but before the caller acts | the package is consumed and a retry is refused: at most once, possibly zero | read from the code, not run |
-| The executor's claim is atomic across processes | **yes** for the reservation store (`O_CREAT|O_EXCL`, one file per key) | MP-1: 0 of 200 / 100 / 30 trials doubled at N = 2 / 8 / 32; a deliberately non-atomic store doubled 100 of 100 |
+| The executor's claim is atomic across processes | **yes** for the reservation store (`O_CREAT \| O_EXCL`, one file per key) | MP-1: 0 of 200 / 100 / 30 trials doubled at N = 2 / 8 / 32; a deliberately non-atomic store doubled 100 of 100 |
 | A crashed holder does not make the key runnable again | yes: an in-flight key is refused, and an expired lease becomes UNKNOWN and is still refused, until `release()` is called (intended for a person after investigating; not enforced) | MP-1 P3/P4 (holder killed before the effect: 0 effects; after: 1 effect; 8 retries refused in both, within the lease); RK-2 R7 (expired lease: 0 effects, refused, UNKNOWN) |
 | A lost reply after the effect is not repeated | yes, if the key was fixed at intent | RK-2 R1/R2 (1 effect, retry refused); A3 shows the failure with a fresh key |
 
