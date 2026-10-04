@@ -1,0 +1,75 @@
+SOVEREIGN VERITAS — BOUNDED REPRODUCTION REPORT
+Review date: 2026-10-04
+Repository: https://github.com/holland202/sovereign-veritas
+Exact requested commit: d37779c504f8b03c9e8429eeeb07aeb5576301f9
+Reviewer: OpenAI assistant executing tests at Amos Tipton's request.
+
+SUMMARY
+The signed fixture and all seven negative controls matched Chad Holland's stated results. The main test suite passed 453 tests with no skips. The kernel and verifier reproduced the published 4,690-vector digest. This is a separate execution of mostly author-supplied tests, not an independently implemented verifier, exhaustive security audit, or production certification. No new challenge-breaking result was found in the checks performed.
+
+ENVIRONMENT
+Linux x86_64; Python 3.12.14; OpenSSH 9.6p1. pytest 9.1.1 and pymavlink 2.4.50 installed in a task-specific virtual environment. Full dependencies in dependencies.txt. Read-only review of the pinned checkout; no repository changes committed or pushed, no messages sent to Chad. The repository working tree was clean at the provenance capture.
+
+RESULTS
+0. Verifier guard mutation experiment: all 27 of 27 disabled guards detected; zero survived (435 seconds). The null control passed 451 tests and skipped two git-checkout-only tests because the mutation tool copies tracked files without .git metadata. Those two tests passed in the 453-test main run. This qualifies the post's no-skip wording for this reproduction.
+
+1. Published signed packages, with BOTH signature and witness checks:
+   sv_package_7548237bceca.json: exit 0, CONSISTENT,
+   freshness=LATEST_WITNESSED(6), authenticity=SIGNED:holland202.
+   Five older packages: exit 1, STALE.
+   Two unwitnessed packages: exit 1, NOT_WITNESSED.
+   All eight signature checks passed against the repository's allowed-signers file.
+   This verifies against the committed trust anchor; it does not independently establish the real-world identity or custody of that key. Freshness is relative to the witness log at this pinned commit.
+
+2. Main suite: 453 passed in 33.93 seconds, no skips.
+
+3. Kernel and verifier: each conforms on all 4,690 supplied vectors.
+   Digest: 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628.
+   The Go port was not executed; Go was not present in the environment. No claim of a new contract-only independent implementation is made.
+
+4. Contract mutation checks: 22 of 23 rules detected by the vectors; one reported unreachable; no surviving reachable mutant. The unchanged control passed. This reproduces the supplied mutation experiment, not every possible defect.
+
+5. Attack harness rounds 2 and 3: all 14 reported predictions HELD. The harness also demonstrates disclosed limitations: unsigned consistent rewrites can pass; verifier-only replay of the latest package can pass; a rolled-back log can fool a first-time consumer. A consumer that has seen the newer log refuses the rollback and rejects replay. The harness uses its own temporary fixtures and signing keys, distinct from the published eight-package check.
+
+6. Additional reviewer-selected CLI checks:
+   - Add one whitespace byte to signed package, retain original signature: exit 1; signature rejected.
+   - Wrong signer identity against original package: exit 1; signature rejected.
+   - Duplicate JSON keys: exit 2; rejected as unreadable.
+   - NaN literal: exit 2; rejected as unreadable.
+   Exit 2 is rejection due to inability to parse/verify, not a successful consistency verdict.
+
+7. Corruption experiment on available published package sv_package_5bfc70dfcfa2.json:
+   0 of 17,131 strict prefixes and 0 of 200 seeded bit flips accepted.
+   IMPORTANT: Chad's historical 17,157-byte phone package was named sv_package_de9fee31b190.json in documentation, but was not found in this checkout. Therefore the exact historical 17,157-case count was NOT reproduced. The analogous 17,131-case experiment passed on a different published fixture. This tool calls verify() directly using ordinary json.loads; it does not exercise the complete signature/witness CLI or its hardened parser.
+
+8. Corridor simulation:
+   Supplied external attacker example: 30.9500 m, NO BREAK against 31.1 m bound.
+   Registered reference/search experiment: 8 of 8 outcomes as registered; 1,000 search attackers, max 30.71 m, zero out-of-model cases. Registered digest:
+   4f09350ea05ee3d30ee9e2cd69c62d5fd459ddcb5984cd700c94509369afa665.
+   This reproduces a kinematic simulation under its stated assumptions. It does NOT prove a universal bound or real-world vehicle safety. The separate best-known 31.00 m attack was not independently reconstructed.
+
+9. Execution boundary probe (--expect-fix): 8 of 8 outcomes as registered.
+   X1-X3 sequential duplicate: one effect, one record; second execution blocked.
+   X4 concurrent race: TWO effects, ONE record.
+   X5 effect succeeds, ledger write fails: ONE effect, ZERO records.
+   These are previously disclosed failures, not new findings. Effects were counted by a local test executor; no live vehicle or business operation was used.
+
+REPRODUCTION COMMANDS (from pinned checkout)
+python tools/verify_package.py evidence/sv_package_7548237bceca.json --signature evidence/sv_package_7548237bceca.json.sig --allowed-signers keys/allowed_signers --identity holland202 --witness-log witness/packages.log
+Repeat the verifier command for each evidence/*.json with its matching .sig.
+../sv-test-env/bin/python -m pytest -q -ra
+PYTHONPATH=. python tools/gate_contract.py --check kernel
+PYTHONPATH=. python tools/gate_contract.py --check verifier
+PYTHONPATH=. python tools/gate_contract.py --mutants
+PYTHONPATH=. python tools/attack_harness.py --round2 --round3
+python tools/package_recovery_sim.py evidence/sv_package_5bfc70dfcfa2.json
+python tools/corridor_challenge.py --attacker 'python tools/corridor_attacker_example.py'
+python tools/corridor_challenge.py
+python tools/execution_boundary_probe.py --expect-fix
+../sv-test-env/bin/python -u tools/verifier_mutants.py
+
+LIMITS
+No new independent Gate implementation, all-platform execution, phone hardware validation, exhaustive adversarial search, real-world input truth validation, operational key-custody assessment, or current branch-protection audit. Passing results apply to the pinned commit and experiments stated. Existing limitations remain material even when the tests correctly expect them and therefore pass.
+
+EVIDENCE
+Raw outputs, package result matrix, environment information, and SHA-256 source/fixture hashes are included. The test source was obtained directly from the public repository at the specified commit. The source checkout itself is not included in this evidence bundle.

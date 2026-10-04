@@ -1,0 +1,43 @@
+SOVEREIGN VERITAS — NEW BASELINE VERIFICATION
+Date: 2026-10-04
+Repository: https://github.com/holland202/sovereign-veritas
+Tested commit: 2c825b8b02083bf3373b9bd857f699507029b865
+Earlier baseline: d37779c504f8b03c9e8429eeeb07aeb5576301f9
+Execution: OpenAI assistant at Amos Tipton's request; Linux x86_64, Python 3.12.14, OpenSSH and pymavlink available.
+
+CONCLUSION
+The specified reference package, all seven other published evidence packages, kernel and verifier conformance checks, and round 2/3 attack predictions reproduced as stated at the new commit. Main suite: 458 passed, no skips. No discrepancy was found in these checks. This is bounded AI-assisted execution of mostly author-supplied tests, not an independent implementation or production certification.
+
+CHANGE FROM EARLIER COMMIT
+Only four files differ: README.md, .github/workflows/tests.yml, tools/verifier_mutants.py, and new tests/test_verifier_mutants_verdict.py. The merge updates mutant classification when tests are skipped, initializes temporary Git repositories to avoid self-caused hygiene-test skips, and adds pymavlink to the relevant CI installation. Core verifier, source packages, signatures, allowed-signers, witness log, and contract vectors are unchanged. Source diff included.
+
+OBSERVED RESULTS
+Reference sv_package_7548237bceca.json: CONSISTENT, LATEST_WITNESSED(6), SIGNED:holland202, exit 0.
+Five STALE packages, all exit 1:
+sv_package_1956abdc6154.json
+sv_package_3a9dbf53aee6.json
+sv_package_5bfc70dfcfa2.json
+sv_package_df46427defc7.json
+sv_package_ed144097dece.json
+Two NOT_WITNESSED packages, both exit 1:
+sv_package_118a02b75646.json
+sv_package_45c6ad182584.json
+All eight checked with matching signatures, keys/allowed_signers, identity holland202, and witness/packages.log. All signatures valid against that committed trust anchor.
+
+Main suite: 458 passed in 35.94 seconds, no skips (five more tests than earlier baseline).
+Kernel and verifier: each CONFORMS on all 4,690 supplied vectors.
+Digest: 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628.
+Attack harness --round2 --round3: all 14 registered predictions HELD, exit 0.
+Updated mutation tool --only signature: null control SURVIVED with 458 passed and no skips; disabled signature guard KILLED (1 failed, 293 passed); exit 0. This is one targeted guard, not a new full 27-guard run. Five new classification tests passed as part of main suite.
+
+SCOPE AND LIMITS
+The seven negative controls above are evidence packages, not seven A1-A10 attack cases.
+The attack harness includes expected demonstrations of disclosed limitations; HELD does not mean every attempted attack is prevented.
+Freshness is relative to the pinned witness log. Signature validity does not independently establish real-world identity or key custody.
+No new full 27-guard mutation experiment, full A/B or V15 harness run, Go-port execution, corruption sweep, corridor simulation, execution-boundary probe, live deployment, or hardware test was performed in this follow-up. Earlier results for those experiments remain attached to the earlier commit; unchanged code does not constitute a fresh execution.
+The prior 12-page strategic PDF remains a historical record of the earlier baseline; this bundle supplies the new verification record. Nothing was sent to Chad or published to GitHub.
+
+REPRODUCTION
+Exact commands, exits and timings: commands.json.
+SHA-256 source/fixture hashes and platform: provenance.json.
+Logs are included for every check. run_checks.py is the orchestration script used; its absolute paths are local to this review environment. It runs independent checks concurrently, with PYTHONPATH set to the reviewed worktree. The targeted mutation changes tools/verify_package.py inside a temporary copy, as implemented by the author tool.
