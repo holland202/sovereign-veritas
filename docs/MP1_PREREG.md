@@ -55,3 +55,46 @@ local filesystem". This tests that claim and nothing wider.
 - A holder whose lease expires while it is still running, racing a late `complete()` against the expiry write
   (a suspected lost update, from reading `FileReservations._move` and `reserve()`; not tested here).
 - Network filesystems and separate machines.
+
+---
+
+## Amendment 1 — 2026-10-04 (UTC), the registered run
+
+Nothing above this line was edited. Probe `tools/mp1_probe.py` at `ce5fee4`, run once with the registered trial
+counts. Linux x86_64 container, 2 CPUs, Python 3.13.16. **NOT VALIDATED on the S25.**
+
+Before the registered run, one smoke run (`--quick`, a twentieth of the trials) found a **probe bug**: the kill
+cases started their holder process without its mode, so it finished before it could be killed and the probe
+crashed (`ProcessLookupError`). Fixed in `ce5fee4` before the registered run. No prediction or trial count changed.
+
+| | Result |
+|---|---|
+| **P1** race, real store | **HELD.** N=2: 0 of 200 trials doubled. N=8: 0 of 100. N=32: 0 of 30. Every trial had exactly one effect; no worker errors. |
+| **P2** anti-vacuity | **HELD.** The sabotage file store doubled 100 of 100 trials at N=8. The harness can see a doubled race across processes. |
+| **P3** killed before the effect | **HELD.** 0 effects; all 8 retries refused before execution. |
+| **P4** killed after the effect | **HELD.** 1 effect; all 8 retries refused before execution. |
+| **P5** fresh-key control | **HELD.** A different key ran after each kill case. |
+
+Output, verbatim:
+
+```
+P1 real     N=2   trials=200  doubled=0 zero=0 errors=0
+P1 real     N=8   trials=100  doubled=0 zero=0 errors=0
+P1 real     N=32  trials=30   doubled=0 zero=0 errors=0
+P2 sabotage N=8   trials=100  doubled=100 zero=0 errors=0
+P3 killed before effect  marker=True same-key effects=0 retries=['refused']x8 fresh-key=ran
+P4 killed after effect   marker=True same-key effects=1 retries=['refused']x8 fresh-key=ran
+
+  P1  HELD
+  P2  HELD
+  P3  HELD
+  P4  HELD
+  P5  HELD
+VERDICT  5 of 5 as registered
+```
+
+**What this shows:** on one local Linux filesystem, `O_CREAT|O_EXCL` held one key to one effect across up to 32
+separate processes, and a killed holder left the key refused rather than re-runnable. **What it does not show:**
+Android storage (Termux folder or FUSE shared storage), network filesystems, separate machines, and the
+lease-expiry/late-complete race listed as unrun. P3 and P4 also show the cost already stated in RK-2: after a
+crash the key stays blocked until a person releases it.
