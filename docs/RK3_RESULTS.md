@@ -11,6 +11,15 @@ independent person.
 
 ## What still fails, first
 
+- **CI refused the first version of the fix.** At `40fe508`, JG-2 P1 (job `red-team`) was REFUTED. The new late-event
+  log was named with a second `hashlib.sha256(key)` call, and JG-2 refuses any hash site except the one line its
+  Amendment 1 allows. Output at `40fe508`, verbatim (abridged to P1's site lists):
+  `"sha256_sites": [..., "sovereign_veritas/idempotency.py:137", "sovereign_veritas/idempotency.py:172", ...],
+  "sites_not_canonical_or_artifact": ["sovereign_veritas/idempotency.py:172"]`. Fixed at `f4022bc` by deriving the
+  log's name from the reservation path (`_path(key).with_suffix(".late.jsonl")`), with no new hash and no change to
+  JG-2's rule. JG-2 then printed `VERDICT 6 of 6 as registered (P2 not run)`. The registered run below was at
+  `40fe508`; the rerun at `f4022bc` is under "Rerun after the CI fix".
+
 - **E1 is not fixed, by design: one key can still produce two effects.** If a holder outlives its lease and a
   person releases the key after truthfully seeing no effect yet, the retry runs and then the late holder's action
   lands (Q2: `effects: 2`). Checking that no effect has happened does not show that the earlier attempt can no
@@ -89,3 +98,38 @@ exit 1
 ## Next unrun test
 
 E1 against a fenced target: the OBS-1 round-one cases, once Amos Tipton's cases are committed unedited.
+
+## Rerun after the CI fix (`f4022bc`, verbatim, `results/rk3/run_after_ci_fix.txt`)
+
+Same probe, same trial counts. Q1c's count differs run to run (123, then 131), as a timing race should.
+
+```
+Q1   changed store   trials=300 hammers=3 COMPLETED lost=0
+Q1c  1307da7 store  trials=300 hammers=3 COMPLETED lost=131
+Q2   lease 1 s, holder 2 s, release at 1.2 s: {"a_token": "2559bd48c9a6a3a4", "effects": 2, "effects_at_check": 0, "errors": {}, "final_state": "COMPLETED", "history": ["IN_FLIGHT", "COMPLETED"], "late": [{"at": 1791154594.5690851, "current_token": "8ba6387e3bdd5f56", "event": "late_complete", "late_token": "2559bd48c9a6a3a4"}], "release": "accepted", "seconds": 2.0, "state_at_check": "UNKNOWN"}
+Q3   lease 5 s, holder 2 s, release at 1.0 s: {"a_token": null, "effects": 1, "effects_at_check": 0, "errors": {}, "final_state": "COMPLETED", "history": ["IN_FLIGHT", "COMPLETED"], "late": [], "release": "refused: release is allowed only from UNKNOWN: 'K-rk3'", "seconds": 2.0, "state_at_check": "IN_FLIGHT"}
+Q4   rk2             exit 0 | VERDICT  10 of 10 as registered (R11: run --sabotage, expect exit 1; R12: regression, run separately)
+Q4   rk2 --sabotage  exit 1 | VERDICT  9 of 10 as registered (R11: run --sabotage, expect exit 1; R12: regression, run separately)
+Q4   mp1             exit 0 | VERDICT  5 of 5 as registered
+Q4   pytest          exit 0 | 481 passed in 40.83s
+
+  Q1   HELD
+  Q1c  HELD
+  Q2   HELD
+  Q3   HELD
+  Q4   HELD
+  Q5   run --sabotage, expect Q2 REFUTED and exit 1
+VERDICT  5 of 5 as registered
+exit 0
+```
+
+`--sabotage` at `f4022bc` (`results/rk3/run_after_ci_fix_sabotage.txt`):
+
+```
+Q2   lease 1 s, holder 2 s, release at 1.2 s: {"a_token": "b2d52dde4b18aa4c", "effects": 2, "effects_at_check": 0, "errors": {}, "final_state": "COMPLETED", "history": ["IN_FLIGHT", "COMPLETED", "COMPLETED"], "late": [], "release": "accepted", "seconds": 2.0, "state_at_check": "UNKNOWN"}
+
+  Q2   REFUTED
+mode: SABOTAGE (complete() ignores the holder token); Q5 holds if Q2 is REFUTED and the exit is 1
+VERDICT  0 of 1 under sabotage
+exit 1
+```
