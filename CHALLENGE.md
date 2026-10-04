@@ -33,6 +33,8 @@ count (see the list below): concurrent processes, and a second package for the s
   fixed (PR #8), so getting a second external effect from a **sequential** repeat of a `record_id` through a
   sink that implements `has_record` **does** count as a break.
 
+<a id="one-action-two-effects-rk-2--mp-1-a-separate-track-also-credited"></a>
+
 ## One action, two effects (RK-2 / MP-1 / RK-3, a separate track, also credited)
 
 **Claim.** Through `EvidenceWorkflow.run()` with an `idempotency_key` and a `FileReservations` store, one key
