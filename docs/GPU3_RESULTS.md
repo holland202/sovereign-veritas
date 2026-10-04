@@ -87,6 +87,22 @@ LOG    /data/data/com.termux/files/home/gpu3_hard_gpu.json
 Across GPU-2 and GPU-3, three GPU runs (30 temperature-0 replies across thermal states from `pwrlevel` 0 to 9)
 gave no byte change for either prompt, including one the model answers correctly.
 
+## The CPU server log (read after the crash, verbatim tail)
+
+```
+0.00.000.459 I srv  llama_server: initializing ...
+0.00.117.638 E ggml_opencl: platform IDs not available.
+0.00.134.618 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.135.048 W srv  llama_server: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.136.606 I srv    load_model: loading model '/data/data/com.termux/files/home/llama-3.2-3b.gguf'
+0.05.981.735 I cmn          init: llama threadpool init, n_threads = 8
+```
+
+The log stops at thread-pool start, with no error and no shutdown message, so the process was ended from
+outside. The `ggml_opencl` line is expected for plain `llama-server` (no Adreno library path) and is not the
+cause. Inference, **not established**: Android ended Termux when 8 CPU threads started on a phone whose GPU had
+just been at 100–105 °C. CPU runs on a cool phone worked on 2026-09-26. Android's own logs were not read.
+
 ## Next
 
 Find the crash cause (the tail of `~/gpu3_cpu.log`) before retrying C and D. Retry them only on a phone that has
