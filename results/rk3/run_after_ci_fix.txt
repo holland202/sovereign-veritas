@@ -1,0 +1,17 @@
+Q1   changed store   trials=300 hammers=3 COMPLETED lost=0
+Q1c  1307da7 store  trials=300 hammers=3 COMPLETED lost=131
+Q2   lease 1 s, holder 2 s, release at 1.2 s: {"a_token": "2559bd48c9a6a3a4", "effects": 2, "effects_at_check": 0, "errors": {}, "final_state": "COMPLETED", "history": ["IN_FLIGHT", "COMPLETED"], "late": [{"at": 1791154594.5690851, "current_token": "8ba6387e3bdd5f56", "event": "late_complete", "late_token": "2559bd48c9a6a3a4"}], "release": "accepted", "seconds": 2.0, "state_at_check": "UNKNOWN"}
+Q3   lease 5 s, holder 2 s, release at 1.0 s: {"a_token": null, "effects": 1, "effects_at_check": 0, "errors": {}, "final_state": "COMPLETED", "history": ["IN_FLIGHT", "COMPLETED"], "late": [], "release": "refused: release is allowed only from UNKNOWN: 'K-rk3'", "seconds": 2.0, "state_at_check": "IN_FLIGHT"}
+Q4   rk2             exit 0 | VERDICT  10 of 10 as registered (R11: run --sabotage, expect exit 1; R12: regression, run separately)
+Q4   rk2 --sabotage  exit 1 | VERDICT  9 of 10 as registered (R11: run --sabotage, expect exit 1; R12: regression, run separately)
+Q4   mp1             exit 0 | VERDICT  5 of 5 as registered
+Q4   pytest          exit 0 | 481 passed in 40.83s
+
+  Q1   HELD
+  Q1c  HELD
+  Q2   HELD
+  Q3   HELD
+  Q4   HELD
+  Q5   run --sabotage, expect Q2 REFUTED and exit 1
+VERDICT  5 of 5 as registered
+exit 0

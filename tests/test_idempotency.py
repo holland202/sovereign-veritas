@@ -159,3 +159,46 @@ def test_keys_compared_byte_for_byte_no_unicode_normalization(tmp_path, make):
     store.reserve(nfd)  # not refused: a second, separate reservation
     with pytest.raises(ReservationRefused):
         store.reserve(nfc)  # the exact same bytes are still refused
+
+
+# RK-3 (docs/RK3_PREREG.md)
+
+def test_rk3_reserve_never_writes_an_existing_key(tmp_path):
+    store = FileReservations(tmp_path / "res")
+    store.reserve("K", lease_s=0)
+    path = store._path("K")
+    before = path.read_bytes()
+    with pytest.raises(ReservationRefused, match="UNKNOWN"):
+        store.reserve("K")
+    assert path.read_bytes() == before  # expiry is derived, so a late complete() cannot be overwritten
+
+
+def test_rk3_late_holder_is_recorded_not_obeyed(store):
+    old = store.reserve("K", lease_s=0)
+    store.release("K", by="op", reason="checked")
+    new = store.reserve("K", lease_s=60)
+    store.complete("K", token=old)  # the released holder finishes late
+    assert store.state("K") == IN_FLIGHT  # the current holder's entry is untouched
+    [ev] = store.late_events("K")
+    assert ev["event"] == "late_complete" and ev["late_token"] == old and ev["current_token"] == new
+    store.complete("K", token=new)
+    assert store.state("K") == COMPLETED
+
+
+def test_rk3_release_records_the_derived_expiry(store):
+    store.reserve("K", lease_s=0)
+    store.release("K", by="op", reason="checked")
+    assert [h["to"] for h in store.released_history("K")[0]] == [IN_FLIGHT, UNKNOWN, "RELEASED"]
+
+
+def test_rk3_run_passes_the_lease(store):
+    wf = EvidenceWorkflow(sensor=_S(), predictor=_P(), verifier=_V(), executor=_Ex(), evidence_sink=LedgerSink(Ledger()),
+                          reservations=store)
+    seen = {}
+    real = store.reserve
+    store.reserve = lambda key, lease_s=30.0: seen.setdefault("lease", lease_s) and real(key, lease_s)
+    wf.run(record_id="r", input_digest="abc", capability=Capability("read_only", True, ("fresh",)),
+           runtime=RuntimeState(platform="t", python_version="3"),
+           action=ActionProposal(capability="read_only", requested="read", parameters={}),
+           metadata={"fresh": True}, idempotency_key="K", lease_s=5.0)
+    assert seen["lease"] == 5.0 and store.state("K") == COMPLETED
