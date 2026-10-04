@@ -219,7 +219,7 @@ def main():
             with open(f, "rb") as fh:
                 data = fh.read()
             pkg = json.loads(data)
-            corpus.append((pkg["provenance"]["chain"][-1]["record"]["timestamp"], os.path.relpath(f, ROOT), data, pkg))
+            corpus.append((pkg["provenance"]["chain"][-1]["record"]["timestamp"], os.path.relpath(f, ROOT).replace(os.sep, "/"), data, pkg))
         corpus.sort()
         if not corpus:
             raise OSError("no packages found")
