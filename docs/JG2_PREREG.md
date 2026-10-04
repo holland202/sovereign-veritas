@@ -82,3 +82,46 @@ sabotage, P6 must be REFUTED and the probe must exit 1.
 ## Next unrun test
 
 Run P5–P7 on the S25 under Termux (`pkg install openssh`). That is the Android part of S1 and S3.
+
+## Amendment 1 (2026-10-04, after a failure; the text above is unchanged)
+
+**What failed.** P1 was REFUTED in CI (job `red-team`) at `2b7f8a2` (RK-2, PR #38) and at `c7e96a6` (MP-1, PR #42,
+built on RK-2). RK-2 added a fifth `sha256` site that hashes neither `canonical_json(...)` nor artifact bytes.
+Output at `2b7f8a2`, verbatim:
+
+```
+REFUTED P1  {"differs_from_ascii_json": true, "digest_is_canonical": true, "sha256_sites": ["sovereign_veritas/evidence.py:48", "sovereign_veritas/idempotency.py:108", "sovereign_veritas/package.py:44", "sovereign_veritas/package.py:49", "sovereign_veritas/package.py:92"], "sites_not_canonical_or_artifact": ["sovereign_veritas/idempotency.py:108"]}
+```
+
+P1 stays REFUTED at those two commits. This amendment does not change that record.
+
+**What the site is.** `FileReservations._path` hashes the idempotency key to name its reservation file. The hash is
+never stored as evidence, never signed and never compared with a digest. It is a file name.
+
+**What the failure taught.** Hashing a key means comparing it byte for byte. The same visible key in two Unicode
+forms (NFC and NFD) is two keys, so a caller that re-normalizes its key between attempts can run the action
+twice. `MemoryReservations` behaves the same way (dictionary keys), so the two stores agree. This is now pinned by
+`tests/test_idempotency.py::test_keys_compared_byte_for_byte_no_unicode_normalization` and stated as a limit in
+RK-2's results. It is not fixed: the key is the caller's, and normalizing it inside the store would change RK-2's
+registered behaviour after its run.
+
+**The amended rule.** P1 now allows a third kind of site: a hash used only to name a file, matched to the exact
+line in `sovereign_veritas/idempotency.py` (`FILE_NAME_LINE` in `tools/jg2_probe.py`) and reported separately as
+`file_name_only_sites`. Any other new hash is still refused. Decided by Chad Holland on 2026-10-04 after the
+failure, from options set out by Claude (Opus 5.5); written after the result, so it is not a prediction.
+
+**The amended check can still fail.** With a second unclassified hash planted in `idempotency.py`, P1 is REFUTED
+again and the probe exits 1:
+
+```
+REFUTED P1  {"differs_from_ascii_json": true, "digest_is_canonical": true, "file_name_only_sites": ["sovereign_veritas/idempotency.py:108"], "sha256_sites": ["sovereign_veritas/evidence.py:48", "sover
+VERDICT 5 of 6 as registered (P2 not run) ...
+```
+
+After the amendment, on the RK-2 branch:
+
+```
+HELD    P1  {"differs_from_ascii_json": true, "digest_is_canonical": true, "file_name_only_sites": ["sovereign_veritas/idempotency.py:108"], "sha256_sites": ["sovereign_veritas/evidence.py:48", "sovereign_veritas/idempotency.py:108", "sovereign_veritas/package.py:44", "sovereign_veritas/package.py:49", "sovereign_veritas/package.py:92"], "sites_not_canonical_or_artifact": []}
+VERDICT 6 of 6 as registered (P2 not run)
+DIGEST 5281e7697a2913fa1d296d1fea32ae917e25b14fa106d61daa06c48c5b6b4f67
+```

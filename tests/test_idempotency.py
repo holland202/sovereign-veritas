@@ -145,3 +145,17 @@ def test_rk2_probe_registered_outcome_and_sabotage():
     sab = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "rk2_probe.py"), "--sabotage"],
                          capture_output=True, text=True)
     assert sab.returncode == 1, sab.stdout[-800:]
+
+
+@pytest.mark.parametrize("make", [lambda p: MemoryReservations(), lambda p: FileReservations(p / "r")])
+def test_keys_compared_byte_for_byte_no_unicode_normalization(tmp_path, make):
+    """Documents a limit found 2026-10-04 (JG-2 Amendment 1): the same visible key in two Unicode forms is two
+    keys, so a caller that re-normalizes its key between attempts can run the action twice. Both stores agree."""
+    import unicodedata
+    nfc, nfd = unicodedata.normalize("NFC", "café"), unicodedata.normalize("NFD", "café")
+    assert nfc != nfd
+    store = make(tmp_path)
+    store.reserve(nfc)
+    store.reserve(nfd)  # not refused: a second, separate reservation
+    with pytest.raises(ReservationRefused):
+        store.reserve(nfc)  # the exact same bytes are still refused

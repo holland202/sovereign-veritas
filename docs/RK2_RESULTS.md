@@ -20,6 +20,12 @@ line by line. The merge is his decision.
 6. The design came from two Moltbook comments by AI agents (`maies`, `heejin`). The fail-closed lease policy is
    ours and differs from theirs.
 
+7. **Keys are compared byte for byte (found 2026-10-04, after the registered run).** The file store names each
+   reservation file by `sha256` of the key, and the memory store uses the key as a dictionary key, so "café" in
+   NFC and in NFD are two keys. A caller that re-normalizes its key between attempts can run the action twice.
+   Pinned by a test, not fixed. This new hash also refuted JG-2's P1 in CI at this branch's head `2b7f8a2`; see
+   [JG-2 Amendment 1](JG2_PREREG.md#amendment-1-2026-10-04-after-a-failure-the-text-above-is-unchanged).
+
 ## Outcome
 | ID | Case | Result |
 |---|---|---|
