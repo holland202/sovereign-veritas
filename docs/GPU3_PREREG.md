@@ -49,3 +49,17 @@ so the CPU runs start on a warm phone. That is recorded, not controlled. Self-te
 ## Next unrun test
 
 A second model (the Qwen2.5-1.5B from `PLATFORM_TESTS.md`) through the same four runs.
+
+## Amendment 1 (2026-10-04, before runs C and D; the text above is unchanged)
+
+Runs C and D crashed Termux three times when the CPU server started: twice right after the GPU runs, and once on
+a cool phone (GPU 37.6 °C), so heat is not the main cause. Each time, the server log stopped at
+`llama threadpool init, n_threads = 8` with no error. The GPU server's log shows that it sized its own memory as
+`n_slots = 4, n_ctx_slot = 13568, kv_unified = 'true'`. `free -h` showed 4.3 GiB available, out of 10 GiB.
+Inference, not established: the CPU server reserves a similar KV cache in ordinary memory, and Android kills
+Termux when memory runs out.
+
+Change, made before C and D run: the CPU server is started with `-c 2048 -np 1` (one slot, 2048-token context).
+The prompts and replies are under 100 tokens, so this should not change the arithmetic. But runs A and B used the
+GPU server's own sizing, so P4 and P5 now compare runs with **different context settings**, and a difference
+could come from that rather than from the CPU versus GPU split. That limit will be stated next to P4 and P5.
