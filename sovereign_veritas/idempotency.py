@@ -10,6 +10,12 @@ A key is reserved before an external effect and is never reused without an expli
 An IN_FLIGHT key whose lease has expired becomes UNKNOWN and is still refused: an expired lease is never treated
 as permission to run again (fail closed). The price is liveness: UNKNOWN keys wait for a person.
 
+RK-3 (docs/RK3_PREREG.md): reserve() never writes to an existing key (expiry is derived, not stored), so it cannot
+overwrite a late complete(). reserve() returns a holder token; complete()/unknown() given a token that no longer
+matches the entry (the key was released, and maybe reserved again) leave the entry alone and append a late event
+instead (late_events()). This makes a late holder visible; it cannot stop the late holder's effect. That needs a
+fence checked by the action's target (OBS-1).
+
 The caller must choose the key when the intent is created, before the first attempt. A fresh key per attempt
 defeats this (RK-2 case A3).
 """
@@ -17,6 +23,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import secrets
 import os
 import threading
 import time
@@ -41,6 +48,21 @@ def _refusal(key: str, state: str) -> ReservationRefused:
     return ReservationRefused(f"idempotency key {key!r} is {state}: refused before execution")
 
 
+def _late_event(to: str, why: str | None, token: str, entry: dict[str, Any] | None) -> dict[str, Any]:
+    """RK-3: a complete()/unknown() from a holder that no longer holds the key."""
+    return {"at": time.time(), "event": "late_complete" if to == COMPLETED else "late_unknown",
+            "late_token": token, "current_token": None if entry is None else entry.get("token"),
+            **({"why": why} if why else {})}
+
+
+def _with_expiry(entry: dict[str, Any]) -> list[dict[str, Any]]:
+    """History as released: expiry is derived (RK-3), so write it down at release time."""
+    hist = list(entry.get("history", []))
+    if entry.get("state") == IN_FLIGHT:
+        hist.append({"at": float(entry.get("lease_expires", 0)), "to": UNKNOWN, "why": "lease_expired"})
+    return hist
+
+
 class MemoryReservations:
     """In-process store; reserve() is atomic under one lock."""
 
@@ -48,30 +70,37 @@ class MemoryReservations:
         self._lock = threading.Lock()
         self._entries: dict[str, dict[str, Any]] = {}
         self._released: dict[str, list[list[dict[str, Any]]]] = {}
+        self._late: dict[str, list[dict[str, Any]]] = {}
 
-    def reserve(self, key: str, lease_s: float = DEFAULT_LEASE_S) -> None:
+    def reserve(self, key: str, lease_s: float = DEFAULT_LEASE_S) -> str:
         now = time.time()
         with self._lock:
             entry = self._entries.get(key)
             if entry is not None:
-                state = _effective(entry, now)
-                if state != entry["state"]:
-                    entry.update(state=state, history=entry["history"] + [{"at": now, "to": state, "why": "lease_expired"}])
-                raise _refusal(key, state)
-            self._entries[key] = {"state": IN_FLIGHT, "lease_expires": now + lease_s,
+                raise _refusal(key, _effective(entry, now))  # RK-3: never written here
+            token = secrets.token_hex(8)
+            self._entries[key] = {"state": IN_FLIGHT, "lease_expires": now + lease_s, "token": token,
                                   "history": [{"at": now, "to": IN_FLIGHT}]}
+            return token
 
-    def _move(self, key: str, to: str, why: str | None = None) -> None:
+    def _move(self, key: str, to: str, why: str | None = None, token: str | None = None) -> None:
         with self._lock:
-            entry = self._entries[key]
+            entry = self._entries.get(key)
+            if token is not None and (entry is None or entry.get("token") != token):
+                self._late.setdefault(key, []).append(_late_event(to, why, token, entry))
+                return
             entry["state"] = to
             entry["history"] = entry["history"] + [{"at": time.time(), "to": to, **({"why": why} if why else {})}]
 
-    def complete(self, key: str) -> None:
-        self._move(key, COMPLETED)
+    def complete(self, key: str, token: str | None = None) -> None:
+        self._move(key, COMPLETED, token=token)
 
-    def unknown(self, key: str, why: str) -> None:
-        self._move(key, UNKNOWN, why)
+    def unknown(self, key: str, why: str, token: str | None = None) -> None:
+        self._move(key, UNKNOWN, why, token=token)
+
+    def late_events(self, key: str) -> list[dict[str, Any]]:
+        with self._lock:
+            return list(self._late.get(key, []))
 
     def state(self, key: str) -> str | None:
         with self._lock:
@@ -87,7 +116,7 @@ class MemoryReservations:
             entry = self._entries.get(key)
             if entry is None or _effective(entry, time.time()) != UNKNOWN:
                 raise ValueError(f"release is allowed only from UNKNOWN: {key!r}")
-            released = entry["history"] + [{"at": time.time(), "to": "RELEASED", "by": by, "why": reason}]
+            released = _with_expiry(entry) + [{"at": time.time(), "to": "RELEASED", "by": by, "why": reason}]
             self._released.setdefault(key, []).append(released)
             del self._entries[key]
 
@@ -124,34 +153,51 @@ class FileReservations:
             os.fsync(fh.fileno())
         os.replace(tmp, path)
 
-    def reserve(self, key: str, lease_s: float = DEFAULT_LEASE_S) -> None:
+    def reserve(self, key: str, lease_s: float = DEFAULT_LEASE_S) -> str:
         now = time.time()
-        entry = {"key": key, "state": IN_FLIGHT, "lease_expires": now + lease_s, "history": [{"at": now, "to": IN_FLIGHT}]}
+        token = secrets.token_hex(8)
+        entry = {"key": key, "state": IN_FLIGHT, "lease_expires": now + lease_s, "token": token,
+                 "history": [{"at": now, "to": IN_FLIGHT}]}
         try:
             fd = os.open(self._path(key), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
         except FileExistsError:
-            current = self._read(key)
-            state = _effective(current, now)
-            if state != current.get("state") and "history" in current:
-                current.update(state=state, history=current["history"] + [{"at": now, "to": state, "why": "lease_expired"}])
-                self._write(key, current)
-            raise _refusal(key, state) from None
+            raise _refusal(key, _effective(self._read(key), now)) from None  # RK-3: never written here
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
             json.dump(entry, fh, sort_keys=True)
             fh.flush()
             os.fsync(fh.fileno())
+        return token
 
-    def _move(self, key: str, to: str, why: str | None = None) -> None:
+    def _late_path(self, key: str) -> Path:
+        return self._dir / (hashlib.sha256(key.encode("utf-8")).hexdigest() + ".late.jsonl")
+
+    def _move(self, key: str, to: str, why: str | None = None, token: str | None = None) -> None:
+        if token is not None:
+            exists = self._path(key).exists()
+            entry = self._read(key) if exists else None
+            if entry is None or entry.get("token") != token:
+                with open(self._late_path(key), "a", encoding="utf-8") as fh:  # append-only; never rewritten
+                    fh.write(json.dumps(_late_event(to, why, token, entry), sort_keys=True) + "\n")
+                    fh.flush()
+                    os.fsync(fh.fileno())
+                return
         entry = self._read(key)
         entry["state"] = to
         entry["history"] = entry.get("history", []) + [{"at": time.time(), "to": to, **({"why": why} if why else {})}]
         self._write(key, entry)
 
-    def complete(self, key: str) -> None:
-        self._move(key, COMPLETED)
+    def complete(self, key: str, token: str | None = None) -> None:
+        self._move(key, COMPLETED, token=token)
 
-    def unknown(self, key: str, why: str) -> None:
-        self._move(key, UNKNOWN, why)
+    def unknown(self, key: str, why: str, token: str | None = None) -> None:
+        self._move(key, UNKNOWN, why, token=token)
+
+    def late_events(self, key: str) -> list[dict[str, Any]]:
+        p = self._late_path(key)
+        if not p.exists():
+            return []
+        with open(p, encoding="utf-8") as fh:
+            return [json.loads(line) for line in fh if line.strip()]
 
     def state(self, key: str) -> str | None:
         if not self._path(key).exists():
@@ -165,7 +211,7 @@ class FileReservations:
         if self.state(key) != UNKNOWN:
             raise ValueError(f"release is allowed only from UNKNOWN: {key!r}")
         entry = self._read(key)
-        entry["history"] = entry.get("history", []) + [{"at": time.time(), "to": "RELEASED", "by": by, "why": reason}]
+        entry["history"] = _with_expiry(entry) + [{"at": time.time(), "to": "RELEASED", "by": by, "why": reason}]
         self._write(key, entry)
         path = self._path(key)
         os.replace(path, path.with_suffix(f".released-{time.time_ns()}.json"))

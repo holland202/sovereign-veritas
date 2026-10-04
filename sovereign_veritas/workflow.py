@@ -73,6 +73,7 @@ class EvidenceWorkflow:
         metadata: dict[str, Any] | None = None,
         verifier_id: str | None = None,
         idempotency_key: str | None = None,
+        lease_s: float = 30.0,
     ) -> WorkflowResult:
         # XB-1 (docs/EXECUTION_BOUNDARY_RESULTS.md): the sink's duplicate check runs inside record(),
         # i.e. after execute(), so a repeated record_id produced a second external effect before the
@@ -246,7 +247,8 @@ class EvidenceWorkflow:
 
             if idempotency_key is not None:
                 # RK-2: reserved before the effect. Raises ReservationRefused if the key exists in any state.
-                self.reservations.reserve(idempotency_key)
+                # RK-3: the lease is the caller's to set; the token lets a late holder be recorded, not obeyed.
+                holder_token = self.reservations.reserve(idempotency_key, lease_s)
             try:
                 execution_result = self.executor.execute(action)
             except Exception as exc:
@@ -259,7 +261,7 @@ class EvidenceWorkflow:
                     failed_metadata["execution_status"] = "UNKNOWN"
                     failed_metadata["idempotency_key"] = idempotency_key
                     try:
-                        self.reservations.unknown(idempotency_key, str(exc))
+                        self.reservations.unknown(idempotency_key, str(exc), token=holder_token)
                     except Exception:
                         pass  # the reservation stays IN_FLIGHT, then UNKNOWN when its lease ends: still refused
                 failed_metadata["execution_error"] = str(exc)
@@ -281,7 +283,7 @@ class EvidenceWorkflow:
                 raise
 
             if idempotency_key is not None:
-                self.reservations.complete(idempotency_key)  # before the record: a failed record write cannot free the key
+                self.reservations.complete(idempotency_key, token=holder_token)  # before the record: a failed record write cannot free the key
             success_metadata = dict(evidence.metadata)
             success_metadata["execution_status"] = "SUCCEEDED"
             if idempotency_key is not None:
