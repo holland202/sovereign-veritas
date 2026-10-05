@@ -1,0 +1,4 @@
+{"attempt_token": "66cefcb3ac589859", "event": "fence", "seq": 1, "target_token": "87771e8ca797b96e"}
+{"attempt_token": "87771e8ca797b96e", "event": "rejected", "reason": "fenced", "record_id": "r1", "seq": 2}
+{"attempt_token": "66cefcb3ac589859", "event": "read", "record_id": "r1", "result": "ok", "seq": 3}
+{"attempt_token": "66cefcb3ac589859", "event": "write", "record_id": "r1", "seq": 4, "value": "on", "version": 1}

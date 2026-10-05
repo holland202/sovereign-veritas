@@ -109,3 +109,6 @@ runtime_*/
 **/SESSION.json
 **/RECOVERY.json
 svgate
+
+# OBS-1 store logs are evidence (Amos Tipton found them missing from 2d0766d, 2026-10-05)
+!results/obs1/**/store_events.jsonl
