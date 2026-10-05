@@ -1,7 +1,7 @@
 # G1-4 drain registration: where should a session budget live? (nothing built or run)
 
 Status: registration only. Written 2026-10-03 before `tools/g1_4_drain_probe.py` exists. Claude-assisted
-(Claude Opus 5.5); Chad delegated the choice of next step ("do what you think is best") and has not reviewed this.
+(Claude Opus 5.5); Chad delegated the choice of next step and has not reviewed this.
 
 ## Why this comes before building G1-4
 docs/SV_GATE_1_SCOPE.md says G1-4 is "checked at the gate" and that a "drain" attack class must be added

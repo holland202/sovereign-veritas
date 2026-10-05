@@ -6,7 +6,7 @@ This is item 2 of Chad Holland's reliability priority queue (end-to-end failure-
 
 **Provenance:** AI participation → human validation → human editing/curation → human responsibility.
 - **AI participation:** Claude (Anthropic, Sonnet 5.5).
-- **Human review:** direction only. Chad Holland: "Build the end-to-end failure injection harness."
+- **Human review:** direction only (Chad Holland).
 - **Responsibility:** Chad Holland. **Self-tested.** No independent human has reviewed it.
 
 ## Question
