@@ -99,3 +99,23 @@ pinned category and reason substring can't tell the two checks apart.
 ## Next unrun test
 
 Run the mutation harness against the Node verifier and compare survivor sets (registered in `STD1_PREREG.md`).
+
+## Update 2026-10-05: fixed upstream, and checked (the text above is unchanged)
+
+The line-622 finding was filed as an issue on `opena2a-standards/aap-conformance` on 2026-10-04. Abdel Fane
+(GitHub `thebenignhacker`) fixed it in `f0d1339` (PR #6): a new fixture, `cgt-compact-cnf-bad-proof-signature`,
+expects `REJECT` / `CNF_MISMATCH` / reason containing `signature`. Neither reference verifier changed.
+
+Checked in a Linux container on 2026-10-05, outputs verbatim:
+
+```
+f0d1339  python verify.py fixtures                                  summary: 44 pass, 0 fail (44 fixtures)
+f0d1339  node verify.mjs fixtures                                   summary: 44 pass, 0 fail (44 fixtures)
+f0d1339  python verify.py, line 622 made a no-op                    FAIL  fixtures/cgt-compact-cnf-bad-proof-signature.json  [cgt]
+                                                                    summary: 43 pass, 1 fail (44 fixtures)
+95580cd  python verify.py, line 622 made a no-op (clean worktree)   summary: 43 pass, 0 fail (43 fixtures)
+```
+
+So the suite now catches a verifier that checks the thumbprint but never verifies the proof signature, and did not
+before. The other 27 surviving reject sites listed above were not part of that fix and were not rechecked. This
+records an upstream change; it is not an endorsement by OpenA2A of this repository.
