@@ -63,7 +63,8 @@ tests. Sabotage (`results/eo1/sabotage.txt`): `VERDICT 1 of 5 as registered`, `e
 - **Implementation fact.** SV's evidence record, `WorkflowResult.executed`, the evidence package and
   `verify_package.py` report the workflow's account of calling the executor. None of them observes an effect.
   `SUCCEEDED` means "the executor returned without raising". It does not mean "the proposed action happened".
-  That is the defect found in Terry Snyder's Elyria harness, **in kind**.
+  This is a similar **evidence-surface** problem to the one found in Terry Snyder's Elyria harness. It is not an
+  architectural equivalence between the two systems (see the correction below).
 - **Where SV differs from that harness.** SV's own test suite watches the executor directly and catches a guard
   mutation: 35 tests fail (10 in `test_workflow.py`), including all three tests whose names say the executor is
   never reached (`test_refused_capability_never_executes`, `test_failed_verification_never_executes`,
@@ -99,3 +100,15 @@ Question prompted by Terry Snyder's Elyria harness and his invitation to break i
 not an endorsement either way. AI participation: Claude (Opus 5.5, Anthropic) wrote the registration, harness
 and this file. Human validation: Chad Holland directed the work; no line review yet. Chad is
 responsible for the final artifact.
+
+## Correction, 2026-10-05
+
+The registration and the first version of this file called the gap "Terry's harness defect **in kind**". Terry Snyder
+replied (private message, paraphrased, not quoted) that this shows a similar evidence-surface problem, not
+architectural equivalence, and that a finding made by mutating his harness does not falsify its unmodified result.
+The first point is accepted, and the wording above is changed. On the second: the Elyria receipt at `bf3cf0c` builds
+its after-state from the effect function's return value rather than re-reading storage, which can be seen in the
+unmodified code. The mutant demonstrated that property; it did not create it. Neither finding says anything about
+his wider framework. He also pointed out that SV takes the proposed action and its authority as given (the README's
+'"PASS" and "authorized" are labels the caller writes'), which is correct and already published.
+
