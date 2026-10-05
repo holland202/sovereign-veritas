@@ -1,0 +1,19 @@
+{
+ "attempts": [
+  {
+   "decision": "ALLOW",
+   "permission_at_execution": "GRANTED",
+   "system_status": "COMPLETED"
+  }
+ ],
+ "case_id": "AT-2",
+ "classes": [
+  "UNAUTHORIZED_EXECUTION"
+ ],
+ "effect_count": 1,
+ "invariant": [],
+ "mismatch_detail": [
+  "attempt 1: permission_at_execution GRANTED vs REVOKED"
+ ],
+ "status_mismatches": 1
+}

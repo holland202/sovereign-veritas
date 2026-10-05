@@ -1,0 +1,24 @@
+{
+ "broken_store": false,
+ "fault": "lose_ack_after_effect",
+ "in_force": {
+  "18b0d14e9a129828": {
+   "attempt": 2,
+   "fence": true,
+   "observation": "unavailable",
+   "write": true
+  },
+  "9c529507b1a80553": {
+   "attempt": 1,
+   "fence": true,
+   "observation": "available",
+   "write": true
+  }
+ },
+ "release": null,
+ "sabotage": null,
+ "tokens": [
+  "9c529507b1a80553",
+  "18b0d14e9a129828"
+ ]
+}

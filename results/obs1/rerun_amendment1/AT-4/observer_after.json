@@ -1,0 +1,28 @@
+{
+ "events": [
+  {
+   "attempt_token": "9c529507b1a80553",
+   "event": "write",
+   "record_id": "r1",
+   "seq": 1,
+   "value": "on",
+   "version": 1
+  },
+  {
+   "attempt_token": "18b0d14e9a129828",
+   "event": "fence",
+   "seq": 2,
+   "target_token": "9c529507b1a80553"
+  },
+  {
+   "attempt_token": "18b0d14e9a129828",
+   "event": "read",
+   "record_id": "r1",
+   "result": "unavailable",
+   "seq": 3
+  }
+ ],
+ "value": "on",
+ "version": 1,
+ "writes": 1
+}

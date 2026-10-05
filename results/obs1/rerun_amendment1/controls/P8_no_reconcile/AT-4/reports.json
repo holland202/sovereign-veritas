@@ -1,0 +1,20 @@
+[
+ {
+  "attempt": 1,
+  "case_id": "AT-4",
+  "decision": "ALLOW",
+  "permission_at_execution": "GRANTED",
+  "reason": "reply_lost_after_set_value",
+  "reconciliation": null,
+  "system_status": "UNKNOWN"
+ },
+ {
+  "attempt": 2,
+  "case_id": "AT-4",
+  "decision": "ALLOW",
+  "permission_at_execution": "GRANTED",
+  "reason": null,
+  "reconciliation": null,
+  "system_status": "COMPLETED"
+ }
+]

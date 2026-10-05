@@ -1,0 +1,35 @@
+{
+ "events": [
+  {
+   "attempt_token": "bb3b3e34d8e18ed5",
+   "event": "fence",
+   "seq": 1,
+   "target_token": "e5266f4aefb48351"
+  },
+  {
+   "attempt_token": "e5266f4aefb48351",
+   "event": "rejected",
+   "reason": "fenced",
+   "record_id": "r1",
+   "seq": 2
+  },
+  {
+   "attempt_token": "bb3b3e34d8e18ed5",
+   "event": "read",
+   "record_id": "r1",
+   "result": "ok",
+   "seq": 3
+  },
+  {
+   "attempt_token": "bb3b3e34d8e18ed5",
+   "event": "write",
+   "record_id": "r1",
+   "seq": 4,
+   "value": "on",
+   "version": 1
+  }
+ ],
+ "value": "on",
+ "version": 1,
+ "writes": 1
+}

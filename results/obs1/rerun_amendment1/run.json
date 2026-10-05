@@ -1,0 +1,17 @@
+{
+ "implementation_commit": "8943ac79d1aa10c2a8b8d19c7f66c6787e35334e",
+ "dirty": false,
+ "command": "python tools/obs1_run.py --out results/obs1/rerun_amendment1",
+ "verdicts": {
+  "P6": true,
+  "P1": true,
+  "P2": true,
+  "P3": true,
+  "P4": true,
+  "P5": true,
+  "P7": true,
+  "P8": true,
+  "P9": true,
+  "P10": true
+ }
+}

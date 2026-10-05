@@ -1,0 +1,23 @@
+{
+ "events": [
+  {
+   "attempt_token": "8d80ffafd4108f04",
+   "event": "write",
+   "record_id": "r1",
+   "seq": 1,
+   "value": "on",
+   "version": 1
+  },
+  {
+   "attempt_token": "f44bfdbc1ddf7cc1",
+   "event": "write",
+   "record_id": "r1",
+   "seq": 2,
+   "value": "on",
+   "version": 2
+  }
+ ],
+ "value": "on",
+ "version": 2,
+ "writes": 2
+}

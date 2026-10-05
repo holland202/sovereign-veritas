@@ -1,0 +1,17 @@
+{
+ "broken_store": false,
+ "fault": "fail_before_effect",
+ "in_force": {
+  "d7cb5083747a7f9e": {
+   "attempt": 1,
+   "fence": true,
+   "observation": "available",
+   "write": true
+  }
+ },
+ "release": null,
+ "sabotage": null,
+ "tokens": [
+  "d7cb5083747a7f9e"
+ ]
+}

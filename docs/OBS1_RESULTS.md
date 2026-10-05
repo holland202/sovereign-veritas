@@ -10,6 +10,12 @@ Chad has not reviewed it line by line. Cases and expected results: Amos Tipton, 
 HYBRID WAYSS (prepared with AI assistance using OpenAI tools). He has not reviewed the implementation or these
 results, and naming him does not imply endorsement.
 
+**Update 2026-10-05 (text below unchanged).** Amos Tipton checked this run and reproduced the comparator outputs for
+all five cases. He found two more problems: the nine store logs were missing from the evidence commit (an ignore
+rule; now published unregenerated at `2321409`, with a provenance note), and the comparator had no final-state check
+(a final version of 99 still matched). Both are recorded, fixed and rerun in
+[`OBS1_AMENDMENT1_RESULTS.md`](OBS1_AMENDMENT1_RESULTS.md). The registered run and his expectations are unchanged.
+
 ## What is weak, first
 
 The run is **not blind**: the system was written after the cases were public, by the same author as the comparator.

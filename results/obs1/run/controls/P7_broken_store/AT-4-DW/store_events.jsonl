@@ -1,0 +1,3 @@
+{"attempt_token": "7bb8f3f443f59e81", "event": "fence", "seq": 1, "target_token": "b9cf0d7edddced4c"}
+{"attempt_token": "b9cf0d7edddced4c", "event": "write", "record_id": "r1", "seq": 2, "value": "on", "version": 1}
+{"attempt_token": "7bb8f3f443f59e81", "event": "read", "record_id": "r1", "result": "ok", "seq": 3}
