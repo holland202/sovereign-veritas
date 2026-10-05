@@ -11,5 +11,5 @@ EO-1 | registered run | python 3.13.16 | linux
   E4  HELD
   E5  HELD
 VERDICT 5 of 5 as registered (E6 is --sabotage; E7 is the door)
-DIGEST bdb2ec94c061dbd52b359a7a1a005eff63471b431160bdf0aab021722c0b4b75
+DIGEST 26dd247f1359b68985094821fc85d7a3c4b1fd8237212aec0e9984ff5cdc5d94
 exit 0

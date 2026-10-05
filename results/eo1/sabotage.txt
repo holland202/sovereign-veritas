@@ -11,5 +11,5 @@ EO-1 | SABOTAGE: effect counter always reads 0 | python 3.13.16 | linux
   E4  REFUTED
   E5  REFUTED
 VERDICT 1 of 5 as registered (E6 is --sabotage; E7 is the door)
-DIGEST 110ee1d6056cb0cf69a8e92516fcf534bfe0024ff4fd2d729bfe5732e3a80be8
+DIGEST 7a90a87dfd096ed3d7d1306a294ce6b754991af0fdb5c50295b12eb9ede7adfb
 exit 1
