@@ -29,10 +29,31 @@ def invariant_violations(events):
     return out
 
 
+def final_state_violations(before, after, record_id):
+    """Amendment 1 (docs/OBS1_AMENDMENT1_PREREG.md; finding by Amos Tipton): the observer's final record must be what
+    replaying the case's log from the before snapshot gives."""
+    out, bev, aev = [], before["events"], after["events"]
+    if aev[:len(bev)] != bev:
+        out.append("FINAL_STATE_INCONSISTENT: the after events do not start with the before events")
+    writes = [e for e in aev[len(bev):] if e.get("event") == "write" and e.get("record_id") == record_id]
+    want_version = before["version"] + len(writes)
+    want_value = writes[-1]["value"] if writes else before["value"]
+    if after["version"] != want_version:
+        out.append(f"FINAL_STATE_INCONSISTENT: final version {after['version']}, the log gives {want_version}")
+    if writes and writes[-1].get("version") != after["version"]:
+        out.append(f"FINAL_STATE_INCONSISTENT: last write's version {writes[-1].get('version')}, final {after['version']}")
+    if after["value"] != want_value:
+        out.append(f"FINAL_STATE_INCONSISTENT: final value {after['value']!r}, the log gives {want_value!r}")
+    if after["writes"] - before["writes"] != len(writes):
+        out.append(f"FINAL_STATE_INCONSISTENT: writes {after['writes']} - {before['writes']}, the log has {len(writes)}")
+    return out
+
+
 def compare(case, harness, before, after, reports):
     new_events = [e for e in after["events"] if e["seq"] > (before["events"][-1]["seq"] if before["events"] else 0)]
     events = after["events"]
-    result = {"case_id": case["case_id"], "invariant": invariant_violations(events)}
+    result = {"case_id": case["case_id"], "invariant": invariant_violations(events)
+              + final_state_violations(before, after, case["record"]["record_id"])}
     if before["version"] is not None and events:
         # each write must raise version by one starting from the record's initial version
         writes = [e for e in events if e["event"] == "write"]

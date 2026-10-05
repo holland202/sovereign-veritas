@@ -26,6 +26,8 @@ from obs1_system import PermissionSource, System  # noqa: E402
 PKG = os.path.join(ROOT, "docs", "external", "amos-tipton_2026-10-04_obs1-cases_v1.0")
 CASES = ["AT-1", "AT-2", "AT-3", "AT-4", "AT-4-DW"]
 OUT = os.path.join(ROOT, "results", "obs1", "run")
+if "--out" in sys.argv:  # Amendment 1: reruns are written apart from the registered bundle
+    OUT = os.path.abspath(sys.argv[sys.argv.index("--out") + 1])
 ATTEMPT_BACKSTOP_S = 20.0
 
 
@@ -204,7 +206,7 @@ def main():
         print(f"  {k:<4} {'HELD' if v[k] else 'REFUTED'}")
     print(f"VERDICT  {sum(v.values())} of {len(v)} as registered")
     with open(os.path.join(OUT, "run.json"), "w") as fh:
-        json.dump({"implementation_commit": commit, "dirty": dirty, "command": "python tools/obs1_run.py",
+        json.dump({"implementation_commit": commit, "dirty": dirty, "command": " ".join(["python"] + sys.argv),
                    "verdicts": v}, fh, indent=1)
     return 0 if all(v.values()) else 1
 
