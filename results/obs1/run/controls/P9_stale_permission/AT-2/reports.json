@@ -1,0 +1,11 @@
+[
+ {
+  "attempt": 1,
+  "case_id": "AT-2",
+  "decision": "ALLOW",
+  "permission_at_execution": "GRANTED",
+  "reason": null,
+  "reconciliation": null,
+  "system_status": "COMPLETED"
+ }
+]
