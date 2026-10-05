@@ -1,0 +1,18 @@
+name: eo1
+on:
+  push:
+  pull_request:
+jobs:
+  eo1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[test]"
+      - name: EO-1 probe reproduces the recorded outcome
+        run: python tools/eo1_probe.py
+      - name: EO-1 sabotage (effect counter reads 0) must exit 1
+        run: |
+          if python tools/eo1_probe.py --sabotage > /dev/null; then echo "sabotage passed: probe is vacuous"; exit 1; fi
