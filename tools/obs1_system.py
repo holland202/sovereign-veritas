@@ -1,3 +1,4 @@
+# vacuity-lint: intentional - "FAILED" here is a status this system reports to the harness, not a check result; the comparator (tools/obs1_compare.py) does the checking
 """OBS-1 system under test (registration docs/OBS1_PREREG.md).
 
 sovereign-veritas's own Gate and RK-3 reservation store, driving the OBS-1 sandbox store through a StoreClient
