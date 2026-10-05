@@ -1,4 +1,4 @@
-From 9c36ea7bced1fd3265c6bd78a89618d211acae01 Mon Sep 17 00:00:00 2001
+From dc01d1173f857d8a877affb841bdf1840e9bd1b4 Mon Sep 17 00:00:00 2001
 From: Chad Holland <261277573+holland202@users.noreply.github.com>
 Date: Mon, 5 Oct 2026 04:46:08 -0500
 Subject: [PATCH] Pin both UNKNOWN_KEY checks with fixtures (follow-up to #4)
@@ -33,12 +33,12 @@ I reviewed this change and am responsible for it.
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 ---
  MANIFEST.sha256                              |  2 +
- README.md                                    | 10 ++--
+ README.md                                    | 12 ++--
  conformance.json                             | 57 ++++++++++++++++++
  fixtures/cgt-compact-kid-suite-mismatch.json | 63 ++++++++++++++++++++
  fixtures/cgt-compact-unknown-key.json        | 48 +++++++++++++++
  scripts/generate-fixtures.mjs                | 26 ++++++++
- 6 files changed, 202 insertions(+), 4 deletions(-)
+ 6 files changed, 203 insertions(+), 5 deletions(-)
  create mode 100644 fixtures/cgt-compact-kid-suite-mismatch.json
  create mode 100644 fixtures/cgt-compact-unknown-key.json
 
@@ -60,7 +60,7 @@ index de91fe9..217f714 100644
  8cda6db57879bf61314155e8f35c1220ca5106a50a7cd49d54b5b3cf67dadfb2  fixtures/cgt-general-one-bad-signature.json
  8b21ce583c5bf42b9106e06dda9dafd4a6503bb733c3a433ff3e564e271fbaf2  fixtures/cgt-general-valid.json
 diff --git a/README.md b/README.md
-index 7c47fd0..0f7b70e 100644
+index 7c47fd0..01afce2 100644
 --- a/README.md
 +++ b/README.md
 @@ -19,11 +19,11 @@ Run it:
@@ -86,6 +86,15 @@ index 7c47fd0..0f7b70e 100644
  | AAP §5.4 must-reject: DA `authorization_details` widened beyond the delegator's (`fieldsAllowed` not a subset) | `fixtures/da-compact-authorization-details-widened.json` |
  | AAP §5.3 must-reject: delegating past a terminal (`max_depth` 0) delegator | `fixtures/da-compact-past-terminal-depth.json` |
  | AAP §9.4/§8.2 must-reject: hybrid token with its declared ML-DSA-65 entry stripped, on a path whose policy requires both families | `fixtures/cgt-hybrid-missing-mldsa65.json` |
+@@ -104,7 +106,7 @@ What this suite verifies:
+ Each negative fixture is valid in every respect except the one defect it
+ pins, so a verifier that skips that verification step (and only that step)
+ wrongly ACCEPTs it. Expected outcomes pin the reject category
+-(`MALFORMED_HEADER`, `UNKNOWN_HEADER_PARAM`, `UNKNOWN_ALG`, `BAD_SIGNATURE`,
++(`MALFORMED_HEADER`, `UNKNOWN_HEADER_PARAM`, `UNKNOWN_ALG`, `UNKNOWN_KEY`, `BAD_SIGNATURE`,
+ `CLAIM_SCHEMA`, `CRIT_UNLISTED`, `CRIT_NOT_UNDERSTOOD`, `EXPIRED`,
+ `TTL_WINDOW`, `CNF_MISMATCH`, `DELEGATOR_INVALID`, `SCOPE_NOT_SUBSET`,
+ `NOT_ATTENUATED`, `HYBRID_INCOMPLETE`, `REPLAYED_JTI`), so rejecting for the wrong reason also
 @@ -208,7 +210,7 @@ CI-checked against drift.
  enforces every claim in this README on each push and pull request:
  
