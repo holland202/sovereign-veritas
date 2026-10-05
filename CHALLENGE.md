@@ -27,6 +27,10 @@ count (see the list below): concurrent processes, and a second package for the s
   trials in `docs/RP1_RESULTS.md`, P6-P7), accepting a second, different package for the same action (P3), or
   stopping on a torn state file (P8). Published, not yet fixed. A **sequential** repeat of the same package
   against an intact state file still counts.
+- A package or record that says no execution happened, or that it `SUCCEEDED`, while the external effect was
+  different (EO-1, `docs/EO1_RESULTS.md`). Neither the record nor `verify_package.py` observes effects; this is a
+  published limit, not a break. Getting an **unmodified** `EvidenceWorkflow.run()` to call the executor on DEFER
+  or REFUSE still counts.
 - A repeated `record_id`, a concurrent race, or a record write that fails after `execute()` producing
   more external effects than ledger records in `EvidenceWorkflow.run()` (XB-1,
   `docs/EXECUTION_BOUNDARY_RESULTS.md`; credited to Davorin Popović). Exception: the sequential case is

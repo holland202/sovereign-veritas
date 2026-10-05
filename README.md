@@ -45,6 +45,12 @@ independent reimplementations of the Gate that reproduce the contract digest.
   same, and a write failure after a successful execute leaves an effect with no record. The sequential case is
   closed (PR #8: a known `record_id` is refused before execution). The race and the effect-without-record case
   are **open**; they are workflow/ledger limits, not Gate-contract issues, and XB-2 tests the candidate mechanisms.
+- **The record reports the workflow's account of execution, not the effect** (EO-1,
+  [docs/EO1_RESULTS.md](docs/EO1_RESULTS.md); question prompted by Terry Snyder's Elyria harness). With the guard
+  broken so the executor runs on REFUSE/DEFER, the record, the package and `verify_package.py` still say "no
+  execution recorded" and verify CONSISTENT. `SUCCEEDED` means the executor returned without raising: a no-op and a
+  wrong action both record `SUCCEEDED`. The test suite does catch the broken guard (35 tests fail). **Open**; the
+  candidate real fix is an executor-issued effect receipt the verifier checks.
 - **"PASS" and "authorized" are labels the caller writes.** An external review filed eleven breaks
   ([issue #4](https://github.com/holland202/sovereign-veritas/issues/4)). Two are fixed; the rest are
   assigned to `sv.gate/1`.
