@@ -1,4 +1,4 @@
-From ebc567cda9b7a7df4266ef35e5318406fcf0b2b9 Mon Sep 17 00:00:00 2001
+From 9c36ea7bced1fd3265c6bd78a89618d211acae01 Mon Sep 17 00:00:00 2001
 From: Chad Holland <261277573+holland202@users.noreply.github.com>
 Date: Mon, 5 Oct 2026 04:46:08 -0500
 Subject: [PATCH] Pin both UNKNOWN_KEY checks with fixtures (follow-up to #4)

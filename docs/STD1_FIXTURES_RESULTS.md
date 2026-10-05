@@ -1,7 +1,7 @@
 # STD-1 follow-up results: two UNKNOWN_KEY fixtures for aap-conformance (5 of 5 as registered, one with a caveat)
 
 Registration: [`STD1_FIXTURES_PREREG.md`](STD1_FIXTURES_PREREG.md), committed at `bf553c3` before the fixtures existed.
-Target `opena2a-standards/aap-conformance` at `f0d1339`. The change is a commit in a local clone (`ebc567c`), kept here as
+Target `opena2a-standards/aap-conformance` at `f0d1339`. The change is a commit in a local clone (`9c36ea7`, after adding UNKNOWN_KEY to the README's category list), kept here as
 [`results/std1/fixtures_unknown_key/0001-pin-unknown-key.patch`](../results/std1/fixtures_unknown_key/0001-pin-unknown-key.patch).
 **Not yet offered upstream.** Linux container only.
 
