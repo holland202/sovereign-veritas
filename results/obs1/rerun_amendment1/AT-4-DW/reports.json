@@ -1,0 +1,27 @@
+[
+ {
+  "attempt": 1,
+  "case_id": "AT-4-DW",
+  "decision": "ALLOW",
+  "permission_at_execution": "GRANTED",
+  "reason": "reply_lost_after_set_value",
+  "reconciliation": null,
+  "system_status": "UNKNOWN"
+ },
+ {
+  "attempt": 2,
+  "case_id": "AT-4-DW",
+  "decision": "ALLOW",
+  "permission_at_execution": "GRANTED",
+  "reason": null,
+  "reconciliation": {
+   "by": "system",
+   "fenced_tokens": [
+    "e5266f4aefb48351"
+   ],
+   "observed_at_seq": 3,
+   "observed_writes_by_fenced": 0
+  },
+  "system_status": "COMPLETED"
+ }
+]

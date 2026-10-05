@@ -1,0 +1,17 @@
+{
+ "broken_store": false,
+ "fault": null,
+ "in_force": {
+  "acc9a38ed513c0d6": {
+   "attempt": 1,
+   "fence": true,
+   "observation": "available",
+   "write": false
+  }
+ },
+ "release": null,
+ "sabotage": null,
+ "tokens": [
+  "acc9a38ed513c0d6"
+ ]
+}
