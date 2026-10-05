@@ -54,6 +54,16 @@ Also for the reader:
   point). In the P7 control, attempt 2 reports `ALLOW` with `ALREADY_COMPLETED`: the broken store let the late write
   land, reconciliation found it, and the system correctly did not write again.
 
+## After the run: CI's vacuity check
+
+CI's `vacuity_lint` (pinned `68355bb`) flagged four files after the run. Three were the audit's scripts: they print
+diagnostics and cannot exit non-zero, which is accurate. They are kept as evidence, not as checks this repository
+relies on, so they were renamed to `.py.txt` with their bytes unchanged (sha256 prefixes `8321180a…`, `b596129d…`,
+`8ebf2602…` before and after). The fourth was `tools/obs1_system.py`, whose `"FAILED"` is a status it reports, not
+a check result; it now carries the linter's `intentional` declaration with that reason (a one-line comment, the only
+change to `tools/` since `0ba3aa7`). Rerun at `56d09ab`: 10 of 10, output in `results/obs1/rerun_after_lint_fix.txt`.
+The evidence bundle in `results/obs1/run/` is the registered run's.
+
 ## Outcome
 
 | ID | Prediction | Result |

@@ -1,0 +1,33 @@
+OBS-1 round one | implementation 56d09abbf06c3afbd867d69c6b917eec54c60d75 | cases v1.0 docs/external/amos-tipton_2026-10-04_obs1-cases_v1.0
+P6  broken log 'seq gap': ['seq 3 at position 2']
+P6  broken log 'version jump': ['seq 2: version 3 after 1']
+P6  broken log 'write after fence': ['seq 3: write by a after a fence of it']
+P6  broken log 'fenced rejection without fence': ['seq 1: fenced rejection of a without a fence']
+P6  clean log: []
+P1  AT-1     attempts [('ALLOW', 'COMPLETED')] effects 1 classes ['AUTHORIZED_COMPLETION'] mismatches 0 
+     expected match: yes; evidence: ok; release None
+P2  AT-2     attempts [('REFUSE', 'REFUSED')] effects 0 classes ['CONFIRMED_FAILURE'] mismatches 0 
+     expected match: yes; evidence: ok; release None
+P3  AT-3     attempts [('ALLOW', 'FAILED')] effects 0 classes ['CONFIRMED_FAILURE'] mismatches 0 
+     expected match: yes; evidence: ok; release None
+P4  AT-4     attempts [('ALLOW', 'UNKNOWN'), ('DEFER', 'HELD')] effects 1 classes ['AUTHORIZED_COMPLETION', 'UNKNOWN_HELD'] mismatches 0 
+     expected match: yes; evidence: ok; release None
+P5  AT-4-DW  attempts [('ALLOW', 'UNKNOWN'), ('ALLOW', 'COMPLETED')] effects 1 classes ['AUTHORIZED_COMPLETION', 'UNKNOWN_RECONCILED_RETRY'] mismatches 0 
+     expected match: yes; evidence: ok; release {'held_token': '6f13f34dbee46546', 'released_at': 'fence', 'released_seq': 2, 'result': 'rejected'}
+P7  broken store, AT-4-DW: store_defect True invariant ['seq 2: write by 9b87fd0c0e3e6636 after a fence of it'] classes []
+P8  no reconciliation: AT-4 classes ['DUPLICATE', 'UNKNOWN_UNRESOLVED_RETRY'] matches False; AT-4-DW classes ['DUPLICATE', 'UNKNOWN_UNRESOLVED_RETRY', 'LATE_WRITE_UNFENCED'] matches False
+P9  stale permission: AT-2 classes ['UNAUTHORIZED_EXECUTION'] matches False mismatches ['attempt 1: permission_at_execution GRANTED vs REVOKED']
+P10 observer calls 10, store files unchanged by every call: True
+
+  P1   HELD
+  P2   HELD
+  P3   HELD
+  P4   HELD
+  P5   HELD
+  P6   HELD
+  P7   HELD
+  P8   HELD
+  P9   HELD
+  P10  HELD
+VERDICT  10 of 10 as registered
+exit 0
