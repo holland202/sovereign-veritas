@@ -1,0 +1,19 @@
+PV-1 | SABOTAGE: A3 relabel skipped | python 3.13.16
+  A0: {"exit": 0, "failed": [], "tags": {"compute_budget": "DEFAULTED", "power_status": "DEFAULTED", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"}
+  A1: {"exit": 0, "failed": [], "tags": {"compute_budget": "OPERATOR", "power_status": "OPERATOR", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"}
+  A2: {"exit": 1, "failed": ["limitations_declared", "package_digest"], "tags": {"compute_budget": "OPERATOR", "power_status": "OPERATOR", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  2 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"}
+  A3: {"exit": 0, "failed": [], "tags": {"compute_budget": "DEFAULTED", "power_status": "DEFAULTED", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"}
+  A4: {"exit": 1, "failed": ["evidence_states"], "tags": {"compute_budget": "MEASURED", "power_status": "DEFAULTED", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"}
+  S_A1: {"exit": 0, "failed": [], "tags": {"compute_budget": "OPERATOR", "power_status": "OPERATOR", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:pv1-throwaway@example.invalid"}
+  S_A3: {"exit": 0, "failed": [], "tags": {"compute_budget": "DEFAULTED", "power_status": "DEFAULTED", "thermal_status": "OPERATOR"}, "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:pv1-throwaway@example.invalid"}
+  W5: {"decision_equal": true, "gate_inputs_equal": true}
+  W6_declarer_paths: []
+
+  W1  HELD
+  W2  HELD
+  W3  HELD
+  W4  REFUTED
+  W5  HELD
+  W6  REFUTED
+VERDICT 4 of 6 as registered (W7 is --sabotage; W8 is the door)
+DIGEST f27b970995b6b9def20fc9d7d118d02a8c5e36da021d5366ebdcbb0da114c91a
