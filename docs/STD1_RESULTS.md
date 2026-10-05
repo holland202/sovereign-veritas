@@ -106,7 +106,7 @@ The line-622 finding was filed as an issue on `opena2a-standards/aap-conformance
 (GitHub `thebenignhacker`) fixed it in `f0d1339` (PR #6): a new fixture, `cgt-compact-cnf-bad-proof-signature`,
 expects `REJECT` / `CNF_MISMATCH` / reason containing `signature`. Neither reference verifier changed.
 
-Checked in a Linux container on 2026-10-05, outputs verbatim:
+Checked in a Linux container on 2026-10-05. The left column labels each run; the verifier output to its right is verbatim:
 
 ```
 f0d1339  python verify.py fixtures                                  summary: 44 pass, 0 fail (44 fixtures)
