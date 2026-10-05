@@ -97,5 +97,5 @@ tests. Sabotage (`results/eo1/sabotage.txt`): `VERDICT 1 of 5 as registered`, `e
 
 Question prompted by Terry Snyder's Elyria harness and his invitation to break it. That credits a question,
 not an endorsement either way. AI participation: Claude (Opus 5.5, Anthropic) wrote the registration, harness
-and this file. Human validation: Chad Holland directed the work ("Run the test"); no line review yet. Chad is
+and this file. Human validation: Chad Holland directed the work; no line review yet. Chad is
 responsible for the final artifact.

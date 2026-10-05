@@ -3,7 +3,7 @@
 **Status:** REGISTRATION. Nothing built or run at the commit that adds this file, except the feasibility
 counts below.
 **Date:** 2026-10-05. **Base:** `main` at `27ce753`.
-**Go-ahead:** Chad Holland, 2026-10-05 06:13 CDT ("Run the test").
+**Go-ahead:** Chad Holland, 2026-10-05 06:13 CDT.
 
 ## Where the question came from
 
