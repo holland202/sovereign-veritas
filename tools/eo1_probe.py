@@ -21,7 +21,7 @@ import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
-RECORDED = None
+RECORDED = (("E1", "E2", "E3", "E4", "E5"), "26dd247f1359b68985094821fc85d7a3c4b1fd8237212aec0e9984ff5cdc5d94")
 
 ANCHOR = '        if decision.decision == "ALLOW":\n            if action is None:'
 MUTANT = ('        if decision.decision != "ALLOW" and action is not None:\n'

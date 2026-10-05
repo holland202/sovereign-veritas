@@ -2,8 +2,8 @@
 
 **Status:** Draft, self-tested. **5 of 5 as registered, and these were predictions of a gap**: the gap is
 confirmed, nothing "passed". E6 (sabotage) exits 1. E7 is the open door.
-**Registration:** `docs/EO1_PREREG.md` (`53468ff`). **Harness and raw output:** `25c73b4`. **Pin and CI:** `51f4be1`.
-**Digest:** `bdb2ec94c061dbd52b359a7a1a005eff63471b431160bdf0aab021722c0b4b75`. Container only, **NOT VALIDATED on the S25**.
+**Registration:** `docs/EO1_PREREG.md` (`53468ff`). **Harness and raw output:** `25c73b4`, re-run after deviation 4.
+**Digest:** `26dd247f1359b68985094821fc85d7a3c4b1fd8237212aec0e9984ff5cdc5d94` (first pinned as `bdb2ec94…`, see deviation 4). Container only, **NOT VALIDATED on the S25**.
 
 ## What could have gone wrong, first
 
@@ -15,7 +15,11 @@ confirmed, nothing "passed". E6 (sabotage) exits 1. E7 is the open door.
   2. The pytest summary included its timing, so the digest changed run to run. Timing was removed from the
      summary.
   3. Failed-test ids with spaces in them were cut at the first space. Parsing was fixed.
-  None of these changed a verdict. All three runs printed `VERDICT 5 of 5 as registered`.
+  4. **Found by CI, after the first pin.** The CI runner reported `35 failed, 443 passed, 3 skipped` against the
+     container's `35 failed, 444 passed, 2 skipped`, with the same 35 failures. The pass/skip counts depend on
+     the machine, so the pinned digest (`bdb2ec94…`) could not reproduce. Only the failed set now enters the
+     digest, and it is re-pinned as `26dd247f…`. The registered E3 criterion is unchanged.
+  None of these changed a verdict. Every run printed `VERDICT 5 of 5 as registered`.
 - **Sabotage refutes more than registered.** E6 named E2, E4 and E5. It also refutes E1, because the ALLOW
   effect stops being counted too. E3 still holds under sabotage because it does not use the counter
   (`VERDICT 1 of 5`, exit 1).
@@ -36,7 +40,7 @@ EO-1 | registered run | python 3.13.16 | linux
   E4  HELD
   E5  HELD
 VERDICT 5 of 5 as registered (E6 is --sabotage; E7 is the door)
-DIGEST bdb2ec94c061dbd52b359a7a1a005eff63471b431160bdf0aab021722c0b4b75
+DIGEST 26dd247f1359b68985094821fc85d7a3c4b1fd8237212aec0e9984ff5cdc5d94
 ```
 
 E3 summary (from `results/eo1/results.json`): `35 failed, 444 passed, 2 skipped`, including both registered
