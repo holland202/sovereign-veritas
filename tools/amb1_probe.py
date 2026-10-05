@@ -16,7 +16,7 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "tools"))
 import gate_contract as gc  # noqa: E402
 
-RECORDED = None  # pinned in a separate commit after the registered run
+RECORDED = (("A1", "A2", "A3", "A4"), "4cb0e9095963584326466cc515082c5f148c97a0e31e2ce339fb3d4ca04547cd")
 ROUNDS, ADD, POOL, SEEDS = 8, 100, 10000, (0, 1, 2, 3, 4)
 RANK = {"REFUSE": 0, "DEFER": 1, "ALLOW": 2}  # majority ties go to the lower rank
 
