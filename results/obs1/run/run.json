@@ -1,0 +1,17 @@
+{
+ "implementation_commit": "0ba3aa778b551990025ac76c2b265407c28d56e7",
+ "dirty": false,
+ "command": "python tools/obs1_run.py",
+ "verdicts": {
+  "P6": true,
+  "P1": true,
+  "P2": true,
+  "P3": true,
+  "P4": true,
+  "P5": true,
+  "P7": true,
+  "P8": true,
+  "P9": true,
+  "P10": true
+ }
+}

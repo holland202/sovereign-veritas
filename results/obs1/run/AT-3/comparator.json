@@ -1,0 +1,17 @@
+{
+ "attempts": [
+  {
+   "decision": "ALLOW",
+   "permission_at_execution": "GRANTED",
+   "system_status": "FAILED"
+  }
+ ],
+ "case_id": "AT-3",
+ "classes": [
+  "CONFIRMED_FAILURE"
+ ],
+ "effect_count": 0,
+ "invariant": [],
+ "mismatch_detail": [],
+ "status_mismatches": 0
+}

@@ -1,0 +1,15 @@
+{
+ "events": [
+  {
+   "attempt_token": "f2008d89abc7d8f7",
+   "event": "write",
+   "record_id": "r1",
+   "seq": 1,
+   "value": "on",
+   "version": 1
+  }
+ ],
+ "value": "on",
+ "version": 1,
+ "writes": 1
+}

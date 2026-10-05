@@ -1,0 +1,11 @@
+{
+ "case_id": "AT-4-DW",
+ "classes": [],
+ "effect_count": 1,
+ "invariant": [
+  "seq 2: write by b9cf0d7edddced4c after a fence of it"
+ ],
+ "mismatch_detail": [],
+ "status_mismatches": null,
+ "store_defect": true
+}

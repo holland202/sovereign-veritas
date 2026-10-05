@@ -1,0 +1,17 @@
+{
+ "attempts": [
+  {
+   "decision": "ALLOW",
+   "permission_at_execution": "GRANTED",
+   "system_status": "COMPLETED"
+  }
+ ],
+ "case_id": "AT-1",
+ "classes": [
+  "AUTHORIZED_COMPLETION"
+ ],
+ "effect_count": 1,
+ "invariant": [],
+ "mismatch_detail": [],
+ "status_mismatches": 0
+}

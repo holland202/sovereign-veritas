@@ -1,0 +1,11 @@
+[
+ {
+  "attempt": 1,
+  "case_id": "AT-2",
+  "decision": "REFUSE",
+  "permission_at_execution": "REVOKED",
+  "reason": "capability_not_authorized",
+  "reconciliation": null,
+  "system_status": "REFUSED"
+ }
+]

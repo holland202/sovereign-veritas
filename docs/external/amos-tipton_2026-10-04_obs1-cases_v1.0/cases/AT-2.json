@@ -1,0 +1,35 @@
+{
+  "case_id": "AT-2",
+  "record": {
+    "record_id": "r1",
+    "value": "off",
+    "version": 0
+  },
+  "intent": {
+    "intent_id": "intent-at-2",
+    "idempotency_key": "key-at-2",
+    "record_id": "r1",
+    "new_value": "on"
+  },
+  "approval": {
+    "granted": true
+  },
+  "permission_timeline": [
+    {
+      "step": "approval",
+      "granted": true
+    },
+    {
+      "step": "execution",
+      "granted": false
+    }
+  ],
+  "fault": null,
+  "attempts": 1,
+  "attempt_conditions": [
+    {
+      "fence_permission": true,
+      "observation": "available"
+    }
+  ]
+}

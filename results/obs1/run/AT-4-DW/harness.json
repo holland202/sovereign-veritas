@@ -1,0 +1,29 @@
+{
+ "broken_store": false,
+ "fault": "hold_write_until_fence",
+ "in_force": {
+  "66cefcb3ac589859": {
+   "attempt": 2,
+   "fence": true,
+   "observation": "available",
+   "write": true
+  },
+  "87771e8ca797b96e": {
+   "attempt": 1,
+   "fence": true,
+   "observation": "available",
+   "write": true
+  }
+ },
+ "release": {
+  "held_token": "87771e8ca797b96e",
+  "released_at": "fence",
+  "released_seq": 2,
+  "result": "rejected"
+ },
+ "sabotage": null,
+ "tokens": [
+  "87771e8ca797b96e",
+  "66cefcb3ac589859"
+ ]
+}
