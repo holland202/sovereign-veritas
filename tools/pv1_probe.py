@@ -17,7 +17,7 @@ sys.path.insert(0, str(REPO))
 from sovereign_veritas.evidence_states import resource_statement  # noqa: E402
 from sovereign_veritas.package import package_digest  # noqa: E402
 
-RECORDED = None  # pinned in a separate commit after the registered run
+RECORDED = (("W1", "W2", "W3", "W4", "W5", "W6"), "d45a5437a660af555e40b4de0cc96101d9b26e84605a50616539e654f7958dd9")
 IDENTITY = "pv1-throwaway@example.invalid"
 DECLARER_KEYS = ("declar", "operator_id", "declared_by")
 
