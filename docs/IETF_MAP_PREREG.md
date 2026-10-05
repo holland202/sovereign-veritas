@@ -1,7 +1,7 @@
 # IM registration: sovereign-veritas against draft-krausz-verification-state-03 (nothing run under this registration)
 
 Status: registration only. Written 2026-10-04, before `tools/ietf_map.py` exists. Baseline main 2c825b8.
-Claude-assisted (Claude Opus 5.5). Chad Holland gave direction ("1. Extrapolate any useful data."). He has not
+Claude-assisted (Claude Opus 5.5). Chad Holland gave direction. He has not
 reviewed this text line by line.
 
 ## Source and its standing

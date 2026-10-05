@@ -4,7 +4,7 @@ Status: **Registered, UNRUN.** Committed alone, before `tools/mp1_probe.py` exis
 this text is not edited after commit.
 
 Registered 2026-10-04 on top of `2b7f8a2` (PR #38, RK-2, not merged). Drafted by Claude (Opus 5.5) at Chad
-Holland's direction ("continue"). Chad has not reviewed it line by line.
+Holland's direction. Chad has not reviewed it line by line.
 
 ## Why
 

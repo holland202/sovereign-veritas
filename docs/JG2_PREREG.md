@@ -12,7 +12,7 @@ Its three statements are claims about this repository. Here they are checked aga
 
 **Provenance:** AI participation → human validation → human editing/curation → human responsibility.
 - **AI participation:** Claude (Anthropic, Opus 5.5).
-- **Human review:** direction only. Chad Holland: "Proceed".
+- **Human review:** direction only (Chad Holland).
 - **Responsibility:** Chad Holland.
 - **Self-tested.**
 

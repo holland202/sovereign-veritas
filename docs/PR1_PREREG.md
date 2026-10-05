@@ -1,7 +1,7 @@
 # PR-1 registration: does an evidence-state label alone change the Gate's decision? (nothing run under this registration)
 
 Status: registration only. Written 2026-10-04, before `tools/pr1_probe.py` exists.
-Claude-assisted (Claude Opus 5.5). Chad Holland gave direction ("Yes. Go."), and the question's framing
+Claude-assisted (Claude Opus 5.5). Chad Holland gave direction, and the question's framing
 came from his message. He has not reviewed this text line by line.
 
 ## Origin

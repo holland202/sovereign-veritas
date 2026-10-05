@@ -3,7 +3,7 @@
 Status: **Registered, UNRUN.** This file is committed alone, before the comparator, the leg script and the workflow
 exist. Results go in a dated amendment below. This text is not edited after commit.
 
-Registered 2026-10-04. Drafted by Claude (Opus 5.5) at Chad Holland's request ("Yes proceed", after Arm's Works on
+Registered 2026-10-04. Drafted by Claude (Opus 5.5) at Chad Holland's request (after Arm's Works on
 Arm runners came up). Chad owns the decision to merge. The method is the one already run in veritas-eval-harness
 (`XPLAT_PREREG.md` there, all six legs, 2026-10-04).
 

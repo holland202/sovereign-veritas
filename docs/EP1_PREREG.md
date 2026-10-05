@@ -1,7 +1,7 @@
 # EP-1 registration: do the states the Gate collapses need different dispositions? (nothing run)
 
 Status: registration only. Written 2026-10-03 before `tools/ep1_probe.py` exists. Claude-assisted (Claude Opus 5.5);
-Chad gave direction only ("Proceed"). Three narrow questions as ChatGPT proposed (EP-1A/B/C), each with a negative control.
+Chad gave direction only. Three narrow questions as ChatGPT proposed (EP-1A/B/C), each with a negative control.
 Builds on EP-0 (PR #29). Nothing in SV is changed.
 
 **Exploration disclosed (C-EXPLORE):** read `evidence_states.py`, `runtime.py`, `Gate.evaluate`. EP-0 already ran.

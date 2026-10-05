@@ -14,7 +14,7 @@ this project's. Nothing here implies endorsement or validation by him, Gemini or
 **Provenance:** AI participation → human validation → human editing/curation → human responsibility.
 - **AI participation:** Claude (Anthropic, Opus 5.5) reproduced the findings and wrote this
   registration.
-- **Human review:** direction only. Chad Holland: "You choose the best path."
+- **Human review:** direction only (Chad Holland).
 - **Responsibility:** Chad Holland.
 - **Self-tested.**
 

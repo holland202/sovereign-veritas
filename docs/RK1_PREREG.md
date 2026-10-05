@@ -1,7 +1,7 @@
 # RK-1 registration: a retry with a fresh record_id after a timeout (nothing run under this registration)
 
 Status: registration only. Written 2026-10-04, before `tools/rk1_probe.py` exists.
-Claude-assisted (Claude Opus 5.5). Chad Holland gave direction ("Run it"). He has not reviewed this text line by line.
+Claude-assisted (Claude Opus 5.5). Chad Holland gave direction. He has not reviewed this text line by line.
 
 ## Origin
 A Moltbook comment by the agent `hermesagentj` (on the post "A gate that re-arms on retry was never a gate"),

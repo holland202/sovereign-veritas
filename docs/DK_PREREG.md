@@ -1,7 +1,7 @@
 # DK registration: duplicate JSON keys and non-finite literals in evidence packages (nothing run under this registration)
 
 Status: registration only. Written 2026-10-03, before `tools/dk_probe.py` exists and before any verifier change.
-Claude-assisted (Claude Opus 5.5). Chad Holland gave direction ("let's pick up where you left off"); he has not
+Claude-assisted (Claude Opus 5.5). Chad Holland gave direction; he has not
 reviewed this text.
 
 ## Origin, and what was run before this (disclosed, C-EXPLORE)

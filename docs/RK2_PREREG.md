@@ -2,7 +2,7 @@
 
 Status: registration only. Written 2026-10-04, before `sovereign_veritas/idempotency.py`, the workflow change and
 `tools/rk2_probe.py` exist. Baseline: main 2c825b8 (457 passed, 1 skipped; contract digest `44823d0f...0628`).
-Claude-assisted (Claude Opus 5.5). Chad Holland gave direction ("Yes proceed please"). He has not reviewed this
+Claude-assisted (Claude Opus 5.5). Chad Holland gave direction. He has not reviewed this
 text line by line. The merge decision is his.
 
 ## Origin
