@@ -4,9 +4,10 @@
 
 ## CREDITED breaks
 
-- **Davorin Popović** — private report (2026-10-02): a possible execution/evidence atomicity issue in
-  `EvidenceWorkflow.run()` at `386716a` (`execute()` before `evidence_sink.record()`), with a reported
-  counting-executor probe he stated he had not independently reproduced. His report prompted XB-1.
+- **Davorin Popović** — AI-assisted private review/report (2026-10-02) identifying that `execute()` runs before
+  the record is written (`evidence_sink.record()`) in `EvidenceWorkflow.run()` at `386716a`, with a reported
+  counting-executor probe he stated he had not independently reproduced at that point. His report prompted
+  XB-1. (Wording per his review, 2026-10-06.)
   This project pre-registered the cases and reproduced the behaviour (a repeated `record_id` gives 2
   external effects, 1 ledger record), merged as PR #7 (`ae6437a`). Credit is for the report and the
   probe idea; the reproduction, results and any fix are this project's, and he has not reviewed or

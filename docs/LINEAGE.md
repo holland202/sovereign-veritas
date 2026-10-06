@@ -45,7 +45,7 @@ their own.
 
 | Claim | Evidence | Status |
 |---|---|---|
-| Davorin Popović's report prompted XB-1 (execution boundary) | his private report (2026-10-02) citing `386716a`; `docs/EXECUTION_BOUNDARY_PREREG.md` quotes it before the probe existed; his reply confirming it | **SUPPORTED** — credit for the report, not the reproduction or fixes |
+| Davorin Popović's report prompted XB-1 (execution boundary) | his AI-assisted private review/report (2026-10-02) citing `386716a` (wording per his review, 2026-10-06); `docs/EXECUTION_BOUNDARY_PREREG.md` quotes it before the probe existed; his reply confirming it | **SUPPORTED** — credit for the report, not the reproduction or fixes |
 | Davorin Popović's question prompted XB-2 | his reply to the XB-1 results, quoted in `docs/XB2_PREREG.md` | **SUPPORTED** — the question; designs and predictions are this project's |
 | Nicholas Kouns' breaks shaped fixes `2902a2c`, B4/B11 | issues #4 and #5, `docs/ISSUE_4_RESPONSE.md`, `docs/ISSUE_5_RESPONSE.md` | **SUPPORTED** |
 | eace's mutation method shaped `tools/verifier_mutants.py` | `docs/INTEGRATION.md`, eace `1991750` | **SUPPORTED** (same author) |

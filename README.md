@@ -40,8 +40,8 @@ independent reimplementations of the Gate that reproduce the contract digest.
   (V11, [docs/VEHICLE_ACTION.md](docs/VEHICLE_ACTION.md)). The cross-check added since runs only at
   request time; a spoof started after the ALLOW is not seen (V14, a model, [docs/V14_CORRIDOR_RESULTS.md](docs/V14_CORRIDOR_RESULTS.md)).
 - **A repeated `record_id` causes two real external effects and one ledger record** (XB-1,
-  [docs/EXECUTION_BOUNDARY_RESULTS.md](docs/EXECUTION_BOUNDARY_RESULTS.md); reported by Davorin
-  Popović, reproduced here). The ledger's duplicate check runs after `execute()`. A two-thread race does the
+  [docs/EXECUTION_BOUNDARY_RESULTS.md](docs/EXECUTION_BOUNDARY_RESULTS.md); reported in an AI-assisted
+  private review by Davorin Popović, reproduced here). The ledger's duplicate check runs after `execute()`. A two-thread race does the
   same, and a write failure after a successful execute leaves an effect with no record. The sequential case is
   closed (PR #8: a known `record_id` is refused before execution). The race and the effect-without-record case
   are **open**; they are workflow/ledger limits, not Gate-contract issues, and XB-2 tests the candidate mechanisms.

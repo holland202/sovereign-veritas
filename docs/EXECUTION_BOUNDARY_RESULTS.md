@@ -11,6 +11,11 @@ His reported probe prompted the XB-1 investigation. The project independently re
 preregistered the experimental cases, and documented the resulting findings and limitations. Credit is
 for the observation; he has not reviewed or endorsed these results or any proposed fix.
 
+**Attribution refinement (2026-10-06), at Davorin Popović's request.** The initial finding came through an
+AI-assisted private review/report identifying that `execute()` runs before the record is written; he had not
+independently reproduced the probe at that point (the PREREG records it as a Codex-assisted review). He reviewed
+the attribution wording only. The paragraph above is left as written.
+
 **Attribution correction (2026-10-02).** The PREREG's open-question line reads "Davorin / Sougata".
 The authority-revalidation question was raised by Davorin Popović. Sougata Roy's separate feedback, that
 authorization and justification are different questions, did not concern this boundary and is not a
