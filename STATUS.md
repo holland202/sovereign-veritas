@@ -44,6 +44,12 @@
 
 ## VERIFIED — automated tests
 
+**Latest (2026-10-05): RL-1, who released a key** ([docs/RL1_RESULTS.md](docs/RL1_RESULTS.md)). A `release()` record
+holds only what the caller wrote: a script passing `by="human:chad"` gives the same entry as any other caller (3 of 3
+as registered; `--sabotage` exits 1 because of L1; a no-op sabotage exits 0). The docstring says release is "meant for
+a human"; OBS-1's own system releases automatically with `by="system"` (3 sites). No change made: the options are
+contract changes. Self-tested by Claude (Opus 5.5), direction only. Container only. S25: NOT VALIDATED.
+
 **Latest (2026-09-30, later): adversarial review of `595446c`** ([docs/REVIEW_595446C.md](docs/REVIEW_595446C.md)).
 Nothing was falsely accepted. Five input classes crashed the verifier with exit 1 (indistinguishable from "checks failed"):
 non-object top level, `provenance.chain` as a string, ~100,000-deep nesting, `min_coverage` = ±10**400 (a crash my own

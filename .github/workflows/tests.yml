@@ -93,6 +93,15 @@ jobs:
           set +e; python tools/xb2_boundary_probe.py --sabotage > xb2_sab.txt; rc=$?; set -e
           tail -3 xb2_sab.txt
           test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
+      - name: RL-1 release() records only what the caller wrote - recorded outcome (docs/RL1_RESULTS.md)
+        run: python tools/rl1_release_probe.py
+      - name: RL-1 probe can fail (release() refuses by != operator -> L1 REFUTED, exit 1)
+        run: |
+          set +e; python tools/rl1_release_probe.py --sabotage > rl1_sab.txt; rc=$?; set -e
+          tail -4 rl1_sab.txt
+          test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
+      - name: RL-1 sabotage exit is caused by the sabotage (no-op replacement -> exit 0)
+        run: python tools/rl1_release_probe.py --sabotage-noop
       - name: V14 corridor can fail (--sabotage never executes the monitor's LAND -> exit 1)
         run: |
           set +e; python tools/corridor_challenge.py --sabotage > v14_sab.txt; rc=$?; set -e

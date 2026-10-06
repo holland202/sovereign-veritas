@@ -1,0 +1,12 @@
+RL-1 | registered run | python 3.13.16
+  MemoryReservations   R0 refused; R1 accepted; R2 accepted
+  MemoryReservations   R1 entry {'to': 'RELEASED', 'by': 'human:chad', 'why': 'checked downstream'}  R2 entry {'to': 'RELEASED', 'by': 'human:chad', 'why': 'checked downstream'}
+  FileReservations     R0 refused; R1 accepted; R2 accepted
+  FileReservations     R1 entry {'by': 'human:chad', 'to': 'RELEASED', 'why': 'checked downstream'}  R2 entry {'by': 'human:chad', 'to': 'RELEASED', 'why': 'checked downstream'}
+  L3 (context, not scored) release(..., by='system') call sites in sovereign_veritas/ and tools/: 3 ['tools/obs1_system.py:106', 'tools/obs1_system.py:139', 'tools/obs1_system.py:90']
+  L1  HELD
+  L2  HELD
+  L4  HELD
+VERDICT 3 of 3 as registered (L3 is context; sabotage and no-op control run separately)
+DIGEST cfe519e4a21e684570e04dfe20113ebf5183a6f1487fcd9768642fc505b6eff5
+exit 0
