@@ -59,7 +59,10 @@ MEM_WARN_KB = 1_500_000
 
 # None until the first full device run is pinned (separate, later step).
 # Form: {"digest": "<sha256>", "held": ("P1", ...)}
-RECORDED = None
+RECORDED = {  # pinned from the 2026-10-06 S25 run (RESULTS_VK1.md)
+    "digest": "e464c9443057b6626f1fb94aa0d12c672255dec41700bad98d0261447f8055a4",
+    "held": ("P1", "P2b", "P3", "P4", "P6", "P7", "P8", "P9"),
+}
 
 MODELS = {
     "tinyllama": {
