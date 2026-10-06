@@ -22,7 +22,7 @@ sys.dont_write_bytecode = True
 
 from sovereign_veritas import idempotency as idem  # noqa: E402
 
-RECORDED = None  # pinned in a separate commit after the registered run
+RECORDED = (("L1", "L2", "L4"), "cfe519e4a21e684570e04dfe20113ebf5183a6f1487fcd9768642fc505b6eff5")
 BY, WHY = "human:chad", "checked downstream"
 RELEASED_KEYS = {"at", "to", "by", "why"}
 
