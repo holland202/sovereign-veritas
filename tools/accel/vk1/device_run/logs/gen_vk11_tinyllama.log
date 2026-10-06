@@ -1,0 +1,31 @@
+# gen_vk11_tinyllama 2026-10-06T12:42:19-0500
+# argv: ["/data/data/com.termux/files/usr/bin/llama-completion", "-m", "/data/data/com.termux/files/home/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf", "-n", "32", "-ngl", "11", "-c", "512", "--temp", "0", "--seed", "1", "-p", "Explain in one sentence what evidence means.", "-no-cnv"]
+# env flags: {}
+# rc: -6  wall_s: 4.6
+# ---- stdout ----
+
+# ---- stderr ----
+0.00.099.413 E ggml_opencl: platform IDs not available.
+0.00.119.881 I llama_completion: llama backend init
+0.00.119.936 I llama_completion: load the model and apply lora adapter, if any
+0.01.049.157 I cmn          init: llama threadpool init, n_threads = 8
+ggml_vulkan: compute pipeline creation failed for mul_mat_vec_q4_k_f32_f32: vk::Device::createComputePipeline: ErrorUnknown
+0: 0x7ed3d71090 
+1: 0x7ed3d71040 ggml_print_backtrace
+2: 0x7ed3d87c2c 
+3: 0x7eda2d46e0 
+4: 0x7eda2f25d8 __cxa_rethrow
+5: 0x7c3aab3898 
+6: 0x7c3aaa4a2c 
+7: 0x7c3aad0370 
+8: 0x7c3aaf9a9c 
+9: 0x7c3ab108f4 
+10: 0x7ed3d91d04 ggml_backend_sched_graph_compute_async
+11: 0x7ed726d8b0 _ZN13llama_context13graph_computeEP11ggml_cgraphb
+12: 0x7ed726d3d8 _ZN13llama_context14process_ubatchERK12llama_ubatch14llm_graph_typeP22llama_memory_context_iR11ggml_status
+13: 0x7ed726ed18 _ZN13llama_context6decodeERK15llama_batch_ext
+14: 0x7ed3ac0fe8 _Z23common_init_from_paramsR13common_paramsb
+15: 0x7edd89bb08 _Z16llama_completioniPPc
+16: 0x7ecfb50a28 __libc_init
+libc++abi: terminating due to uncaught exception of type N2vk12UnknownErrorE: vk::Device::createComputePipeline: ErrorUnknown
+
