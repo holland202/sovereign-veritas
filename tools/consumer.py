@@ -25,36 +25,56 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOCK_TIMEOUT_S = 30.0
 
 
+try:
+    import fcntl
+except ImportError:  # Windows
+    fcntl = None
+try:
+    import msvcrt
+except ImportError:  # POSIX
+    msvcrt = None
+
+
 class LockTimeout(Exception):
-    """Could not claim the state lock in time: another consumer is running, or a crashed one left
-    a stale lock file. Never silently proceeds without the lock (RP-1, docs/RP1_RESULTS.md, P6/P7:
-    load-check-write with no lock let 100% of a forced-interleaving trial double-accept)."""
+    """Could not claim the state lock in time (another consumer holds it). Never silently proceeds without the lock
+    (RP-1, docs/RP1_RESULTS.md, P6/P7: load-check-write with no lock let a forced interleaving double-accept)."""
 
 
 def _acquire_lock(lock_path, timeout=LOCK_TIMEOUT_S, poll=0.01):
-    """Exclusive claim on lock_path: os.open(O_CREAT|O_EXCL), the same atomic-create idiom
-    sovereign_veritas/idempotency.py's FileReservations already uses for keys (RP1_RESULTS.md's
-    own proposed fix). Portable: no fcntl/msvcrt needed, so this runs the same way on every
-    platform consumer.py is tested on (Linux, macOS, Windows)."""
+    """Exclusive advisory lock on lock_path, released by the operating system when the holder exits or is killed.
+
+    7a03566 used an O_CREAT|O_EXCL lock file instead; a consumer killed while holding it left the file behind and every
+    later consumer timed out until a person deleted it (K1, docs/RP1_FIX_RESULTS.md addendum). fcntl.flock (POSIX) and
+    msvcrt.locking (Windows) are both released at process exit. The file is never unlinked: unlinking a locked file lets
+    two processes lock two different inodes. With neither primitive available this fails closed. Windows: not validated."""
+    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o600)
     deadline = time.monotonic() + timeout
     while True:
         try:
-            os.close(os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
-            return
-        except FileExistsError:
+            if fcntl is not None:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            elif msvcrt is not None:
+                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+            else:
+                os.close(fd)
+                raise LockTimeout("no operating-system file lock available on this platform")
+            return fd
+        except OSError:  # BlockingIOError on POSIX, PermissionError/OSError on Windows: held by someone else
             if time.monotonic() >= deadline:
-                raise LockTimeout(
-                    f"could not claim {lock_path!r} within {timeout}s "
-                    "(another consumer running, or a stale lock left by a crash)"
-                )
+                os.close(fd)
+                raise LockTimeout(f"could not claim {lock_path!r} within {timeout}s (another consumer holds it)")
             time.sleep(poll)
 
 
-def _release_lock(lock_path):
+def _release_lock(fd):
     try:
-        os.remove(lock_path)
-    except OSError:
-        pass
+        if fcntl is not None:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        elif msvcrt is not None:
+            os.lseek(fd, 0, os.SEEK_SET)
+            msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+    finally:
+        os.close(fd)
 
 
 def _write_state(path, state):
@@ -118,7 +138,7 @@ def main():
     vp = load_verifier()
     lock_path = a.state + ".lock"
     try:
-        _acquire_lock(lock_path)
+        lock_fd = _acquire_lock(lock_path)
     except LockTimeout as exc:
         print(f"COULD NOT LOOK: {exc}")
         sys.exit(2)
@@ -145,7 +165,7 @@ def main():
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
     finally:
-        _release_lock(lock_path)
+        _release_lock(lock_fd)
     for name, ok, detail in checks:
         print(f"{'PASS' if ok else 'FAIL'}  {name:<34} {detail}")
     if all(ok for _, ok, _ in checks):

@@ -91,3 +91,36 @@ def test_concurrent_accepts_do_not_double(tmp_path):
             doubled += 1
     assert errors == 0, "every process must exit 0 (accepted) or 1 (refused), never crash"
     assert doubled == 0, "no trial may accept the same package twice under a forced interleaving"
+
+
+# K1 (docs/RP1_FIX_RESULTS.md, addendum): the 7a03566 lock was an O_EXCL lock file, so a consumer killed while holding it
+# left the file behind and every later consumer timed out (COULD NOT LOOK) until a person deleted it. The lock must be
+# released by the operating system when its holder dies.
+HOLDING_CONSUMER = r"""
+import importlib.util, sys, time
+spec = importlib.util.spec_from_file_location("c", "tools/consumer.py")
+c = importlib.util.module_from_spec(spec); spec.loader.exec_module(c)
+orig = c.load_state
+def hang(p):
+    s = orig(p); print("HOLDING", flush=True); time.sleep(60); return s
+c.load_state = hang
+sys.argv = ["consumer.py"] + sys.argv[1:]
+c.main()
+"""
+
+
+def test_a_killed_lock_holder_does_not_block_the_next_consumer(tmp_path):
+    import signal
+    import time
+    log, st = tmp_path / "w.log", tmp_path / "s.json"
+    write_log(log, [OLD, PKG])
+    holder = subprocess.Popen([sys.executable, "-c", HOLDING_CONSUMER, "accept", str(PKG), "--witness-log", str(log),
+                               "--state", str(st)], cwd=ROOT, stdout=subprocess.PIPE, text=True)
+    assert holder.stdout.readline().strip() == "HOLDING"
+    holder.send_signal(signal.SIGKILL if hasattr(signal, "SIGKILL") else signal.SIGTERM)
+    holder.wait()
+    t0 = time.monotonic()
+    r = run(PKG, log, st)
+    assert r.returncode == 0, r.stdout
+    assert time.monotonic() - t0 < 10
+    assert run(PKG, log, st).returncode == 1  # still at most once

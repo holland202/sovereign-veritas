@@ -91,3 +91,26 @@ doubled, see above).
   never trade a double-accept for availability.
 - **A network filesystem or Android/Termux shared storage is untested.** `FileReservations` names
   the same boundary (one local filesystem); this fix inherits it.
+
+## Addendum (2026-10-07, later): a defect this fix introduced (K1), found and fixed
+
+The lock above was an `os.open(O_CREAT | O_EXCL)` lock **file**, released by deleting it. A consumer killed while holding
+it never deletes it. Probe (`SIGKILL` of a consumer paused inside the lock, then a fresh consumer), on `48ab26a`:
+
+```
+lock file left behind after SIGKILL: True
+next consumer: exit 2 after 30.1s: COULD NOT LOOK: could not claim '/tmp/tmpmvcbgmig/s.json.lock' within 30.0s (another consumer running, or a stale lock l
+```
+
+Fail closed (no double-accept), but permanent: every later consumer on that state file failed until a person removed the
+file. Any crash turned the relying party into a denial of service. The section above called this "a liveness cost for a
+human to clear"; measured, it is worse than that sentence suggests, and it was avoidable.
+
+**Fix:** an operating-system advisory lock on the same path, `fcntl.flock` (POSIX) or `msvcrt.locking` (Windows), both
+released by the kernel when the holder exits or is killed. The lock file is never unlinked (unlinking a locked file lets
+two processes lock two different inodes), so a zero-byte `<state>.lock` persists by design (`.gitignore`d). With neither
+primitive available the consumer fails closed. **Windows path not validated.**
+
+After: the same probe prints `next consumer: exit 0 after 0.1s: CONSUMER  ACCEPTED  (state updated)`. Regression
+`tests/test_consumer.py::test_a_killed_lock_holder_does_not_block_the_next_consumer` fails on `48ab26a` (30.75 s) and passes
+after; the race regression still passes; `rp1_vectors.py` P7 0/100, P7c 0/20 doubled. Container only.
