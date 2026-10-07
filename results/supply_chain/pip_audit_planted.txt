@@ -1,0 +1,17 @@
+== pip-audit, planted vulnerable pins (anti-vacuity: must report findings)
+urllib3  1.24.1  PYSEC-2023-212  1.26.18,2.0.7
+urllib3  1.24.1  PYSEC-2023-207  1.24.2
+urllib3  1.24.1  PYSEC-2023-212  1.26.18,2.0.7
+urllib3  1.24.1  PYSEC-2026-1999 2.5.0
+urllib3  1.24.1  PYSEC-2026-1998 2.6.0
+urllib3  1.24.1  PYSEC-2026-1994 2.6.0
+urllib3  1.24.1  PYSEC-2026-1996 2.6.3
+urllib3  1.24.1  PYSEC-2026-141  2.7.0
+urllib3  1.24.1  PYSEC-2026-141  2.7.0
+urllib3  1.24.1  PYSEC-2026-1999 2.5.0
+urllib3  1.24.1  PYSEC-2026-1998 2.6.0
+urllib3  1.24.1  PYSEC-2026-1995 1.26.19,2.2.2
+urllib3  1.24.1  PYSEC-2026-1994 2.6.0
+urllib3  1.24.1  PYSEC-2026-1996 2.6.3
+urllib3  1.24.1  PYSEC-2026-4177 2.8.0
+exit 1

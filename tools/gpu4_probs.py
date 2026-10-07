@@ -128,8 +128,9 @@ def selftest():
             for rep in (1, 2):
                 pos = [{"chosen": t, "kind": "logprob", "top": {t: -0.01 - shift, "x": -5.0 + shift}} for t in tokens]
                 runs.append({"prompt": pid, "rep": rep, "busy_max": 95 if tag == "gpu" else 0, "positions": pos})
-        f = tempfile.mktemp(suffix=".json")
-        json.dump({"tag": tag, "runs": runs}, open(f, "w"))
+        fd, f = tempfile.mkstemp(suffix=".json")  # not mktemp: a name another user could create first (bandit B306)
+        with os.fdopen(fd, "w") as fh:
+            json.dump({"tag": tag, "runs": runs}, fh)
         return f
 
     print("--- selftest A: tiny difference, same tokens (P3 must hold)")

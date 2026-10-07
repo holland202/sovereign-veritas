@@ -1,0 +1,5 @@
+== pip-audit, the repository's own requirements: pytest>=7 (test extra) and pymavlink (CI red-team job); both unpinned, resolved today
+WARNING:pip_audit._cli:--no-deps is supported, but users are encouraged to fully hash their pinned dependencies
+WARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes
+ERROR:pip_audit._cli:requirement pytest is not pinned to an exact version: pytest>=7 (from RequirementLine(line_number=1, line='pytest>=7', filename=PosixPath('planted/requirements-actual.txt')))
+exit 1

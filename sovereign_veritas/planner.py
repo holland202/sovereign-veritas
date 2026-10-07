@@ -122,7 +122,8 @@ class BoundedMultiStepPlanner:
         for index, step in enumerate(plan.steps):
             step_number = index + 1
             capability = self.registry.get(step.capability_name)
-            assert capability is not None
+            if capability is None:  # preflight checked it; the registry changed since. Not an assert: python -O strips those
+                raise ValueError(f"capability_missing_after_preflight:{step.capability_name}")
 
             metadata = dict(step.metadata)
             metadata["step_count"] = step_number

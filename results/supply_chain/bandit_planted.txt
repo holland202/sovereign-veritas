@@ -1,0 +1,12 @@
+== bandit, planted file (anti-vacuity: must report shell=True, pickle, md5, hardcoded password)
+>> Issue: [B403:blacklist] Consider possible security implications associated with pickle module.
+   Severity: Low   Confidence: High
+>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+>> Issue: [B301:blacklist] Pickle and modules that wrap it can be unsafe when used to deserialize untrusted data, possible security issue.
+   Severity: Medium   Confidence: High
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'hunter2'
+   Severity: Low   Confidence: Medium
+exit 1

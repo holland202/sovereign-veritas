@@ -1,0 +1,52 @@
+== bandit over sovereign_veritas/ and tools/ (medium severity and above)
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: sovereign_veritas/package.py:166:50
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: tools/gate_constraint.py:347:15
+>> Issue: [B102:exec_used] Use of exec detected.
+   Severity: Medium   Confidence: High
+   Location: tools/gate_contract.py:270:8
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/gpu2_probe.py:66:9
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/gpu2_probe.py:93:26
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/gpu4_probs.py:34:9
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/gpu4_probs.py:53:8
+>> Issue: [B306:blacklist] Use of insecure and deprecated function (mktemp).
+   Severity: Medium   Confidence: High
+   Location: tools/gpu4_probs.py:131:12
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: tools/make_package.py:166:10
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/model_action.py:115:9
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: tools/model_action.py:339:33
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/nvidia_challenge.py:69:17
+>> Issue: [B310:blacklist] Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected.
+   Severity: Medium   Confidence: High
+   Location: tools/nvidia_challenge.py:102:17
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: tools/recovery_admissibility.py:208:31
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: tools/thermal_probe.py:112:30
+>> Issue: [B324:hashlib] Use of weak MD5 hash for security. Consider usedforsecurity=False
+   Severity: High   Confidence: High
+   Location: tools/vehicle_action.py:465:33
+
+all severities, by test id: {('B101', 'LOW'): 2, ('B102', 'MEDIUM'): 1, ('B105', 'LOW'): 5, ('B106', 'LOW'): 1, ('B110', 'LOW'): 4, ('B306', 'MEDIUM'): 1, ('B310', 'MEDIUM'): 7, ('B311', 'LOW'): 9, ('B324', 'HIGH'): 7, ('B404', 'LOW'): 36, ('B603', 'LOW'): 64, ('B607', 'LOW'): 19}
+totals: 7 high, 9 medium, 140 low

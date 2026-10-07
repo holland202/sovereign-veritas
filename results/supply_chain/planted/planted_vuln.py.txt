@@ -1,0 +1,12 @@
+import pickle, subprocess, hashlib
+
+def run(cmd):
+    return subprocess.call(cmd, shell=True)
+
+def load(b):
+    return pickle.loads(b)
+
+def weak(x):
+    return hashlib.md5(x).hexdigest()
+
+PASSWORD = "hunter2"
