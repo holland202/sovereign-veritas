@@ -38,6 +38,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
+from sovereign_veritas.evidence import canonical_json
+
 try:
     import fcntl
 except ImportError:  # Windows
@@ -95,12 +97,21 @@ class ConflictingIntent(ValueError):
     """The idempotency key is already reserved for a different command."""
 
 
+def _finite(value: Any) -> None:
+    """Raise ValueError on NaN/Infinity, which canonical_json would write as the non-JSON literals NaN/Infinity."""
+    json.dumps(value, allow_nan=False)
+
+
 def _canon(value: Any) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+    # Every digest in this package hashes evidence.canonical_json (JG-2 P1). The first version had its own copy of it:
+    # identical bytes for finite values, but JG-2 P1 was REFUTED at b7d072b (docs/JG2_PREREG.md, Record 2).
+    _finite(value)
+    return canonical_json(value).encode("utf-8")
 
 
 def digest(value: Any) -> str:
-    return "sha256:" + hashlib.sha256(_canon(value)).hexdigest()
+    _finite(value)
+    return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
 def _now() -> dict[str, str]:
@@ -195,7 +206,7 @@ class ExecutionJournal:
         for name, v in (("domain", domain), ("principal", principal), ("idempotency key", key)):
             if not isinstance(v, str) or not v:
                 raise ValueError(f"{name} must be a non-empty string")
-        return hashlib.sha256(_canon([domain, principal, key])).hexdigest()
+        return hashlib.sha256(canonical_json([domain, principal, key]).encode("utf-8")).hexdigest()
 
     def path(self, intent: str) -> Path:
         return self.dir / f"{intent}.jsonl"

@@ -19,6 +19,8 @@ import subprocess
 import tempfile
 from typing import Any
 
+from sovereign_veritas.evidence import canonical_json
+
 SCHEMA = "sv.effect-receipt/1"
 NAMESPACE = "sv-effect-receipt"
 RESULTS = ("ATTESTED", "FAILED", "UNCONFIRMED")
@@ -33,7 +35,9 @@ class SignatureUnavailable(RuntimeError):
 
 
 def _canon(value: Any) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+    # evidence.canonical_json, the one canonicalization every digest uses (JG-2 P1), refusing NaN/Infinity.
+    json.dumps(value, allow_nan=False)
+    return canonical_json(value).encode("utf-8")
 
 
 def body_bytes(receipt: dict[str, Any]) -> bytes:
@@ -42,7 +46,8 @@ def body_bytes(receipt: dict[str, Any]) -> bytes:
 
 
 def receipt_digest(receipt: dict[str, Any]) -> str:
-    return "sha256:" + hashlib.sha256(_canon(receipt)).hexdigest()
+    json.dumps(receipt, allow_nan=False)
+    return "sha256:" + hashlib.sha256(canonical_json(receipt).encode("utf-8")).hexdigest()
 
 
 def problems(receipt: Any) -> list[str]:

@@ -1,0 +1,11 @@
+  valid                verify_receipt -> EFFECT_ATTESTED    journal -> EFFECT_ATTESTED
+  missing              verify_receipt -> n/a (no receipt)   journal -> refused (EFFECT_ATTESTED needs a receipt and a dispatched attempt to )
+  other_command        verify_receipt -> EFFECT_UNCONFIRMED journal -> refused (EFFECT_ATTESTED receipt does not bind the dispatched attempt)
+  other_authorization  verify_receipt -> EFFECT_UNCONFIRMED journal -> refused (EFFECT_ATTESTED receipt does not bind the dispatched attempt)
+  other_attempt        verify_receipt -> EFFECT_UNCONFIRMED journal -> refused (EFFECT_ATTESTED receipt does not bind the dispatched attempt)
+  wrong_namespace      verify_receipt -> EFFECT_UNCONFIRMED journal -> refused (EFFECT_ATTESTED refused: receipt does not attest this attemp)
+  unknown_key          verify_receipt -> EFFECT_UNCONFIRMED journal -> refused (EFFECT_ATTESTED refused: receipt does not attest this attemp)
+  positive control (valid receipt attests through both): yes
+mode: registered
+VERDICT  X5 HELD: none of 6 registered cases attests
+exit 0

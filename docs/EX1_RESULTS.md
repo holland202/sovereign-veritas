@@ -186,3 +186,22 @@ python tools/ex1_poc_binding.py              # exit 0: all three refused
 python tools/ex1_test_mutants.py             # exit 0: every mutant killed or equivalent with a killed witness
 python -m pytest -q tests/test_execution.py
 ```
+
+## Addendum 1 (2026-10-07, after the results; the text above is unchanged)
+
+1. **Windows: first run, in CI at `b7d072b`.** On `windows-latest` with Python 3.10, 3.12 and 3.14, every job printed
+   `1 failed, 601 passed, 10 skipped`. The one failure was `tests/test_review_findings.py::test_f2_...` (item 3), so all
+   105 cases of `tests/test_execution.py` passed on Windows. The sidecar lock (item 8 above) works there. This is CI's
+   observation; there is still no desktop Windows run and no S25 run.
+2. **JG-2 P1 was REFUTED at `b7d072b` by this code** (`docs/JG2_PREREG.md`, Record 2). Three hash sites used a local copy of
+   canonical JSON instead of `canonical_json(...)`. The code now hashes `canonical_json(...)` and still refuses
+   NaN/Infinity. On 20000 random finite values the bytes are identical, so no digest changes. The red-team job stopped at
+   JG-2, so none of the EX-1 CI steps ran at `b7d072b`. Rerun after the change (`results/ex1/addendum1/`): campaign `6 of 6`;
+   X5 `HELD`; fuzz `0 violations in 2000 sequences` (registered and `--forge`); `--sabotage-deep` `violation found`; PoC
+   `all three refused`; `tests/test_execution.py` `105 passed`.
+3. **The Windows failure came from a test, not from EX-1.** The review fix in `c7a9ee8` made `AnchoredFileLedger.contains()`
+   read under the lock, and that lock needs `fcntl`. The F2 regression test ignored the repository's convention that the
+   anchored ledger is POSIX-only. A run at `48ab26a` with `fcntl` removed, which is how Windows behaves, gave
+   `effects = ['effect']` with no ledger file: the effect happened, and the ledger refused afterwards. After `c7a9ee8` the
+   refusal comes before the effect. The F2 test now skips without `fcntl`, like the other anchored-ledger tests.
+   `test_f2_without_flock_the_refusal_comes_before_the_effect` pins the new order on every platform.

@@ -1,0 +1,35 @@
+  before_reserve_publish                 kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  before_reserve_publish                 storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_reserve_publish                  kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_reserve_publish                  storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_authorize                        kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_authorize                        storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  before_append:DISPATCHED               kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  before_append:DISPATCHED               storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_append:DISPATCHED                kill     effects=0 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  after_append:DISPATCHED                storage  effects=0 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  before_execute                         kill     effects=0 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  before_execute                         storage  effects=0 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  after_execute                          kill     effects=1 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  after_execute                          storage  effects=1 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  before_append:EXECUTOR_ACKNOWLEDGED    kill     effects=1 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  before_append:EXECUTOR_ACKNOWLEDGED    storage  effects=1 final=EFFECT_UNCONFIRMED dispatched_recorded=True restarts=['EFFECT_UNCONFIRMED', 'EFFECT_UNCONFIRMED']
+  after_ack                              kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_ack                              storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  before_append:EFFECT_ATTESTED          kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  before_append:EFFECT_ATTESTED          storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_attest                           kill     effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  after_attest                           storage  effects=1 final=EFFECT_ATTESTED dispatched_recorded=True restarts=['EFFECT_ATTESTED', 'EFFECT_ATTESTED']
+  baseline EvidenceWorkflow crash after_execute   effects=1 ledger_records=0
+  baseline EvidenceWorkflow crash after_complete  effects=1 ledger_records=0
+  lying executor: without observer -> EFFECT_ATTESTED; with observer -> EFFECT_DISPUTED
+  X8 faulted intents left EFFECT_UNCONFIRMED with no effect (liveness cost): 4 of 22
+  X1  HELD
+  X2  HELD
+  X3  HELD
+  X4  HELD
+  X6  HELD
+  X8  HELD
+mode: registered
+VERDICT  6 of 6 as registered
+exit 0

@@ -125,3 +125,32 @@ HELD    P1  {"differs_from_ascii_json": true, "digest_is_canonical": true, "file
 VERDICT 6 of 6 as registered (P2 not run)
 DIGEST 5281e7697a2913fa1d296d1fea32ae917e25b14fa106d61daa06c48c5b6b4f67
 ```
+
+## Record 2 (2026-10-07): REFUTED at `b7d072b`, the code changed to meet the rule; the rule is unchanged
+
+**What failed.** P1 was REFUTED in CI (job `red-team`) at `b7d072b` (EX-1, `docs/EX1_RESULTS.md`). EX-1 added three
+`sha256` sites that hashed a local copy of canonical JSON (`_canon`) instead of `canonical_json(...)`. Reproduced
+locally at `b7d072b`; the detail, verbatim:
+
+```
+"sha256_sites": ["sovereign_veritas/evidence.py:48", "sovereign_veritas/execution.py:103", "sovereign_veritas/execution.py:198", "sovereign_veritas/idempotency.py:166", "sovereign_veritas/package.py:45", "sovereign_veritas/package.py:50", "sovereign_veritas/package.py:93", "sovereign_veritas/receipts.py:45"],
+"sites_not_canonical_or_artifact": ["sovereign_veritas/execution.py:103", "sovereign_veritas/execution.py:198", "sovereign_veritas/receipts.py:45"]
+```
+
+P1 stays REFUTED at `b7d072b`. Because the red-team job stopped at this step, none of the EX-1 steps after it ran in CI at that
+commit.
+
+**What the sites were.** Two hashed journal events and receipts, and one named a journal file (the intent id). The copy
+differed from `canonical_json` only in refusing NaN/Infinity: on 20000 random finite values the bytes were identical.
+
+**What changed.** The code, not the rule. The three sites now hash `canonical_json(...)`, and the NaN/Infinity refusal is a
+separate check before hashing. No digest changes for any finite value. The intent id hashes `canonical_json([domain,
+principal, key])`, which is a hash of canonical JSON under P1's original wording, so it needs no amendment. This was decided
+by Claude (Opus 5.5) without asking Chad Holland, because it changes code to meet a registered rule. Changing the rule to
+fit the code would have needed his decision, as Amendment 1 did. After the change:
+
+```
+HELD    P1  {"differs_from_ascii_json": true, "digest_is_canonical": true, "file_name_only_sites": ["sovereign_veritas/idempotency.py:166"], "sha256_sites": ["sovereign_veritas/evidence.py:48", "sovereign_veritas/execution.py:114", "sovereign_veritas/execution.py:209", "sovereign_veritas/idempotency.py:166", "sovereign_veritas/package.py:45", "sovereign_veritas/package.py:50", "sovereign_veritas/package.py:93", "sovereign_veritas/receipts.py:50"], "sites_not_canonical_or_artifact": []}
+VERDICT 6 of 6 as registered (P2 not run)
+DIGEST ae0ba90174049b9ae240d0191756faf16e7950ced8e1a6c4e80c64676450ae5d
+```

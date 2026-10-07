@@ -1,0 +1,26 @@
+  fix3-authorized-off              KILLED    1 failed, 16 passed in 6.28s
+  fix3-attempt-reuse-off           KILLED    1 failed, 16 passed in 6.39s
+  fix3-dispatch-binding-off        KILLED    1 failed, 9 passed in 6.30s
+  fix3-ack-receipt-off             KILLED    1 failed, 22 passed in 6.31s
+  fix2-attestation-off             KILLED    1 failed, 35 passed in 6.35s
+  fix2+3-attest-binding-off        KILLED    1 failed, 25 passed in 6.34s
+  fix1-actor-off                   KILLED    1 failed, 53 passed in 6.53s
+  basis-off                        KILLED    1 failed, 56 passed in 6.51s
+  finalized-free                   KILLED    1 failed, 62 passed in 6.66s
+  read-admit-off                   KILLED    1 failed, 23 passed in 6.35s
+  read-intent-off                  KILLED    1 failed, 34 passed in 7.28s
+  table-edge-added                 SURVIVED  105 passed in 7.72s   EQUIVALENT (fix 3: a DISPATCHED needs an AUTHORIZED event just before it to bind to); witness: table-edge+dispatch-rule-off
+  table-edge+dispatch-rule-off     KILLED    1 failed, 6 passed in 6.29s
+  chain-off                        KILLED    1 failed, 31 passed in 6.37s
+  digest-off                       KILLED    1 failed, 26 passed in 6.38s
+  torn-off                         KILLED    1 failed, 33 passed in 6.40s
+  reserve-overwrites               KILLED    1 failed, 2 passed in 3.21s
+  append-creates                   KILLED    1 failed, 5 passed in 6.24s
+  no-lock                          KILLED    1 failed, 3 passed in 6.27s
+  recover-redispatch               KILLED    1 failed, 22 passed in 6.37s
+  dispatch-after-execute           KILLED    1 failed, 3 passed in 6.24s
+  raise-is-no-effect               KILLED    1 failed, 43 passed in 6.43s
+  late-receipt-any-state           KILLED    1 failed, 46 passed in 6.49s
+  observer-ignored                 KILLED    1 failed, 48 passed in 6.51s
+VERDICT  23 of 24 killed; 1 declared equivalent with a killed witness
+exit 0

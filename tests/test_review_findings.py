@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from sovereign_veritas import anchored_file_ledger as afl
 from sovereign_veritas.anchored_file_ledger import AnchoredFileLedger
 from sovereign_veritas.capability import Capability
 from sovereign_veritas.evidence import Ledger, LedgerSink
@@ -58,6 +59,9 @@ def _wf(sink, ex, store=None):
     return EvidenceWorkflow(sensor=_S(), predictor=_S(), verifier=_S(), executor=ex, evidence_sink=sink, reservations=store)
 
 
+@pytest.mark.skipif(afl.fcntl is None, reason="AnchoredFileLedger is POSIX-only (fcntl.flock); on Windows it refuses to "
+                                              "run, pinned on every platform by the test below and by "
+                                              "test_anchored_file_ledger_platform.py")
 def test_f2_a_second_ledger_instance_sees_the_first_ones_record_before_executing(tmp_path):
     path, effects = tmp_path / "ledger.jsonl", []
     worker_a, worker_b = LedgerSink(AnchoredFileLedger(path)), LedgerSink(AnchoredFileLedger(path))
@@ -66,6 +70,18 @@ def test_f2_a_second_ledger_instance_sees_the_first_ones_record_before_executing
     with pytest.raises(ValueError, match="duplicate record_id refused before execution"):
         _wf(worker_b, _Ex(effects)).run(record_id="txn-42", input_digest="d", capability=CAP, runtime=RT, action=ACT)
     assert len(effects) == 1
+
+
+def test_f2_without_flock_the_refusal_comes_before_the_effect(tmp_path, monkeypatch):
+    """Found by CI on windows-latest at b7d072b: contains() now reads under the lock, so without fcntl the anchored
+    ledger refuses at the duplicate check, before execute(); before that fix the refusal came at append, after the
+    effect. Runs on every platform by removing fcntl."""
+    monkeypatch.setattr(afl, "fcntl", None)
+    effects = []
+    with pytest.raises(RuntimeError, match="requires fcntl.flock"):
+        _wf(LedgerSink(AnchoredFileLedger(tmp_path / "ledger.jsonl")), _Ex(effects)).run(
+            record_id="txn-42", input_digest="d", capability=CAP, runtime=RT, action=ACT)
+    assert effects == []
 
 
 @pytest.mark.parametrize("rid,digest", [("", "d"), ("r", ""), (None, "d"), (7, "d")])
