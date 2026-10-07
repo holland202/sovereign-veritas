@@ -135,6 +135,15 @@ def main():
     ap.add_argument("--allowed-signers")
     ap.add_argument("--identity")
     a = ap.parse_args()
+    sig_opts = (a.signature, a.allowed_signers, a.identity)
+    if any(sig_opts) and not all(sig_opts):
+        # Review 2026-10-07, F3: --allowed-signers/--identity without --signature skipped authentication silently, and
+        # --signature without the others crashed. All three or none, as verify_package.py requires.
+        print("COULD NOT LOOK: --signature, --allowed-signers and --identity must be given together")
+        sys.exit(2)
+    # Review 2026-10-07, F4: os.replace() on a symlinked --state replaced the link with a file, so the two names held two
+    # states (and took two locks). Resolve the path once, before locking or writing.
+    a.state = os.path.realpath(a.state)
     vp = load_verifier()
     lock_path = a.state + ".lock"
     try:
@@ -161,7 +170,8 @@ def main():
         # (the gap between them is exactly what let a second process see the pre-write state).
         if all(ok for _, ok, _ in checks):
             _write_state(a.state, new)
-    except (vp.WitnessUnreadable, vp.SignatureUnavailable, OSError, ValueError, KeyError) as exc:
+    except (vp.WitnessUnreadable, vp.SignatureUnavailable, OSError, ValueError, KeyError, TypeError, IndexError,
+            AttributeError, RecursionError, OverflowError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
     finally:

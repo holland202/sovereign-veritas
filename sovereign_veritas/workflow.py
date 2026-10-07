@@ -84,6 +84,10 @@ class EvidenceWorkflow:
         # i.e. after execute(), so a repeated record_id produced a second external effect before the
         # ledger refused it. Refuse it here, before anything runs. Covers sequential repeats only: a
         # concurrent race (X4) and an effect whose record fails to write (X5) are NOT closed by this.
+        # Review 2026-10-07, F2b: an empty or non-string record_id/input_digest passed has_record (False), the Gate ALLOWed,
+        # execute() ran, and only then did the ledger reject the record: an effect with no record, every time.
+        if not (isinstance(record_id, str) and record_id and isinstance(input_digest, str) and input_digest):
+            raise ValueError("record_id and input_digest must be non-empty strings: refused before execution")
         has_record = getattr(self.evidence_sink, "has_record", None)
         if has_record is not None and has_record(record_id):
             raise ValueError(f"duplicate record_id refused before execution: {record_id}")

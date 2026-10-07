@@ -21,6 +21,7 @@ defeats this (RK-2 case A3).
 """
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import secrets
@@ -125,6 +126,34 @@ class MemoryReservations:
             return list(self._released.get(key, []))
 
 
+try:
+    import fcntl
+except ImportError:  # Windows
+    fcntl = None
+try:
+    import msvcrt
+except ImportError:  # POSIX
+    msvcrt = None
+
+
+@contextlib.contextmanager
+def _dir_lock(directory: Path):
+    """Exclusive OS lock on <directory>/.mutate.lock, released by the OS if the holder dies. Serializes release() and
+    complete()/unknown(), whose read-check-write sequences raced (review 2026-10-07, F5). reserve() needs no lock: its claim
+    is O_CREAT|O_EXCL. With neither fcntl nor msvcrt available this fails closed. Windows: not validated."""
+    fd = os.open(directory / ".mutate.lock", os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        if fcntl is not None:
+            fcntl.flock(fd, fcntl.LOCK_EX)
+        elif msvcrt is not None:
+            msvcrt.locking(fd, msvcrt.LK_LOCK, 1)
+        else:
+            raise RuntimeError("no operating-system file lock available: refusing to mutate reservations")
+        yield
+    finally:
+        os.close(fd)  # closing the descriptor releases the lock on both platforms
+
+
 class FileReservations:
     """One file per key hash in a directory. The claim is os.open(O_CREAT|O_EXCL), atomic across threads and
     processes on one local filesystem. A file that exists but cannot be read counts as IN_FLIGHT (fail closed)."""
@@ -172,6 +201,10 @@ class FileReservations:
         return self._path(key).with_suffix(".late.jsonl")  # no new hash site (JG-2 P1)
 
     def _move(self, key: str, to: str, why: str | None = None, token: str | None = None) -> None:
+        with _dir_lock(self._dir):
+            self._move_locked(key, to, why, token)
+
+    def _move_locked(self, key: str, to: str, why: str | None = None, token: str | None = None) -> None:
         if token is not None:
             exists = self._path(key).exists()
             entry = self._read(key) if exists else None
@@ -208,6 +241,13 @@ class FileReservations:
         return list(self._read(key).get("history", [])) if self._path(key).exists() else []
 
     def release(self, key: str, by: str, reason: str) -> None:
+        # Review 2026-10-07, F5: two releases of one UNKNOWN key raced: the slower one wrote the stale entry over a new
+        # holder's IN_FLIGHT file and renamed it away, freeing the key twice (two effects). The check, the write and the
+        # rename now happen under one lock, so the second release sees the key's current state.
+        with _dir_lock(self._dir):
+            self._release_locked(key, by, reason)
+
+    def _release_locked(self, key: str, by: str, reason: str) -> None:
         if self.state(key) != UNKNOWN:
             raise ValueError(f"release is allowed only from UNKNOWN: {key!r}")
         entry = self._read(key)

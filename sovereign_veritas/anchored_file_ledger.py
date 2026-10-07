@@ -158,6 +158,18 @@ class AnchoredFileLedger(FileLedger):
         fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
         return handle
 
+    def contains(self, record_id: str) -> bool:
+        # Review 2026-10-07, F2: contains() read only this instance's memory, so a second instance opened before another
+        # wrote (two workers on one ledger) passed EvidenceWorkflow's pre-execution duplicate check and executed again.
+        # Re-read the file under the lock, as append() does.
+        lock = self._locked()
+        try:
+            self._reload_locked()
+            return super().contains(record_id)
+        finally:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+            lock.close()
+
     def append(self, record: EvidenceRecord) -> EvidenceRecord:
         lock = self._locked()
         try:

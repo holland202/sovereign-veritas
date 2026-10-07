@@ -82,12 +82,22 @@ def _no_nonfinite(name):
     raise ValueError(f"non-standard JSON literal {name} (NaN and Infinity are not JSON)")
 
 
+def _finite_float(literal):
+    # Review 2026-10-07, F6a: parse_constant refuses the literals NaN/Infinity, but 1e400 parsed to inf and verified, and
+    # the digest was then computed over the non-JSON text "Infinity". An overflowing literal is refused the same way.
+    value = float(literal)
+    if not math.isfinite(value):
+        raise ValueError(f"number {literal[:40]!r} is not a finite double")
+    return value
+
+
 def loads_bounded(text):
     """Strict json.loads: nesting limit, no duplicate keys, no NaN/Infinity. Each raises ValueError."""
     d = json_depth(text)
     if d > MAX_JSON_DEPTH:
         raise ValueError(f"JSON nesting depth {d} exceeds the verifier limit {MAX_JSON_DEPTH}")
-    return json.loads(text, object_pairs_hook=_no_duplicate_keys, parse_constant=_no_nonfinite)
+    return json.loads(text, object_pairs_hook=_no_duplicate_keys, parse_constant=_no_nonfinite,
+                      parse_float=_finite_float)
 
 
 def read_witness_log(path):
@@ -1050,7 +1060,8 @@ def main():
     # AttributeError: a list/str where an object is expected (e.g. provenance.chain = "x").
     # RecursionError: nesting deeper than the JSON decoder allows. Both were uncaught tracebacks (exit 1,
     # indistinguishable from "checks failed") until 2026-09-30; malformed input is COULD NOT LOOK (exit 2).
-    except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError, RecursionError) as exc:
+    # OverflowError (review 2026-10-07, F6b): min_evidence_quality = 10**400 crashed the Gate replay's float formatting.
+    except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError, RecursionError, OverflowError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
     for name, ok, detail in checks:
