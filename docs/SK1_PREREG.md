@@ -48,3 +48,15 @@ carefully.
 - **S2 refuted (the baseline also finds K2c with executed evidence):** the skill shows no measurable value on this task.
   Keep it only as a pointer to the tool, and say so.
 - **S1 refuted:** the skill does not work as written. Fix or delete it, and keep this record either way.
+
+## Deviation before the run (2026-10-07; the text above is unchanged)
+
+1. **The committed skill named the answer.** Its opening paragraph said "skn's K2c passed review and was skipped in
+   exactly the environment it was about", which would hand the skill arm the finding. It now describes the pattern
+   without naming the test or the repository. The rest of the skill is unchanged. The first version is in `dd45e0d`.
+2. **The target's git history would also leak it.** skn's fix commit (`43710a4`) names K2c in its message, and a checkout
+   sharing the repository's history shows it in `git log --all`. Both arms get a plain copy of `b657216`'s files with no
+   `.git`, at `/home/user/skn_sk1_plain`. The tool's clean-checkout run therefore cannot run there and reports that it was
+   not run.
+3. Both agents are told not to read anything outside the target and their output folder (the skill arm may also read the
+   skill and the tool), and to list in their report every path they read outside the target. Compliance is self-reported.

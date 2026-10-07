@@ -7,8 +7,9 @@ license: MIT
 # Test-vacuity audit
 
 A passing or skipped test is a claim about the code only if it could have gone the other way. This procedure runs the
-suite under changed conditions, because reading the tests misses environment-dependent cases: skn's K2c passed review and
-was skipped in exactly the environment it was about.
+suite under changed conditions, because reading the tests misses environment-dependent cases. A typical one: a test of
+the behaviour *without* a library sits in a class whose setup skips when that library is missing, so it never runs in
+the one environment it is about.
 
 ## Procedure
 
