@@ -113,5 +113,8 @@ svgate
 # OBS-1 store logs are evidence (Amos Tipton found them missing from 2d0766d, 2026-10-05)
 !results/obs1/**/store_events.jsonl
 
+# HV-1 run records are evidence: their artifact manifests pin these files by sha256
+!results/hv1/**/events.jsonl
+
 # tools/consumer.py OS lock files (persistent by design: unlinking a locked file is unsafe)
 *.state.json.lock
