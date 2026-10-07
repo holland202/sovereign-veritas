@@ -1,0 +1,9 @@
+test_vacuity_audit | /home/user/skn_43710a4 | as is: 30 tests, {'passed': 27, 'failed': 0, 'error': 0, 'skipped': 3}
+  skipped as is: 3; with skipping disabled: 0 pass (collateral), 3 fail or error (justified)
+  ok    justified skip:  tests.run_tests.TestSignedDocking::test_k2a_genuine_record_verifies  -> failure when un-skipped
+  ok    justified skip:  tests.run_tests.TestSignedDocking::test_k2b_tamper_wrong_key_replay_all_fail  -> failure when un-skipped
+  ok    justified skip:  tests.run_tests.TestSignedDocking::test_k8_no_nonce_store_refuses_and_refusals_keep_store_empty  -> failure when un-skipped
+  clean checkout of HEAD: 30 tests; 0 pass as is but not there; 0 not in HEAD at all
+  review: 0 test(s) with no assertion in their body; 0 truthiness-only assert(s)
+VERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))
+exit 0

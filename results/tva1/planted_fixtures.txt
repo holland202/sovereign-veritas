@@ -1,0 +1,8 @@
+test_vacuity_audit | /tmp/claude-0/-home-user/77c30d9b-52c8-5aa8-979f-1cd1655ce439/scratchpad/tva/planted | as is: 3 tests, {'passed': 3, 'failed': 0, 'error': 0, 'skipped': 0}
+  skipped as is: 0; with skipping disabled: 0 pass (collateral), 0 fail or error (justified)
+  clean checkout: not run (skipped (--no-clean-checkout))
+  review: 1 test(s) with no assertion in their body; 1 truthiness-only assert(s)
+  review  no assertion: tests/test_planted.py::test_no_assertion
+  review  truthiness: tests/test_planted.py:10 in test_truthy_only: assert helper()
+VERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))
+exit 0

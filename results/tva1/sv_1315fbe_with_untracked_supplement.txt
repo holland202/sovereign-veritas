@@ -1,0 +1,10 @@
+test_vacuity_audit | /home/user/sv_1315fbe | as is: 2 tests, {'passed': 2, 'failed': 0, 'error': 0, 'skipped': 0}
+  skipped as is: 0; with skipping disabled: 0 pass (collateral), 0 fail or error (justified)
+  clean checkout of HEAD: 2 tests; 2 pass as is but not there; 0 not in HEAD at all
+  FLAG  untracked dependency: tests.test_gate_supplement::test_kernel_and_verifier_conform_to_the_supplement  -> failure in the clean checkout: AssertionError: 
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/usr/bin/python3', '/
+  FLAG  untracked dependency: tests.test_gate_supplement::test_supplement_kills_a_vocabulary_mutant_the_frozen_vectors_miss  -> failure in the clean checkout: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpwis6g7lh/clean/contract/g
+  review: 0 test(s) with no assertion in their body; 0 truthiness-only assert(s)
+VERDICT  2 flagged (0 collateral skip(s), 2 untracked dependenc(ies))
+exit 1
