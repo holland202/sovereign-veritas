@@ -1,0 +1,62 @@
+gate_differential | implementations: kernel, verifier, go, rust | 3022 cases (seed 20261007)
+  DOMAIN   x759   {'go': 'REFUSE', 'kernel': 'NO-DECISION', 'rust': 'REFUSE', 'verifier': 'REFUSE'}
+           e.g. F000005 ['capability.required_evidence=<deleted>']
+             kernel    RAISE:KeyError []
+             verifier  REFUSE ['evidence_invalid:missing_input_digest']
+             go        REFUSE ['evidence_invalid:missing_input_digest']
+             rust      REFUSE ['evidence_invalid:missing_input_digest']
+  DOMAIN   x307   {'go': 'REFUSE', 'kernel': 'NO-DECISION', 'rust': 'REFUSE', 'verifier': 'NO-DECISION'}
+           e.g. F000004 ['record.verification=<deleted>', 'record.verification=false']
+             kernel    RAISE:AttributeError []
+             verifier  RAISE:AttributeError []
+             go        REFUSE ['verification_not_passed']
+             rust      REFUSE ['verification_not_passed']
+  DOMAIN   x13    {'go': 'DEFER', 'kernel': 'NO-DECISION', 'rust': 'DEFER', 'verifier': 'NO-DECISION'}
+           e.g. F000102 ['record.action.capability={}', 'capability.min_evidence_quality=1000000000000000000000000000000000000000']
+             kernel    RAISE:OverflowError []
+             verifier  RAISE:OverflowError []
+             go        DEFER ['evidence_quality_below_threshold:0.9000<+Inf']
+             rust      DEFER ['evidence_quality_below_threshold:0.9000<inf']
+  DOMAIN   x3     {'go': 'ALLOW', 'kernel': 'NO-DECISION', 'rust': 'ALLOW', 'verifier': 'NO-DECISION'}
+           e.g. F002335 ['record.action=-1']
+             kernel    RAISE:AttributeError []
+             verifier  RAISE:AttributeError []
+             go        ALLOW []
+             rust      ALLOW []
+  DOMAIN   x2     {'go': 'ALLOW', 'kernel': 'NO-DECISION', 'rust': 'ALLOW', 'verifier': 'ALLOW'}
+           e.g. F000701 ['capability.parent=<deleted>']
+             kernel    RAISE:KeyError []
+             verifier  ALLOW []
+             go        ALLOW []
+             rust      ALLOW []
+  DISAGREE x2     {'go': 'REFUSE', 'kernel': 'REFUSE', 'rust': 'REFUSE', 'verifier': 'REFUSE'}
+           e.g. F001095 ['capability.min_evidence_quality=false', 'policy.allow_only=-100000000000000000000000000000000000000', 'capability.max_steps=false']
+             kernel    REFUSE ['capability_max_steps_exceeded:1>False']
+             verifier  REFUSE ['capability_max_steps_exceeded:1>False']
+             go        REFUSE ['policy_invalid:allow_only_must_be_a_collection']
+             rust      REFUSE ['capability_max_steps_exceeded:1>False']
+  DISAGREE x2     {'go': 'ALLOW', 'kernel': 'DEFER', 'rust': 'DEFER', 'verifier': 'DEFER'}
+           e.g. required_evidence='ab' ['<extra>']
+             kernel    DEFER ['missing_required_evidence:a', 'missing_required_evidence:b']
+             verifier  DEFER ['missing_required_evidence:a', 'missing_required_evidence:b']
+             go        ALLOW []
+             rust      DEFER ['missing_required_evidence:a', 'missing_required_evidence:b']
+  DISAGREE x2     {'go': 'ALLOW', 'kernel': 'REFUSE', 'rust': 'REFUSE', 'verifier': 'REFUSE'}
+           e.g. max_steps=2.5, step_count=3 ['<extra>']
+             kernel    REFUSE ['capability_max_steps_exceeded:3>2.5']
+             verifier  REFUSE ['capability_max_steps_exceeded:3>2.5']
+             go        ALLOW []
+             rust      REFUSE ['capability_max_steps_exceeded:3>2.5']
+  DOMAIN   x1     {'go': 'DEFER', 'kernel': 'NO-DECISION', 'rust': 'DEFER', 'verifier': 'DEFER'}
+           e.g. F000848 ['record.evidence_quality=<deleted>']
+             kernel    RAISE:KeyError []
+             verifier  DEFER ['missing_required_evidence:calibration']
+             go        DEFER ['missing_required_evidence:calibration']
+             rust      DEFER ['missing_required_evidence:calibration']
+  DOMAIN   x1     {'go': 'DEFER', 'kernel': 'NO-DECISION', 'rust': 'REFUSE', 'verifier': 'REFUSE'}
+           e.g. F000926 ['capability_registry=1e+16', 'capability.max_steps=false']
+             kernel    RAISE:AttributeError []
+             verifier  REFUSE ['capability_max_steps_exceeded:5>False']
+             go        DEFER ['runtime_not_healthy']
+             rust      REFUSE ['capability_max_steps_exceeded:5>False']
+VERDICT  6 DISAGREE, 1086 DOMAIN, 1930 agree
