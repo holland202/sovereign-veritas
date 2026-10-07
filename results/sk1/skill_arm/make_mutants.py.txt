@@ -1,0 +1,46 @@
+"""Scratch mutants for the audit. Copies skn/, tests/ and skn_orbital_tui.py from the repository (read-only) into
+/home/user/sk1_skill_out/mutants/<name>/ and applies one exact source replacement per mutant (each must match once).
+The repository itself is never written."""
+import os
+import shutil
+
+SRC = "/home/user/skn_sk1_plain"
+OUT = "/home/user/sk1_skill_out/mutants"
+
+MUTANTS = {
+    # M1: docking fails OPEN when dilithium-py is absent (locks and commits an unsigned dock).
+    "m1_dock_fails_open_without_lib": ("skn/node.py",
+        "        if not ccpl.available():\n            return False, ccpl.UNAVAILABLE\n",
+        "        if not ccpl.available():\n"
+        "            self.c_cpl_locked = True\n"
+        "            self._dock_count += 1\n"
+        "            self.vault.commit(self.pose, {\"event\": \"CCPL_DOCK\", \"target\": target_node_id, \"unsigned\": True})\n"
+        "            return True, \"UNSIGNED DOCK (mutant)\"\n"),
+    # M2: the dashboard claims six locked, VALID signatures when dilithium-py is absent.
+    "m2_dashboard_false_valid_without_lib": ("skn_orbital_tui.py",
+        "        return [\"ML-DSA-65 unavailable (pip install dilithium-py): docking fails closed, no locks\"], nodes\n",
+        "        return [f\"SKN-{i:03d}->SKN-{(i + 1) % len(P):03d} LOCK  sig VALID  000000000000\" for i in range(len(P))], nodes\n"),
+    # M3: topology guard disabled (b1 always 0, so FRP can never fire).
+    "m3_guard_disabled": ("skn/swarm.py",
+        "        return betti(self._positions(), comm_range)[1]\n",
+        "        return 0  # mutant: guard disabled\n"),
+    # M3b: the pre-K1 guard (E - V + C of the communication graph), the regression k1e was written for.
+    "m3b_guard_pre_k1": ("skn/swarm.py",
+        "        return betti(self._positions(), comm_range)[1]\n",
+        "        from .topology import graph_cycle_rank\n        return graph_cycle_rank(self._positions(), comm_range)  # mutant: pre-K1 count\n"),
+}
+
+for name, (rel, old, new) in MUTANTS.items():
+    dst = os.path.join(OUT, name)
+    shutil.rmtree(dst, ignore_errors=True)
+    os.makedirs(dst)
+    shutil.copytree(os.path.join(SRC, "skn"), os.path.join(dst, "skn"))
+    shutil.copytree(os.path.join(SRC, "tests"), os.path.join(dst, "tests"))
+    shutil.copy2(os.path.join(SRC, "skn_orbital_tui.py"), os.path.join(dst, "skn_orbital_tui.py"))
+    path = os.path.join(dst, rel)
+    text = open(path, encoding="utf-8").read()
+    n = text.count(old)
+    if n != 1:
+        raise SystemExit(f"{name}: expected exactly one match in {rel}, found {n}")
+    open(path, "w", encoding="utf-8").write(text.replace(old, new))
+    print(f"{name}: mutated {rel}")

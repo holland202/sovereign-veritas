@@ -55,3 +55,26 @@ skip and one untracked dependency, plus a clean control.
 - A run with every optional dependency of SV made absent at once.
 - The 16 truthiness-only asserts, read one by one.
 - The S25.
+
+## Addendum 1 (2026-10-07, after SK-1): two fail-open verdicts in the tool, fixed
+
+1. **Found by SK-1's skill arm.** A module that cannot be imported makes pytest abort the whole run. The tool then
+   printed `VERDICT  0 flagged`, with exit 0, for a suite of which it had seen nothing:
+   `as is: 1 tests, {'passed': 0, 'failed': 0, 'error': 1, 'skipped': 0}` (skn with numpy made absent,
+   `results/sk1/skill_arm/audit3_numpy_absent.txt`).
+2. **Found by me, checking the first.** The same abort in the clean checkout hid the case V3 was about, at module
+   level. A test module that imports a gitignored helper cannot be collected there. Its tests were then listed as
+   `not in HEAD (uncommitted test)` (review only), and the tool printed `0 flagged`.
+3. **Before the fix, both new tests fail** (`results/tva1/addendum1_new_tests_before_fix.txt`): `2 failed, 2 passed`.
+4. **The fix.**
+   - Every run passes `--continue-on-collection-errors`.
+   - A module that cannot be collected as is makes the verdict `NOT ESTABLISHED`, with exit 2.
+   - A module that cannot be collected in the clean checkout flags each of its tests that passed as is.
+5. **After the fix.**
+   - Tests: `4 passed`.
+   - skn with numpy absent: `VERDICT  NOT ESTABLISHED: 1 module(s) could not be collected as is; 0 flagged among the
+     tests that ran`, exit 2 (`addendum1_skn_numpy_absent_after_fix.txt`).
+   - skn with dilithium-py absent: the same lines as the skill arm's run 2 (`addendum1_skn_dilithium_absent_after_fix.txt`).
+6. **The registered outcomes V1–V5 are unaffected.** No registered run had a collection error: every as-is line shows
+   `'error': 0`, and every clean checkout collected all its tests.
+7. **Still a limit:** the static review inspects bare `assert` only, not `self.assert*`.

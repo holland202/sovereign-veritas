@@ -1,0 +1,12 @@
+"""alloc_probe.py ROOT TEST N: run one TestPropulsionAllocator test N times through unittest (unseeded, as written)
+and count passes."""
+import importlib.util, io, sys, unittest
+root, test, N = sys.argv[1], sys.argv[2], int(sys.argv[3])
+spec = importlib.util.spec_from_file_location("rt", root + "/tests/run_tests.py")
+mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+passes = 0
+for _ in range(N):
+    r = unittest.TextTestRunner(stream=io.StringIO(), verbosity=0).run(
+        unittest.TestLoader().loadTestsFromName("TestPropulsionAllocator." + test, mod))
+    passes += r.wasSuccessful()
+print(f"{root.split('/')[-1]:12s} {test}: passed {passes} of {N} runs")

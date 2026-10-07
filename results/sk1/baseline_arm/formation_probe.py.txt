@@ -1,0 +1,22 @@
+"""formation_probe.py ROOT: final_error_m of the two TestFormationV3 calls, exactly as the tests make them,
+plus how many SLC exceptions node.step swallowed (the 6th positional argument False lands in `slc`)."""
+import io, logging, sys
+root = sys.argv[1]
+sys.path.insert(0, root)
+import inspect
+from skn.simulation_v3 import formation_v3
+print("signature:", inspect.signature(formation_v3))
+log = io.StringIO()
+h = logging.StreamHandler(log); h.setLevel(logging.DEBUG)
+lg = logging.getLogger("skn.node"); lg.setLevel(logging.DEBUG); lg.addHandler(h)
+import contextlib
+for args in ((4, "tetrahedron", 20.0, 300, 0.05, False), (8, "cube", 15.0, 300, 0.05, False)):
+    out = io.StringIO()
+    before = log.getvalue().count("SLC governance call failed")
+    with contextlib.redirect_stdout(out):
+        r = formation_v3(*args)
+    n_exc = log.getvalue().count("SLC governance call failed") - before
+    print(f"{args[1]:12s} final_error_m={r['final_error_m']:.3e}  passes(<0.01)={r['final_error_m'] < 0.01}  "
+          f"printed {len(out.getvalue().splitlines())} lines (verbose was meant to be off)  swallowed SLC exceptions={n_exc}")
+first = [l for l in log.getvalue().splitlines() if "SLC" in l][:1]
+print("first swallowed exception:", first)

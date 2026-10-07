@@ -1,0 +1,16 @@
+{
+ "repo": "/home/user/skn_sk1_plain",
+ "as_is": {
+  "passed": 0,
+  "failed": 0,
+  "error": 1,
+  "skipped": 0
+ },
+ "collateral": [],
+ "justified": [],
+ "untracked": [],
+ "not_in_head": [],
+ "clean_checkout": "skipped (--no-clean-checkout)",
+ "no_assert": [],
+ "truthy": []
+}

@@ -13,7 +13,10 @@ Static review (not flagged): test functions with no assert, pytest.raises/warns/
 `assert` on a bare name, call, attribute or subscript (truthiness only; may be fine, may hide a non-bool value).
 
   python tools/test_vacuity_audit.py REPO [TEST_PATH ...] [--no-clean-checkout] [--json OUT]
-Exit: 0 nothing flagged | 1 something flagged | 2 pytest could not run. The environment is passed through unchanged
+Every run uses --continue-on-collection-errors. A module that cannot be collected AS IS makes the verdict NOT ESTABLISHED
+(its tests are invisible to the audit). A module that cannot be collected in the clean checkout flags each of its tests
+that passed as is as an UNTRACKED DEPENDENCY.
+Exit: 0 nothing flagged | 1 something flagged | 2 pytest could not run, or not established. The environment is passed through unchanged
 (PYTHONPATH etc.), so a caller can simulate a missing library with a shadow module. Stdlib only; pytest is run as a
 subprocess with the interpreter running this script.
 """
@@ -65,8 +68,8 @@ def run_pytest(cwd, paths, extra_env=None, extra_args=()):
     with tempfile.TemporaryDirectory() as tmp:
         xml = os.path.join(tmp, "report.xml")
         env = dict(os.environ, **(extra_env or {}))
-        subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--junitxml", xml, *extra_args,
-                        *paths], cwd=cwd, env=env, capture_output=True, text=True)
+        subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--continue-on-collection-errors",
+                        "--junitxml", xml, *extra_args, *paths], cwd=cwd, env=env, capture_output=True, text=True)
         if not os.path.exists(xml):
             return None
         out = {}
@@ -77,8 +80,23 @@ def run_pytest(cwd, paths, extra_env=None, extra_args=()):
                 if child.tag in ("skipped", "failure", "error"):
                     outcome, message = child.tag, (child.get("message") or "")[:160]
                     break
+            if not case.get("classname") and outcome == "error":  # a module that could not be collected
+                tid, outcome = f"{COLLECT}{case.get('name')}", "collection_error"
             out[tid] = (outcome, message)
         return out
+
+
+COLLECT = "<collection error>::"
+
+
+def uncollected(run):
+    """Modules (dotted, as pytest names them) that could not be collected in this run."""
+    return sorted(t[len(COLLECT):] for t, (o, _) in (run or {}).items() if o == "collection_error")
+
+
+def in_module(test_id, modules):
+    cls = test_id.split("::", 1)[0]
+    return next((m for m in modules if cls == m or cls.startswith(m + ".")), None)
 
 
 def unskipped_run(cwd, paths):
@@ -174,28 +192,37 @@ def main(argv):
         runs["C"], why = clean_checkout_run(repo, a.paths)
         c_note = why or ""
     A, B, C = runs["A"], runs["B"], runs.get("C")
+    col_a, col_b, col_c = uncollected(A), uncollected(B), uncollected(C)
+    A = {t: v for t, v in A.items() if v[0] != "collection_error"}
     skipped = {t: m for t, (o, m) in A.items() if o == "skipped"}
     collateral = sorted(t for t in skipped if B.get(t, ("missing", ""))[0] == "passed")
     justified = sorted(t for t in skipped if t not in collateral)
-    untracked = sorted(t for t, (o, _) in A.items() if o == "passed" and C is not None and t in C and C[t][0] != "passed")
-    not_in_head = sorted(t for t in A if C is not None and t not in C)
+    untracked = sorted(t for t, (o, _) in A.items() if o == "passed" and C is not None and (
+        (t in C and C[t][0] != "passed") or (t not in C and in_module(t, col_c))))
+    not_in_head = sorted(t for t in A if C is not None and t not in C and not in_module(t, col_c))
     no_assert, truthy = static_review(repo, test_files(repo, a.paths))
     counts = {k: sum(1 for o, _ in A.values() if o == k) for k in ("passed", "failed", "error", "skipped")}
     counts["failed"] = sum(1 for o, _ in A.values() if o == "failure")
     print(f"test_vacuity_audit | {repo} | as is: {len(A)} tests, {counts}")
+    for m in col_a:
+        print(f"  NOT ESTABLISHED  could not be collected as is: {m}  (its tests are invisible to this audit)")
     print(f"  skipped as is: {len(skipped)}; with skipping disabled: {len(collateral)} pass (collateral), "
           f"{len(justified)} fail or error (justified)")
     for t in collateral:
         print(f"  FLAG  collateral skip: {t}  (skip reason: {skipped[t]!r})")
     for t in justified:
-        print(f"  ok    justified skip:  {t}  -> {B.get(t, ('missing', ''))[0]} when un-skipped")
+        how = B.get(t, ("collection error" if in_module(t, col_b) else "missing", ""))[0]
+        print(f"  ok    justified skip:  {t}  -> {how} when un-skipped")
     if C is None:
         print(f"  clean checkout: not run ({c_note})")
     else:
         print(f"  clean checkout of HEAD: {len(C)} tests; {len(untracked)} pass as is but not there; "
               f"{len(not_in_head)} not in HEAD at all")
+        for m in col_c:
+            print(f"  clean checkout: could not collect {m}")
         for t in untracked:
-            print(f"  FLAG  untracked dependency: {t}  -> {C[t][0]} in the clean checkout: {C[t][1][:90]}")
+            why = C[t] if t in C else ("its module could not be collected", in_module(t, col_c))
+            print(f"  FLAG  untracked dependency: {t}  -> {why[0]} in the clean checkout: {why[1][:90]}")
         for t in not_in_head[:20]:
             print(f"  review  not in HEAD (uncommitted test): {t}")
     print(f"  review: {len(no_assert)} test(s) with no assertion in their body; {len(truthy)} truthiness-only assert(s)")
@@ -204,14 +231,19 @@ def main(argv):
     for t in truthy[:40]:
         print(f"  review  truthiness: {t}")
     flagged = len(collateral) + len(untracked)
-    print(f"VERDICT  {flagged} flagged ({len(collateral)} collateral skip(s), {len(untracked)} untracked dependenc(ies))")
+    if col_a:
+        print(f"VERDICT  NOT ESTABLISHED: {len(col_a)} module(s) could not be collected as is; "
+              f"{flagged} flagged among the tests that ran")
+    else:
+        print(f"VERDICT  {flagged} flagged ({len(collateral)} collateral skip(s), {len(untracked)} untracked dependenc(ies))")
     if a.json:
         with open(a.json, "w", encoding="utf-8") as fh:
             json.dump({"repo": repo, "as_is": counts, "collateral": collateral, "justified": justified,
                        "untracked": untracked, "not_in_head": not_in_head if C is not None else [],
                        "clean_checkout": c_note if C is None else len(C),
-                       "no_assert": no_assert, "truthy": truthy}, fh, indent=1)
-    return 1 if flagged else 0
+                       "no_assert": no_assert, "truthy": truthy, "uncollected_as_is": col_a,
+                       "uncollected_clean_checkout": col_c}, fh, indent=1)
+    return 2 if col_a else 1 if flagged else 0
 
 
 if __name__ == "__main__":

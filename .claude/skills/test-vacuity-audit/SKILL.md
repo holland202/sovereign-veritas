@@ -6,6 +6,10 @@ license: MIT
 
 # Test-vacuity audit
 
+**Evidence for this skill:** in its one trial (SK-1, `docs/SK1_RESULTS.md`, n = 1, same vendor), an agent without the
+skill found the same defect, with executed evidence. Its value as a procedure is not demonstrated. It is kept as a
+pointer to `tools/test_vacuity_audit.py`, which has its own tests.
+
 A passing or skipped test is a claim about the code only if it could have gone the other way. This procedure runs the
 suite under changed conditions, because reading the tests misses environment-dependent cases. A typical one: a test of
 the behaviour *without* a library sits in a class whose setup skips when that library is missing, so it never runs in
@@ -36,6 +40,9 @@ the one environment it is about.
    - `FLAG untracked dependency`: the test passes only with files the commit lacks (check `.gitignore`). Commit the file,
      or make the test create it.
    - `review no assertion` and `review truthiness`: read each one. `assert result` also passes for `{"status": "FAIL"}`.
+     Only bare `assert` statements are inspected, not `self.assertTrue(...)` and the other `self.assert*` calls.
+   - `NOT ESTABLISHED  could not be collected as is`: a module did not import in this environment, so the audit saw
+     none of its tests. Report that, never "0 flagged".
 5. **Report with evidence.** Paste the tool's output verbatim, and state the commit, the platform, which dependencies
    were simulated absent, and what you read to confirm each flag.
 

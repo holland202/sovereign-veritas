@@ -1,0 +1,17 @@
+"""k1e_probe.py ROOT: frp_events for the test's call and for a hand-made swarm that has a real hole."""
+import sys
+sys.path.insert(0, sys.argv[1])
+import numpy as np
+from skn.simulation import rendezvous
+from skn.swarm import SwarmGossipProtocol
+from skn.node import SKNV1_SovereignNode
+print("rendezvous(n_nodes=6, n_steps=30) frp_events =", rendezvous(n_nodes=6, n_steps=30, verbose=False)["frp_events"])
+# positive control: 6 nodes on a ring of radius 40 (neighbour spacing 40 < 50, next-nearest 69 > 50): b1 = 1
+sw = SwarmGossipProtocol(eta=0.0)
+ids = [f"R{i}" for i in range(6)]
+for i, nid in enumerate(ids):
+    a = 2 * np.pi * i / 6
+    sw.register_node(SKNV1_SovereignNode(nid, np.array([40 * np.cos(a), 40 * np.sin(a), 0, 0, 0, 0], np.float32)),
+                     [ids[(i - 1) % 6], ids[(i + 1) % 6]])
+st = sw.gossip_step(dt=0.05)
+print("ring with a hole: beta_1 reported =", st["beta_1"], " frp_triggered =", st["frp_triggered"])

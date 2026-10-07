@@ -1,0 +1,62 @@
+..FF                                                                     [100%]
+=================================== FAILURES ===================================
+___________ test_a_suite_that_cannot_be_collected_is_not_established ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-463/test_a_suite_that_cannot_be_co0')
+
+    def test_a_suite_that_cannot_be_collected_is_not_established(tmp_path):
+        """SK-1's skill arm found that a collection error aborted the run and the audit still printed '0 flagged', exit 0."""
+        repo = tmp_path / "repo"
+        (repo / "tests").mkdir(parents=True)
+        (repo / "tests" / "test_z.py").write_text("import a_module_that_is_absent_tva1  # noqa: F401\n\n\n"
+                                                 "def test_z():\n    assert 1 + 1 == 2\n")
+        (repo / "tests" / "test_ok.py").write_text("def test_ok():\n    assert 2 + 2 == 4\n")
+        p = subprocess.run([sys.executable, str(TOOL), str(repo), "--no-clean-checkout"], capture_output=True, text=True)
+>       assert p.returncode == 2, p.stdout
+E       AssertionError: test_vacuity_audit | /tmp/pytest-of-root/pytest-463/test_a_suite_that_cannot_be_co0/repo | as is: 1 tests, {'passed': 0, 'failed': 0, 'error': 1, 'skipped': 0}
+E           skipped as is: 0; with skipping disabled: 0 pass (collateral), 0 fail or error (justified)
+E           clean checkout: not run (skipped (--no-clean-checkout))
+E           review: 0 test(s) with no assertion in their body; 0 truthiness-only assert(s)
+E         VERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))
+E         
+E       assert 0 == 2
+E        +  where 0 = CompletedProcess(args=['/usr/bin/python3', '/home/user/sovereign-veritas/tools/test_vacuity_audit.py', '/tmp/pytest-of...body; 0 truthiness-only assert(s)\nVERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))\n", stderr='').returncode
+
+tests/test_test_vacuity_audit.py:70: AssertionError
+___________ test_a_module_that_imports_an_untracked_file_is_flagged ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-463/test_a_module_that_imports_an_0')
+
+    @pytest.mark.skipif(shutil.which("git") is None, reason="git not installed")
+    def test_a_module_that_imports_an_untracked_file_is_flagged(tmp_path):
+        """In the clean checkout the module cannot be collected; its tests must not read as 'not in HEAD'."""
+        repo = tmp_path / "repo"
+        (repo / "tests").mkdir(parents=True)
+        (repo / "tests" / "test_w.py").write_text("from helper_untracked_tva1 import VALUE\n\n\n"
+                                                 "def test_uses_the_helper():\n    assert VALUE == 3\n")
+        (repo / "tests" / "test_v.py").write_text("def test_plain():\n    assert 3 * 3 == 9\n")
+        (repo / "tests" / "helper_untracked_tva1.py").write_text("VALUE = 3\n")
+        (repo / ".gitignore").write_text("helper_untracked_tva1.py\n")
+        git = ["git", "-C", str(repo), "-c", "user.email=t@example.invalid", "-c", "user.name=t"]
+        subprocess.run(["git", "init", "-q", str(repo)], check=True)
+        subprocess.run(git + ["add", "."], check=True)
+        subprocess.run(git + ["commit", "-q", "-m", "fixture"], check=True)
+        p = subprocess.run([sys.executable, str(TOOL), str(repo)], capture_output=True, text=True)
+>       assert p.returncode == 1, p.stdout
+E       AssertionError: test_vacuity_audit | /tmp/pytest-of-root/pytest-463/test_a_module_that_imports_an_0/repo | as is: 2 tests, {'passed': 2, 'failed': 0, 'error': 0, 'skipped': 0}
+E           skipped as is: 0; with skipping disabled: 0 pass (collateral), 0 fail or error (justified)
+E           clean checkout of HEAD: 1 tests; 0 pass as is but not there; 2 not in HEAD at all
+E           review  not in HEAD (uncommitted test): tests.test_v::test_plain
+E           review  not in HEAD (uncommitted test): tests.test_w::test_uses_the_helper
+E           review: 0 test(s) with no assertion in their body; 0 truthiness-only assert(s)
+E         VERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))
+E         
+E       assert 0 == 1
+E        +  where 0 = CompletedProcess(args=['/usr/bin/python3', '/home/user/sovereign-veritas/tools/test_vacuity_audit.py', '/tmp/pytest-of...body; 0 truthiness-only assert(s)\nVERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))\n", stderr='').returncode
+
+tests/test_test_vacuity_audit.py:90: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_test_vacuity_audit.py::test_a_suite_that_cannot_be_collected_is_not_established
+FAILED tests/test_test_vacuity_audit.py::test_a_module_that_imports_an_untracked_file_is_flagged
+2 failed, 2 passed in 3.89s
+exit 1

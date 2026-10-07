@@ -1,0 +1,13 @@
+"""k3_probe.py ROOT: final z after the exact loop of test_k3_closed_loop_paired_reaches_below, for each
+closed_loop x geometry combination (the test asserts z < -1.0 for closed_loop=True, paired)."""
+import sys
+sys.path.insert(0, sys.argv[1])
+import numpy as np
+from skn.node import SKNV1_SovereignNode
+for closed in (True, False):
+    for geo in ("paired", "legacy"):
+        n = SKNV1_SovereignNode("t", closed_loop=closed, thruster_geometry=geo)
+        for _ in range(500):
+            n.step(np.array([0, 0, -3, 0, 0, 0.0]))
+        z = float(n.pose[2])
+        print(f"closed_loop={closed!s:5}  geometry={geo:6}  final z={z:+.4f}  test assertion z < -1.0 -> {z < -1.0}")

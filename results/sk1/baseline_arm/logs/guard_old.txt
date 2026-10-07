@@ -1,0 +1,76 @@
+test_chain_grows (__main__.TestEvidenceVault.test_chain_grows) ... ok
+test_commit_returns_bytes (__main__.TestEvidenceVault.test_commit_returns_bytes) ... ok
+test_intact_chain_verifies (__main__.TestEvidenceVault.test_intact_chain_verifies) ... ok
+test_reordered_chain_fails (__main__.TestEvidenceVault.test_reordered_chain_fails) ... ok
+test_tampered_hash_fails (__main__.TestEvidenceVault.test_tampered_hash_fails) ... ok
+test_tampered_state_fails (__main__.TestEvidenceVault.test_tampered_state_fails) ... ok
+test_window_past_256_verifies (__main__.TestEvidenceVault.test_window_past_256_verifies) ... ok
+test_cube (__main__.TestFormationV3.test_cube) ... 
+============================================================
+ SKN-V1 FORMATION v3  (8 nodes, shape=cube)
+ Scale=15.0m  Steps=300  dt=0.05s
+============================================================
+
+  Step    0  form_err=16.915m  cent_err=33.654m
+  Step  100  form_err=0.001m  cent_err=0.001m
+  Step  200  form_err=0.000m  cent_err=0.000m
+
+  Final formation error: 0.0000m
+  Final centroid error:  0.0000m
+
+ok
+test_tetra (__main__.TestFormationV3.test_tetra) ... 
+============================================================
+ SKN-V1 FORMATION v3  (4 nodes, shape=tetrahedron)
+ Scale=20.0m  Steps=300  dt=0.05s
+============================================================
+
+  Step    0  form_err=18.617m  cent_err=64.352m
+  Step  100  form_err=0.001m  cent_err=0.001m
+  Step  200  form_err=0.000m  cent_err=0.000m
+
+  Final formation error: 0.0000m
+  Final centroid error:  0.0000m
+
+ok
+test_nonspontaneous (__main__.TestISRUMonitor.test_nonspontaneous) ... ok
+test_spontaneous (__main__.TestISRUMonitor.test_spontaneous) ... ok
+test_plain_frames_show_real_state (__main__.TestLiveDashboard.test_plain_frames_show_real_state) ... ok
+test_cmg_bounded (__main__.TestPropulsionAllocator.test_cmg_bounded) ... ok
+test_het_bounded (__main__.TestPropulsionAllocator.test_het_bounded) ... ok
+test_output_shape (__main__.TestPropulsionAllocator.test_output_shape) ... ok
+test_k3_closed_loop_paired_reaches_below (__main__.TestRound20261005b.test_k3_closed_loop_paired_reaches_below) ... ok
+test_k3_paired_can_descend_legacy_cannot (__main__.TestRound20261005b.test_k3_paired_can_descend_legacy_cannot) ... ok
+test_k5_b0_equals_laplacian_nullity_and_margin (__main__.TestRound20261005b.test_k5_b0_equals_laplacian_nullity_and_margin) ... ok
+test_k6_vault_file_detects_dropped_record_edit (__main__.TestRound20261005b.test_k6_vault_file_detects_dropped_record_edit) ... /home/user/sk1_base_out/mutants/guard_old/tests/run_tests.py:248: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/sk1_base_out/tmp/tmp2phdrv94/v.jsonl' mode='r' encoding='utf-8'>
+  ls = open(path).readlines()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/home/user/sk1_base_out/mutants/guard_old/tests/run_tests.py:250: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/user/sk1_base_out/tmp/tmp2phdrv94/v.jsonl' mode='w' encoding='utf-8'>
+  open(path, "w").writelines(ls)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_convergence (__main__.TestSKNV1Node.test_convergence) ... ok
+test_step_moves_toward_target (__main__.TestSKNV1Node.test_step_moves_toward_target) ... ok
+test_k2a_genuine_record_verifies (__main__.TestSignedDocking.test_k2a_genuine_record_verifies) ... ok
+test_k2b_tamper_wrong_key_replay_all_fail (__main__.TestSignedDocking.test_k2b_tamper_wrong_key_replay_all_fail) ... ok
+test_k2c_fails_closed_without_the_library (__main__.TestSignedDocking.test_k2c_fails_closed_without_the_library) ... ok
+test_k8_no_nonce_store_refuses_and_refusals_keep_store_empty (__main__.TestSignedDocking.test_k8_no_nonce_store_refuses_and_refusals_keep_store_empty) ... ok
+test_k1a_ring_has_one_hole_until_filled (__main__.TestTopologyGuard.test_k1a_ring_has_one_hole_until_filled) ... ok
+test_k1b_filled_tetrahedron_is_not_a_hole (__main__.TestTopologyGuard.test_k1b_filled_tetrahedron_is_not_a_hole) ... ok
+test_k1c_two_clusters (__main__.TestTopologyGuard.test_k1c_two_clusters) ... ok
+test_k1d_matches_reference_on_random_clouds (__main__.TestTopologyGuard.test_k1d_matches_reference_on_random_clouds) ... ok
+test_k1e_guard_does_not_cut_links_in_rendezvous (__main__.TestTopologyGuard.test_k1e_guard_does_not_cut_links_in_rendezvous) ... FAIL
+
+======================================================================
+FAIL: test_k1e_guard_does_not_cut_links_in_rendezvous (__main__.TestTopologyGuard.test_k1e_guard_does_not_cut_links_in_rendezvous)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/sk1_base_out/mutants/guard_old/tests/run_tests.py", line 132, in test_k1e_guard_does_not_cut_links_in_rendezvous
+    self.assertEqual(rendezvous(n_nodes=6, n_steps=30, verbose=False)["frp_events"], 0)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 30 != 0
+
+----------------------------------------------------------------------
+Ran 30 tests in 1.974s
+
+FAILED (failures=1)

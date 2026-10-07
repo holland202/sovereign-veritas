@@ -1,0 +1,36 @@
+skn imported from /home/user/sk1_base_out/mutants/f_nosprings/skn
+ccpl.available() = True
+test_cube (run_tests_mod.TestFormationV3.test_cube) ... 
+============================================================
+ SKN-V1 FORMATION v3  (8 nodes, shape=cube)
+ Scale=15.0m  Steps=300  dt=0.05s
+============================================================
+
+  Step    0  form_err=18.367m  cent_err=33.654m
+  Step  100  form_err=0.001m  cent_err=0.000m
+  Step  200  form_err=0.000m  cent_err=0.000m
+
+  Final formation error: 0.0000m
+  Final centroid error:  0.0000m
+
+ok
+test_tetra (run_tests_mod.TestFormationV3.test_tetra) ... 
+============================================================
+ SKN-V1 FORMATION v3  (4 nodes, shape=tetrahedron)
+ Scale=20.0m  Steps=300  dt=0.05s
+============================================================
+
+  Step    0  form_err=19.969m  cent_err=64.352m
+  Step  100  form_err=0.001m  cent_err=0.001m
+  Step  200  form_err=0.000m  cent_err=0.000m
+
+  Final formation error: 0.0001m
+  Final centroid error:  0.0000m
+
+ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.310s
+
+OK
+SUMMARY run=2 failures=0 errors=0 skipped=0 ok=True

@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""Run the repo's own tests/run_tests.py from ROOT, optionally a subset, optionally with the
+TestSignedDocking dependency skip removed.
+
+  runtests.py ROOT [--unskip-docking] [TestClass.test_name ...]
+"""
+import importlib.util
+import os
+import sys
+import unittest
+
+
+def main():
+    root = sys.argv[1]
+    args = sys.argv[2:]
+    unskip = "--unskip-docking" in args
+    names = [a for a in args if not a.startswith("--")]
+    path = os.path.join(root, "tests", "run_tests.py")
+    spec = importlib.util.spec_from_file_location("run_tests_mod", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)  # inserts ROOT at sys.path[0], so `skn` comes from ROOT
+    import skn
+    print("skn imported from", os.path.dirname(skn.__file__))
+    from skn import ccpl
+    print("ccpl.available() =", ccpl.available())
+    if unskip:
+        mod.TestSignedDocking.setUp = lambda self: None
+        print("TestSignedDocking.setUp replaced by a no-op (dependency skip removed)")
+    loader = unittest.TestLoader()
+    if names:
+        suite = unittest.TestSuite(loader.loadTestsFromName(n, mod) for n in names)
+    else:
+        suite = loader.loadTestsFromModule(mod)
+    res = unittest.TextTestRunner(verbosity=2, stream=sys.stdout).run(suite)
+    print(f"SUMMARY run={res.testsRun} failures={len(res.failures)} errors={len(res.errors)} "
+          f"skipped={len(res.skipped)} ok={res.wasSuccessful()}")
+    sys.exit(0 if res.wasSuccessful() else 1)
+
+
+if __name__ == "__main__":
+    main()

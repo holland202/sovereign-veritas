@@ -1,0 +1,12 @@
+K6 | SABOTAGE: verify_file checks prev links only | python 3.13.16
+Traceback (most recent call last):
+  File "/home/user/sk1_base_out/mutants/k6_sabotage_typo/scripts/k6_vault_file.py", line 117, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/user/sk1_base_out/mutants/k6_sabotage_typo/scripts/k6_vault_file.py", line 58, in main
+    n_lines, ok_a = len(lines(base)), EvidenceVault.verify_file(base)
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/user/sk1_base_out/mutants/k6_sabotage_typo/scripts/k6_vault_file.py", line 50, in <lambda>
+    EvidenceVault.verify_file = staticmethod(lambda p: EvidenceVault._walk_files(p, check_hashes=False)[0])  # MUTANT: typo
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'EvidenceVault' has no attribute '_walk_files'. Did you mean: '_walk_file'?

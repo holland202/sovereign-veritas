@@ -1,0 +1,11 @@
+K3 | SABOTAGE: closed_loop ignored | python 3.13.16
+  K3a legacy command z=-1: realized translation [0.0, 0.0, 0.0]
+  K3a legacy command z=+1: realized translation [-0.0, 0.0, 1.0]
+  K3a paired command z=-1: realized translation [-0.0, 0.0, -0.5]
+  K3a paired command z=+1: realized translation [-0.0, 0.0, 0.5]
+  K3b legacy, 50 targets x 1000 steps: z never decreased: False; 20 targets below z=-1, none got closer in z: False
+  K3c target (0,0,-5), 1000 steps: paired z non-increasing True, final distance 0.3994 m; legacy final distance 0.3994 m
+  K3d paired, 50 targets x 3000 steps: final/initial distance < 0.5 in 50 of 50 (max ratio 0.0543, median 0.0219)
+  (unregistered) legacy, same 50 targets x 3000 steps: final/initial < 0.5 in 50 of 50 (median ratio 0.0219, max 0.0543)
+  K3e clipping off, closed vs open loop, max pose difference after 300 steps: legacy 0.00e+00  paired 0.00e+00
+COULD NOT LOOK: cannot read skn/node.py at 7510e5b (Command '['git', 'show', '7510e5b:skn/node.py']' returned non-zero exit status 128.); fetch the history first

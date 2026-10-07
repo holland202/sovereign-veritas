@@ -1,0 +1,27 @@
+"""Scratch probe for the audit: what the two store-less assertFalse calls in test_k2b (tests/run_tests.py lines 161, 167)
+evaluate, as written and with the tamper / wrong key removed. Imports the repository read-only."""
+import copy
+import sys
+
+sys.path.insert(0, "/home/user/skn_sk1_plain")
+import numpy as np  # noqa: E402
+from skn.ccpl import verify_dock  # noqa: E402
+from skn.node import SKNV1_SovereignNode  # noqa: E402
+
+
+def dock(nid):  # same as TestSignedDocking.dock
+    n = SKNV1_SovereignNode(nid, np.zeros(6, np.float32))
+    ok, detail = n.ccpl_initiate_dock("SKN-002", np.eye(3, dtype=np.float32), np.full(3, 0.2, np.float32))
+    assert ok, detail
+    return n
+
+
+n, other = dock("SKN-001"), dock("SKN-009")
+rec = n.last_dock_record
+bad = copy.deepcopy(rec)
+bad["manifest"]["target_id"] = "SKN-666"
+print("L161 as written (target_id tampered), no store :", verify_dock(bad, n.dock_public_key))
+print("L161 with NO tampering,              no store :", verify_dock(copy.deepcopy(rec), n.dock_public_key))
+print("L167 as written (other node's key),  no store :", verify_dock(rec, other.dock_public_key))
+print("L167 with the RIGHT key,             no store :", verify_dock(rec, n.dock_public_key))
+print("genuine record, right key, WITH a store       :", verify_dock(rec, n.dock_public_key, set()))

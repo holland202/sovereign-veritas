@@ -1,0 +1,10 @@
+skn imported from /home/user/sk1_base_out/work/repo/skn
+ccpl.available() = False
+TestSignedDocking.setUp replaced by a no-op (dependency skip removed)
+test_k2c_fails_closed_without_the_library (run_tests_mod.TestSignedDocking.test_k2c_fails_closed_without_the_library) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+OK
+SUMMARY run=1 failures=0 errors=0 skipped=0 ok=True

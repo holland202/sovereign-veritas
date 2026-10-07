@@ -1,0 +1,9 @@
+skn imported from /home/user/sk1_base_out/mutants/tui_const/skn
+ccpl.available() = True
+test_plain_frames_show_real_state (run_tests_mod.TestLiveDashboard.test_plain_frames_show_real_state) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.738s
+
+OK
+SUMMARY run=1 failures=0 errors=0 skipped=0 ok=True

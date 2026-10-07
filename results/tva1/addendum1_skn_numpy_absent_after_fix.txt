@@ -1,0 +1,7 @@
+test_vacuity_audit | /home/user/skn_sk1_plain | as is: 0 tests, {'passed': 0, 'failed': 0, 'error': 0, 'skipped': 0}
+  NOT ESTABLISHED  could not be collected as is: tests.run_tests  (its tests are invisible to this audit)
+  skipped as is: 0; with skipping disabled: 0 pass (collateral), 0 fail or error (justified)
+  clean checkout: not run (skipped (--no-clean-checkout))
+  review: 0 test(s) with no assertion in their body; 0 truthiness-only assert(s)
+VERDICT  NOT ESTABLISHED: 1 module(s) could not be collected as is; 0 flagged among the tests that ran
+exit 2

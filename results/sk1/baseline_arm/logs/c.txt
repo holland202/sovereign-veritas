@@ -1,0 +1,26 @@
+skn imported from /home/user/sk1_base_out/mutants/failopen/skn
+ccpl.available() = False
+TestSignedDocking.setUp replaced by a no-op (dependency skip removed)
+test_k2c_fails_closed_without_the_library (run_tests_mod.TestSignedDocking.test_k2c_fails_closed_without_the_library) ... FAIL
+
+======================================================================
+FAIL: test_k2c_fails_closed_without_the_library (run_tests_mod.TestSignedDocking.test_k2c_fails_closed_without_the_library)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/sk1_base_out/mutants/failopen/tests/run_tests.py", line 191, in test_k2c_fails_closed_without_the_library
+    self.assertEqual((ok, n.c_cpl_locked, n.vault.chain_length), (False, False, depth))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (True, True, 2) != (False, False, 1)
+
+First differing element 0:
+True
+False
+
+- (True, True, 2)
++ (False, False, 1)
+
+----------------------------------------------------------------------
+Ran 1 test in 0.010s
+
+FAILED (failures=1)
+SUMMARY run=1 failures=1 errors=0 skipped=0 ok=False

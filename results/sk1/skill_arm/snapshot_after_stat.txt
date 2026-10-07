@@ -1,0 +1,179 @@
+.|directory|4096|1791344205
+./.github|directory|4096|1791344205
+./.github/workflows|directory|4096|1791344205
+./.github/workflows/verify.yml|regular file|2745|1791344205
+./.gitignore|regular file|351|1791344205
+./CHALLENGE.md|regular file|6746|1791344205
+./DESIGN.md|regular file|4816|1791344205
+./LICENSE|regular file|1069|1791344205
+./README.md|regular file|33920|1791344205
+./assets|directory|4096|1791344205
+./assets/architecture_diagram.png|regular file|307572|1791344205
+./assets/formation_convergence_dark.png|regular file|164666|1791344205
+./assets/performance_dashboard.png|regular file|350510|1791344205
+./assets/rendezvous_3d.png|regular file|228481|1791344205
+./assets/skn_demo.gif|regular file|5258721|1791344205
+./assets/skn_demo.mp4|regular file|377045|1791344205
+./concept|directory|4096|1791344205
+./concept/skn_node_concept.png|regular file|136338|1791344205
+./concept/skn_swarm_concept.png|regular file|139104|1791344205
+./docs|directory|4096|1791344205
+./docs/PREREG_2026-09-27.md|regular file|3065|1791344205
+./docs/PREREG_2026-10-05.md|regular file|3102|1791344205
+./docs/PREREG_2026-10-05b.md|regular file|9846|1791344205
+./docs/PREREG_2026-10-05c.md|regular file|3813|1791344205
+./docs/PREREG_2026-10-05d.md|regular file|6142|1791344205
+./docs/RESULTS_2026-09-27.md|regular file|4635|1791344205
+./docs/RESULTS_2026-10-05.md|regular file|3658|1791344205
+./docs/RESULTS_2026-10-05b.md|regular file|12949|1791344205
+./docs/RESULTS_2026-10-05c.md|regular file|4898|1791344205
+./docs/RESULTS_2026-10-05d.md|regular file|6914|1791344205
+./docs/external|directory|4096|1791344205
+./docs/external/cwahq_2026-10-05_moltbook_comment.md|regular file|1301|1791344205
+./docs/external/fredoffrededison_2026-10-05_moltbook_comment.md|regular file|1781|1791344205
+./docs/findings|directory|4096|1791344205
+./docs/findings/README.md|regular file|139|1791344205
+./docs/k3|directory|4096|1791344205
+./docs/k3/run.txt|regular file|1196|1791344205
+./docs/k3/sabotage.txt|regular file|1219|1791344205
+./docs/k4|directory|4096|1791344205
+./docs/k4/run.txt|regular file|507|1791344205
+./docs/k4/sabotage.txt|regular file|544|1791344205
+./docs/k5|directory|4096|1791344205
+./docs/k5/run.txt|regular file|890|1791344205
+./docs/k5/sabotage.txt|regular file|915|1791344205
+./docs/k6|directory|4096|1791344205
+./docs/k6/run.txt|regular file|793|1791344205
+./docs/k6/sabotage.txt|regular file|825|1791344205
+./docs/k8|directory|4096|1791344205
+./docs/k8/run.txt|regular file|1234|1791344205
+./docs/k8/sabotage.txt|regular file|1209|1791344205
+./experiments|directory|4096|1791344205
+./experiments/partition_veritas|directory|4096|1791344205
+./experiments/partition_veritas/PREREGISTRATION.md|regular file|3500|1791344205
+./experiments/partition_veritas/README.md|regular file|2160|1791344205
+./experiments/partition_veritas/__init__.py|regular file|309|1791344205
+./experiments/partition_veritas/adversary.py|regular file|3799|1791344205
+./experiments/partition_veritas/checkpoint.py|regular file|2154|1791344205
+./experiments/partition_veritas/fragment_store.py|regular file|3727|1791344205
+./experiments/partition_veritas/metrics.py|regular file|4474|1791344205
+./experiments/partition_veritas/protocol.py|regular file|5174|1791344205
+./experiments/partition_veritas/recovery.py|regular file|3760|1791344205
+./experiments/partition_veritas/results|directory|4096|1791344205
+./experiments/partition_veritas/results/.gitkeep|regular empty file|0|1791344205
+./experiments/partition_veritas/run_experiment.py|regular file|6358|1791344205
+./legacy|directory|4096|1791344205
+./legacy/README.md|regular file|707|1791344205
+./legacy/build_skn.py|regular file|35263|1791344205
+./legacy/generate_assets.py|regular file|12789|1791344205
+./legacy/write_readme.py|regular file|203|1791344205
+./mockups|directory|4096|1791344205
+./mockups/README.md|regular file|952|1791344205
+./mockups/demo_mission_control.py|regular file|6285|1791344205
+./mockups/frames|directory|4096|1791344205
+./mockups/frames/frame_0000.png|regular file|103795|1791344205
+./mockups/frames/frame_0005.png|regular file|98113|1791344205
+./mockups/frames/frame_0006.png|regular file|57080|1791344205
+./mockups/frames/frame_0010.png|regular file|94186|1791344205
+./mockups/frames/frame_0012.png|regular file|58989|1791344205
+./mockups/frames/frame_0015.png|regular file|102197|1791344205
+./mockups/frames/frame_0018.png|regular file|62881|1791344205
+./mockups/frames/frame_0020.png|regular file|101570|1791344205
+./mockups/frames/frame_0024.png|regular file|64993|1791344205
+./mockups/frames/frame_0025.png|regular file|102561|1791344205
+./mockups/frames/frame_0030.png|regular file|100899|1791344205
+./mockups/frames/frame_0035.png|regular file|94701|1791344205
+./mockups/frames/frame_0036.png|regular file|63423|1791344205
+./mockups/frames/frame_0040.png|regular file|91465|1791344205
+./mockups/frames/frame_0042.png|regular file|65162|1791344205
+./mockups/frames/frame_0045.png|regular file|96943|1791344205
+./mockups/frames/frame_0048.png|regular file|62728|1791344205
+./mockups/frames/frame_0050.png|regular file|99746|1791344205
+./mockups/frames/frame_0054.png|regular file|60911|1791344205
+./mockups/frames/frame_0055.png|regular file|97239|1791344205
+./mockups/frames/frame_0060.png|regular file|94972|1791344205
+./mockups/frames/frame_0065.png|regular file|93849|1791344205
+./mockups/frames/frame_0066.png|regular file|59276|1791344205
+./mockups/frames/frame_0070.png|regular file|93194|1791344205
+./mockups/frames/frame_0072.png|regular file|60171|1791344205
+./mockups/frames/frame_0075.png|regular file|94782|1791344205
+./mockups/frames/frame_0078.png|regular file|60058|1791344205
+./mockups/frames/frame_0080.png|regular file|98409|1791344205
+./mockups/frames/frame_0084.png|regular file|58543|1791344205
+./mockups/frames/frame_0085.png|regular file|100041|1791344205
+./mockups/frames/frame_0090.png|regular file|100472|1791344205
+./mockups/frames/frame_0095.png|regular file|100370|1791344205
+./mockups/frames/frame_0096.png|regular file|60857|1791344205
+./mockups/frames/frame_0100.png|regular file|99400|1791344205
+./mockups/frames/frame_0102.png|regular file|58985|1791344205
+./mockups/frames/frame_0105.png|regular file|94898|1791344205
+./mockups/frames/frame_0108.png|regular file|58001|1791344205
+./mockups/frames/frame_0110.png|regular file|98648|1791344205
+./mockups/frames/frame_0114.png|regular file|57083|1791344205
+./mockups/frames/frame_0115.png|regular file|98692|1791344205
+./mockups/frames/frame_0120.png|regular file|97002|1791344205
+./mockups/frames/frame_0125.png|regular file|91461|1791344205
+./mockups/frames/frame_0126.png|regular file|55743|1791344205
+./mockups/frames/frame_0130.png|regular file|84071|1791344205
+./mockups/frames/frame_0132.png|regular file|53976|1791344205
+./mockups/frames/frame_0135.png|regular file|81260|1791344205
+./mockups/frames/frame_0138.png|regular file|51531|1791344205
+./mockups/frames/frame_0140.png|regular file|80283|1791344205
+./mockups/frames/frame_0144.png|regular file|49302|1791344205
+./mockups/frames/frame_0145.png|regular file|80466|1791344205
+./mockups/frames/frame_0150.png|regular file|80053|1791344205
+./mockups/frames/frame_0155.png|regular file|79523|1791344205
+./mockups/frames/frame_0156.png|regular file|46935|1791344205
+./mockups/frames/frame_0160.png|regular file|75471|1791344205
+./mockups/frames/frame_0162.png|regular file|46672|1791344205
+./mockups/frames/frame_0165.png|regular file|83434|1791344205
+./mockups/frames/frame_0168.png|regular file|48287|1791344205
+./mockups/frames/frame_0170.png|regular file|81434|1791344205
+./mockups/frames/frame_0174.png|regular file|48837|1791344205
+./mockups/frames/frame_0175.png|regular file|84343|1791344205
+./mockups/frames/frame_0180.png|regular file|84946|1791344205
+./mockups/frames/frame_0185.png|regular file|84662|1791344205
+./mockups/frames/frame_0190.png|regular file|86359|1791344205
+./mockups/frames/frame_0195.png|regular file|89958|1791344205
+./mockups/frames/frame_0200.png|regular file|91449|1791344205
+./mockups/frames/frame_0205.png|regular file|94497|1791344205
+./mockups/frames/frame_0210.png|regular file|90214|1791344205
+./mockups/frames/frame_0215.png|regular file|89661|1791344205
+./mockups/skn_cinematic.py|regular file|3692|1791344205
+./mockups/skn_mission_control.html|regular file|20148|1791344205
+./mockups/skn_mission_control.py|regular file|2726|1791344205
+./mockups/skn_orbital_demo.py|regular file|4339|1791344205
+./mockups/skn_orbital_tui_mockup.py|regular file|5406|1791344205
+./mockups/sovereign_futuristic_demo.py|regular file|2765|1791344205
+./pyproject.toml|regular file|1097|1791344205
+./requirements.txt|regular file|140|1791344205
+./results|directory|4096|1791344205
+./results/k9|directory|4096|1791344205
+./results/k9/run.txt|regular file|1600|1791344205
+./results/k9/sabotage.txt|regular file|1525|1791344205
+./scripts|directory|4096|1791344205
+./scripts/bench_k1_k2.py|regular file|1510|1791344205
+./scripts/demo_30s.py|regular file|3132|1791344205
+./scripts/demo_formation.py|regular file|528|1791344205
+./scripts/demo_visual.py|regular file|7917|1791344205
+./scripts/k3_closed_loop.py|regular file|6183|1791344205
+./scripts/k4_vault_window.py|regular file|3899|1791344205
+./scripts/k5_guard_vs_rivals.py|regular file|5142|1791344205
+./scripts/k6_vault_file.py|regular file|4447|1791344205
+./scripts/k8_nonce_store.py|regular file|6377|1791344205
+./scripts/k9_freshness.py|regular file|8062|1791344205
+./scripts/plot_formation_convergence.py|regular file|3160|1791344205
+./scripts/topology_guard_k1e.py|regular file|965|1791344205
+./setup.py|regular file|231|1791344205
+./skn|directory|4096|1791344205
+./skn/__init__.py|regular file|465|1791344205
+./skn/ccpl.py|regular file|4922|1791344205
+./skn/geometric_policy.py|regular file|3202|1791344205
+./skn/node.py|regular file|15572|1791344205
+./skn/simulation.py|regular file|13450|1791344205
+./skn/simulation_v3.py|regular file|6377|1791344205
+./skn/swarm.py|regular file|5834|1791344205
+./skn/topology.py|regular file|5175|1791344205
+./skn_orbital_tui.py|regular file|6745|1791344205
+./tests|directory|4096|1791344205
+./tests/run_tests.py|regular file|12758|1791344205

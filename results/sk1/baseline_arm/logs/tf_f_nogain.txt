@@ -1,0 +1,54 @@
+skn imported from /home/user/sk1_base_out/mutants/f_nogain/skn
+ccpl.available() = True
+test_cube (run_tests_mod.TestFormationV3.test_cube) ... 
+============================================================
+ SKN-V1 FORMATION v3  (8 nodes, shape=cube)
+ Scale=15.0m  Steps=300  dt=0.05s
+============================================================
+
+  Step    0  form_err=26.022m  cent_err=33.654m
+  Step  100  form_err=0.665m  cent_err=0.667m
+  Step  200  form_err=0.509m  cent_err=0.510m
+
+  Final formation error: 0.4257m
+  Final centroid error:  0.4263m
+
+FAIL
+test_tetra (run_tests_mod.TestFormationV3.test_tetra) ... 
+============================================================
+ SKN-V1 FORMATION v3  (4 nodes, shape=tetrahedron)
+ Scale=20.0m  Steps=300  dt=0.05s
+============================================================
+
+  Step    0  form_err=28.641m  cent_err=64.352m
+  Step  100  form_err=0.785m  cent_err=0.788m
+  Step  200  form_err=0.560m  cent_err=0.561m
+
+  Final formation error: 0.4556m
+  Final centroid error:  0.4564m
+
+FAIL
+
+======================================================================
+FAIL: test_cube (run_tests_mod.TestFormationV3.test_cube)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/sk1_base_out/mutants/f_nogain/tests/run_tests.py", line 90, in test_cube
+    self.assertLess(r["final_error_m"], 0.01)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0.4256817102432251 not less than 0.01
+
+======================================================================
+FAIL: test_tetra (run_tests_mod.TestFormationV3.test_tetra)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/sk1_base_out/mutants/f_nogain/tests/run_tests.py", line 86, in test_tetra
+    self.assertLess(r["final_error_m"], 0.01)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0.45559799671173096 not less than 0.01
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.429s
+
+FAILED (failures=2)
+SUMMARY run=2 failures=2 errors=0 skipped=0 ok=False

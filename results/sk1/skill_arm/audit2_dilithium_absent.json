@@ -1,0 +1,22 @@
+{
+ "repo": "/home/user/skn_sk1_plain",
+ "as_is": {
+  "passed": 26,
+  "failed": 0,
+  "error": 0,
+  "skipped": 4
+ },
+ "collateral": [
+  "tests.run_tests.TestSignedDocking::test_k2c_fails_closed_without_the_library"
+ ],
+ "justified": [
+  "tests.run_tests.TestSignedDocking::test_k2a_genuine_record_verifies",
+  "tests.run_tests.TestSignedDocking::test_k2b_tamper_wrong_key_replay_all_fail",
+  "tests.run_tests.TestSignedDocking::test_k8_no_nonce_store_refuses_and_refusals_keep_store_empty"
+ ],
+ "untracked": [],
+ "not_in_head": [],
+ "clean_checkout": "skipped (--no-clean-checkout)",
+ "no_assert": [],
+ "truthy": []
+}

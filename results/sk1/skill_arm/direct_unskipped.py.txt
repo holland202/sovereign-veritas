@@ -1,0 +1,24 @@
+"""Scratch driver for the audit: run each TestSignedDocking method with setUp bypassed (so its skip cannot fire).
+
+Imports the repository's test module read-only; writes nothing into the repository (run with PYTHONDONTWRITEBYTECODE=1).
+"""
+import sys
+import traceback
+
+TESTS_DIR = sys.argv[1] if len(sys.argv) > 1 else "/home/user/skn_sk1_plain/tests"
+sys.path.insert(0, TESTS_DIR)
+import run_tests  # noqa: E402  (tests/run_tests.py of the repository, or of a scratch mutant copy)
+from skn import ccpl  # noqa: E402
+
+print("ccpl.available() =", ccpl.available(), "| skn.ccpl loaded from", ccpl.__file__)
+cls = run_tests.TestSignedDocking
+for name in sorted(n for n in dir(cls) if n.startswith("test")):
+    case = cls(name)  # setUp (which holds the skip) is not called
+    try:
+        getattr(case, name)()
+        print(f"PASS  {name}")
+    except AssertionError as exc:
+        print(f"FAIL  {name}: {str(exc).splitlines()[0][:120]}")
+    except Exception as exc:  # noqa: BLE001
+        print(f"ERROR {name}: {type(exc).__name__}: {exc}")
+        traceback.print_exc(limit=1)

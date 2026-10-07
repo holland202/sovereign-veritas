@@ -1,0 +1,5 @@
+test_vacuity_audit | /home/user/skn_sk1_plain | as is: 1 tests, {'passed': 0, 'failed': 0, 'error': 1, 'skipped': 0}
+  skipped as is: 0; with skipping disabled: 0 pass (collateral), 0 fail or error (justified)
+  clean checkout: not run (skipped (--no-clean-checkout))
+  review: 0 test(s) with no assertion in their body; 0 truthiness-only assert(s)
+VERDICT  0 flagged (0 collateral skip(s), 0 untracked dependenc(ies))

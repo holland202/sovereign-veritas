@@ -1,0 +1,17 @@
+"""b1_probe.py MUTANT_ROOT: on the random clouds of test_k1d, how often does the mutant's betti differ from the
+stock betti (loaded from the unmodified copy)?"""
+import importlib.util, sys
+import numpy as np
+def load(root, name):
+    spec = importlib.util.spec_from_file_location(name, root + "/skn/topology.py")
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
+stock = load("/home/user/sk1_base_out/work/repo", "stock_topo")
+mut = load(sys.argv[1], "mut_topo")
+rng = np.random.default_rng(7)
+diff = 0; ex = None
+for _ in range(200):
+    n = int(rng.integers(2, 13)); P = rng.uniform(0, 3, (n, 2)); r = float(rng.uniform(0.5, 2.5))
+    a, b = stock.betti(P, r), mut.betti(P, r)
+    if a != b:
+        diff += 1; ex = ex or (n, round(r, 3), a, b)
+print(f"test_k1d's 200 clouds: mutant (b0,b1) differs from stock on {diff} of 200; first example (n, r, stock, mutant) = {ex}")
