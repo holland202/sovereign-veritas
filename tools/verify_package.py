@@ -843,6 +843,12 @@ def verify(pkg, allow_recorded_only=False):
     gi, rs = pkg["gate_inputs"], pkg["resource_state"]
     cap = gi["capability"]
     check("capability_named_in_record", rec.get("capability") == (cap or {}).get("name"))
+    # The capability the Gate decided on must be the one the package's own registry snapshot records under that name,
+    # when the snapshot has it (docs/CUSTODY_RESULTS.md, R3: revoked in the snapshot, authorized in gate_inputs).
+    creg = gi["capability_registry"]
+    if isinstance(cap, dict) and isinstance(creg, dict) and cap.get("name") in creg:
+        check("capability_matches_registry", creg[cap.get("name")] == cap,
+              "gate_inputs.capability equals its registry snapshot entry")
     got = replay_gate(rec, cap, gi["capability_registry"], rs["runtime"], gi["policy"])
     check("gate_replay", list(got) == [dec["decision"], dec["reasons"]],
           f"replayed {got[0]} {got[1]}")

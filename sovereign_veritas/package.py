@@ -119,6 +119,10 @@ def build_package(
         for name in registry_names:
             cap = capability_registry.get(name)
             snapshot[name] = None if cap is None else cap.to_dict()
+        # A package must not carry a capability its own registry snapshot contradicts (docs/CUSTODY_RESULTS.md, R3):
+        # the Gate decided on gate_inputs.capability while the snapshot recorded a different, e.g. revoked, entry.
+        if capability is not None and capability.name in snapshot and snapshot[capability.name] != capability.to_dict():
+            raise ValueError(f"capability {capability.name!r} differs from its entry in the registry snapshot")
     package: dict[str, Any] = {
         "schema": SCHEMA,
         "artifact": {"name": artifact_name, "sha256": art_sha,

@@ -4,7 +4,7 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
-from .capability import Capability
+from .capability import Capability, CapabilityRegistry
 from .decision import Decision, Gate
 from .evidence import EvidenceRecord
 from .interfaces.contracts import (
@@ -49,6 +49,7 @@ class EvidenceWorkflow:
         gate: Gate | None = None,
         verifier_registry: VerifierRegistry | None = None,
         reservations: Any | None = None,
+        capability_registry: CapabilityRegistry | None = None,
     ) -> None:
         self.sensor = sensor
         self.predictor = predictor
@@ -60,6 +61,10 @@ class EvidenceWorkflow:
         self.verifier_registry = verifier_registry
         # RK-2 (docs/RK2_PREREG.md): optional idempotency-key store (sovereign_veritas/idempotency.py).
         self.reservations = reservations
+        # Custody (docs/CUSTODY_RESULTS.md): with a registry, the registry's current entry decides, not the object the
+        # caller holds, so a revocation reaches the decision; and the Gate gets the registry, so parents are checked.
+        # Without one, the caller-supplied Capability decides (issue #4, B2) and the record says so.
+        self.capability_registry = capability_registry
 
     def run(
         self,
@@ -219,11 +224,22 @@ class EvidenceWorkflow:
                 timestamp=evidence.timestamp,
             )
 
+        custody = {"capability_source": "caller"}
+        if self.capability_registry is not None:
+            name = capability.name if capability is not None else (action.capability if action is not None else None)
+            current = self.capability_registry.get(name) if name else None
+            custody = {"capability_source": "registry",
+                       "caller_capability_differs_from_registry": capability != current}
+            capability = current
+            evidence = evidence.with_updates(capability=capability.name if capability else None)
+        evidence = evidence.with_updates(metadata={**dict(evidence.metadata), **custody})
+
         decision = self.gate.evaluate(
             evidence,
             capability,
             runtime,
             policy=policy,
+            registry=self.capability_registry,
         )
 
         evidence = EvidenceRecord(
