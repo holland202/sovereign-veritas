@@ -45,6 +45,45 @@
 
 ## VERIFIED — automated tests
 
+**Latest (2026-10-07, EX-1): a write-ahead execution journal and scoped effect receipts; X7 REFUTED in the registered run; three journal defects of one kind fixed** ([docs/EX1_RESULTS.md](docs/EX1_RESULTS.md), registration `9f92326`). New prototype, beside the workflow: `sovereign_veritas/execution.py` (one hash-chained journal per intent; DISPATCHED is written and fsynced before the executor is called; recovery never dispatches again an intent that reached DISPATCHED) and `receipts.py` (`sv.effect-receipt/1`, ssh-signed under the namespace `sv-effect-receipt`). 7 of 8 as registered. Crash campaign, 22 cases: every one ≤ 1 effect and never a state that denies an effect. The baseline `EvidenceWorkflow` leaves an effect with no record in 2 of 2 cases (X3). X8: 4 of 22 faulted intents end EFFECT_UNCONFIRMED with no effect (the liveness cost). **X7 REFUTED:** the registered fuzz run found RECONCILED_NO_EFFECT accepted from any caller after an effect. Fixing it exposed more defects of one kind: the journal trusted its caller to supply a transition's evidence. Each was reachable only through a caller other than the coordinator:
+- receipt-less EFFECT_ATTESTED (fuzz);
+- a dispatch bound to another command, a reused attempt id, and AUTHORIZED with no decision (proofs of concept);
+- a receipt-less acknowledgement that crashed recovery (found by reading the code after the registered generator printed 0 violations, then by an exploratory run).
+
+The journal now checks each transition's evidence itself (`_admit`), on write and on read. Four instrument defects are kept and corrected. `tests/test_execution.py` has 105 cases; `tools/ex1_test_mutants.py` kills 23 of 24 mutants, and the survivor is equivalent, with a killed witness. **Unchanged: `EvidenceWorkflow`, the path users run, still has the gap X3 measures**; joining the two is X9, registered and unrun. A receipt proves who claimed an effect, not that it happened. World claims name an actor that is declared, not authenticated. The chain is unkeyed. Self-tested, no independent review of EX-1. Container only; S25 and Windows NOT VALIDATED. Full suite: 611 passed, 1 skipped.
+
+**Latest (2026-10-07): differential testing of four sv.gate/0 implementations** ([docs/DIFFERENTIAL_RESULTS.md](docs/DIFFERENTIAL_RESULTS.md); `1315fbe`, `1fbdced`).
+- A Rust port written by a Claude subagent from CONTRACT.md and the vectors alone (same vendor, separate context, so not independent judgment) matched the 4690 frozen vectors on its first run.
+- Its author built 8 deliberately wrong variants, and 7 still matched all 4690 vectors: the frozen vectors leave vocabulary words (`high`, `critical`, `unsafe`, `low`) and rounding ties unpinned.
+- Added `contract/gate_vectors_supplement.jsonl`: 53 in-contract cases, each written only because all four implementations agree. That is a derived oracle, labelled as such; the frozen file and its digest are unchanged.
+- Beyond the vectors, 3022 cases gave 6 DISAGREE, all `ports/go` against the other three. Two are fail-open in Go on input types the contract does not define. Decision: DOCUMENT ONLY for sv.gate/0, EXPERIMENT FIRST for an sv.gate/1 rule 0.
+- `1315fbe` silently left out four gitignored `.jsonl` files; `1fbdced` adds them, checked from a fresh clone.
+
+**Latest (2026-10-07): seven findings of an adversarial review of `48ab26a`, reproduced and fixed** ([docs/REVIEW_2026-10-07.md](docs/REVIEW_2026-10-07.md); `c7a9ee8`). The reviewer was a separate Claude (Opus 5.5) agent with a fresh context: separation of context, not independence of judgment. No human reviewed it.
+- F2 (High): a sequentially repeated `record_id` gave 2 external effects through two `AnchoredFileLedger` instances on one file.
+- F2b: an empty `record_id` gave an effect with no record.
+- F5: two racing `release()` calls gave 2 effects for one idempotency key.
+- F4: the consumer accepted one package twice through a symlinked `--state`, a regression from `7a03566`.
+- F3: the consumer silently skipped authentication without `--signature`.
+- F6a: `1e400` passed the NaN/Infinity guard and verified CONSISTENT.
+- F6b: `10**400` crashed the verifier with exit 1, the code for "checks failed".
+
+Each was reproduced before its fix and has a regression test (12 in all). F1 is the custody defect below, found independently by both sessions.
+
+**Latest (2026-10-07): `tools/consumer.py`'s lock left a permanent denial of service after a crash (K1), a defect `7a03566` introduced; fixed** ([docs/RP1_FIX_RESULTS.md](docs/RP1_FIX_RESULTS.md), addendum; `7a1f08b`). **The RP-1 entry below describes the `O_EXCL` lock file that this replaces.** A consumer killed while holding the lock never deleted it, and every later consumer then failed (`COULD NOT LOOK ... within 30.0s`) until a person removed the file. The lock is now an OS advisory lock (`fcntl.flock` / `msvcrt.locking`), which the OS releases when the holder dies; the lock file is never unlinked. Regression test: `tests/test_consumer.py::test_a_killed_lock_holder_does_not_block_the_next_consumer`.
+
+**Latest (2026-10-07): a registry revocation did not reach the decision (custody R1–R3); fixed** ([docs/CUSTODY_RESULTS.md](docs/CUSTODY_RESULTS.md); `ca8ba8b`). Found during the same review; not registered in advance.
+- R1: after a revocation was ledgered and applied, a caller holding the old `Capability` object still got ALLOW and an effect.
+- R2: through the workflow, a child of an authorized root was always refused.
+- R3: a package whose capability said authorized while its registry snapshot said revoked verified CONSISTENT.
+
+The fix:
+- With `EvidenceWorkflow(capability_registry=...)`, the registry's current entry decides.
+- `build_package` refuses the contradiction.
+- The verifier checks `capability_matches_registry`.
+
+Without a registry, the workflow still decides on the object it is passed (documented). 7 tests.
+
 **Latest (2026-10-07, later): the kernel wrote packages its own verifier refuses.** `canonical_json` uses Python's default `allow_nan=True`, so a record with a NaN `evidence_quality` (which the Gate handles: DEFER `evidence_quality_invalid:nan`) or a NaN/Infinity anywhere in metadata or prediction was written as the non-JSON literal `NaN`, and `verify_package.py` then said COULD NOT LOOK (exit 2). Fail closed, never a false CONSISTENT, but producer and verifier disagreed on the format, and `build_package`'s own check ("fail here, not in the verifier, if anything is not JSON") did not fire. Fix: `build_package` also runs `json.dumps(..., allow_nan=False)`. Record digests, the Gate, the contract and the 4608-case lattice are untouched (gate contract CONFORMS; lattice digest `ab816905…2d65` unchanged). Regression `tests/test_package.py::test_build_package_refuses_non_json_numbers`: 3 failed before, 3 pass after. Full suite 484 passed, 1 skipped; verifier mutants 27 of 27 killed; `nonfinite_probe.py` 0 fail-open, 0 crash over 8 packages. Found during the same review, while writing Eunoia's canonical JSON. Not fixed: `EvidenceRecord`/`FileLedger` still accept and persist NaN (changing that touches the frozen lattice, so it belongs to `sv.gate/1`). Container only; S25 NOT VALIDATED.
 
 **Latest (2026-10-07): `tools/consumer.py` state-file race, found and fixed**

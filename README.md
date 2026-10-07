@@ -44,13 +44,16 @@ independent reimplementations of the Gate that reproduce the contract digest.
   private review by Davorin Popović, reproduced here). The ledger's duplicate check runs after `execute()`. A two-thread race does the
   same, and a write failure after a successful execute leaves an effect with no record. The sequential case is
   closed (PR #8: a known `record_id` is refused before execution). The race and the effect-without-record case
-  are **open**; they are workflow/ledger limits, not Gate-contract issues, and XB-2 tests the candidate mechanisms.
+  are **open**; they are workflow/ledger limits, not Gate-contract issues, and XB-2 tests the candidate mechanisms. A
+  write-ahead execution journal removes both in a prototype that `EvidenceWorkflow` does not use yet (EX-1,
+  [docs/EX1_RESULTS.md](docs/EX1_RESULTS.md); its registered fuzz run was refuted and three journal defects were fixed).
 - **The record reports the workflow's account of execution, not the effect** (EO-1,
   [docs/EO1_RESULTS.md](docs/EO1_RESULTS.md); question prompted by Terry Snyder's Elyria harness). With the guard
   broken so the executor runs on REFUSE/DEFER, the record, the package and `verify_package.py` still say "no
   execution recorded" and verify CONSISTENT. `SUCCEEDED` means the executor returned without raising: a no-op and a
   wrong action both record `SUCCEEDED`. The test suite does catch the broken guard (35 tests fail). **Open**; the
-  candidate real fix is an executor-issued effect receipt the verifier checks.
+  candidate real fix is an executor-issued effect receipt the verifier checks. EX-1 builds such receipts in the same
+  prototype; the verifier does not check them yet. A receipt proves who claimed the effect, not that it happened.
 - **"PASS" and "authorized" are labels the caller writes.** An external review filed eleven breaks
   ([issue #4](https://github.com/holland202/sovereign-veritas/issues/4)). Two are fixed; the rest are
   assigned to `sv.gate/1`.
@@ -61,7 +64,9 @@ independent reimplementations of the Gate that reproduce the contract digest.
   cannot see it retries instead of searching). A missing runtime value REFUSEs while a missing evidence item
   DEFERs. The `epistemic.py` vocabulary is not read by the Gate.
 - **No second, independent implementation exists yet.** The kernel and the verifier agree on all 4690
-  vectors, but both were written by one author.
+  vectors, but both were written by one author. A Rust port written from CONTRACT.md alone by a separate Claude agent
+  also conforms. It is the same vendor, so separate context, not independent judgment. It showed that the vectors leave
+  vocabulary words and rounding ties unpinned ([docs/DIFFERENTIAL_RESULTS.md](docs/DIFFERENTIAL_RESULTS.md)).
 
 ```mermaid
 flowchart LR
