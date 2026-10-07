@@ -1,0 +1,499 @@
+{
+ "schema": "sv.claims/1",
+ "as_of": "dfcbee1",
+ "note": "Machine-readable claim -> test -> evidence -> independence matrix. Checked and rendered to docs/CLAIMS_MATRIX.md by tools/claims_matrix.py. Statuses and oracle labels are the directive's vocabulary; every claim is self-tested unless 'independence' says otherwise.",
+ "claims": [
+  {
+   "id": "C01",
+   "claim": "Within CONTRACT.md the Gate is fail closed: its ALLOW set equals the fail-closed specification",
+   "source": "README.md; docs/GATE_CONSTRAINT.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_gate_constraint.py::test_gate_allow_set_equals_fail_closed_spec",
+    "tests/test_gate_constraint.py::test_gate_constraint_instrument_kills_its_mutants"
+   ],
+   "evidence": [
+    "docs/GATE_CONSTRAINT.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; S25 and CI reproduce the digest",
+   "can_fail": "19 of 19 planted Gate bugs caught",
+   "gap": "the spec and the Gate share an author"
+  },
+  {
+   "id": "C02",
+   "claim": "The kernel and the verifier decide identically on all 4690 contract vectors",
+   "source": "CONTRACT.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_gate_contract.py::test_c1_each_implementation_conforms",
+    "tests/test_gate_contract.py::test_c3_every_rule_of_the_verifiers_gate_is_pinned_or_listed_unreachable"
+   ],
+   "evidence": [
+    "contract/gate_vectors.jsonl",
+    "docs/GATE_CONTRACT.md"
+   ],
+   "oracle": "DERIVED ORACLE",
+   "independence": "self-tested",
+   "can_fail": "22 of 23 contract rules switched off fail a vector",
+   "gap": "the vectors are generated from the kernel: a regression pin, not an independent oracle"
+  },
+  {
+   "id": "C03",
+   "claim": "An implementation written from CONTRACT.md alone conforms (Rust port)",
+   "source": "docs/DIFFERENTIAL_RESULTS.md",
+   "status": "REPRODUCED",
+   "tests": [
+    "tests/test_gate_supplement.py::test_kernel_and_verifier_conform_to_the_supplement"
+   ],
+   "evidence": [
+    "ports/rust/PROVENANCE.md",
+    "docs/DIFFERENTIAL_RESULTS.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "same-vendor subagent, separate context",
+   "can_fail": "7 of the implementer's 8 wrong variants still matched the frozen vectors, which exposed the vectors' gap",
+   "gap": "not independent judgment"
+  },
+  {
+   "id": "C04",
+   "claim": "The frozen vectors leave vocabulary words and rounding ties unpinned; the 53-case supplement pins them",
+   "source": "docs/DIFFERENTIAL_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_gate_supplement.py::test_supplement_kills_a_vocabulary_mutant_the_frozen_vectors_miss"
+   ],
+   "evidence": [
+    "contract/gate_vectors_supplement.jsonl"
+   ],
+   "oracle": "DERIVED ORACLE",
+   "independence": "self-tested",
+   "can_fail": "a verifier mutant without 'high' passes the frozen vectors and fails the supplement",
+   "gap": "the supplement is written from four-way agreement, not from an outside oracle"
+  },
+  {
+   "id": "C05",
+   "claim": "Beyond the contract, ports/go fails open on undefined input types",
+   "source": "docs/DIFFERENTIAL_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [],
+   "evidence": [
+    "results/differential/gate_differential_3000.txt"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested differential",
+   "can_fail": "6 DISAGREE of 3022 cases",
+   "gap": "sv.gate/1 rule 0 is EXPERIMENT FIRST"
+  },
+  {
+   "id": "C06",
+   "claim": "A CONSISTENT package agrees with itself and with the documented Gate; every inconsistent rewrite is caught after a full reseal",
+   "source": "README.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_package.py::test_p0_untouched_verifies_and_resealed_decision_flip_fails",
+    "tests/test_package.py::test_p2_every_inconsistent_rewrite_is_caught_after_full_reseal"
+   ],
+   "evidence": [
+    "docs/EVIDENCE_PACKAGE.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "N-version, same author",
+   "can_fail": "verifier guards switched off one at a time each fail a test",
+   "gap": "CONSISTENT is not TRUE"
+  },
+  {
+   "id": "C07",
+   "claim": "Every verifier guard is load-bearing",
+   "source": "docs/INTEGRATION.md I1",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_verifier_mutants_verdict.py::test_pass_with_no_skips_still_reports_survived"
+   ],
+   "evidence": [
+    "tools/verifier_mutants.py"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; CI",
+   "can_fail": "the null mutant must pass",
+   "gap": "README still says 27 of 27; the 28th guard is from ca8ba8b"
+  },
+  {
+   "id": "C08",
+   "claim": "The set of fields a signature-less attacker can rewrite undetected is pinned exactly",
+   "source": "tools/field_sweep.py",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_field_sweep.py::test_unbound_fields_are_exactly_the_pinned_set",
+    "tests/test_field_sweep.py::test_pin_can_fail_when_a_check_is_disabled"
+   ],
+   "evidence": [
+    "tools/field_sweep.py"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested",
+   "can_fail": "disabling gate_replay changes the set",
+   "gap": "timestamps, uncertainty and record ids stay rewritable unsigned"
+  },
+  {
+   "id": "C09",
+   "claim": "authenticity=SIGNED means a key in today's allowed-signers file signed these exact bytes; no signing time; revocation lists ignored",
+   "source": "docs/KL1_RE1_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_kl1_re1.py::test_the_verdict_names_the_pattern"
+   ],
+   "evidence": [
+    "results/kl1/kl1_registered.txt"
+   ],
+   "oracle": "INDEPENDENT ORACLE",
+   "independence": "self-tested; the oracle is ssh-keygen itself",
+   "can_fail": "--sabotage: 7 of 8",
+   "gap": "key lifecycle (B3)"
+  },
+  {
+   "id": "C10",
+   "claim": "A signature matched only through an allowed-signers pattern is labelled with the pattern",
+   "source": "docs/KL1_RE1_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_kl1_re1.py::test_the_signature_listing_says_how_the_identity_matched"
+   ],
+   "evidence": [
+    "results/kl1/kl1_postfix_expect_fix.txt"
+   ],
+   "oracle": "INDEPENDENT ORACLE",
+   "independence": "self-tested",
+   "can_fail": "12 of 14 tests fail at 9e52fa2",
+   "gap": "pattern entries are still accepted"
+  },
+  {
+   "id": "C11",
+   "claim": "Freshness is order among packages the author logged, in a log the relying party pulled",
+   "source": "README.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_witness.py::test_w1_earlier_entry_becomes_stale",
+    "tests/test_witness.py::test_w6_rolled_back_signed_package_is_stale"
+   ],
+   "evidence": [
+    "docs/EVIDENCE_PACKAGE.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested",
+   "can_fail": "an earlier entry becomes STALE",
+   "gap": "unsigned log, no clock, first use"
+  },
+  {
+   "id": "C12",
+   "claim": "The consumer refuses a replay (including byte-rewritten copies) and a rolled-back log after first use",
+   "source": "tools/consumer.py",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_consumer.py::test_accept_once_then_refuse_replay",
+    "tests/test_consumer.py::test_rollback_after_seeing_more_is_refused",
+    "tests/test_metamorphic.py::test_the_consumer_does_not_act_twice_on_a_rewritten_copy"
+   ],
+   "evidence": [
+    "docs/RP1_FIX_RESULTS.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested",
+   "can_fail": "the RP-1 regression test failed 8 of 8 before its fix",
+   "gap": "first use is unprotected"
+  },
+  {
+   "id": "C13",
+   "claim": "Concurrent consumers do not double-accept, and a killed lock holder does not block the next consumer",
+   "source": "docs/RP1_FIX_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_consumer.py::test_concurrent_accepts_do_not_double",
+    "tests/test_consumer.py::test_a_killed_lock_holder_does_not_block_the_next_consumer"
+   ],
+   "evidence": [
+    "docs/RP1_FIX_RESULTS.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested",
+   "can_fail": "K1 reproduced before the fix",
+   "gap": "Windows locking path not exercised on a desktop"
+  },
+  {
+   "id": "C14",
+   "claim": "Strict parsing: duplicate keys, NaN/Infinity, overflowing numbers and deep nesting are COULD NOT LOOK, never CONSISTENT",
+   "source": "docs/DK_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_malformed_input.py::test_f3b_depth_over_verifier_limit_is_could_not_look_on_every_platform",
+    "tests/test_review_findings.py::test_f6a_an_overflowing_float_literal_is_refused_like_infinity",
+    "tests/test_review_findings.py::test_f6b_an_unrepresentable_quality_floor_is_could_not_look_not_a_crash"
+   ],
+   "evidence": [
+    "docs/DK_RESULTS.md",
+    "tools/dk_probe.py",
+    "docs/REVIEW_2026-10-07.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; review F6a/F6b by a same-vendor agent",
+   "can_fail": "tools/dk_probe.py --sabotage exits 1 in CI; F6a/F6b reproduced before their fix",
+   "gap": "EvidenceRecord still persists NaN"
+  },
+  {
+   "id": "C15",
+   "claim": "Memory exhaustion is COULD NOT LOOK (exit 2) in the verifier and the consumer",
+   "source": "docs/KL1_RE1_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_kl1_re1.py::test_verifier_reports_memory_exhaustion_as_could_not_look",
+    "tests/test_kl1_re1.py::test_consumer_reports_memory_exhaustion_as_could_not_look_and_releases_its_lock"
+   ],
+   "evidence": [
+    "results/re1/re1_postfix_expect_fix.txt",
+    "results/re1/re1_registered.txt"
+   ],
+   "oracle": "INDEPENDENT ORACLE",
+   "independence": "self-tested; the oracle is the OS memory limit",
+   "can_fail": "the registered run showed exit 1 before the fix",
+   "gap": "Android's memory killer is not tested"
+  },
+  {
+   "id": "C16",
+   "claim": "The verifier has an input size limit",
+   "source": "docs/KL1_RE1_RESULTS.md",
+   "status": "NOT_SUPPORTED",
+   "tests": [],
+   "evidence": [
+    "results/re1/re1_registered.txt"
+   ],
+   "oracle": "INDEPENDENT ORACLE",
+   "independence": "self-tested",
+   "can_fail": "a 100 MB package verified CONSISTENT",
+   "gap": "B4: size cap"
+  },
+  {
+   "id": "C17",
+   "claim": "EvidenceWorkflow causes at most one effect per intent and never an effect without a record",
+   "source": "docs/EXECUTION_BOUNDARY_RESULTS.md",
+   "status": "NOT_SUPPORTED",
+   "tests": [],
+   "evidence": [
+    "results/ex1/final/campaign_registered.txt"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; the world file is ground truth, but the same author wrote the harness that writes it",
+   "can_fail": "EX-1 X3: effects=1 ledger_records=0 in 2 of 2 crash cases",
+   "gap": "B1: join the journal (X9)"
+  },
+  {
+   "id": "C18",
+   "claim": "The EX-1 coordinator keeps every tested crash case at effects <= 1, with DISPATCHED durable before the executor runs",
+   "source": "docs/EX1_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_execution.py::test_a_crash_after_dispatch_is_never_redispatched",
+    "tests/test_execution.py::test_concurrent_submitters_cause_one_effect_and_a_valid_journal"
+   ],
+   "evidence": [
+    "results/ex1/final/campaign_registered.txt",
+    "results/ex1/final/campaign_sabotage.txt"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; world-file ground truth written by the same author's harness; blind same-vendor review in progress",
+   "can_fail": "--sabotage: X1, X4, X8 REFUTED",
+   "gap": "prototype, not the workflow users run"
+  },
+  {
+   "id": "C19",
+   "claim": "EX-1 X7: the registered fuzz run finds no invariant violation",
+   "source": "docs/EX1_PREREG.md",
+   "status": "REFUTED",
+   "tests": [],
+   "evidence": [
+    "results/ex1/fuzz_registered.txt"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested",
+   "can_fail": "it did fail: I8, minimized to 2 operations",
+   "gap": "kept as refuted; the post-fix runs are confirmations, not the registered test"
+  },
+  {
+   "id": "C20",
+   "claim": "The EX-1 journal itself enforces each transition's evidence, on write and on read",
+   "source": "docs/EX1_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_execution.py::test_dispatch_must_bind_intent_attempt_command_and_authorization",
+    "tests/test_execution.py::test_attestation_needs_a_bound_verified_receipt"
+   ],
+   "evidence": [
+    "results/ex1/final/test_execution_mutants.txt",
+    "results/ex1/poc_binding_prefix3.txt"
+   ],
+   "oracle": "DERIVED ORACLE",
+   "independence": "self-tested",
+   "can_fail": "23 of 24 mutants killed, 1 equivalent with a killed witness",
+   "gap": "actors declared; on read a receipt's signature is not checked"
+  },
+  {
+   "id": "C21",
+   "claim": "Receipts for another command, authorization or attempt, in the wrong namespace, or from an unknown key never attest",
+   "source": "docs/EX1_RESULTS.md X5",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_execution.py::test_x5_receipts_that_must_never_attest"
+   ],
+   "evidence": [
+    "results/ex1/final/receipts_x5.txt"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; ssh-keygen judges signatures, but the binding rules are this author's code",
+   "can_fail": "--sabotage: 5 cases attest",
+   "gap": "—"
+  },
+  {
+   "id": "C22",
+   "claim": "An effect receipt proves the effect happened",
+   "source": "docs/EX1_RESULTS.md X6",
+   "status": "NOT_SUPPORTED",
+   "tests": [
+    "tests/test_execution.py::test_a_lying_executor_is_attested_alone_and_disputed_by_an_observer"
+   ],
+   "evidence": [
+    "results/ex1/final/campaign_registered.txt"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; world-file ground truth written by the same author's harness",
+   "can_fail": "a lying executor reaches EFFECT_ATTESTED",
+   "gap": "needs an independent observer"
+  },
+  {
+   "id": "C23",
+   "claim": "Authorization changes are ledgered before the registry mutates; failed custody leaves the registry unchanged",
+   "source": "README.md core idea 7",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_governance.py::test_authorize_is_ledgered_before_registry_change",
+    "tests/test_governance.py::test_failed_custody_does_not_change_registry"
+   ],
+   "evidence": [
+    "README.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested",
+   "can_fail": "NOT ESTABLISHED for these tests (no mutation run)",
+   "gap": "R1: before ca8ba8b the registry did not decide"
+  },
+  {
+   "id": "C24",
+   "claim": "A ledgered revocation reaches the decision when a registry is configured",
+   "source": "docs/CUSTODY_RESULTS.md",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_capability_custody.py::test_r1_revocation_reaches_the_decision_when_a_registry_is_configured",
+    "tests/test_capability_custody.py::test_r1_without_a_registry_the_caller_supplied_object_still_decides_documented_limit"
+   ],
+   "evidence": [
+    "docs/CUSTODY_RESULTS.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested; found independently by a same-vendor reviewer (F1)",
+   "can_fail": "the tests failed at 48ab26a",
+   "gap": "callers who pass no registry"
+  },
+  {
+   "id": "C25",
+   "claim": "Runtime values nobody declared are not counted as healthy",
+   "source": "docs/INTEGRATION.md F1",
+   "status": "NOT_SUPPORTED",
+   "tests": [
+    "tests/test_evidence_states.py::test_e1_make_package_records_where_each_value_came_from"
+   ],
+   "evidence": [
+    "docs/INTEGRATION.md"
+   ],
+   "oracle": "NOT ESTABLISHED",
+   "independence": "self-tested",
+   "can_fail": "NOT ESTABLISHED: no test pins the Gate's ALLOW on DEFAULTED values",
+   "gap": "B2"
+  },
+  {
+   "id": "C26",
+   "claim": "The kernel imports only the standard library; the verifier and the consumer import nothing from the kernel",
+   "source": "tools/verify_package.py docstring",
+   "status": "MEASURED",
+   "tests": [
+    "tests/test_supply_chain.py::test_the_kernel_imports_only_the_standard_library_and_itself",
+    "tests/test_supply_chain.py::test_the_verifier_and_consumer_are_stdlib_only_and_do_not_import_the_kernel"
+   ],
+   "evidence": [
+    "docs/SUPPLY_CHAIN.md"
+   ],
+   "oracle": "INDEPENDENT ORACLE",
+   "independence": "self-tested; sys.stdlib_module_names is the oracle",
+   "can_fail": "a planted import is flagged",
+   "gap": "—"
+  },
+  {
+   "id": "C27",
+   "claim": "The scanners used can detect planted vulnerabilities",
+   "source": "docs/SUPPLY_CHAIN.md",
+   "status": "MEASURED",
+   "tests": [],
+   "evidence": [
+    "results/supply_chain/pip_audit_planted.txt",
+    "results/supply_chain/bandit_planted.txt"
+   ],
+   "oracle": "INDEPENDENT ORACLE",
+   "independence": "self-tested",
+   "can_fail": "they did fire",
+   "gap": "secret scanning not tested"
+  },
+  {
+   "id": "C28",
+   "claim": "EX-1's execution journal works on Windows",
+   "source": "docs/EX1_RESULTS.md Addendum 1",
+   "status": "OBSERVED",
+   "tests": [
+    "tests/test_execution.py::test_concurrent_reservers_have_exactly_one_winner"
+   ],
+   "evidence": [
+    "docs/EX1_RESULTS.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "GitHub CI windows-latest; no desktop run",
+   "can_fail": "the same CI run failed another test, so CI can fail",
+   "gap": "CI logs are GitHub's, not stored in the repository"
+  },
+  {
+   "id": "C29",
+   "claim": "The vehicle check keeps a simulated copter inside its fence under GPS spoofing",
+   "source": "docs/VEHICLE_ACTION.md",
+   "status": "REFUTED",
+   "tests": [
+    "tests/test_vehicle_action.py::test_decisions_commands_and_verification"
+   ],
+   "evidence": [
+    "docs/VEHICLE_ACTION.md"
+   ],
+   "oracle": "PARTIALLY INDEPENDENT",
+   "independence": "self-tested in ArduCopter SITL (a simulation: model-dependent)",
+   "can_fail": "V11: 61 m outside while every check passed",
+   "gap": "not for GNSS-contested use"
+  },
+  {
+   "id": "C30",
+   "claim": "This week's changes (custody to supply chain) were reproduced by someone else",
+   "source": "STATUS.md",
+   "status": "NOT_ESTABLISHED",
+   "tests": [],
+   "evidence": [
+    "docs/PRODUCTION_GAP_ANALYSIS.md"
+   ],
+   "oracle": "NOT ESTABLISHED",
+   "independence": "none",
+   "can_fail": "—",
+   "gap": "B5"
+  }
+ ]
+}
