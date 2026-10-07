@@ -1,0 +1,22 @@
+{"id":"capability={}","decision":"REFUSE","reasons":["capability_not_authorized"]}
+{"id":"capability='x'","decision":"REFUSE","reasons":["capability_not_authorized"]}
+{"id":"verification='PASS' (string, not object)","decision":"REFUSE","reasons":["verification_not_passed"]}
+{"id":"parent=1 with registry","decision":"REFUSE","reasons":["capability_parent_missing:1"]}
+{"id":"parent=root-on, registry=[] ","decision":"REFUSE","reasons":["capability_parent_missing:root-on"]}
+{"id":"registry entry = {} ","decision":"REFUSE","reasons":["capability_parent_not_authorized:p"]}
+{"id":"registry entry = false","decision":"REFUSE","reasons":["capability_parent_not_authorized:p"]}
+{"id":"required_evidence='ab'","decision":"DEFER","reasons":["missing_required_evidence:a","missing_required_evidence:b"]}
+{"id":"required_evidence=[1]","decision":"DEFER","reasons":["missing_required_evidence:1"]}
+{"id":"required_evidence=null","decision":"ALLOW","reasons":[]}
+{"id":"min_evidence_quality=true, q=0.9","decision":"DEFER","reasons":["evidence_quality_below_threshold:0.9000<1.0000"]}
+{"id":"min_evidence_quality='0.5'","decision":"ALLOW","reasons":[]}
+{"id":"min_evidence_quality=10**400","decision":"DEFER","reasons":["evidence_quality_below_threshold:0.9000<inf"]}
+{"id":"max_steps=2.5, step_count=3","decision":"REFUSE","reasons":["capability_max_steps_exceeded:3>2.5"]}
+{"id":"max_steps=true, step_count=2","decision":"REFUSE","reasons":["capability_max_steps_exceeded:2>True"]}
+{"id":"max_steps='3', step_count=5","decision":"ALLOW","reasons":[]}
+{"id":"step_count=10**30 > 3","decision":"REFUSE","reasons":["capability_max_steps_exceeded:1000000000000000000000000000000>3"]}
+{"id":"policy=[] (non-object)","decision":"ALLOW","reasons":[]}
+{"id":"runtime=null","decision":"REFUSE","reasons":["runtime_state_unavailable"]}
+{"id":"input has extra key","decision":"ALLOW","reasons":[]}
+{"id":"requested=[] (falsy) not in allow_only","decision":"ALLOW","reasons":[]}
+{"id":"evidence_quality=-0.0","decision":"DEFER","reasons":["evidence_quality_below_threshold:-0.0000<0.5000"]}
