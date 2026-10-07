@@ -23,10 +23,14 @@ count (see the list below): concurrent processes, and a second package for the s
 - Rolling back the witness log against a consumer that has never seen the newer log (A10, round 3).
 - Anything that needs the signing key. Key custody is out of scope.
 - The companion route check trusts the companion's own labels (`docs/COMPANION_ACTION.md`).
-- `tools/consumer.py` accepting one package twice when several processes race on its state file (4 of 100
-  trials in `docs/RP1_RESULTS.md`, P6-P7), accepting a second, different package for the same action (P3), or
-  stopping on a torn state file (P8). Published, not yet fixed. A **sequential** repeat of the same package
-  against an intact state file still counts.
+- `tools/consumer.py` accepting a second, different package for the same action (P3, `docs/RP1_RESULTS.md`),
+  or stopping on a torn state file it did not tear itself (P8). Published, not yet fixed (P3 needs an action
+  identity in `sv.package/1`, which is Chad's decision, not an implementation bug). A **sequential** repeat
+  of the same package against an intact state file still counts.
+- **Fixed 2026-10-07** (`docs/RP1_FIX_RESULTS.md`): two or more processes racing on one `consumer.py` state
+  file no longer double-accept. This was the published gap in `docs/RP1_RESULTS.md` P6, P7 and P7c (4-15 of
+  roughly 100 trials doubled, depending on timing). A lock now serializes the read-check-write, and the
+  state write is atomic. Getting two accepts through the **current** code still counts as a break.
 - A package or record that says no execution happened, or that it `SUCCEEDED`, while the external effect was
   different (EO-1, `docs/EO1_RESULTS.md`). Neither the record nor `verify_package.py` observes effects; this is a
   published limit, not a break. Getting an **unmodified** `EvidenceWorkflow.run()` to call the executor on DEFER

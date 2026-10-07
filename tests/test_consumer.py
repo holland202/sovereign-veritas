@@ -53,3 +53,41 @@ def test_garbage_log_is_unreadable(tmp_path):
     r = run(PKG, log, st)
     assert r.returncode == 2
     assert "COULD NOT LOOK" in r.stdout or "WitnessUnreadable" in r.stdout
+
+
+# RP-1 (docs/RP1_RESULTS.md, P6/P7): load-check-write on the state file had no lock. A forced
+# interleaving doubled 100% of trials in manual reproduction (consumer.py's own `load_state`
+# monkeypatched to pause between the read and the write, the same technique
+# tools/rp1_vectors.py's P7c control uses). This is the regression test for the fix: it fails
+# (doubled >= 1) against the pre-fix consumer.py and must report 0 doubled after the fix.
+PAUSED_CONSUMER = r"""
+import importlib.util, sys, time
+spec = importlib.util.spec_from_file_location("c", "tools/consumer.py")
+c = importlib.util.module_from_spec(spec); spec.loader.exec_module(c)
+orig = c.load_state
+def paused(p):
+    s = orig(p); time.sleep(0.2); return s
+c.load_state = paused
+sys.argv = ["consumer.py"] + sys.argv[1:]
+c.main()
+"""
+
+
+def test_concurrent_accepts_do_not_double(tmp_path):
+    log, st = tmp_path / "w.log", tmp_path / "s.json"
+    write_log(log, [OLD, PKG])
+    trials, procs, doubled, errors = 8, 6, 0, 0
+    for t in range(trials):
+        state = tmp_path / f"race_{t}.state.json"
+        args = [sys.executable, "-c", PAUSED_CONSUMER, "accept", str(PKG),
+                "--witness-log", str(log), "--state", str(state)]
+        ps = [subprocess.Popen(args, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+              for _ in range(procs)]
+        outs = [p.communicate()[0] for p in ps]
+        codes = [p.returncode for p in ps]
+        if any(c not in (0, 1) for c in codes):
+            errors += 1
+        if codes.count(0) >= 2:
+            doubled += 1
+    assert errors == 0, "every process must exit 0 (accepted) or 1 (refused), never crash"
+    assert doubled == 0, "no trial may accept the same package twice under a forced interleaving"

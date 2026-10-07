@@ -17,10 +17,56 @@ Exit: 0 accepted (state updated) | 1 refused (state unchanged) | 2 could not loo
 What it does not do: protect a consumer on first use (no anchor yet), or detect a rollback that
 happened before this consumer ever looked.
 """
-import argparse, hashlib, importlib.util, json, os, sys
+import argparse, hashlib, importlib.util, json, os, sys, time
 
 sys.dont_write_bytecode = True
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+LOCK_TIMEOUT_S = 30.0
+
+
+class LockTimeout(Exception):
+    """Could not claim the state lock in time: another consumer is running, or a crashed one left
+    a stale lock file. Never silently proceeds without the lock (RP-1, docs/RP1_RESULTS.md, P6/P7:
+    load-check-write with no lock let 100% of a forced-interleaving trial double-accept)."""
+
+
+def _acquire_lock(lock_path, timeout=LOCK_TIMEOUT_S, poll=0.01):
+    """Exclusive claim on lock_path: os.open(O_CREAT|O_EXCL), the same atomic-create idiom
+    sovereign_veritas/idempotency.py's FileReservations already uses for keys (RP1_RESULTS.md's
+    own proposed fix). Portable: no fcntl/msvcrt needed, so this runs the same way on every
+    platform consumer.py is tested on (Linux, macOS, Windows)."""
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            os.close(os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            return
+        except FileExistsError:
+            if time.monotonic() >= deadline:
+                raise LockTimeout(
+                    f"could not claim {lock_path!r} within {timeout}s "
+                    "(another consumer running, or a stale lock left by a crash)"
+                )
+            time.sleep(poll)
+
+
+def _release_lock(lock_path):
+    try:
+        os.remove(lock_path)
+    except OSError:
+        pass
+
+
+def _write_state(path, state):
+    """Atomic replace (temp file + os.replace), not a truncating open(path, 'w'): a crash
+    mid-write must never leave a torn file where an intact one was (RP1_RESULTS.md P8 saw this
+    non-atomic write produce a torn state file live, during the very race this lock closes)."""
+    tmp = f"{path}.tmp-{os.getpid()}"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump(state, fh, indent=1, sort_keys=True)
+        fh.flush()
+        os.fsync(fh.fileno())
+    os.replace(tmp, path)
 
 
 def load_verifier():
@@ -70,6 +116,12 @@ def main():
     ap.add_argument("--identity")
     a = ap.parse_args()
     vp = load_verifier()
+    lock_path = a.state + ".lock"
+    try:
+        _acquire_lock(lock_path)
+    except LockTimeout as exc:
+        print(f"COULD NOT LOOK: {exc}")
+        sys.exit(2)
     try:
         with open(a.package, "rb") as fh:
             data = fh.read()
@@ -80,17 +132,23 @@ def main():
         entries = vp.read_witness_log(a.witness_log)
         ok_w, fresh, detail = vp.check_witness_entries(pkg, entries)
         checks.append(("freshness_witness", ok_w, f"{fresh}: {detail}"))
+        # Read the state only after the lock is held (RP-1 P6): a snapshot read before the lock
+        # could already be stale by the time this process would have written it.
         state = load_state(a.state)
         ok_c, why, new = consumer_check(vp, pkg, entries, state)
         checks.append(("consumer", ok_c, why))
+        # Write while still holding the lock: the check and the write are one claim, not two
+        # (the gap between them is exactly what let a second process see the pre-write state).
+        if all(ok for _, ok, _ in checks):
+            _write_state(a.state, new)
     except (vp.WitnessUnreadable, vp.SignatureUnavailable, OSError, ValueError, KeyError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
+    finally:
+        _release_lock(lock_path)
     for name, ok, detail in checks:
         print(f"{'PASS' if ok else 'FAIL'}  {name:<34} {detail}")
     if all(ok for _, ok, _ in checks):
-        with open(a.state, "w", encoding="utf-8") as fh:
-            json.dump(new, fh, indent=1, sort_keys=True)
         print("CONSUMER  ACCEPTED  (state updated)")
         sys.exit(0)
     print("CONSUMER  REFUSED  (state unchanged)")

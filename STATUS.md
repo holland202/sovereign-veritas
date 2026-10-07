@@ -45,6 +45,20 @@
 
 ## VERIFIED — automated tests
 
+**Latest (2026-10-07): `tools/consumer.py` state-file race, found and fixed**
+([docs/RP1_FIX_RESULTS.md](docs/RP1_FIX_RESULTS.md)). Found during an independent adversarial review
+requested by Chad Holland (not an external report; no issue filed). RP-1's P6/P7/P7c had already
+measured that the consumer's load-check-write had no lock (4-15 of roughly 100 trials doubled,
+depending on timing); this review reproduced it again (15 of 15, same technique) before fixing it.
+Fix: a lock (the same `os.open(O_CREAT|O_EXCL)` idiom `idempotency.py` already uses) around the whole
+load-check-write, and an atomic state write. Regression test
+`tests/test_consumer.py::test_concurrent_accepts_do_not_double` fails 8 of 8 against the pre-fix code
+and passes 0 of 8 after. `tools/rp1_vectors.py` rerun: P7 and P7c now REFUTE their registered
+predictions (0 doubled of 100 and of 20) — the race is closed, not a new gap. Full suite: 481 passed,
+1 skipped (pymavlink). P3 (a second package for the same action) and P8 (fail-closed on a torn state
+file) are unchanged; P3 needs a schema change the note already says is Chad's decision, not an
+implementation bug. Container only; **not validated on Windows, macOS, or the S25.**
+
 **Latest (2026-10-05): RL-1, who released a key** ([docs/RL1_RESULTS.md](docs/RL1_RESULTS.md)). A `release()` record
 holds only what the caller wrote: a script passing `by="human:chad"` gives the same entry as any other caller (3 of 3
 as registered; `--sabotage` exits 1 because of L1; a no-op sabotage exits 0). The docstring says release is "meant for
