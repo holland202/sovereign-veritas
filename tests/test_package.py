@@ -286,3 +286,29 @@ def test_cli_exit_codes(tmp_path):
     run = lambda f: subprocess.run([sys.executable, str(ROOT / "tools" / "verify_package.py"), str(f)],
                                    capture_output=True, text=True).returncode
     assert (run(good), run(bad), run(tmp_path / "absent.json")) == (0, 1, 2)
+
+
+# Cross-repository review (2026-10-07): canonical_json emits Python's non-JSON NaN/Infinity, so build_package's
+# "fail here, not in the verifier, if anything is not JSON" check passed them, and verify_package.py then refused the
+# package (COULD NOT LOOK, exit 2). The producer must refuse what its own verifier cannot read.
+import math as _math
+
+import pytest as _pytest
+
+
+@_pytest.mark.parametrize("bad", [dict(evidence_quality=_math.nan), dict(metadata={"note": _math.inf}),
+                                  dict(prediction={"value": {"output_sha256": "x"}, "u": -_math.inf})])
+def test_build_package_refuses_non_json_numbers(bad):
+    import hashlib
+    from sovereign_veritas.capability import Capability
+    from sovereign_veritas.evidence import EvidenceRecord
+    from sovereign_veritas.package import build_package
+    from sovereign_veritas.runtime import RuntimeState
+    art = b"artifact"
+    sha = hashlib.sha256(art).hexdigest()
+    rec = EvidenceRecord(record_id="r1", input_digest=sha, verification={"status": "PASS"}, capability="c",
+                         decision="DEFER", **bad)
+    with _pytest.raises(ValueError):
+        build_package(artifact=art, artifact_name="a", chain=[rec], capability=Capability("c", authorized=True),
+                      runtime=RuntimeState("linux", "3"),
+                      measurement={"artifact_sha256": sha, "kind": "x", "output_sha256": "x"})

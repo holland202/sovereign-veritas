@@ -45,6 +45,8 @@
 
 ## VERIFIED — automated tests
 
+**Latest (2026-10-07, later): the kernel wrote packages its own verifier refuses.** `canonical_json` uses Python's default `allow_nan=True`, so a record with a NaN `evidence_quality` (which the Gate handles: DEFER `evidence_quality_invalid:nan`) or a NaN/Infinity anywhere in metadata or prediction was written as the non-JSON literal `NaN`, and `verify_package.py` then said COULD NOT LOOK (exit 2). Fail closed, never a false CONSISTENT, but producer and verifier disagreed on the format, and `build_package`'s own check ("fail here, not in the verifier, if anything is not JSON") did not fire. Fix: `build_package` also runs `json.dumps(..., allow_nan=False)`. Record digests, the Gate, the contract and the 4608-case lattice are untouched (gate contract CONFORMS; lattice digest `ab816905…2d65` unchanged). Regression `tests/test_package.py::test_build_package_refuses_non_json_numbers`: 3 failed before, 3 pass after. Full suite 484 passed, 1 skipped; verifier mutants 27 of 27 killed; `nonfinite_probe.py` 0 fail-open, 0 crash over 8 packages. Found during the same review, while writing Eunoia's canonical JSON. Not fixed: `EvidenceRecord`/`FileLedger` still accept and persist NaN (changing that touches the frozen lattice, so it belongs to `sv.gate/1`). Container only; S25 NOT VALIDATED.
+
 **Latest (2026-10-07): `tools/consumer.py` state-file race, found and fixed**
 ([docs/RP1_FIX_RESULTS.md](docs/RP1_FIX_RESULTS.md)). Found during an independent adversarial review
 requested by Chad Holland (not an external report; no issue filed). RP-1's P6/P7/P7c had already

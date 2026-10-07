@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 import os
 from typing import Any, Iterable
 
@@ -141,7 +142,11 @@ def build_package(
                      "reasons": list(decision_record.reasons)},
         "known_limitations": limitations,
     }
-    canonical_json(package)  # fail here, not in the verifier, if anything is not JSON
+    # Fail here, not in the verifier, if anything is not JSON. canonical_json alone does not: it emits Python's
+    # NaN/Infinity literals, which tools/verify_package.py refuses (COULD NOT LOOK). allow_nan=False makes the
+    # producer refuse what its own verifier cannot read. Record digests and the Gate are unchanged.
+    json.dumps(package, allow_nan=False)
+    canonical_json(package)
     package["package_sha256"] = package_digest(package)
     return package
 
