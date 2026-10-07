@@ -1,0 +1,4 @@
+         observed: exit 0 | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+mode: SABOTAGE (KL-P2 keeps k_old listed)
+VERDICT  7 of 8 as registered
+exit 1

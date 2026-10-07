@@ -1,0 +1,19 @@
+  KL-P1  HELD    control: P_old with both keys listed is SIGNED
+         observed: exit 0 | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+  KL-P2  HELD    rotation by replacement: the genuine old package fails like a forgery (exit 1)
+         observed: exit 1 | VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+  KL-P3  HELD    expired window: FAIL through verify_package.py; ssh-keygen -Overify-time inside the window succeeds
+         observed: verify_package exit 1 | VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN | direct -Overify-time rc 0
+  KL-P4  HELD    KRL revoking k_old: still SIGNED through verify_package.py; ssh-keygen -r KRL refuses
+         observed: verify_package exit 0 | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202 | direct -r rc 255
+  KL-P5  HELD    pattern principal '*': the attacker's package verifies as SIGNED:holland202[pattern:*] (expect-fix: the pattern is named)
+         observed: exit 0 | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202[pattern:*]
+  KL-P6  HELD    a sv-effect-receipt signature over the package bytes fails, restricted or not
+         observed: exit 1 | VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN || exit 1 | VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+  KL-P7  HELD    the SSHSIG blob has no time field
+         observed: fields ['magic', 'version', 'publickey', 'namespace', 'reserved', 'hash_algorithm', 'signature'], 0 trailing bytes
+  KL-P8  HELD    leaked k_old: a consistent package the author never made is CONSISTENT and SIGNED (a limit)
+         observed: exit 0 | VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:holland202
+mode: registered +expect-fix
+VERDICT  8 of 8 as registered
+exit 0

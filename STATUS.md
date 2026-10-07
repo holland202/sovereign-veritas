@@ -45,6 +45,25 @@
 
 ## VERIFIED — automated tests
 
+**Latest (2026-10-07, KL-1 / RE-1): what SIGNED means as keys change, and what large inputs cost; three fixes** ([docs/KL1_RE1_RESULTS.md](docs/KL1_RE1_RESULTS.md); registration `9e52fa2`, pushed before any probe existed). KL-1, 8 of 8 as registered:
+- a genuine package signed by a rotated-out or expired key fails exactly as a forgery does (exit 1);
+- the verifier never reads a revocation list (a revoked key still verifies SIGNED);
+- SSH signatures carry no signing time;
+- **a `*` principal line made an attacker's package verify as `authenticity=SIGNED:holland202`.** The verdict now names the pattern: `SIGNED:holland202[pattern:*]`. A first version of that fix used `ssh-keygen -Y find-principals`, which ignores namespaces; the fix now verifies each allowed-signers line alone.
+
+RE-1, 6 of 6 as registered:
+- no input size limit: a 100 MB package verified CONSISTENT at a 401 MB peak;
+- memory exhaustion exited 1, which is "a check failed" in the verifier and REFUSED in the consumer. It is now COULD NOT LOOK, exit 2;
+- the depth check scanned 50 MB before refusing. It now stops at the limit.
+
+A default size cap, revocation lists and witness-clock binding are EXPERIMENT FIRST. Self-tested; container only; S25 NOT VALIDATED.
+
+**Latest (2026-10-07): two CI failures at `b7d072b`, both caused by this branch's code, both fixed.**
+1. JG-2 P1 was **REFUTED** by EX-1's three hash sites, which used a local copy of canonical JSON. The code now hashes `canonical_json(...)`: identical bytes on 20000 random finite values, NaN still refused. The rule is unchanged ([docs/JG2_PREREG.md](docs/JG2_PREREG.md), Record 2).
+2. On `windows-latest`, the F2 regression test from `c7a9ee8` ignored the anchored ledger's POSIX-only convention. Checking why showed a pre-existing Windows defect: at `48ab26a`, without `fcntl`, the workflow executed and the ledger refused afterwards, leaving an effect with no record. Since `c7a9ee8` the refusal comes before the effect. A new test pins that order on every platform.
+
+All 105 EX-1 tests passed on Windows (3.10, 3.12, 3.14): the first Windows run of `execution.py`. The red-team job stopped at JG-2, so the EX-1 CI steps had not yet run in CI.
+
 **Latest (2026-10-07, EX-1): a write-ahead execution journal and scoped effect receipts; X7 REFUTED in the registered run; three journal defects of one kind fixed** ([docs/EX1_RESULTS.md](docs/EX1_RESULTS.md), registration `9f92326`). New prototype, beside the workflow: `sovereign_veritas/execution.py` (one hash-chained journal per intent; DISPATCHED is written and fsynced before the executor is called; recovery never dispatches again an intent that reached DISPATCHED) and `receipts.py` (`sv.effect-receipt/1`, ssh-signed under the namespace `sv-effect-receipt`). 7 of 8 as registered. Crash campaign, 22 cases: every one ≤ 1 effect and never a state that denies an effect. The baseline `EvidenceWorkflow` leaves an effect with no record in 2 of 2 cases (X3). X8: 4 of 22 faulted intents end EFFECT_UNCONFIRMED with no effect (the liveness cost). **X7 REFUTED:** the registered fuzz run found RECONCILED_NO_EFFECT accepted from any caller after an effect. Fixing it exposed more defects of one kind: the journal trusted its caller to supply a transition's evidence. Each was reachable only through a caller other than the coordinator:
 - receipt-less EFFECT_ATTESTED (fuzz);
 - a dispatch bound to another command, a reused attempt id, and AUTHORIZED with no decision (proofs of concept);

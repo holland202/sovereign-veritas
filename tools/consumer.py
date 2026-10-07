@@ -170,8 +170,9 @@ def main():
         # (the gap between them is exactly what let a second process see the pre-write state).
         if all(ok for _, ok, _ in checks):
             _write_state(a.state, new)
+    # MemoryError (RE-1, docs/KL1_RE1_PREREG.md): an exhausted consumer exited 1, which reads as REFUSED.
     except (vp.WitnessUnreadable, vp.SignatureUnavailable, OSError, ValueError, KeyError, TypeError, IndexError,
-            AttributeError, RecursionError, OverflowError) as exc:
+            AttributeError, RecursionError, OverflowError, MemoryError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
     finally:

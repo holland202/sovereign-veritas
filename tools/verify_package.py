@@ -44,8 +44,10 @@ class WitnessUnreadable(Exception):
 MAX_JSON_DEPTH = 64
 
 
-def json_depth(text):
-    """Deepest [ / { nesting in a JSON text, ignoring brackets inside strings. Iterative: no recursion."""
+def json_depth(text, stop_above=None):
+    """Deepest [ / { nesting in a JSON text, ignoring brackets inside strings. Iterative: no recursion. With stop_above,
+    returns as soon as the depth exceeds it (RE-1, docs/KL1_RE1_PREREG.md: 50 MB of '[' was scanned to the end, 3.66 s,
+    although the limit was exceeded at byte 65). The refusal is the same; the depth reported is then stop_above + 1."""
     depth = deepest = 0
     in_str = esc = False
     for ch in text:
@@ -62,6 +64,8 @@ def json_depth(text):
             depth += 1
             if depth > deepest:
                 deepest = depth
+                if stop_above is not None and deepest > stop_above:
+                    return deepest
         elif ch in "]}":
             depth -= 1
     return deepest
@@ -93,7 +97,7 @@ def _finite_float(literal):
 
 def loads_bounded(text):
     """Strict json.loads: nesting limit, no duplicate keys, no NaN/Infinity. Each raises ValueError."""
-    d = json_depth(text)
+    d = json_depth(text, MAX_JSON_DEPTH)
     if d > MAX_JSON_DEPTH:
         raise ValueError(f"JSON nesting depth {d} exceeds the verifier limit {MAX_JSON_DEPTH}")
     return json.loads(text, object_pairs_hook=_no_duplicate_keys, parse_constant=_no_nonfinite,
@@ -195,19 +199,55 @@ def check_witness(pkg, log_path):
     return check_witness_entries(pkg, read_witness_log(log_path))
 
 
-def check_signature(data, sig_path, allowed_signers, identity):
-    """(ok, detail) for a detached ssh-keygen signature over `data` (bytes)."""
+def _ssh_keygen(args, data=None):
     exe = shutil.which("ssh-keygen")
     if exe is None:
         raise SignatureUnavailable("ssh-keygen not found (Termux: pkg install openssh)")
     try:
-        p = subprocess.run([exe, "-Y", "verify", "-f", allowed_signers, "-I", identity,
-                            "-n", NAMESPACE, "-s", sig_path], input=data, capture_output=True,
-                           timeout=60)
+        return subprocess.run([exe, *args], input=data, capture_output=True, timeout=60)
     except (OSError, subprocess.SubprocessError) as exc:
         raise SignatureUnavailable(str(exc))
+
+
+def _verify_with(data, sig_path, allowed_signers, identity):
+    return _ssh_keygen(["-Y", "verify", "-f", allowed_signers, "-I", identity, "-n", NAMESPACE, "-s", sig_path], data)
+
+
+def signature_listing(data, sig_path, allowed_signers, identity):
+    """How `identity` matched: 'literal' if the allowed-signers lines naming it exactly (no pattern) in their principals
+    field verify this signature on their own; otherwise the principals fields of the lines that verify it on their own,
+    each line checked alone by ssh-keygen with its own options (namespaces, validity). KL-1, KL-P5: a line `* ...` made
+    the verdict read SIGNED:<identity> for a key never listed under that identity. ssh-keygen -Y find-principals is not
+    used: it ignores namespaces and reported a line valid only for another namespace. A quoted principals field is not
+    unquoted here, so a quoted literal is reported as a pattern (the cautious side)."""
+    lines = [l.strip() for l in Path(allowed_signers).read_text(encoding="utf-8", errors="replace").splitlines()
+             if l.strip() and not l.strip().startswith("#")]
+
+    def verifies(subset):
+        with tempfile.TemporaryDirectory() as tmp:
+            f = os.path.join(tmp, "signers")
+            with open(f, "w", encoding="utf-8") as fh:
+                fh.write("".join(l + "\n" for l in subset))
+            return bool(subset) and _verify_with(data, sig_path, f, identity).returncode == 0
+
+    if verifies([l for l in lines if identity in l.split(None, 1)[0].split(",")]):
+        return "literal"
+    matched = [l.split(None, 1)[0] for l in lines if verifies([l])]
+    return ",".join(matched) or "unknown"
+
+
+def check_signature(data, sig_path, allowed_signers, identity, listing=None):
+    """(ok, detail) for a detached ssh-keygen signature over `data` (bytes). When ok and `listing` is a list, the result
+    of signature_listing() is appended to it, so the caller can label the verdict without running ssh-keygen again."""
+    p = _verify_with(data, sig_path, allowed_signers, identity)
     if p.returncode == 0:
-        return True, f"valid {NAMESPACE} signature by {identity}"
+        how = signature_listing(data, sig_path, allowed_signers, identity)
+        if listing is not None:
+            listing.append(how)
+        if how == "literal":
+            return True, f"valid {NAMESPACE} signature by {identity}"
+        return True, (f"valid {NAMESPACE} signature for {identity} by a key listed only under the principal pattern(s) "
+                      f"{how!r}, not by name")
     msg = (p.stderr or p.stdout).decode("utf-8", "replace").strip().splitlines()
     return False, msg[0] if msg else f"ssh-keygen exit {p.returncode}"
 
@@ -1037,7 +1077,7 @@ def main():
         print("\n".join(__doc__.strip().splitlines()[7:10]))
         sys.exit(2)
     path, allow, sig, witness = parsed
-    freshness = None
+    freshness, listing = None, []
     try:
         with open(path, "rb") as fh:
             data = fh.read()
@@ -1046,7 +1086,7 @@ def main():
             raise ValueError(f"top level is {type(pkg).__name__}, not an object")
         checks = verify(pkg, allow_recorded_only=allow)
         if sig is not None:
-            ok, detail = check_signature(data, *sig)
+            ok, detail = check_signature(data, *sig, listing=listing)
             checks.append(("signature", ok, detail))
         if witness is not None:
             ok, freshness, detail = check_witness(pkg, witness)
@@ -1061,7 +1101,9 @@ def main():
     # RecursionError: nesting deeper than the JSON decoder allows. Both were uncaught tracebacks (exit 1,
     # indistinguishable from "checks failed") until 2026-09-30; malformed input is COULD NOT LOOK (exit 2).
     # OverflowError (review 2026-10-07, F6b): min_evidence_quality = 10**400 crashed the Gate replay's float formatting.
-    except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError, RecursionError, OverflowError) as exc:
+    # MemoryError (RE-1): a 400 MB package under a 1 GiB limit, or a 10^7-entry witness log under 512 MiB, exited 1.
+    except (OSError, ValueError, KeyError, TypeError, IndexError, AttributeError, RecursionError, OverflowError,
+            MemoryError) as exc:
         print(f"COULD NOT LOOK: {type(exc).__name__}: {exc}")
         sys.exit(2)
     for name, ok, detail in checks:
@@ -1071,6 +1113,8 @@ def main():
     # then the named key holder signed exactly these failing bytes, which is itself worth knowing.
     signed = sig is not None and any(n == "signature" and ok for n, ok, _ in checks)
     authenticity = f"SIGNED:{sig[2]}" if signed else "NOT_PROVEN"
+    if signed and listing and listing[0] != "literal":  # KL-P5: say how the identity matched
+        authenticity += f"[pattern:{listing[0]}]"
     print(f"VERDICT  {'CONSISTENT' if not failed else f'{len(failed)} check(s) failed'}"
           f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}")
     sys.exit(1 if failed else 0)

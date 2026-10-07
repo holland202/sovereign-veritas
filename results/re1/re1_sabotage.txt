@@ -1,0 +1,24 @@
+  baseline genuine package (4709 bytes): exit 0, peak 19.4 MB, 0.096 s (min-max 0.095-0.103)
+  RE-P1    1 MB: exit 0, peak 23.3 MB, 0.16 s (min-max 0.16-0.20), VERDICT CONSISTENT
+  RE-P1   10 MB: exit 0, peak 57.6 MB, 0.73 s (min-max 0.69-0.74), VERDICT CONSISTENT
+  RE-P1   50 MB: exit 0, peak 210.2 MB, 3.28 s (min-max 3.17-3.29), VERDICT CONSISTENT
+  RE-P1  100 MB: exit 0, peak 401.0 MB, 6.20 s (min-max 6.13-6.43), VERDICT CONSISTENT
+  RE-P1  HELD    no size refusal; time and peak memory linear (r >= 0.99); peak at 100 MB >= 2x the file
+         observed: exits [0, 0, 0, 0]; all CONSISTENT: True; r(time) 0.9998, r(peak) 1.0000; peak at 100 MB 401 MB
+  RE-P2  REFUTED 400 MB under RLIMIT_AS 1 GiB: uncaught MemoryError, exit 1 ('a check failed')
+         observed: exit 0, 27.7 s, last line: ----
+  RE-P3  10 MB of '[': exit 2, 0.82 s (min-max 0.75-0.83)
+  RE-P3  50 MB of '[': exit 2, 3.65 s (min-max 3.29-3.88)
+  RE-P3  HELD    COULD NOT LOOK both times; the 50 MB refusal takes >= 4x the 10 MB one (no early exit)
+         observed: exits 2, 2; ratio 4.46
+  RE-P4    100000 entries (7 MB): exit 0, peak 78.2 MB, 0.47 s (min-max 0.44-0.49)
+  RE-P4   1000000 entries (72 MB): exit 0, peak 587.0 MB, 3.40 s (min-max 3.17-3.65)
+  RE-P4  HELD    10^5 and 10^6 entries both judged LATEST_WITNESSED (exit 0); 10^6 takes >= 5x the 10^5 time
+         observed: exits [0, 0]; ratio 7.20
+  RE-P5  HELD    10^7 entries under RLIMIT_AS 512 MiB: uncaught MemoryError, exit 1
+         observed: exit 1, 0.1 s, log 729 MB, last line: MemoryError
+  RE-P6  HELD    rounds = 10,000,000 completes in < 30 s
+         observed: exit 0, 3.52 s, peak 19.3 MB
+mode: SABOTAGE (RE-P2 without the memory limit)
+VERDICT  5 of 6 as registered
+exit 1

@@ -167,6 +167,13 @@ jobs:
         run: python tools/ex1_poc_binding.py
       - name: EX-1 tests can fail (each fix re-planted must fail tests/test_execution.py)
         run: python tools/ex1_test_mutants.py | tail -1
+      - name: KL-1 key lifecycle - 8 of 8 with the KL-P5 fix (docs/KL1_RE1_RESULTS.md)
+        run: python tools/kl1_probe.py --expect-fix | tail -2
+      - name: KL-1 can fail (--sabotage keeps the rotated-out key listed -> exit 1)
+        run: |
+          set +e; python tools/kl1_probe.py --sabotage > kl1_sab.txt; rc=$?; set -e
+          tail -2 kl1_sab.txt
+          test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
       - name: Fetch vacuity_lint, pinned
         run: |
           git clone -q https://github.com/holland202/vacuity_lint.py "$RUNNER_TEMP/vl"

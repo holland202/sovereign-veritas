@@ -1,0 +1,28 @@
+  baseline genuine package (4709 bytes): exit 0, peak 19.6 MB, 0.104 s (min-max 0.100-0.110)
+  RE-P1    1 MB: exit 0, peak 23.4 MB, 0.17 s (min-max 0.16-0.18), VERDICT CONSISTENT
+  RE-P1   10 MB: exit 0, peak 57.7 MB, 0.73 s (min-max 0.72-0.74), VERDICT CONSISTENT
+  RE-P1   50 MB: exit 0, peak 210.4 MB, 3.15 s (min-max 3.13-3.20), VERDICT CONSISTENT
+  RE-P1  100 MB: exit 0, peak 401.0 MB, 6.32 s (min-max 6.26-6.44), VERDICT CONSISTENT
+  RE-P1  HELD    no size refusal; time and peak memory linear (r >= 0.99); peak at 100 MB >= 2x the file
+         observed: exits [0, 0, 0, 0]; all CONSISTENT: True; r(time) 0.9999, r(peak) 1.0000; peak at 100 MB 401 MB
+  RE-P2  HELD    expect-fix: 400 MB under RLIMIT_AS 1 GiB is COULD NOT LOOK: MemoryError, exit 2
+         observed: exit 2, 22.5 s, out: COULD NOT LOOK: MemoryError: 
+
+----
+  RE-P3  10 MB of '[': exit 2, 0.11 s (min-max 0.10-0.12)
+  RE-P3  50 MB of '[': exit 2, 0.17 s (min-max 0.16-0.17)
+  RE-P3  HELD    expect-fix: COULD NOT LOOK both times; the 50 MB refusal takes < 2x the 10 MB one
+         observed: exits 2, 2; ratio 1.55
+  RE-P4    100000 entries (7 MB): exit 0, peak 78.0 MB, 0.44 s (min-max 0.42-0.45)
+  RE-P4   1000000 entries (72 MB): exit 0, peak 587.0 MB, 3.50 s (min-max 3.49-3.71)
+  RE-P4  HELD    10^5 and 10^6 entries both judged LATEST_WITNESSED (exit 0); 10^6 takes >= 5x the 10^5 time
+         observed: exits [0, 0]; ratio 7.93
+  RE-P5  HELD    expect-fix: 10^7 entries under RLIMIT_AS 512 MiB is COULD NOT LOOK: MemoryError, exit 2
+         observed: exit 2, 0.1 s, out: COULD NOT LOOK: MemoryError: 
+
+----
+  RE-P6  HELD    rounds = 10,000,000 completes in < 30 s
+         observed: exit 0, 3.52 s, peak 19.6 MB
+mode: registered +expect-fix
+VERDICT  6 of 6 as registered
+exit 0
