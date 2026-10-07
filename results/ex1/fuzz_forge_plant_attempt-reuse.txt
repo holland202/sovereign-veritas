@@ -1,0 +1,7 @@
+ex1_fuzz | 2000 sequences (seed 20261007) | ops tried: {'tamper': 214, 'submit': 2391, 'raw': 515, 'forge': 693, 'replay': 237, 'receipt': 689, 'reconcile': 448}
+  VIOLATION in sequence 800: forged authorize_reused: illegal RECONCILED_NO_EFFECT -> AUTHORIZED was accepted
+  minimized to 3 op(s) of the same class (forged authorize_reused:): [{"kind": "submit", "decision": "ALLOW", "executor": "lie", "observe": true}, {"kind": "reconcile"}, {"kind": "forge", "variant": "authorize_reused", "attempt": "f8403deb1"}]
+  the minimized sequence reports: forged authorize_reused: illegal RECONCILED_NO_EFFECT -> AUTHORIZED was accepted
+mode: PLANTED attempt-reuse (anti-vacuity) +forge
+VERDICT  violation found
+exit 1

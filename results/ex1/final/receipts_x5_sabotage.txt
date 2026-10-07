@@ -1,0 +1,11 @@
+  valid                verify_receipt -> EFFECT_ATTESTED    journal -> EFFECT_ATTESTED
+  missing              verify_receipt -> n/a (no receipt)   journal -> refused (EFFECT_ATTESTED needs a receipt and a dispatched attempt to )
+  other_command        verify_receipt -> EFFECT_ATTESTED    journal -> refused (EFFECT_ATTESTED receipt does not bind the dispatched attempt)
+  other_authorization  verify_receipt -> EFFECT_ATTESTED    journal -> refused (EFFECT_ATTESTED receipt does not bind the dispatched attempt)
+  other_attempt        verify_receipt -> EFFECT_ATTESTED    journal -> refused (EFFECT_ATTESTED receipt does not bind the dispatched attempt)
+  wrong_namespace      verify_receipt -> EFFECT_ATTESTED    journal -> EFFECT_ATTESTED
+  unknown_key          verify_receipt -> EFFECT_ATTESTED    journal -> EFFECT_ATTESTED
+  positive control (valid receipt attests through both): yes
+mode: SABOTAGE (verifier accepts anything)
+VERDICT  X5 REFUTED: other_command, other_authorization, other_attempt, wrong_namespace, unknown_key
+exit 1

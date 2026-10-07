@@ -1,0 +1,24 @@
+  fix3-authorized-off          KILLED    1 failed, 16 passed in 6.38s
+  fix3-attempt-reuse-off       KILLED    1 failed, 16 passed in 6.26s
+  fix3-dispatch-binding-off    KILLED    1 failed, 9 passed in 6.25s
+  fix3-ack-receipt-off         KILLED    1 failed, 22 passed in 6.30s
+  fix2-attestation-off         KILLED    1 failed, 31 passed in 6.33s
+  fix2+3-attest-binding-off    SURVIVED  100 passed in 7.46s
+  fix1-actor-off               KILLED    1 failed, 49 passed in 6.45s
+  basis-off                    KILLED    1 failed, 52 passed in 6.46s
+  finalized-free               KILLED    1 failed, 58 passed in 6.51s
+  read-admit-off               KILLED    1 failed, 24 passed in 6.32s
+  read-intent-off              KILLED    1 failed, 30 passed in 6.34s
+  read-table-off               SURVIVED  100 passed in 7.59s
+  chain-off                    SURVIVED  100 passed in 7.41s
+  digest-off                   KILLED    1 failed, 25 passed in 6.31s
+  torn-off                     SURVIVED  100 passed in 7.64s
+  reserve-overwrites           KILLED    1 failed, 2 passed in 3.21s
+  append-creates               KILLED    1 failed, 5 passed in 6.21s
+  no-lock                      KILLED    1 failed, 3 passed in 6.24s
+  recover-redispatch           KILLED    1 failed, 22 passed in 6.30s
+  dispatch-after-execute       KILLED    1 failed, 3 passed in 6.22s
+  raise-is-no-effect           KILLED    1 failed, 39 passed in 6.40s
+  late-receipt-any-state       KILLED    1 failed, 42 passed in 6.44s
+  observer-ignored             KILLED    1 failed, 44 passed in 6.43s
+VERDICT  19 of 23 mutants killed

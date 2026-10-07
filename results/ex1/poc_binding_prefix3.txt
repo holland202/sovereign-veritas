@@ -1,0 +1,6 @@
+P1: DISPATCHED context names another command (I6 at the journal level)
+  ACCEPTED: reserved for sha256:265329e02d888cad..., final EFFECT_ATTESTED by a receipt for sha256:99f22b2ce36373a7...
+P2: a reused attempt id lets an old receipt attest a new attempt whose executor never ran
+  replayed old receipt -> EFFECT_ATTESTED (attempt ids used: ['a1', 'a1'])
+P3: AUTHORIZED with no decision at all
+  ACCEPTED: AUTHORIZED by 'anyone' with detail {}

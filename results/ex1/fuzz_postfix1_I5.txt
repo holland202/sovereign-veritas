@@ -1,0 +1,5 @@
+ex1_fuzz | 2000 sequences (seed 20261007) | ops tried: {'raw': 6, 'submit': 31, 'receipt': 6, 'replay': 5, 'reconcile': 5, 'tamper': 2}
+  VIOLATION in sequence 10: I6/I7: EFFECT_ATTESTED by a receipt for another command/authorization/attempt
+  minimized to 2 op(s): [{"kind": "submit", "decision": "ALLOW", "executor": "raise_before", "observe": false}, {"kind": "raw", "to": "EFFECT_ATTESTED"}]
+mode: registered
+VERDICT  violation found

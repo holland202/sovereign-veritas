@@ -1,0 +1,12 @@
+EXPLORATORY (C-EXPLORE): not the registered run; larger N and another seed, run after fuzz_postfix2b found 0
+ex1_fuzz | 20000 sequences (seed 20261008) | ops tried: {'submit': 1205, 'raw': 258, 'tamper': 107, 'reconcile': 228, 'receipt': 366, 'replay': 142}
+  VIOLATION in sequence 360: unhandled KeyError in the code under test: KeyError('receipt')
+  minimized to 3 op(s) of the same class (unhandled KeyError): [{"kind": "submit", "decision": "ALLOW", "executor": "lie", "observe": false, "crash_at": "after_append:DISPATCHED"}, {"kind": "raw", "to": "EXECUTOR_ACKNOWLEDGED"}, {"kind": "submit", "decision": "ALLOW", "executor": "raise_before", "observe": true}]
+  the minimized sequence reports: unhandled KeyError in the code under test: KeyError('receipt')
+mode: registered
+VERDICT  violation found
+
+real	0m2.161s
+user	0m1.075s
+sys	0m0.350s
+exit 1

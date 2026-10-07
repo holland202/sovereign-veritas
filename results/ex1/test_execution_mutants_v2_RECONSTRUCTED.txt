@@ -1,0 +1,28 @@
+RECONSTRUCTED from the session log: the console output of the second mutation run (scratch runner, before it became
+tools/ex1_test_mutants.py). Its file, results/ex1/test_execution_mutants.txt, was overwritten by the next run; this text is
+that run's printed output, copied verbatim. "table-edge-added" replaced "read-table-off" after the redundant read-path table
+check was removed (one definition: _admit applies the table).
+  fix3-authorized-off          KILLED    1 failed, 16 passed in 6.26s
+  fix3-attempt-reuse-off       KILLED    1 failed, 16 passed in 6.27s
+  fix3-dispatch-binding-off    KILLED    1 failed, 9 passed in 6.29s
+  fix3-ack-receipt-off         KILLED    1 failed, 22 passed in 6.29s
+  fix2-attestation-off         KILLED    1 failed, 35 passed in 6.37s
+  fix2+3-attest-binding-off    KILLED    1 failed, 25 passed in 6.29s
+  fix1-actor-off               KILLED    1 failed, 53 passed in 6.46s
+  basis-off                    KILLED    1 failed, 56 passed in 6.60s
+  finalized-free               KILLED    1 failed, 62 passed in 6.54s
+  read-admit-off               KILLED    1 failed, 23 passed in 6.31s
+  read-intent-off              KILLED    1 failed, 34 passed in 6.38s
+  table-edge-added             SURVIVED  104 passed in 7.59s
+  chain-off                    KILLED    1 failed, 31 passed in 6.38s
+  digest-off                   KILLED    1 failed, 26 passed in 6.31s
+  torn-off                     KILLED    1 failed, 33 passed in 6.40s
+  reserve-overwrites           KILLED    1 failed, 2 passed in 3.18s
+  append-creates               KILLED    1 failed, 5 passed in 6.22s
+  no-lock                      KILLED    1 failed, 3 passed in 6.20s
+  recover-redispatch           KILLED    1 failed, 22 passed in 6.30s
+  dispatch-after-execute       KILLED    1 failed, 3 passed in 6.23s
+  raise-is-no-effect           KILLED    1 failed, 43 passed in 6.37s
+  late-receipt-any-state       KILLED    1 failed, 46 passed in 6.44s
+  observer-ignored             KILLED    1 failed, 48 passed in 6.42s
+VERDICT  22 of 23 mutants killed

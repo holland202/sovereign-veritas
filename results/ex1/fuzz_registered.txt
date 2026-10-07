@@ -1,0 +1,5 @@
+ex1_fuzz | 2000 sequences (seed 20261007) | ops tried: {'raw': 6, 'submit': 31, 'receipt': 6, 'replay': 5, 'reconcile': 5, 'tamper': 2}
+  VIOLATION in sequence 10: I8: effect happened, journal ends in RECONCILED_NO_EFFECT
+  minimized to 2 op(s): [{"kind": "submit", "decision": "ALLOW", "executor": "foreign", "observe": false}, {"kind": "raw", "to": "RECONCILED_NO_EFFECT"}]
+mode: registered
+VERDICT  violation found

@@ -1,0 +1,5 @@
+EX-1 directed sequences (written from reading execution.py after fuzz_postfix2b; not found by the random search)
+  D1 raw ACKNOWLEDGED (no receipt) after a crash at DISPATCHED, then resubmit
+    -> ("unhandled KeyError in the code under test: KeyError('receipt')", 2)
+  D2 raw DISPATCHED (no context) after a crash at AUTHORIZED, raw ACKNOWLEDGED, resubmit
+    -> ("unhandled KeyError in the code under test: KeyError('context')", 3)

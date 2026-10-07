@@ -1,0 +1,8 @@
+ex1_fuzz | 20000 sequences (seed 20261008) | ops tried: {'submit': 68108, 'raw': 13879, 'tamper': 6644, 'reconcile': 13805, 'receipt': 20352, 'replay': 6988}
+mode: registered
+VERDICT  0 violations in 20000 sequences
+
+real	1m57.236s
+user	1m0.080s
+sys	0m15.747s
+exit 0

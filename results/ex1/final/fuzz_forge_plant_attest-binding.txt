@@ -1,0 +1,7 @@
+ex1_fuzz | 2000 sequences (seed 20261007) | ops tried: {'tamper': 13, 'submit': 77, 'raw': 24, 'forge': 24, 'replay': 6, 'receipt': 18, 'reconcile': 12}
+  VIOLATION in sequence 26: forged attest_foreign: illegal EFFECT_UNCONFIRMED -> EFFECT_ATTESTED was accepted
+  minimized to 2 op(s) of the same class (forged attest_foreign:): [{"kind": "submit", "decision": "ALLOW", "executor": "raise_before", "observe": true}, {"kind": "forge", "variant": "attest_foreign", "attempt": "f6aa7ea10"}]
+  the minimized sequence reports: forged attest_foreign: illegal EFFECT_UNCONFIRMED -> EFFECT_ATTESTED was accepted
+mode: PLANTED attest-binding (anti-vacuity) +forge
+VERDICT  violation found
+exit 1

@@ -1,0 +1,7 @@
+ex1_fuzz | 2000 sequences (seed 20261007) | ops tried: {'tamper': 56, 'submit': 527, 'raw': 123, 'forge': 160, 'replay': 51, 'receipt': 148, 'reconcile': 83}
+  VIOLATION in sequence 176: forged dispatch_other_command: illegal AUTHORIZED -> DISPATCHED was accepted
+  minimized to 3 op(s) of the same class (forged dispatch_other_command:): [{"kind": "submit", "decision": "DEFER", "executor": "lie", "observe": true}, {"kind": "forge", "variant": "authorize_fresh", "attempt": "f973bfde7"}, {"kind": "forge", "variant": "dispatch_other_command", "attempt": "f70db8799"}]
+  the minimized sequence reports: forged dispatch_other_command: illegal AUTHORIZED -> DISPATCHED was accepted
+mode: PLANTED dispatch-binding (anti-vacuity) +forge
+VERDICT  violation found
+exit 1

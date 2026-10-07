@@ -136,6 +136,37 @@ jobs:
           set +e; python tools/jg2_probe.py --sabotage > jg2_sab.txt; rc=$?; set -e
           tail -3 jg2_sab.txt
           test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
+      - name: EX-1 crash campaign - X1-X4, X6, X8 as registered (docs/EX1_RESULTS.md)
+        run: python tools/ex1_campaign.py | tail -9
+      - name: EX-1 campaign can fail (--sabotage calls the executor before DISPATCHED is written -> exit 1)
+        run: |
+          set +e; python tools/ex1_campaign.py --sabotage > ex1_sab.txt; rc=$?; set -e
+          tail -8 ex1_sab.txt
+          test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
+      - name: EX-1 X5 receipts that must never attest (real ssh signatures)
+        run: python tools/ex1_receipts.py | tail -3
+      - name: EX-1 X5 can fail (--sabotage verifier accepts anything -> exit 1)
+        run: |
+          set +e; python tools/ex1_receipts.py --sabotage > ex1_x5_sab.txt; rc=$?; set -e
+          tail -3 ex1_x5_sab.txt
+          test "$rc" -eq 1 || { echo "expected exit 1 from --sabotage, got $rc"; exit 1; }
+      - name: EX-1 state-machine fuzz, registered generator and with forged appends - 0 violations
+        run: |
+          python tools/ex1_fuzz.py | tail -2
+          python tools/ex1_fuzz.py --forge | tail -2
+      - name: EX-1 fuzz can fail (deviation 3 sabotage, and each fix-3 rule removed in turn -> exit 1)
+        # The registered --sabotage (an illegal edge alone) no longer produces a violation after fix 3, by design (P-c in
+        # results/ex1/postfix3_predictions.txt), so it cannot serve as the anti-vacuity control here.
+        run: |
+          for mode in "--sabotage-deep" "--forge --plant dispatch-binding" "--forge --plant attempt-reuse" "--forge --plant attest-binding"; do
+            set +e; python tools/ex1_fuzz.py $mode > ex1_fuzz_sab.txt; rc=$?; set -e
+            tail -2 ex1_fuzz_sab.txt
+            test "$rc" -eq 1 || { echo "expected exit 1 from $mode, got $rc"; exit 1; }
+          done
+      - name: EX-1 fix 3 proofs of concept are refused
+        run: python tools/ex1_poc_binding.py
+      - name: EX-1 tests can fail (each fix re-planted must fail tests/test_execution.py)
+        run: python tools/ex1_test_mutants.py | tail -1
       - name: Fetch vacuity_lint, pinned
         run: |
           git clone -q https://github.com/holland202/vacuity_lint.py "$RUNNER_TEMP/vl"

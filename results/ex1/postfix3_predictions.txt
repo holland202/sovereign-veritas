@@ -1,0 +1,11 @@
+EX-1 post-fix-3 predictions, written 2026-10-07T02:10:58Z before any post-fix-3 run (not a git-committed registration;
+these are confirmations after fixes, exploratory under C-EXPLORE, not the registered X7 run, which stays REFUTED).
+
+P-a  fuzz, registered generator, seed 20261007, 2000 sequences: 0 violations.
+P-b  fuzz --forge, seed 20261007, 2000 sequences: 0 violations.
+P-c  fuzz --sabotage (the registered planted defect: dispatch on REFUSE + illegal REFUSED->DISPATCHED edge): 0 violations,
+     because fix 3's rule "DISPATCHED binds the authorization just before it" refuses the planted dispatch (a second barrier).
+P-d  fuzz --sabotage-deep (deviation 3: the binding rule removed too): an I1/I2 violation, minimized to <= 4 ops.
+P-e  fuzz, seed 20261008, 20000 sequences (the exploratory run that found the KeyError): 0 violations.
+P-f  campaign, registered: 6 of 6 held; X8 count unchanged at 4 of 22.
+P-g  campaign --sabotage (executor called before DISPATCHED is written): X1, X4, X8 REFUTED as in campaign_sabotage_v2.txt.

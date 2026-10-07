@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/user/sovereign-veritas/tools/ex1_fuzz.py", line 312, in <module>
+    sys.exit(main(sys.argv[1:]))
+             ~~~~^^^^^^^^^^^^^^
+  File "/home/user/sovereign-veritas/tools/ex1_fuzz.py", line 292, in main
+    violation, step = run_sequence(ops, sabotage)
+                      ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/user/sovereign-veritas/tools/ex1_fuzz.py", line 250, in run_sequence
+    violations = check(ex.ExecutionJournal(os.path.join(d, "journal")), world, intent)
+  File "/home/user/sovereign-veritas/tools/ex1_fuzz.py", line 165, in check
+    contexts = {e["detail"]["context"]["attempt_id"]: e["detail"]["context"] for e in evs if e["to"] == ex.DISPATCHED}
+                ~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'context'
+
+real	0m9.077s
+user	0m4.733s
+sys	0m1.295s
+exit 1

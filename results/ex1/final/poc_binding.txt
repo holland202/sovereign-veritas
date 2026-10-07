@@ -1,0 +1,8 @@
+P1: DISPATCHED context names another command (I6 at the journal level)
+  refused: DISPATCHED context must bind exactly this intent, the authorized attempt, the reserved command and its authorization
+P2: a reused attempt id lets an old receipt attest a new attempt whose executor never ran
+  refused: attempt id 'a1' was already authorized for this intent
+P3: AUTHORIZED with no decision at all
+  refused: AUTHORIZED needs the decision ALLOW
+VERDICT  all three refused
+exit 0

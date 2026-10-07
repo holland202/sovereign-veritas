@@ -1,0 +1,5 @@
+ex1_fuzz | 2000 sequences (seed 20261007) | ops tried: {'raw': 3, 'submit': 10, 'receipt': 5, 'replay': 3, 'reconcile': 3, 'tamper': 1}
+  VIOLATION in sequence 6: I1/I2: DISPATCHED after REFUSED
+  minimized to 1 op(s): [{"kind": "submit", "decision": "REFUSE", "executor": "ok", "observe": false}]
+mode: SABOTAGE
+VERDICT  violation found
