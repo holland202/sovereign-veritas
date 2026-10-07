@@ -209,6 +209,9 @@ def test_no_vehicle_is_could_not_run(tmp_path):
     p = subprocess.run([sys.executable, str(TOOL), "--link", "tcp:127.0.0.1:9", "--action", "land"],
                        capture_output=True, text=True, env=dict(os.environ, HOME=str(home)), timeout=120)
     assert p.returncode == 2 and "COULD NOT RUN" in p.stdout and not list(home.glob("sv_package_*"))
+    # TVA-1 V5 (docs/TVA1_RESULTS.md): without this line the test also passed with pymavlink missing, through the
+    # "pymavlink is not installed" COULD NOT RUN, so it could not tell an unreachable vehicle from a missing library.
+    assert "no vehicle at" in p.stdout or "no heartbeat from" in p.stdout, p.stdout
 
 
 # ---- V12: cross-check against an independent position (fake backend; SITL runs in the doc) ------------

@@ -1,0 +1,35 @@
+{
+ "repo": "/home/user/sovereign-veritas",
+ "as_is": {
+  "passed": 658,
+  "failed": 0,
+  "error": 0,
+  "skipped": 1
+ },
+ "collateral": [
+  "tests.test_vehicle_action::test_no_vehicle_is_could_not_run"
+ ],
+ "justified": [],
+ "untracked": [],
+ "not_in_head": [],
+ "clean_checkout": 659,
+ "no_assert": [],
+ "truthy": [
+  "tests/test_file_ledger.py:32 in test_clean_reload_passes: assert second.verify()",
+  "tests/test_file_ledger.py:139 in test_empty_ledger_is_valid: assert ledger.verify()",
+  "tests/test_gate.py:60 in test_ledger_is_append_only_and_chained: assert ledger.verify()",
+  "tests/test_governance.py:31 in test_authorize_is_ledgered_before_registry_change: assert ledger.verify()",
+  "tests/test_governance.py:52 in test_revoke_is_ledgered: assert ledger.verify()",
+  "tests/test_nonfinite_verifier.py:45 in test_recorded_package_with_nan_failed_probes_fails_verification: assert names",
+  "tests/test_package_recovery.py:68 in test_r1_no_strict_prefix_is_accepted: assert accepted(data)",
+  "tests/test_review_findings.py:69 in test_f2_a_second_ledger_instance_sees_the_first_ones_record_before_executing: assert worker_b.has_record('txn-42')",
+  "tests/test_review_findings.py:121 in test_f5_racing_releases_never_free_a_key_twice: assert b_paused.wait(5)",
+  "tests/test_review_findings.py:165 in test_f4_a_symlinked_state_path_is_one_state: assert (tmp_path / 'link.json').is_symlink()",
+  "tests/test_sink.py:29 in test_sink_appends_to_chain: assert ledger.verify()",
+  "tests/test_sink.py:39 in test_refusals_become_permanent_evidence: assert ledger.verify()",
+  "tests/test_sink.py:90 in test_gate_decision_flows_into_custody: assert ledger.verify()",
+  "tests/test_verifier_registry.py:61 in test_failed_probe_is_terminal_failure: assert registry.is_failed('v1')",
+  "tests/test_workflow.py:105 in test_allow_executes_only_after_gate_allows: assert result.executed",
+  "tests/test_workflow.py:512 in test_adversary_runs_even_when_gate_later_refuses_capability: assert adversary.calls"
+ ]
+}

@@ -1,0 +1,27 @@
+test_vacuity_audit | /home/user/sovereign-veritas | as is: 659 tests, {'passed': 658, 'failed': 0, 'error': 0, 'skipped': 1}
+  skipped as is: 1; with skipping disabled: 1 pass (collateral), 0 fail or error (justified)
+  FLAG  collateral skip: tests.test_vehicle_action::test_no_vehicle_is_could_not_run  (skip reason: "could not import 'pymavlink': No module named 'pymavlink'")
+  clean checkout of HEAD: 659 tests; 0 pass as is but not there; 0 not in HEAD at all
+  review: 0 test(s) with no assertion in their body; 16 truthiness-only assert(s)
+  review  truthiness: tests/test_file_ledger.py:32 in test_clean_reload_passes: assert second.verify()
+  review  truthiness: tests/test_file_ledger.py:139 in test_empty_ledger_is_valid: assert ledger.verify()
+  review  truthiness: tests/test_gate.py:60 in test_ledger_is_append_only_and_chained: assert ledger.verify()
+  review  truthiness: tests/test_governance.py:31 in test_authorize_is_ledgered_before_registry_change: assert ledger.verify()
+  review  truthiness: tests/test_governance.py:52 in test_revoke_is_ledgered: assert ledger.verify()
+  review  truthiness: tests/test_nonfinite_verifier.py:45 in test_recorded_package_with_nan_failed_probes_fails_verification: assert names
+  review  truthiness: tests/test_package_recovery.py:68 in test_r1_no_strict_prefix_is_accepted: assert accepted(data)
+  review  truthiness: tests/test_review_findings.py:69 in test_f2_a_second_ledger_instance_sees_the_first_ones_record_before_executing: assert worker_b.has_record('txn-42')
+  review  truthiness: tests/test_review_findings.py:121 in test_f5_racing_releases_never_free_a_key_twice: assert b_paused.wait(5)
+  review  truthiness: tests/test_review_findings.py:165 in test_f4_a_symlinked_state_path_is_one_state: assert (tmp_path / 'link.json').is_symlink()
+  review  truthiness: tests/test_sink.py:29 in test_sink_appends_to_chain: assert ledger.verify()
+  review  truthiness: tests/test_sink.py:39 in test_refusals_become_permanent_evidence: assert ledger.verify()
+  review  truthiness: tests/test_sink.py:90 in test_gate_decision_flows_into_custody: assert ledger.verify()
+  review  truthiness: tests/test_verifier_registry.py:61 in test_failed_probe_is_terminal_failure: assert registry.is_failed('v1')
+  review  truthiness: tests/test_workflow.py:105 in test_allow_executes_only_after_gate_allows: assert result.executed
+  review  truthiness: tests/test_workflow.py:512 in test_adversary_runs_even_when_gate_later_refuses_capability: assert adversary.calls
+VERDICT  1 flagged (1 collateral skip(s), 0 untracked dependenc(ies))
+
+real	3m57.055s
+user	2m44.232s
+sys	0m19.254s
+exit 1
