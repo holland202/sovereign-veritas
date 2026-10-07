@@ -1,0 +1,32 @@
+{
+  "artifacts": [
+    {
+      "path": "tools/hv1_sim.py",
+      "sha256": "945d7c65ed4a47bf2b3be65a2a6d48a2b9f39fa931028d1ccd3a43f20f1a046f",
+      "size": 20339
+    },
+    {
+      "path": "sovereign_veritas/decision.py",
+      "sha256": "84a4a59a4692973b9440e66fdcafdaa0e57d18e5f1e284ab04a9ccacd1893462",
+      "size": 5776
+    },
+    {
+      "path": "docs/HV1_PREREG.md",
+      "sha256": "d601f6ba80185a8d7b6b96e4a0c782d8bcc6d262ff3a81dc7b68c55a3e611474",
+      "size": 5776
+    },
+    {
+      "path": "results/hv1/hv1-20261007-2000-registered/run.json",
+      "sha256": "05990804ccd22dcac7ca70d18ceaf15e0f3453e1b435422424ec3cada93073d2",
+      "size": 533
+    },
+    {
+      "path": "results/hv1/hv1-20261007-2000-registered/events.jsonl",
+      "sha256": "922889ef926cd33b87dd3f40f6892f85c91c7bd674b6e5d48decbf98ff91b277",
+      "size": 35426
+    }
+  ],
+  "root": "/home/user/sovereign-veritas",
+  "schema": "sv-lab-agent/artifact-manifest/v0.1",
+  "timestamp_utc": "2026-10-07T03:48:03.746587+00:00"
+}

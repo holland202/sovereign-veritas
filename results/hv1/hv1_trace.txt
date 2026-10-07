@@ -1,0 +1,1079 @@
+HV-1 trace | registered run re-observed: 128 of 128 cells have the registered digest
+worst-case honest error per sensor (noise + drift) against the margin:
+  robot_geofence  gnss_a       2.000  margin 5      below
+  robot_geofence  gnss_b       2.000  margin 5      below
+  robot_geofence  odometry     8.000  margin 5      EXCEEDS the margin
+  ics_pressure    tx_a         8.000  margin 20     below
+  ics_pressure    tx_b         8.000  margin 20     below
+  banking         ledger       1.000  margin 5      below
+  banking         recon        1.000  margin 5      below
+  legal_release   classifier   0.030  margin 0.08   below
+  legal_release   attorney     0.030  margin 0.08   below
+false ALLOWs traced (truth unsafe):
+  robot_geofence adaptive trial 0 provenance: truth 104.897 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.472 -> UNCERTAIN (honest, error -1.426)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 48 provenance: truth 101.484 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.386 -> UNCERTAIN (honest, error -1.098)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 107 provenance: truth 101.330 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.949 -> UNCERTAIN (honest, error +2.618)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 110 provenance: truth 105.517 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.235 -> UNCERTAIN (honest, error -1.282)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 124 provenance: truth 101.440 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.715 -> UNCERTAIN (honest, error +2.275)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 131 provenance: truth 107.746 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.797 -> UNCERTAIN (honest, error -6.949)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 138 provenance: truth 107.452 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.412 -> UNCERTAIN (honest, error -4.039)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 173 provenance: truth 103.418 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.404 -> UNCERTAIN (honest, error -1.014)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 247 provenance: truth 105.139 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.466 -> UNCERTAIN (honest, error -7.673)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 349 provenance: truth 107.815 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.165 -> UNCERTAIN (honest, error -5.650)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 352 provenance: truth 105.563 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.600 -> UNCERTAIN (honest, error -4.963)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 365 provenance: truth 105.767 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.513 -> UNCERTAIN (honest, error -2.254)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 368 provenance: truth 105.104 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.154 -> UNCERTAIN (honest, error -4.950)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 382 provenance: truth 107.011 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.414 -> UNCERTAIN (honest, error -5.597)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 413 provenance: truth 100.973 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.548 -> UNCERTAIN (honest, error +0.575)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 427 provenance: truth 103.535 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.702 -> UNCERTAIN (honest, error +0.167)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 433 provenance: truth 106.874 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.696 -> UNCERTAIN (honest, error -2.178)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 499 provenance: truth 100.414 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.091 -> UNCERTAIN (honest, error +3.677)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 524 provenance: truth 101.835 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.166 -> UNCERTAIN (honest, error -1.669)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 543 provenance: truth 104.060 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.978 -> UNCERTAIN (honest, error -3.082)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 605 provenance: truth 109.713 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.085 -> UNCERTAIN (honest, error -7.629)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 660 provenance: truth 100.248 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.576 -> UNCERTAIN (honest, error +1.328)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 701 provenance: truth 101.002 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.543 -> UNCERTAIN (honest, error +2.541)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 718 provenance: truth 102.204 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.520 -> UNCERTAIN (honest, error -0.684)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 727 provenance: truth 101.658 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.284 -> UNCERTAIN (honest, error -2.374)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 729 provenance: truth 101.834 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.098 -> UNCERTAIN (honest, error +0.264)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 781 provenance: truth 105.839 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.776 -> UNCERTAIN (honest, error -2.064)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 805 provenance: truth 107.897 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.967 -> UNCERTAIN (honest, error -6.930)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 812 provenance: truth 103.553 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.839 -> UNCERTAIN (honest, error -1.715)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 814 provenance: truth 101.383 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.754 -> UNCERTAIN (honest, error +3.371)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 834 provenance: truth 102.783 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.691 -> UNCERTAIN (honest, error +1.908)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 838 provenance: truth 102.018 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.835 -> UNCERTAIN (honest, error -2.183)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 860 provenance: truth 100.756 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.258 -> UNCERTAIN (honest, error -3.498)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 891 provenance: truth 103.187 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.064 -> UNCERTAIN (honest, error -7.122)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 914 provenance: truth 100.852 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.002 -> UNCERTAIN (honest, error -0.850)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 923 provenance: truth 101.644 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.845 -> UNCERTAIN (honest, error -3.800)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 968 provenance: truth 104.890 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.375 -> UNCERTAIN (honest, error -0.515)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 989 provenance: truth 103.888 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.410 -> UNCERTAIN (honest, error -4.478)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 995 provenance: truth 108.793 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.700 -> UNCERTAIN (honest, error -6.093)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1004 provenance: truth 101.342 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 95.647 -> UNCERTAIN (honest, error -5.695)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1016 provenance: truth 100.999 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.240 -> UNCERTAIN (honest, error -0.758)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1045 provenance: truth 103.628 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.767 -> UNCERTAIN (honest, error -3.861)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1046 provenance: truth 100.806 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 95.832 -> UNCERTAIN (honest, error -4.974)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1065 provenance: truth 101.477 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.806 -> UNCERTAIN (honest, error -0.670)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1072 provenance: truth 106.404 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.743 -> UNCERTAIN (honest, error -3.660)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1087 provenance: truth 105.254 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.404 -> UNCERTAIN (honest, error -2.850)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1104 provenance: truth 106.832 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.369 -> UNCERTAIN (honest, error -7.463)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1109 provenance: truth 106.765 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.542 -> UNCERTAIN (honest, error -7.223)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1129 provenance: truth 101.473 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.834 -> UNCERTAIN (honest, error +3.361)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1138 provenance: truth 100.426 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.626 -> UNCERTAIN (honest, error -1.799)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1150 provenance: truth 104.043 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.292 -> UNCERTAIN (honest, error +0.249)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1161 provenance: truth 101.724 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.053 -> UNCERTAIN (honest, error -0.671)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1188 provenance: truth 108.138 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.360 -> UNCERTAIN (honest, error -3.778)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1237 provenance: truth 101.840 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.745 -> UNCERTAIN (honest, error -5.096)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1260 provenance: truth 100.082 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.508 -> UNCERTAIN (honest, error -3.574)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1281 provenance: truth 104.246 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.429 -> UNCERTAIN (honest, error -6.817)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1308 provenance: truth 100.769 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.501 -> UNCERTAIN (honest, error -4.268)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1337 provenance: truth 101.627 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 95.337 -> UNCERTAIN (honest, error -6.291)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1355 provenance: truth 103.394 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.693 -> UNCERTAIN (honest, error +1.299)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1361 provenance: truth 102.934 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.156 -> UNCERTAIN (honest, error +0.221)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1398 provenance: truth 109.181 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.597 -> UNCERTAIN (honest, error -4.584)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1451 provenance: truth 102.953 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.049 -> UNCERTAIN (honest, error -2.904)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1458 provenance: truth 102.019 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.777 -> UNCERTAIN (honest, error -2.241)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1467 provenance: truth 101.763 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.145 -> UNCERTAIN (honest, error -3.618)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1525 provenance: truth 105.235 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.443 -> UNCERTAIN (honest, error -4.792)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1537 provenance: truth 108.025 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.145 -> UNCERTAIN (honest, error -5.880)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1579 provenance: truth 101.791 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.919 -> UNCERTAIN (honest, error +1.128)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1630 provenance: truth 109.138 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.938 -> UNCERTAIN (honest, error -7.200)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1636 provenance: truth 106.263 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.788 -> UNCERTAIN (honest, error -5.475)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1654 provenance: truth 104.899 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.416 -> UNCERTAIN (honest, error -4.483)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1722 provenance: truth 104.321 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.961 -> UNCERTAIN (honest, error +0.640)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1788 provenance: truth 103.120 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.551 -> UNCERTAIN (honest, error -1.569)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1790 provenance: truth 103.503 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.909 -> UNCERTAIN (honest, error +1.406)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1812 provenance: truth 101.776 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.257 -> UNCERTAIN (honest, error +2.481)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1854 provenance: truth 101.102 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.008 -> UNCERTAIN (honest, error -0.093)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1856 provenance: truth 101.138 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.686 -> UNCERTAIN (honest, error +3.548)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1883 provenance: truth 101.530 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.995 -> UNCERTAIN (honest, error -4.535)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1898 provenance: truth 100.723 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.484 -> UNCERTAIN (honest, error -1.239)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1921 provenance: truth 106.461 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.616 -> UNCERTAIN (honest, error -6.845)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1945 provenance: truth 109.541 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.666 -> UNCERTAIN (honest, error -6.874)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1950 provenance: truth 100.030 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.723 -> UNCERTAIN (honest, error +1.692)
+      odometry [odometry] 94.582 -> SAFE (honest, error -5.448)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1950 diverse: truth 100.030 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.723 -> UNCERTAIN (honest, error +1.692)
+      odometry [odometry] 94.582 -> SAFE (honest, error -5.448)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1950 split_reasons: truth 100.030 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.723 -> UNCERTAIN (honest, error +1.692)
+      odometry [odometry] 94.582 -> SAFE (honest, error -5.448)
+      adapter: status PASS, attestations {'fresh': True, 'independent': True, 'consistent': True, 'diverse': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1969 provenance: truth 101.597 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.416 -> UNCERTAIN (honest, error -5.181)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1976 provenance: truth 102.837 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.469 -> UNCERTAIN (honest, error -0.368)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1977 provenance: truth 107.640 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.613 -> UNCERTAIN (honest, error -4.027)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence adaptive trial 1990 provenance: truth 101.155 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.529 -> UNCERTAIN (honest, error -2.626)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 7 provenance: truth 101.835 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.331 -> UNCERTAIN (honest, error +0.496)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 19 provenance: truth 104.999 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.636 -> UNCERTAIN (honest, error -3.363)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 46 provenance: truth 110.207 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.765 -> UNCERTAIN (honest, error -6.442)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 55 provenance: truth 101.489 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.415 -> UNCERTAIN (honest, error +1.926)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 86 provenance: truth 104.912 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.095 -> UNCERTAIN (honest, error -1.816)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 94 provenance: truth 107.467 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.958 -> UNCERTAIN (honest, error -4.508)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 155 provenance: truth 103.349 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.661 -> UNCERTAIN (honest, error +0.312)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 166 provenance: truth 101.745 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.959 -> UNCERTAIN (honest, error +1.214)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 175 provenance: truth 100.876 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.460 -> UNCERTAIN (honest, error -0.416)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 194 provenance: truth 102.873 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.708 -> UNCERTAIN (honest, error -5.165)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 201 provenance: truth 100.869 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.911 -> UNCERTAIN (honest, error +2.042)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 205 provenance: truth 108.029 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.280 -> UNCERTAIN (honest, error -4.749)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 263 provenance: truth 104.650 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.381 -> UNCERTAIN (honest, error -3.269)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 283 provenance: truth 101.328 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.628 -> SAFE (honest, error -6.699)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 283 diverse: truth 101.328 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.628 -> SAFE (honest, error -6.699)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 283 split_reasons: truth 101.328 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.628 -> SAFE (honest, error -6.699)
+      adapter: status PASS, attestations {'fresh': True, 'independent': True, 'consistent': True, 'diverse': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 285 provenance: truth 105.594 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.804 -> UNCERTAIN (honest, error -1.790)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 288 provenance: truth 102.752 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.785 -> UNCERTAIN (honest, error -2.967)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 316 provenance: truth 105.446 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.829 -> UNCERTAIN (honest, error -0.617)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 347 provenance: truth 104.628 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.399 -> UNCERTAIN (honest, error -2.229)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 353 provenance: truth 101.474 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.627 -> UNCERTAIN (honest, error +2.153)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 355 provenance: truth 103.062 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.859 -> UNCERTAIN (honest, error -5.203)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 370 provenance: truth 104.390 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.294 -> UNCERTAIN (honest, error -1.097)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 389 provenance: truth 101.087 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.556 -> UNCERTAIN (honest, error +0.469)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 390 provenance: truth 100.157 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.616 -> UNCERTAIN (honest, error +2.459)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 408 provenance: truth 108.165 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.579 -> UNCERTAIN (honest, error -3.587)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 430 provenance: truth 101.018 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.755 -> UNCERTAIN (honest, error -0.263)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 445 provenance: truth 104.950 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.859 -> UNCERTAIN (honest, error -3.091)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 457 provenance: truth 105.782 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.147 -> UNCERTAIN (honest, error -5.635)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 487 provenance: truth 101.532 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.902 -> UNCERTAIN (honest, error +0.371)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 488 provenance: truth 104.866 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.633 -> UNCERTAIN (honest, error -2.233)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 496 provenance: truth 101.995 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.519 -> UNCERTAIN (honest, error -4.475)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 505 provenance: truth 110.861 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.355 -> UNCERTAIN (honest, error -6.506)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 542 provenance: truth 103.854 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.059 -> UNCERTAIN (honest, error +0.205)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 545 provenance: truth 101.366 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.386 -> UNCERTAIN (honest, error +2.020)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 546 provenance: truth 102.794 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.892 -> UNCERTAIN (honest, error +0.098)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 595 provenance: truth 101.712 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.823 -> UNCERTAIN (honest, error +0.111)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 597 provenance: truth 105.146 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.468 -> UNCERTAIN (honest, error -6.678)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 618 provenance: truth 107.998 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.793 -> UNCERTAIN (honest, error -6.205)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 626 provenance: truth 107.837 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.267 -> UNCERTAIN (honest, error -4.570)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 662 provenance: truth 108.552 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.113 -> UNCERTAIN (honest, error -4.438)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 666 provenance: truth 100.837 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.153 -> UNCERTAIN (honest, error -4.683)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 679 provenance: truth 106.747 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.622 -> UNCERTAIN (honest, error -5.124)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 681 provenance: truth 106.237 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.732 -> UNCERTAIN (honest, error -3.504)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 733 provenance: truth 107.629 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.590 -> UNCERTAIN (honest, error -4.039)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 742 provenance: truth 101.563 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.527 -> UNCERTAIN (honest, error -2.036)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 766 provenance: truth 106.833 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.875 -> UNCERTAIN (honest, error -2.958)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 789 provenance: truth 107.258 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.327 -> UNCERTAIN (honest, error -2.931)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 790 provenance: truth 101.795 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.350 -> UNCERTAIN (honest, error +0.555)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 873 provenance: truth 107.197 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.345 -> UNCERTAIN (honest, error -3.851)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 900 provenance: truth 101.877 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.106 -> UNCERTAIN (honest, error +2.229)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 906 provenance: truth 101.629 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.440 -> UNCERTAIN (honest, error -1.189)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 919 provenance: truth 101.792 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.744 -> UNCERTAIN (honest, error +2.952)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 927 provenance: truth 102.672 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.634 -> UNCERTAIN (honest, error -6.037)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 951 provenance: truth 108.330 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.950 -> UNCERTAIN (honest, error -4.380)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 999 provenance: truth 108.474 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.280 -> UNCERTAIN (honest, error -4.194)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1026 provenance: truth 103.117 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.792 -> UNCERTAIN (honest, error -1.325)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1031 provenance: truth 102.230 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.340 -> UNCERTAIN (honest, error -3.891)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1093 provenance: truth 107.961 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.318 -> UNCERTAIN (honest, error -6.643)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1133 provenance: truth 103.077 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.213 -> UNCERTAIN (honest, error +1.136)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1174 provenance: truth 105.427 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.168 -> UNCERTAIN (honest, error -2.260)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1215 provenance: truth 106.585 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.354 -> UNCERTAIN (honest, error -2.231)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1232 provenance: truth 101.335 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.712 -> UNCERTAIN (honest, error +1.377)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1235 provenance: truth 101.450 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.553 -> SAFE (honest, error -6.898)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1235 diverse: truth 101.450 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.553 -> SAFE (honest, error -6.898)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1235 split_reasons: truth 101.450 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.553 -> SAFE (honest, error -6.898)
+      adapter: status PASS, attestations {'fresh': True, 'independent': True, 'consistent': True, 'diverse': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1252 provenance: truth 103.958 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.521 -> UNCERTAIN (honest, error -0.437)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1283 provenance: truth 109.201 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.602 -> UNCERTAIN (honest, error -7.599)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1299 provenance: truth 102.232 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.368 -> UNCERTAIN (honest, error -3.864)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1302 provenance: truth 103.093 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.705 -> UNCERTAIN (honest, error -1.388)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1319 provenance: truth 108.384 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.615 -> UNCERTAIN (honest, error -5.768)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1339 provenance: truth 102.462 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.009 -> UNCERTAIN (honest, error +1.547)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1379 provenance: truth 106.666 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.279 -> UNCERTAIN (honest, error -5.386)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1388 provenance: truth 101.323 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.227 -> UNCERTAIN (honest, error -1.096)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1403 provenance: truth 102.878 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.356 -> UNCERTAIN (honest, error -5.522)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1404 provenance: truth 106.242 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.538 -> UNCERTAIN (honest, error -4.704)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1428 provenance: truth 106.383 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.015 -> UNCERTAIN (honest, error -3.368)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1434 provenance: truth 105.853 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.945 -> UNCERTAIN (honest, error -2.907)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1452 provenance: truth 101.790 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.590 -> UNCERTAIN (honest, error -4.200)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1490 provenance: truth 107.046 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.198 -> UNCERTAIN (honest, error -6.848)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1537 provenance: truth 104.797 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.769 -> UNCERTAIN (honest, error -0.028)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1564 provenance: truth 101.820 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.111 -> UNCERTAIN (honest, error -2.709)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1581 provenance: truth 100.231 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.304 -> SAFE (honest, error -5.927)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1581 diverse: truth 100.231 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.304 -> SAFE (honest, error -5.927)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1581 split_reasons: truth 100.231 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 94.304 -> SAFE (honest, error -5.927)
+      adapter: status PASS, attestations {'fresh': True, 'independent': True, 'consistent': True, 'diverse': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1586 provenance: truth 106.459 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.332 -> UNCERTAIN (honest, error -2.127)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1602 provenance: truth 105.710 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.187 -> UNCERTAIN (honest, error -7.524)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1611 provenance: truth 101.457 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.473 -> UNCERTAIN (honest, error -0.985)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1619 provenance: truth 100.875 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.913 -> UNCERTAIN (honest, error -2.962)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1637 provenance: truth 104.484 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.007 -> UNCERTAIN (honest, error -6.477)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1647 provenance: truth 105.650 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.283 -> UNCERTAIN (honest, error -6.367)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1648 provenance: truth 105.079 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.180 -> UNCERTAIN (honest, error -1.899)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1664 provenance: truth 109.299 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.269 -> UNCERTAIN (honest, error -5.030)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1715 provenance: truth 101.966 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 98.348 -> UNCERTAIN (honest, error -3.618)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1738 provenance: truth 100.124 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 93.746 -> SAFE (honest, error -6.378)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1738 diverse: truth 100.124 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 93.746 -> SAFE (honest, error -6.378)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1738 split_reasons: truth 100.124 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 93.746 -> SAFE (honest, error -6.378)
+      adapter: status PASS, attestations {'fresh': True, 'independent': True, 'consistent': True, 'diverse': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1751 provenance: truth 100.324 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.511 -> UNCERTAIN (honest, error +3.187)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1766 provenance: truth 102.904 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.647 -> UNCERTAIN (honest, error -1.257)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1773 provenance: truth 101.422 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 99.665 -> UNCERTAIN (honest, error -1.757)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1778 provenance: truth 102.980 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.200 -> UNCERTAIN (honest, error -6.780)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1805 provenance: truth 102.305 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.912 -> UNCERTAIN (honest, error +1.607)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1821 provenance: truth 102.849 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.563 -> UNCERTAIN (honest, error -5.286)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1822 provenance: truth 106.912 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.931 -> UNCERTAIN (honest, error -1.980)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1824 provenance: truth 100.044 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 102.993 -> UNCERTAIN (honest, error +2.950)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1846 provenance: truth 101.927 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 95.762 -> UNCERTAIN (honest, error -6.165)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1853 provenance: truth 100.738 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 100.924 -> UNCERTAIN (honest, error +0.185)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1857 provenance: truth 102.371 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.047 -> UNCERTAIN (honest, error -6.324)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1889 provenance: truth 102.016 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.710 -> UNCERTAIN (honest, error +1.695)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1939 provenance: truth 104.267 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 104.017 -> UNCERTAIN (honest, error -0.251)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1941 provenance: truth 102.454 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 95.978 -> UNCERTAIN (honest, error -6.477)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1950 provenance: truth 100.754 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.267 -> UNCERTAIN (honest, error -3.487)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1952 provenance: truth 101.745 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 101.530 -> UNCERTAIN (honest, error -0.215)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1963 provenance: truth 103.362 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 97.708 -> UNCERTAIN (honest, error -5.654)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1979 provenance: truth 102.473 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 96.172 -> UNCERTAIN (honest, error -6.301)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence common_mode trial 1989 provenance: truth 107.288 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 90.000 -> SAFE (spoofed)
+      odometry [odometry] 103.392 -> UNCERTAIN (honest, error -3.896)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence copy_spoof trial 850 naive: truth 101.969 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.893 -> UNCERTAIN (honest, error -0.076)
+      odometry [odometry] 94.553 -> SAFE (honest, error -7.415)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence copy_spoof trial 850 provenance: truth 101.969 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.893 -> UNCERTAIN (honest, error -0.076)
+      odometry [odometry] 94.553 -> SAFE (honest, error -7.415)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence copy_spoof trial 850 diverse: truth 101.969 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.893 -> UNCERTAIN (honest, error -0.076)
+      odometry [odometry] 94.553 -> SAFE (honest, error -7.415)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence copy_spoof trial 850 split_reasons: truth 101.969 (limit 100, margin 5)
+      gnss_a [gnss] 90.000 -> SAFE (spoofed)
+      gnss_b [gnss] 101.893 -> UNCERTAIN (honest, error -0.076)
+      odometry [odometry] 94.553 -> SAFE (honest, error -7.415)
+      adapter: status PASS, attestations {'fresh': True, 'independent': True, 'consistent': True, 'diverse': True}, quality 1.0000 -> ALLOW
+  robot_geofence replay trial 261 naive: truth 100.219 (limit 100, margin 5)
+      gnss_a [gnss] 100.580 -> UNCERTAIN (honest, error +0.362)
+      gnss_b [gnss] 90.000 -> SAFE (replayed (age 50))
+      odometry [odometry] 94.471 -> SAFE (honest, error -5.748)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence replay trial 1197 naive: truth 100.263 (limit 100, margin 5)
+      gnss_a [gnss] 100.314 -> UNCERTAIN (honest, error +0.051)
+      gnss_b [gnss] 90.000 -> SAFE (replayed (age 23))
+      odometry [odometry] 94.198 -> SAFE (honest, error -6.065)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+  robot_geofence replay trial 1557 naive: truth 100.405 (limit 100, margin 5)
+      gnss_a [gnss] 100.311 -> UNCERTAIN (honest, error -0.094)
+      gnss_b [gnss] 90.000 -> SAFE (replayed (age 11))
+      odometry [odometry] 93.789 -> SAFE (honest, error -6.616)
+      adapter: status PASS, attestations {'independent_corroboration': True}, quality 1.0000 -> ALLOW
+traced false ALLOWs: 210; with an honest reading classified SAFE: 22; with a fresh UNCERTAIN reading: 198; with both: 10
+recount of false ALLOWs from the trace against the run's own counts: equal
+legal_release copy_spoof (truth unsafe): ALLOW by whether the attorney reading is present:
+  naive          present: 979/979 ALLOW (attorney said {'UNSAFE': 827, 'UNCERTAIN': 152})   absent: 0/1021 ALLOW
+  provenance     present: 0/979 ALLOW (attorney said -)   absent: 0/1021 ALLOW
+  diverse        present: 0/979 ALLOW (attorney said -)   absent: 0/1021 ALLOW
+  split_reasons  present: 0/979 ALLOW (attorney said -)   absent: 0/1021 ALLOW
+false hold under fresh, by domain (not ALLOW while safe):
+  robot_geofence  naive 40/989  provenance 40/989  diverse 50/989  split_reasons 50/989
+  ics_pressure    naive 54/1014  provenance 62/1014  diverse 1014/1014  split_reasons 1014/1014
+  banking         naive 14/1037  provenance 14/1037  diverse 14/1037  split_reasons 14/1037
+  legal_release   naive 576/997  provenance 582/997  diverse 582/997  split_reasons 582/997
+
+real	0m26.949s
+user	0m26.316s
+sys	0m0.238s
+exit 0

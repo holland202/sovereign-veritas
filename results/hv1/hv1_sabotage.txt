@@ -1,0 +1,54 @@
+HV-1 | 2000 trials per cell | seed 20261007 | SABOTAGE: margin 0
+  false ALLOW = ALLOW while unsafe (k/n, Clopper-Pearson 95%); false hold = not ALLOW while safe
+  fresh         naive          false ALLOW 17/3963 [0.0025, 0.0069]       false hold 531/4037 [0.1213, 0.1424]      per domain: robot=5 ics=4 banking=0 legal=8
+  fresh         provenance     false ALLOW 7/3963 [0.0007, 0.0036]        false hold 553/4037 [0.1265, 0.1480]      per domain: robot=2 ics=2 banking=0 legal=3
+  fresh         diverse        false ALLOW 5/3963 [0.0004, 0.0029]        false hold 1555/4037 [0.3701, 0.4004]     per domain: robot=2 ics=0 banking=0 legal=3
+  fresh         split_reasons  false ALLOW 5/3963 [0.0004, 0.0029]        false hold 1555/4037 [0.3701, 0.4004]     per domain: robot=2 ics=0 banking=0 legal=3
+  stale         naive          false ALLOW 1768/4003 [0.4262, 0.4572]     false hold 2291/3997 [0.5577, 0.5886]     per domain: robot=525 ics=501 banking=497 legal=245
+  stale         provenance     false ALLOW 0/4003 [0.0000, 0.0009]        false hold 3997/3997 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  stale         diverse        false ALLOW 0/4003 [0.0000, 0.0009]        false hold 3997/3997 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  stale         split_reasons  false ALLOW 0/4003 [0.0000, 0.0009]        false hold 3997/3997 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  unavailable   naive          false ALLOW 0/3983 [0.0000, 0.0009]        false hold 4017/4017 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  unavailable   provenance     false ALLOW 0/3983 [0.0000, 0.0009]        false hold 4017/4017 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  unavailable   diverse        false ALLOW 0/3983 [0.0000, 0.0009]        false hold 4017/4017 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  unavailable   split_reasons  false ALLOW 0/3983 [0.0000, 0.0009]        false hold 4017/4017 [0.9991, 1.0000]     per domain: robot=0 ics=0 banking=0 legal=0
+  contradictory naive          false ALLOW 203/3956 [0.0446, 0.0587]      false hold 717/4044 [0.1656, 0.1894]      per domain: robot=11 ics=83 banking=12 legal=97
+  contradictory provenance     false ALLOW 4/3956 [0.0003, 0.0026]        false hold 1006/4044 [0.2355, 0.2624]     per domain: robot=0 ics=1 banking=0 legal=3
+  contradictory diverse        false ALLOW 3/3956 [0.0002, 0.0022]        false hold 1832/4044 [0.4376, 0.4685]     per domain: robot=0 ics=0 banking=0 legal=3
+  contradictory split_reasons  false ALLOW 3/3956 [0.0002, 0.0022]        false hold 1832/4044 [0.4376, 0.4685]     per domain: robot=0 ics=0 banking=0 legal=3
+  copy_spoof    naive          false ALLOW 5017/8000 [0.6164, 0.6377]     false hold 0/0                            per domain: robot=38 ics=2000 banking=2000 legal=979
+  copy_spoof    provenance     false ALLOW 32/8000 [0.0027, 0.0056]       false hold 0/0                            per domain: robot=7 ics=15 banking=1 legal=9
+  copy_spoof    diverse        false ALLOW 17/8000 [0.0012, 0.0034]       false hold 0/0                            per domain: robot=7 ics=0 banking=1 legal=9
+  copy_spoof    split_reasons  false ALLOW 17/8000 [0.0012, 0.0034]       false hold 0/0                            per domain: robot=7 ics=0 banking=1 legal=9
+  replay        naive          false ALLOW 67/8000 [0.0065, 0.0106]       false hold 0/0                            per domain: robot=35 ics=11 banking=1 legal=20
+  replay        provenance     false ALLOW 0/8000 [0.0000, 0.0005]        false hold 0/0                            per domain: robot=0 ics=0 banking=0 legal=0
+  replay        diverse        false ALLOW 0/8000 [0.0000, 0.0005]        false hold 0/0                            per domain: robot=0 ics=0 banking=0 legal=0
+  replay        split_reasons  false ALLOW 0/8000 [0.0000, 0.0005]        false hold 0/0                            per domain: robot=0 ics=0 banking=0 legal=0
+  common_mode   naive          false ALLOW 6998/8000 [0.8673, 0.8819]     false hold 0/0                            per domain: robot=2000 ics=2000 banking=2000 legal=998
+  common_mode   provenance     false ALLOW 2045/8000 [0.2461, 0.2653]     false hold 0/0                            per domain: robot=31 ics=2000 banking=0 legal=14
+  common_mode   diverse        false ALLOW 45/8000 [0.0041, 0.0075]       false hold 0/0                            per domain: robot=31 ics=0 banking=0 legal=14
+  common_mode   split_reasons  false ALLOW 45/8000 [0.0041, 0.0075]       false hold 0/0                            per domain: robot=31 ics=0 banking=0 legal=14
+  adaptive      naive          false ALLOW 6985/8000 [0.8656, 0.8803]     false hold 0/0                            per domain: robot=2000 ics=2000 banking=2000 legal=985
+  adaptive      provenance     false ALLOW 2041/8000 [0.2456, 0.2648]     false hold 0/0                            per domain: robot=26 ics=2000 banking=0 legal=15
+  adaptive      diverse        false ALLOW 41/8000 [0.0037, 0.0069]       false hold 0/0                            per domain: robot=26 ics=0 banking=0 legal=15
+  adaptive      split_reasons  false ALLOW 41/8000 [0.0037, 0.0069]       false hold 0/0                            per domain: robot=26 ics=0 banking=0 legal=15
+  H6 detail: diverse: 0.0000 of DEFERs indistinguishable by reasons (stale 8000, contradictory 2322)
+  H6 detail: split_reasons: 0.0000 of DEFERs indistinguishable by reasons (stale 8000, contradictory 2322)
+    diverse stale: 1 distinct reason tuple(s), e.g. [('verification_insufficient_evidence', 'missing_required_evidence:independent_corroboration', 'evidence_quality_below_threshold:0.0000<0.8000')]
+    diverse contradictory: 4 distinct reason tuple(s), e.g. [('missing_required_evidence:independent_corroboration',), ('missing_required_evidence:independent_corroboration', 'evidence_quality_below_threshold:0.5000<0.8000')]
+    split_reasons stale: 1 distinct reason tuple(s), e.g. [('missing_required_evidence:fresh', 'missing_required_evidence:independent', 'missing_required_evidence:diverse', 'evidence_quality_below_threshold:0.0000<0.8000')]
+    split_reasons contradictory: 5 distinct reason tuple(s), e.g. [('missing_required_evidence:consistent',), ('missing_required_evidence:consistent', 'missing_required_evidence:diverse')]
+  H7: with margin 0, H1 is refuted (as it must be)
+  H1  REFUTED
+  H2  REFUTED
+  H3  REFUTED
+  H4  HELD
+  H5  REFUTED
+  H6  REFUTED
+mode: SABOTAGE (margin 0)
+VERDICT  H7 HELD
+
+real	0m30.514s
+user	0m30.049s
+sys	0m0.026s
+exit 0

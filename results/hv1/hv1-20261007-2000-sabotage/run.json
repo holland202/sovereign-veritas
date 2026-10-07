@@ -1,0 +1,19 @@
+{
+  "agent": "hv1_sim",
+  "code_commit": "378332a",
+  "created_utc": "2026-10-07T03:48:34.266148+00:00",
+  "experiment": "HV-1",
+  "sabotage": true,
+  "schema": "sv-lab-agent/run/v0.1",
+  "seed": "20261007",
+  "semantics": {
+    "agent_may_assign_correctness": false,
+    "agent_may_assign_truth": false,
+    "agent_may_execute": true,
+    "agent_may_modify_preregistration": false,
+    "agent_may_push_git": false,
+    "hidden_plane_used_only_by_scorer": true,
+    "network_access_requested": false
+  },
+  "trials_per_cell": 2000
+}

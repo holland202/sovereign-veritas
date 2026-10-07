@@ -1,4 +1,4 @@
-# Threat model — Sovereign Veritas (as of `dfcbee1`, 2026-10-07)
+# Threat model — Sovereign Veritas (as of `dfcbee1`, 2026-10-07; T31–T32 added from HV-1)
 
 **Status:** self-tested. Written by Claude (Opus 5.5) from this repository's code, tests and results; no outside
 reviewer has checked it. Each row names its evidence. A row is only as strong as that evidence, and most of the evidence
@@ -81,6 +81,8 @@ defect or gap without a fix), **NOT TESTED**. The evidence status is in brackets
 | T28 | declared timestamps and `verifier_id` | A2 | LIMIT [MEASURED] | field sweep; `known_limitations` | — |
 | T29 | out-of-contract inputs fail open in a port | A2 | OPEN for `ports/go` [MEASURED] | 2 fail-open DISAGREE cases | sv.gate/1 rule 0 (EXPERIMENT FIRST) |
 | T30 | a lying observer confirms an effect that did not happen | A6 | NOT TESTED | — | out of model |
+| T31 | an adapter turns copies, stale readings or one spoofed modality into `independent_corroboration` | external spoofer; A1 (the adapter) | **OPEN** outside the Gate [MEASURED in simulation] | HV-1: false ALLOW `naive` 4980/8000 `copy_spoof`, 1664/4003 `stale`; `provenance` 2108/8000 `common_mode`; `diverse` 4/8000 `common_mode`, where honest odometry error passed the margin (`docs/HV1_RESULTS.md`) | the Gate decided correctly on its inputs in every traced trial. Adapter contract (HV-1b, EXPERIMENT FIRST) |
+| T32 | a dissenting reading raises an evidence-quality number, and the action passes | A1 (the adapter) | **OPEN** for quality computed from available readings [MEASURED in simulation] | HV-1 `legal_release copy_spoof`: `naive` ALLOW 979/979 with the dissenting attorney reading present, 0/1021 without it | provenance-based adapters 0/979; quality from distinct, fresh, authenticated sources |
 
 ## 5. Ranked residual risk (what I would fix first)
 
@@ -90,7 +92,8 @@ defect or gap without a fix), **NOT TESTED**. The evidence status is in brackets
 4. **T4:** no input size cap. Any verifier or consumer can be made to use 4× the input size in memory.
 5. **T25:** CI runs code from movable tags, including one third-party action, with the repository's token.
 6. **T21/T20:** journal integrity rests on an unkeyed chain and declared actors.
-7. **T24/T29:** contract-external inputs and physical-world spoofing are outside the decision's reach.
+7. **T24/T29/T31/T32:** contract-external inputs, physical-world spoofing and adapter-side laundering are outside the
+   decision's reach. The Gate decides on what an adapter gives it.
 
 ## 6. Not modelled
 
