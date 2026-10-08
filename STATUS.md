@@ -2,6 +2,12 @@
 
 ---
 
+## Cross-substrate research — Azure / LDE (separate project)
+
+The 2026-10-07 Local Discovery Engine LDE-2G research compared Azure x86_64 and S25 ARM64 artifacts. The 60-seed confirmatory output reported 49/60 maximal choices, with 11 non-maximal; the hypothesis was **not supported** on this trial set. Identical reported stdout hashes do **not** resolve the Azure direct-invocation failure (`exit_code.txt=1`, `ModuleNotFoundError`) versus the separate confirmatory exit 0. **Cross-substrate reproduction NOT VALIDATED. This is not an Azure validation of Sovereign Veritas.** See [docs/AZURE_LDE_CROSS_SUBSTRATE.md](docs/AZURE_LDE_CROSS_SUBSTRATE.md) and [the LDE evidence dataset](https://huggingface.co/datasets/holland202/lde-cross-substrate-research).
+
+---
+
 ## CREDITED breaks
 
 - **Davorin Popović** — AI-assisted private review/report (2026-10-02) identifying that `execute()` runs before
@@ -11,7 +17,7 @@
   This project pre-registered the cases and reproduced the behaviour (a repeated `record_id` gives 2
   external effects, 1 ledger record), merged as PR #7 (`ae6437a`). Credit is for the report and the
   probe idea; the reproduction, results and any fix are this project's, and he has not reviewed or
-  endorsed them. Candidate fix (sequential repeats only): PR #8, open. See
+  endorsed them. Sequential-repeat fix (X1–X3): PR #8, merged; concurrent race X4 and effect-before-record failure X5 remain open. See
   [docs/EXECUTION_BOUNDARY_RESULTS.md](docs/EXECUTION_BOUNDARY_RESULTS.md).
 - **Nicholas Kouns** (@nicholaskouns-create) — [issue #5](https://github.com/holland202/sovereign-veritas/issues/5)
   (2026-09-28): two unpublished implementation defects at `8f098e8`.
