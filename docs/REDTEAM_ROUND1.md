@@ -1,6 +1,6 @@
 # 🔴 Red Team Challenge — Round 1: Break the Gate Contract
 
-**Target:** Sovereign Veritas `sv.gate/0`  
+**Target:** Sovereign Veritas `sv.gate/0`
 **Frozen commit:** `709da9eb435cbfe06a1ca00427843b12c673ceb0`
 
 Repository:

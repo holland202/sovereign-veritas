@@ -1,8 +1,8 @@
 # Red Team Challenge — Round 1 Preregistration
 
-**Status:** Preregistered before public attack  
-**Target:** Sovereign Veritas Gate / `sv.gate/0`  
-**Target commit:** `709da9eb435cbfe06a1ca00427843b12c673ceb0`  
+**Status:** Preregistered before public attack
+**Target:** Sovereign Veritas Gate / `sv.gate/0`
+**Target commit:** `709da9eb435cbfe06a1ca00427843b12c673ceb0`
 **Repository:** https://github.com/holland202/sovereign-veritas
 
 ## Frozen inputs
