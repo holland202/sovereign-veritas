@@ -45,7 +45,28 @@
 
 ## VERIFIED — automated tests
 
-**Latest (2026-10-05): RL-1, who released a key** ([docs/RL1_RESULTS.md](docs/RL1_RESULTS.md)). A `release()` record
+**Latest (2026-10-09): P-001 close-out, v0.2.0. EXPERIMENTAL — NOT PRODUCTION-READY, NOT INDEPENDENTLY SECURITY-VALIDATED.**
+- **W1:** `tools/consumer.py accept` requires `--signature --allowed-signers --identity` and accepts only signed `sv.package/1`.
+- **W2:** new packages carry `contract: {id: "sv.gate/0", conformance_digest}`. The verifier checks it against its own pinned `TRUSTED_CONTRACTS`. Legacy `sv.package/0` stays byte-identical and can be inspected with `--legacy` (`CONTRACT LEGACY_UNBOUND`).
+- **A08:** the state file is written atomically. That is atomic replacement, not power-loss durability.
+- **Gate decisions are unchanged:** 4,690 vectors, digest `44823d0f…0628`.
+
+Evidence and test results:
+- Frozen acceptance: `coordination/p001/ACCEPTANCE.md` @ `1c16e66`.
+- [docs/P001_ACCEPTANCE_REPORT.md](docs/P001_ACCEPTANCE_REPORT.md): A01–A08 and B01–B08 PASS, three planted mutants killed (C06).
+- [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
+
+Negative findings merged with this release, kept as findings:
+- **PV-1 (#54):** a DEFAULTED→OPERATOR relabel verifies, and verifies SIGNED when signed. No field names a declarer.
+- **AMB-1 (#55):** impostor gates reproduce all 4,690 vectors; the worst gives a false ALLOW on 1,235 of 10,000 inputs. The 800 extra vectors are not adopted.
+
+Still open:
+- **W3:** an all-DEFAULTED package still gets ALLOW.
+- XB-1 X4/X5, EO-1, concurrent consumers and first use.
+
+Self-tested by Claude (Opus 5.5) under Chad Holland's direction. Chad reviewed the outcome summary, not every line. Container and GitHub CI only. S25: NOT VALIDATED for this release.
+
+**Earlier (2026-10-05): RL-1, who released a key** ([docs/RL1_RESULTS.md](docs/RL1_RESULTS.md)). A `release()` record
 holds only what the caller wrote: a script passing `by="human:chad"` gives the same entry as any other caller (3 of 3
 as registered; `--sabotage` exits 1 because of L1; a no-op sabotage exits 0). The docstring says release is "meant for
 a human"; OBS-1's own system releases automatically with `by="system"` (3 sites). No change made: the options are
@@ -176,4 +197,4 @@ See `docs/PHYSICAL_DURABILITY_RUNS.md`.
 
 ## Version
 
-`__version__ = "0.1.1"`
+`__version__ = "0.2.0"`. Until v0.2.0, `__init__.py` said 0.1.1 and `pyproject.toml` said 0.1.0; both now agree.
