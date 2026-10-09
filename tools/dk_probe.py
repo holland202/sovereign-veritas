@@ -72,7 +72,7 @@ def edit(cell, d):
 
 def run_verifier(vp, path):
     old = sys.argv
-    sys.argv = ["verify_package.py", path]
+    sys.argv = ["verify_package.py", path, "--legacy"]  # evidence/ is archived sv.package/0 (P-001 W2)
     out = io.StringIO()
     code = 0
     try:

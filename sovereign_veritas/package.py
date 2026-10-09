@@ -1,4 +1,4 @@
-"""End-to-end evidence package (schema sv.package/0).
+"""End-to-end evidence package (schema sv.package/1; sv.package/0 is the legacy, contract-unbound format).
 
 One JSON document carrying everything a challenger needs to reconstruct a gated run without
 the producing process: artifact bytes, measurement, the provenance chain up to the decision
@@ -25,7 +25,13 @@ from .thermal import ZoneReading, summarize
 from .thermal_policy import POLICIES, derive_thermal_status, policy_dict
 from .verifier_registry import VerifierValidation
 
-SCHEMA = "sv.package/0"
+SCHEMA = "sv.package/1"
+SCHEMA_V0 = "sv.package/0"  # legacy: archived packages only; build_package no longer writes it
+# The Gate contract a package is decided under (docs/GATE_CONTRACT.md). sv.package/1 carries it inside
+# the canonical body, so package_sha256 and a detached signature cover it. The verifier does NOT take it
+# on trust: it compares it with its own locally pinned TRUSTED_CONTRACTS (P-001 W2).
+CONTRACT = {"id": "sv.gate/0",
+            "conformance_digest": "44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628"}
 KNOWN_LIMITATIONS = (
     "freshness: NOT_PROVEN - no external witness; an older valid package is indistinguishable",
     "authenticity: none - no signature; a fully consistent rewrite verifies",
@@ -120,6 +126,7 @@ def build_package(
             snapshot[name] = None if cap is None else cap.to_dict()
     package: dict[str, Any] = {
         "schema": SCHEMA,
+        "contract": dict(CONTRACT),
         "artifact": {"name": artifact_name, "sha256": art_sha,
                      "bytes_b64": base64.b64encode(artifact).decode("ascii")},
         "measurement": dict(measurement),

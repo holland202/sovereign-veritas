@@ -40,7 +40,7 @@ def problems(evidence, log, signers, check_signatures=HAVE_SSH):
     digests = [d for _, d in vp.read_witness_log(str(log))]
     published = {pkg["package_sha256"] for _, _, pkg in packages}
     for path, data, pkg in packages:
-        failed = [name for name, ok, _ in vp.verify(pkg) if not ok]
+        failed = [name for name, ok, _ in vp.verify(pkg, legacy=True) if not ok]  # archived sv.package/0 (P-001)
         if failed:
             found.append(f"{path.name}: fails {failed}")
         sig = pathlib.Path(f"{path}.sig")

@@ -27,6 +27,12 @@ jobs:
         run: |
           python tools/gate_contract.py --check kernel
           python tools/gate_contract.py --check verifier
+      - name: P-001 acceptance (W1, W2, A08) - frozen ACCEPTANCE.md @1c16e66; B08 transcript kept
+        env:
+          P001_B08_TRANSCRIPT: p001_b08_transcript.txt
+        run: |
+          python -m pytest -q -rs tests/test_p001_w1.py tests/test_p001_w2.py | tee p001.txt
+          if [ -f p001_b08_transcript.txt ]; then cat p001_b08_transcript.txt; else echo "B08 NOT_TESTED on this runner (ssh-keygen absent)"; fi
       - name: Make a package and verify it independently
         run: |
           f=$(python tools/make_package.py --thermal-status normal | awk '/^package /{print $2}')
@@ -73,6 +79,8 @@ jobs:
       # skipped is UNDECIDED, so SURVIVED is only reachable when nothing is skipped here.
       - name: Every verifier guard, switched off in turn, must fail a test (method from EACE)
         run: python tools/verifier_mutants.py
+      - name: P-001 C06 - signature-bypass, self-digest and refuse-all mutants must all be killed
+        run: python tools/p001_mutants.py
       - name: Every planted Gate bug must be caught
         run: python tools/gate_constraint.py --target . --mutants
       - name: Every reachable rule of the Gate is pinned by a contract vector

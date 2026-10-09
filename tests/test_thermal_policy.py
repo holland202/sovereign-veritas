@@ -138,7 +138,10 @@ def reseal(pkg):
 
 
 def failed(pkg):
-    return sorted(n for n, ok, _ in vp.verify(json.loads(vp.canon(pkg))) if not ok)
+    # P-001 W2: archived sv.package/0 files are inspected as legacy (every other check still runs);
+    # newly built packages are sv.package/1 and must pass contract_binding.
+    return sorted(n for n, ok, _ in vp.verify(json.loads(vp.canon(pkg)), legacy=pkg.get("schema") == vp.SCHEMA_V0)
+                  if not ok)
 
 
 @pytest.fixture
@@ -211,7 +214,7 @@ def test_t0_published_package_still_verifies():
     """Consistency and signature only. Its witness status belongs to test_published_evidence.py: it
     is LATEST_WITNESSED(1) until a newer package is witnessed, then STALE - by design."""
     pkg = ROOT / "evidence" / "sv_package_5bfc70dfcfa2.json"
-    args = [sys.executable, str(ROOT / "tools" / "verify_package.py"), str(pkg)]
+    args = [sys.executable, str(ROOT / "tools" / "verify_package.py"), str(pkg), "--legacy"]  # sv.package/0 (P-001)
     if shutil.which("ssh-keygen"):
         args += ["--signature", f"{pkg}.sig", "--allowed-signers", str(ROOT / "keys" / "allowed_signers"),
                  "--identity", "holland202"]
