@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""make_package.py - run one gated measurement on this device and write an sv.package/0.
+"""make_package.py - run one gated measurement on this device and write an sv.package/1.
 
 Measurement: sha256 chained --rounds times over a seeded artifact (deterministic, so the
 independent verifier can recompute it). Runs the real EvidenceWorkflow: a recompute verifier

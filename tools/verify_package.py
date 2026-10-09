@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""verify_package.py - challenge an sv.package/0 evidence package without the producer's code.
+"""verify_package.py - challenge an sv.package/1 (or, with --legacy, a legacy sv.package/0) evidence
+package without the producer's code.
 
 Stdlib only. Imports nothing from sovereign_veritas: digests, the Gate, runtime vocabulary,
 thermal classification and verifier-validation rules are re-implemented here from the
 documented contract. Same author as the producer, so this is N-version, not independent.
 
-  python tools/verify_package.py PACKAGE.json [--allow-recorded-only]
+  python tools/verify_package.py PACKAGE.json [--allow-recorded-only] [--legacy]
          [--signature PACKAGE.json.sig --allowed-signers FILE --identity ID]
          [--witness-log witness/packages.log]
       exit 0 all checks pass | 1 a check failed | 2 unreadable, or a signature or witness check
@@ -19,6 +20,13 @@ append-only witness log that you pulled yourself (a log handed to you by the pro
 nothing). That shows it is the newest package the author made public - order, not time, and not
 packages the author never logged. The VERDICT line reports each layer separately: authenticity is
 SIGNED whenever the signature check passed, even if another check failed.
+
+Contract binding (P-001 W2): an sv.package/1 names the Gate contract it was decided under
+(contract.id, contract.conformance_digest). This verifier compares both with its own locally pinned
+TRUSTED_CONTRACTS, never with anything else in the package, so a package cannot vouch for itself.
+An sv.package/0 has no binding: without --legacy it fails contract_binding; with --legacy it is
+inspected and reported contract=LEGACY_UNBOUND. Inspection is never acceptance (tools/consumer.py
+accepts only signed sv.package/1).
 """
 import base64, hashlib, json, math, os, shutil, subprocess, sys, tempfile
 from pathlib import Path
@@ -201,7 +209,12 @@ def check_signature(data, sig_path, allowed_signers, identity):
     msg = (p.stderr or p.stdout).decode("utf-8", "replace").strip().splitlines()
     return False, msg[0] if msg else f"ssh-keygen exit {p.returncode}"
 
-SCHEMA = "sv.package/0"
+SCHEMA_V0 = "sv.package/0"  # legacy, contract-unbound: inspected only with --legacy
+SCHEMA_V1 = "sv.package/1"
+SCHEMA = SCHEMA_V1
+# Local trust anchor for contract binding. Pinned here, not read from the package; CI checks that the
+# digest equals the one tools/gate_contract.py recomputes from the shipped vectors (tests/test_p001_w2.py).
+TRUSTED_CONTRACTS = {"sv.gate/0": "44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628"}
 # v0 packages carry exactly these four statements. Exact match: an appended line could contradict
 # one ("authenticity: signed by hardware") while every required prefix is still present.
 V0_LIMITATIONS = (
@@ -223,6 +236,7 @@ MEASURED_RESOURCE_STATEMENT = (
 # so unchecked text could ride inside a package that passes.
 PACKAGE_KEYS = frozenset({"artifact", "decision", "freshness", "gate_inputs", "known_limitations", "measurement",
                           "package_sha256", "provenance", "resource_state", "schema", "verifier"})
+PACKAGE_KEYS_V1 = PACKAGE_KEYS | {"contract"}
 RECORD_KEYS = frozenset({"action", "capability", "decision", "evidence_quality", "input_digest", "metadata",
                          "prediction", "previous_digest", "reasons", "record_id", "timestamp", "uncertainty",
                          "verification"})
@@ -238,6 +252,7 @@ CAPABILITY_KEYS = frozenset({"authorized", "description", "max_steps", "min_evid
                              "required_evidence"})
 CLOSED = {
     "artifact": {"bytes_b64", "name", "sha256"},
+    "contract": {"conformance_digest", "id"},
     "decision": {"decision", "reasons"},
     "freshness": {"status", "witness"},
     "gate_inputs": {"capability", "capability_registry", "policy"},
@@ -776,16 +791,49 @@ def recompute_measurement(m, artifact):
     return None
 
 
-def verify(pkg, allow_recorded_only=False):
+def contract_binding(pkg):
+    """(ok, detail) for an sv.package/1: both contract fields must equal the LOCAL trust anchor."""
+    c = pkg.get("contract")
+    if not isinstance(c, dict):
+        return False, "contract missing or not an object"
+    cid, dig = c.get("id"), c.get("conformance_digest")
+    if not isinstance(cid, str) or not cid:
+        return False, f"contract.id missing or malformed: {cid!r}"
+    if not isinstance(dig, str) or not dig:
+        return False, f"contract.conformance_digest missing or malformed: {dig!r}"
+    if cid not in TRUSTED_CONTRACTS:
+        return False, f"contract.id {cid!r} is not a locally trusted contract"
+    if dig != TRUSTED_CONTRACTS[cid]:
+        return False, f"contract.conformance_digest {dig[:16]}... is not the locally trusted digest for {cid}"
+    return True, f"BOUND {cid}: digest matches the local trust anchor"
+
+
+def contract_status(pkg, legacy=False):
+    """The VERDICT line's contract= field."""
+    if pkg.get("schema") == SCHEMA_V0:
+        return "LEGACY_UNBOUND"
+    if pkg.get("schema") == SCHEMA_V1:
+        return f"BOUND:{pkg['contract']['id']}" if contract_binding(pkg)[0] else "UNBOUND"
+    return "UNKNOWN_SCHEMA"
+
+
+def verify(pkg, allow_recorded_only=False, legacy=False):
     """allow_recorded_only: accept a measurement kind this verifier cannot recompute. Off by default:
-    otherwise relabelling the kind (e.g. sha256_chain -> anything else) lets a forged output pass."""
+    otherwise relabelling the kind (e.g. sha256_chain -> anything else) lets a forged output pass.
+    legacy: inspect an sv.package/0 without failing contract_binding (it is reported LEGACY_UNBOUND)."""
     checks = []
 
     def check(name, ok, detail=""):
         checks.append((name, bool(ok), detail))
 
-    check("schema", pkg.get("schema") == SCHEMA, str(pkg.get("schema")))
-    extra = sorted(set(pkg) - PACKAGE_KEYS)
+    schema = pkg.get("schema")
+    check("schema", schema in (SCHEMA_V0, SCHEMA_V1), str(schema))
+    if schema == SCHEMA_V1:
+        check("contract_binding", *contract_binding(pkg))
+    elif schema == SCHEMA_V0 and not legacy:
+        check("contract_binding", False,
+              "LEGACY_UNBOUND: sv.package/0 carries no contract binding; inspect it with --legacy")
+    extra = sorted(set(pkg) - (PACKAGE_KEYS_V1 if schema == SCHEMA_V1 else PACKAGE_KEYS))
     for i, entry in enumerate((pkg.get("provenance") or {}).get("chain") or []):
         extra += [f"chain[{i}].{k}" for k in sorted(set((entry.get("record") or {})) - RECORD_KEYS)]
         extra += [f"chain[{i}]:{k}" for k in sorted(set(entry) - {"record", "record_digest"})]
@@ -996,11 +1044,13 @@ def verify(pkg, allow_recorded_only=False):
 
 
 def parse_args(argv):
-    opts, rest, allow, witness = {}, [], False, None
+    opts, rest, allow, witness, legacy = {}, [], False, None, False
     it = iter(argv)
     for a in it:
         if a == "--allow-recorded-only":
             allow = True
+        elif a == "--legacy":
+            legacy = True
         elif a in ("--signature", "--allowed-signers", "--identity"):
             opts[a] = next(it, None)
         elif a == "--witness-log":
@@ -1012,15 +1062,15 @@ def parse_args(argv):
     sig = (opts.get("--signature"), opts.get("--allowed-signers"), opts.get("--identity"))
     if len(rest) != 1 or (opts and (len(opts) != 3 or None in sig)):
         return None
-    return rest[0], allow, sig if opts else None, witness
+    return rest[0], allow, sig if opts else None, witness, legacy
 
 
 def main():
     parsed = parse_args(sys.argv[1:])
     if parsed is None:
-        print("\n".join(__doc__.strip().splitlines()[7:10]))
+        print("\n".join(__doc__.strip().splitlines()[7:12]))
         sys.exit(2)
-    path, allow, sig, witness = parsed
+    path, allow, sig, witness, legacy = parsed
     freshness = None
     try:
         with open(path, "rb") as fh:
@@ -1028,7 +1078,7 @@ def main():
         pkg = loads_bounded(data.decode("utf-8"))
         if not isinstance(pkg, dict):
             raise ValueError(f"top level is {type(pkg).__name__}, not an object")
-        checks = verify(pkg, allow_recorded_only=allow)
+        checks = verify(pkg, allow_recorded_only=allow, legacy=legacy)
         if sig is not None:
             ok, detail = check_signature(data, *sig)
             checks.append(("signature", ok, detail))
@@ -1055,7 +1105,8 @@ def main():
     signed = sig is not None and any(n == "signature" and ok for n, ok, _ in checks)
     authenticity = f"SIGNED:{sig[2]}" if signed else "NOT_PROVEN"
     print(f"VERDICT  {'CONSISTENT' if not failed else f'{len(failed)} check(s) failed'}"
-          f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}")
+          f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}"
+          f"  contract={contract_status(pkg)}")
     sys.exit(1 if failed else 0)
 
 

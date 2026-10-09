@@ -10,6 +10,8 @@ is the attacker's best move. Keys are throwaway, made in a temporary directory; 
   python tools/attack_harness.py [--runs DIR ...] [--json OUT] [--round2]
   --round2 adds A8-A10 (malformed signatures, corrupted witness logs, rollback) and P9-P11.
 Exit: 0 every registered prediction held | 1 one failed | 2 could not run
+P-001 (2026-10-09): the corpus is archived sv.package/0, so it is verified with legacy=True (contract
+binding reported LEGACY_UNBOUND, every other check unchanged). The registered outcome is unchanged.
 """
 import argparse, base64, copy, glob, importlib.util, json, os, shutil, subprocess, sys, tempfile
 
@@ -153,7 +155,7 @@ def round2(vp, keys, corpus, genuine_sig, witness, tmp, summary):
     with open(rolled, "w") as fh:
         fh.write("\n".join([header] + entries[:-1]) + "\n")
     _, name2, data2, pkg2 = corpus[-2]
-    d1 = all(ok for _, ok, _ in vp.verify(pkg2)) and keys.valid(data2, genuine_sig[name2])
+    d1 = all(ok for _, ok, _ in vp.verify(pkg2, legacy=True)) and keys.valid(data2, genuine_sig[name2])
     a10 = d1 and vp.check_witness(pkg2, rolled)[0]
     print(f"A8       {a8['n']:>3}  D1 accepted {a8['accepted']}/{a8['n']}, crashed {a8['crashed']}")
     print("A9         5  " + ", ".join(f"{k} {v}" for k, v in a9.items()))
@@ -179,7 +181,7 @@ def round3(vp, keys, corpus, genuine_sig, witness, tmp, summary):
 
     def d3(item, log, state):
         _, name, data, pkg = item
-        d2 = (all(ok for _, ok, _ in vp.verify(pkg)) and keys.valid(data, genuine_sig[name])
+        d2 = (all(ok for _, ok, _ in vp.verify(pkg, legacy=True)) and keys.valid(data, genuine_sig[name])
               and vp.check_witness(pkg, log)[0])
         if not d2:
             return False, state
@@ -240,7 +242,7 @@ def main():
     def judge(data, sigs):
         """(D0, D1, D2) acceptance of these bytes, given the signatures the attacker can attach."""
         pkg = json.loads(data)
-        d0 = all(ok for _, ok, _ in vp.verify(pkg))
+        d0 = all(ok for _, ok, _ in vp.verify(pkg, legacy=True))
         d1 = d0 and any(keys.valid(data, s) for s in sigs)
         d2 = d1 and vp.check_witness(pkg, witness)[0]
         return d0, d1, d2
@@ -256,7 +258,7 @@ def main():
                                             "failed": failed_checks or []})
 
     def failed_names(pkg):
-        return [n for n, ok, _ in vp.verify(pkg) if not ok]
+        return [n for n, ok, _ in vp.verify(pkg, legacy=True) if not ok]
 
     latest = corpus[-1][1]
     for _, name, data, pkg in corpus:
