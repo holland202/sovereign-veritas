@@ -1,5 +1,12 @@
 # Sovereign Veritas
 
+> **MAINTENANCE-ONLY (from v0.2.0).** Active development of this repository has ended. Release `v0.2.0`
+> (annotated tag on `ecd4de9`) is **NOT PRODUCTION-READY** and **NOT INDEPENDENTLY SECURITY-VALIDATED**.
+> From here: security reports and correctness fixes only; no new features. All findings, negative results and
+> known limits stay published: see [STATUS.md](STATUS.md) and [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
+> Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
+> Issues and breaks are still welcome; the owner will answer them.
+
 <!-- 30s-demo -->
 > **Status labels used below.** **PROTOTYPE:** runs, is tested, and is not hardened for production.
 > **RESEARCH HYPOTHESIS:** stated, not yet shown. **NOT PRODUCTION-READY:** nothing in this repository is.
