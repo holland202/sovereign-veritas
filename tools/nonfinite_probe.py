@@ -41,7 +41,7 @@ def reseal(vp, pkg):
 def verify_rc(vp, pkg, path):
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(json.dumps(pkg))
-    old, sys.argv = sys.argv, ["verify_package.py", path]
+    old, sys.argv = sys.argv, ["verify_package.py", path, "--legacy"]  # evidence/ is archived sv.package/0 (P-001 W2)
     try:
         with contextlib.redirect_stdout(io.StringIO()):
             try:
