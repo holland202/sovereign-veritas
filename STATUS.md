@@ -11,7 +11,7 @@
   This project pre-registered the cases and reproduced the behaviour (a repeated `record_id` gives 2
   external effects, 1 ledger record), merged as PR #7 (`ae6437a`). Credit is for the report and the
   probe idea; the reproduction, results and any fix are this project's, and he has not reviewed or
-  endorsed them. Candidate fix (sequential repeats only): PR #8, open. See
+  endorsed them. Fix for sequential repeats only: PR #8, merged 2026-10-02 (`73de3f7`); the race and effect-without-record cases remain open. See
   [docs/EXECUTION_BOUNDARY_RESULTS.md](docs/EXECUTION_BOUNDARY_RESULTS.md).
 - **Nicholas Kouns** (@nicholaskouns-create) — [issue #5](https://github.com/holland202/sovereign-veritas/issues/5)
   (2026-09-28): two unpublished implementation defects at `8f098e8`.
