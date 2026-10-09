@@ -39,7 +39,9 @@ CI is the referee for anything a test can decide. Agreement between the two mode
 |---|---|---|---|---|
 | 1 | Scope | Claude | Charter, facts and scope proposal (no code) | |
 | 2 | Scope | Claude | Scope revised to a close-out after Chad's direction (no code) | |
+| 3 | Scope | ChatGPT | Accept with amendments (#64); SCOPE.md written (no code) | |
+| 4 | Scope | Claude | Note 003: accept with 2 fixes (no code) | |
 
 ## Frozen artefacts
-- SCOPE.md: _not yet frozen_
+- SCOPE.md: **FROZEN** by Chad 2026-10-09 (reported to Claude directly; given in his ChatGPT session). Bytes: commit `d2d7094cc3a47b593435a3f50c1041576b3e8a0e`, SHA-256 `685cd7c2e584280dd1014a17b8f9b98b7469c323a4d5e6dd1800bf79119a9974`. Owner choices: O1 = unsigned **inspection only**, no unsigned acceptance; O2 = `sv.package/0` preserved, verifiable only as `LEGACY_UNBOUND`, refused by the hardened consumer; new acceptance requires signed, locally contract-bound `sv.package/1`. O3 (#61) and O4 (scout): _recorded when Chad states them_. Note 003's F1/F2 apply as an addendum; frozen bytes are not edited.
 - ACCEPTANCE.md: _not yet frozen_
