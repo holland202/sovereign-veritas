@@ -1,5 +1,12 @@
 # Sovereign Veritas
 
+> **MAINTENANCE-ONLY (from v0.2.0).** Active development of this repository has ended. Release `v0.2.0`
+> (annotated tag on `ecd4de9`) is **NOT PRODUCTION-READY** and **NOT INDEPENDENTLY SECURITY-VALIDATED**.
+> From here: security reports and correctness fixes only; no new features. All findings, negative results and
+> known limits stay published: see [STATUS.md](STATUS.md) and [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
+> Cross-platform QEMU legs (s390x, ppc64le) on the release revision: **RESULT_PENDING**.
+> Issues and breaks are still welcome; the owner will answer them.
+
 <!-- 30s-demo -->
 > **Status labels used below.** **PROTOTYPE:** runs, is tested, and is not hardened for production.
 > **RESEARCH HYPOTHESIS:** stated, not yet shown. **NOT PRODUCTION-READY:** nothing in this repository is.
