@@ -60,6 +60,8 @@ Negative findings merged with this release, kept as findings:
 - **PV-1 (#54):** a DEFAULTED→OPERATOR relabel verifies, and verifies SIGNED when signed. No field names a declarer.
 - **AMB-1 (#55):** impostor gates reproduce all 4,690 vectors; the worst gives a false ALLOW on 1,235 of 10,000 inputs. The 800 extra vectors are not adopted.
 
+Also merged: **VK-1 (#61)**, a hardware negative outside the kernel (`tools/accel/vk1/`). llama.cpp Vulkan on the Adreno 830 gives wrong output, and correct Vulkan inference is NOT DEMONSTRATED. Its perplexity cells are void because their control failed. The raw device results are committed and re-derive the pinned digest.
+
 Still open:
 - **W3:** an all-DEFAULTED package still gets ALLOW.
 - XB-1 X4/X5, EO-1, concurrent consumers and first use.

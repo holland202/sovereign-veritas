@@ -146,3 +146,12 @@ Provenance: device run and output by Chad Holland (2026-10-06). The registration
 this analysis were drafted by Claude Opus 5.5 (Anthropic) under Chad's direction. Human review
 level: the device run's output was examined in session; the code and this document were not
 reviewed line by line. Human responsibility for the final artifact: Chad Holland.
+
+## Addendum 2026-10-09 (additive; the record above is unchanged)
+
+The line near the top saying "`results.jsonl` and the per-cell logs are still on the device" was
+stale when the PR merged. They were committed on 2026-10-06 in `11bdad2`, under `device_run/`.
+Re-check on 2026-10-09: `vk1_probe.py --report`, with `~/sv-lab/runs/vk1` pointing at a copy of
+`device_run/`, prints `DIGEST e464c9443057b6626f1fb94aa0d12c672255dec41700bad98d0261447f8055a4` and
+`RECORDED match`. Everything else above stands, including the void perplexity cells and the
+registration committed after the run. Added by Claude (Opus 5.5) under Chad Holland's direction.
