@@ -72,7 +72,9 @@ def test_s1_no_resealed_rewrite_survives_the_signature(signed):
     p = json.loads(pkg.read_text(encoding="utf-8"))
     total, unsigned = fs.sweep(vp, p)
     _, with_sig = fs.sweep(vp, p, (str(sig), str(signers), "chad"))
-    assert (total, set(unsigned), with_sig) == (119, UNBOUND, {})
+    # 121 = 119 + contract.id + contract.conformance_digest (sv.package/1, P-001 W2). Both are caught
+    # without a signature (contract_binding), so UNBOUND is unchanged.
+    assert (total, set(unsigned), with_sig) == (121, UNBOUND, {})
 
 
 @needs_ssh

@@ -1,0 +1,131 @@
+{
+ "results": {
+  "a1_fits_all_vectors": true,
+  "kernel_verifier_mismatch": 0,
+  "rounds": [
+   {
+    "added": 100,
+    "round": 0,
+    "unsafe_allow_H": [
+     423,
+     103,
+     62,
+     96,
+     1235
+    ],
+    "vectors": 4690
+   },
+   {
+    "added": 100,
+    "round": 1,
+    "unsafe_allow_H": [
+     48,
+     213,
+     88,
+     60,
+     157
+    ],
+    "vectors": 4790
+   },
+   {
+    "added": 100,
+    "round": 2,
+    "unsafe_allow_H": [
+     167,
+     63,
+     273,
+     99,
+     88
+    ],
+    "vectors": 4890
+   },
+   {
+    "added": 100,
+    "round": 3,
+    "unsafe_allow_H": [
+     34,
+     80,
+     54,
+     60,
+     57
+    ],
+    "vectors": 4990
+   },
+   {
+    "added": 100,
+    "round": 4,
+    "unsafe_allow_H": [
+     73,
+     33,
+     43,
+     22,
+     27
+    ],
+    "vectors": 5090
+   },
+   {
+    "added": 100,
+    "round": 5,
+    "unsafe_allow_H": [
+     27,
+     49,
+     36,
+     39,
+     50
+    ],
+    "vectors": 5190
+   },
+   {
+    "added": 100,
+    "round": 6,
+    "unsafe_allow_H": [
+     55,
+     37,
+     20,
+     21,
+     15
+    ],
+    "vectors": 5290
+   },
+   {
+    "added": 100,
+    "round": 7,
+    "unsafe_allow_H": [
+     24,
+     28,
+     44,
+     21,
+     26
+    ],
+    "vectors": 5390
+   },
+   {
+    "round": 8,
+    "unsafe_allow_H": [
+     12,
+     22,
+     20,
+     28,
+     26
+    ],
+    "vectors": 5490
+   }
+  ],
+  "truth_H": {
+   "ALLOW": 12,
+   "DEFER": 96,
+   "REFUSE": 9892
+  },
+  "truth_S": {
+   "ALLOW": 19,
+   "DEFER": 106,
+   "REFUSE": 9875
+  }
+ },
+ "verdicts": {
+  "A1": true,
+  "A2": true,
+  "A3": true,
+  "A4": true
+ }
+}

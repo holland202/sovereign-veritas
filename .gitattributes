@@ -9,3 +9,8 @@ keys/allowed_signers -text
 runs/**/*.json -text
 # Verbatim external texts whose sha256 is recorded in their header: keep their exact bytes (JG-2, F1).
 docs/external/*.md -text
+# P-001 B06: every archived sv.package/0 is hashed byte for byte (tests/p001/legacy_manifest_709da9e.sha256),
+# including those below evidence/ and results/ that the patterns above do not reach.
+evidence/**/*.json -text
+results/**/*.json -text
+tests/p001/*.sha256 -text

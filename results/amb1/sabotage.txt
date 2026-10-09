@@ -1,0 +1,18 @@
+AMB-1 | SABOTAGE: impostors are the Gate itself | python 3.13.16
+  round 0: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 1: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 2: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 3: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 4: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 5: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 6: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 7: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]  added 0
+  round 8: vectors  4690  unsafe ALLOW on H [0, 0, 0, 0, 0]
+  truth on H {'ALLOW': 12, 'DEFER': 96, 'REFUSE': 9892}  kernel/verifier mismatches on 20000: 0
+
+  A1  HELD
+  A2  REFUTED
+  A3  HELD
+  A4  HELD
+VERDICT 3 of 4 as registered (A5 is --sabotage; A6 is the door)
+DIGEST 0b3cf960c5c86bd5a6e6f14da815877d6e9f5eab6342c9112df397faad81b517

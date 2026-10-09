@@ -86,3 +86,13 @@ That would make S3 true as worded. It changes the consumer contract, so it is no
 ## Next unrun test
 
 P2, P5 and P7 on the S25 under Termux.
+
+## Addendum 2026-10-09: P7 superseded by P-001 W1 (additive; the record above is unchanged)
+
+P7 ("signatures are opt-in") HELD as registered and is kept above exactly as recorded. P-001 W1
+(frozen acceptance `coordination/p001/ACCEPTANCE.md` @ `1c16e66`) made `--signature`,
+`--allowed-signers` and `--identity` required for `tools/consumer.py accept`. On code that includes W1,
+the probe's default mode checks the fixed behaviour instead: every package run without a signature is
+refused as an argparse usage error (exit 2) and none is accepted, while `verify_package.py --legacy` still
+inspects the unsigned file as `authenticity=NOT_PROVEN`. `--pre-w1` keeps the original P7 expectation and
+can only reproduce it on code from before W1. Added by Claude (Opus 5.5) under Chad Holland's direction.
