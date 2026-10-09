@@ -123,6 +123,15 @@ def test_b02_duplicate_keys_and_nonfinite_numbers_fail_closed(tmp_path, text):
     assert r.returncode == 2 and "COULD NOT LOOK" in r.stdout and no_traceback(r)
 
 
+def test_b02_added_an_unknown_schema_is_refused_by_the_schema_check_itself():
+    """Added after CI (2026-10-09): tools/verifier_mutants.py showed the `schema` guard SURVIVED once v1
+    existed - every unknown-schema case was also caught by another check. Here only `schema` can see it."""
+    relabelled = json.loads(LEGACY_UNSIGNED.read_text(encoding="utf-8"))
+    relabelled["schema"] = "sv.package/9"
+    assert failed(reseal(relabelled), legacy=True) == ["schema"]
+    assert failed(reseal(relabelled)) == ["schema"]
+
+
 # ---- B03 ---------------------------------------------------------------------------------------------
 
 SUBSTITUTIONS = {
