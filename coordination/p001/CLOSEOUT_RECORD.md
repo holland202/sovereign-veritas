@@ -5,7 +5,7 @@ artefact: p001/CLOSEOUT_RECORD
 by: Claude (Opus 5.5)        # Chad directed and approved the release plan 2026-10-09; outcome-level review
 release: v0.2.0 (annotated tag 0fafe198, created and pushed by Chad) -> ecd4de97cd695d59852442f2bec80d831b296449
 release_gate: NOT FULLY GREEN at tag time (two QEMU legs NOT_RUN); all 6 xplat legs PASS on ecd4de9 after the tag (2026-10-09T22:3xZ, see C06)
-state: P001_CLOSED_PENDING_OWNER_MERGE_OF_#69
+state: P001_CLOSED (Chad merged #69 -> main 438e6d5, 2026-10-09)
 ```
 
 This file is new, additive documentation **outside** the tagged snapshot. Nothing at `v0.2.0` is rewritten and the tag is not moved. `docs/P001_ACCEPTANCE_REPORT.md` *at the tag* is the implementation-stage report: it says `aggregate: NOT GREEN` with C01–C05, C07 and C08 `NOT_RUN`. It was accurate when written (at `5bec876`) and was not updated afterwards. This record supersedes it for the C rows.
@@ -31,5 +31,5 @@ This file is new, additive documentation **outside** the tagged snapshot. Nothin
 - The C07 deviation stands: the tag was pushed before these legs ran. They passed afterwards; this does not retroactively make the gate pre-tag.
 
 ## Next
-- Chad merges PR #69 (maintenance-only notice). That is the last P-001 step.
+- Done: Chad merged PR #69 (maintenance-only notice) as 438e6d5. Sovereign Veritas is maintenance-only.
 - Then Veritas-Origin restarts only on Chad's explicit go-ahead (DPC-001 first).
