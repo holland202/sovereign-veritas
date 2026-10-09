@@ -1,0 +1,31 @@
+# ppl_vk99_qwen_q4km 2026-10-06T12:42:05-0500
+# argv: ["/data/data/com.termux/files/usr/bin/llama-perplexity", "-m", "/data/data/com.termux/files/home/models/qwen2.5-1.5b-instruct-q4_k_m.gguf", "-f", "/data/data/com.termux/files/home/sv-lab/runs/vk1/corpus_text.txt", "-c", "128", "--chunks", "4", "-ngl", "99"]
+# env flags: {}
+# rc: -6  wall_s: 4.4
+# ---- stdout ----
+
+# ---- stderr ----
+0.00.103.985 E ggml_opencl: platform IDs not available.
+0.00.942.501 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.133.221 W llama_context: n_ctx is not divisible by n_seq_max - rounding down to 4096
+0.02.311.364 I cmn          init: llama threadpool init, n_threads = 8
+ggml_vulkan: compute pipeline creation failed for mul_mat_vec_q4_k_f32_f32: vk::Device::createComputePipeline: ErrorUnknown
+0: 0x7aaa74c090 
+1: 0x7aaa74c040 ggml_print_backtrace
+2: 0x7aaa762c2c 
+3: 0x7aa72b86e0 
+4: 0x7aa72d65d8 __cxa_rethrow
+5: 0x780e2d8898 
+6: 0x780e2c9a2c 
+7: 0x780e2f5370 
+8: 0x780e31ea9c 
+9: 0x780e3358f4 
+10: 0x7aaa76cd04 ggml_backend_sched_graph_compute_async
+11: 0x7aa7ebb8b0 _ZN13llama_context13graph_computeEP11ggml_cgraphb
+12: 0x7aa7ebb3d8 _ZN13llama_context14process_ubatchERK12llama_ubatch14llm_graph_typeP22llama_memory_context_iR11ggml_status
+13: 0x7aa7ebcd18 _ZN13llama_context6decodeERK15llama_batch_ext
+14: 0x7aa6cbbfe8 _Z23common_init_from_paramsR13common_paramsb
+15: 0x7ab1454730 _Z16llama_perplexityiPPc
+16: 0x7aa6936a28 __libc_init
+libc++abi: terminating due to uncaught exception of type N2vk12UnknownErrorE: vk::Device::createComputePipeline: ErrorUnknown
+

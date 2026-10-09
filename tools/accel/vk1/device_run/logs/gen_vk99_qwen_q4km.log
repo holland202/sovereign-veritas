@@ -1,0 +1,32 @@
+# gen_vk99_qwen_q4km 2026-10-06T12:41:59-0500
+# argv: ["/data/data/com.termux/files/usr/bin/llama-completion", "-m", "/data/data/com.termux/files/home/models/qwen2.5-1.5b-instruct-q4_k_m.gguf", "-n", "32", "-ngl", "99", "-c", "512", "--temp", "0", "--seed", "1", "-p", "Explain in one sentence what evidence means.", "-no-cnv"]
+# env flags: {}
+# rc: -6  wall_s: 4.38
+# ---- stdout ----
+
+# ---- stderr ----
+0.00.149.955 E ggml_opencl: platform IDs not available.
+0.00.181.774 I llama_completion: llama backend init
+0.00.181.786 I llama_completion: load the model and apply lora adapter, if any
+0.01.118.575 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.02.806.213 I cmn          init: llama threadpool init, n_threads = 8
+ggml_vulkan: compute pipeline creation failed for mul_mat_vec_q4_k_f32_f32: vk::Device::createComputePipeline: ErrorUnknown
+0: 0x7c40752090 
+1: 0x7c40752040 ggml_print_backtrace
+2: 0x7c40768c2c 
+3: 0x7c482f36e0 
+4: 0x7c483115d8 __cxa_rethrow
+5: 0x79a333d898 
+6: 0x79a332ea2c 
+7: 0x79a335a370 
+8: 0x79a3383a9c 
+9: 0x79a339a8f4 
+10: 0x7c40772d04 ggml_backend_sched_graph_compute_async
+11: 0x7c3f2598b0 _ZN13llama_context13graph_computeEP11ggml_cgraphb
+12: 0x7c3f2593d8 _ZN13llama_context14process_ubatchERK12llama_ubatch14llm_graph_typeP22llama_memory_context_iR11ggml_status
+13: 0x7c3f25ad18 _ZN13llama_context6decodeERK15llama_batch_ext
+14: 0x7c448affe8 _Z23common_init_from_paramsR13common_paramsb
+15: 0x7c44b67b08 _Z16llama_completioniPPc
+16: 0x7c4847ca28 __libc_init
+libc++abi: terminating due to uncaught exception of type N2vk12UnknownErrorE: vk::Device::createComputePipeline: ErrorUnknown
+

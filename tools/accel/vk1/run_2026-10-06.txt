@@ -1,0 +1,160 @@
+[Γ] SOVEREIGN_EVOLUTION ~ $ ls -l ~/storage/downloads/vk1_probe* ~/storage/downloads/VK1_PREREG*
+-rw-rw----. 1 u0_a320 media_rw 11788 Oct  6 12:36 /data/data/com.termux/files/home/storage/downloads/VK1_PREREG-1.md
+-rw-rw----. 1 u0_a320 media_rw 11788 Oct  6 12:36 /data/data/com.termux/files/home/storage/downloads/VK1_PREREG.md
+-rw-rw----. 1 u0_a320 media_rw 28577 Oct  6 12:36 /data/data/com.termux/files/home/storage/downloads/vk1_probe.py
+[Γ] SOVEREIGN_EVOLUTION ~ $ mkdir -p ~/sv-lab/vk1 && cp ~/storage/downloads/vk1_probe.py ~/storage/downloads/VK1_PREREG.md ~/sv-lab/vk1/ && sha256sum ~/sv-lab/vk1/vk1_probe.py ~/sv-lab/vk1/VK1_PREREG.md
+e823f2a3da9bf2d1aeb02a8b265096645f978a3b585b8080d4fdf74e684ecd7e  /data/data/com.termux/files/home/sv-lab/vk1/vk1_probe.py
+99e048102150cf4ce040b62f0547381340ccaaed28935582238d4a0aec313bd9  /data/data/com.termux/files/home/sv-lab/vk1/VK1_PREREG.md
+[Γ] SOVEREIGN_EVOLUTION ~ $ python3 ~/sv-lab/vk1/vk1_probe.py --plan
+A_antivacuity  ppl_cpu_tinyllama                  ppl      ngl=0
+A_antivacuity  ppl_cpu_tinyllama_scrambled        ppl      ngl=0
+B_ref          gen_cpu_tinyllama                  gen      ngl=0
+B_ref          gen_cpu_q40                        gen      ngl=0
+B_ref          gen_cpu_qwen_q4km                  gen      ngl=0
+A_antivacuity  gen_cpu_tinyllama_r2               gen      ngl=0
+B_ref          ppl_cpu_q40                        ppl      ngl=0
+B_ref          ppl_cpu_qwen_q4km                  ppl      ngl=0
+C_ngl1         gen_vk1_tinyllama                  gen      ngl=1
+C_ngl1         ppl_vk1_tinyllama                  ppl      ngl=1
+C_ngl1         gen_vk1_q40                        gen      ngl=1
+C_ngl1         ppl_vk1_q40                        ppl      ngl=1
+C_ngl1         gen_vk1_qwen_q4km                  gen      ngl=1
+C_ngl1         ppl_vk1_qwen_q4km                  ppl      ngl=1
+D_full         gen_vk99_tinyllama                 gen      ngl=99
+D_full         ppl_vk99_tinyllama                 ppl      ngl=99
+D_full         gen_vk99_q40                       gen      ngl=99
+D_full         ppl_vk99_q40                       ppl      ngl=99
+D_full         gen_vk99_qwen_q4km                 gen      ngl=99
+D_full         ppl_vk99_qwen_q4km                 ppl      ngl=99
+E_bisect       gen_vk2_tinyllama                  gen      ngl=2
+E_bisect       gen_vk11_tinyllama                 gen      ngl=11
+E_bisect       gen_vk21_tinyllama                 gen      ngl=21
+E_bisect       gen_vk22_tinyllama                 gen      ngl=22
+E_bisect       gen_vk23_tinyllama                 gen      ngl=23
+F_repeat       cli_vk99_tinyllama_r1              cli_raw  ngl=99
+F_repeat       cli_vk99_tinyllama_r2              cli_raw  ngl=99
+F_repeat       cli_vk99_tinyllama_r3              cli_raw  ngl=99
+G_explore      gen_vk1_tinyllama_mmvq             gen      ngl=1   GGML_VK_DISABLE_MMVQ=1
+G_explore      gen_vk1_tinyllama_f16              gen      ngl=1   GGML_VK_DISABLE_F16=1
+G_explore      gen_vk1_tinyllama_coopmat2dv       gen      ngl=1   GGML_VK_DISABLE_COOPMAT2_DECODE_VECTOR=1
+G_explore      gen_vk1_tinyllama_dot2             gen      ngl=1   GGML_VK_DISABLE_DOT2=1
+G_explore      gen_vk1_tinyllama_fusion           gen      ngl=1   GGML_VK_DISABLE_FUSION=1
+G_explore      gen_vk1_tinyllama_graphopt         gen      ngl=1   GGML_VK_DISABLE_GRAPH_OPTIMIZE=1
+34 cells
+[Γ] SOVEREIGN_EVOLUTION ~ $ termux-wake-lock && python3 ~/sv-lab/vk1/vk1_probe.py
+preflight written; prereg_sha256=99e048102150cf4ce040b62f0547381340ccaaed28935582238d4a0aec313bd9
+gen tool=llama-completion  ppl tool=/data/data/com.termux/files/usr/bin/llama-perplexity  llama-cli=/data/data/com.termux/files/usr/bin/llama-cli
+ppl_cpu_tinyllama                  REF           rc=0 9.87s
+ppl_cpu_tinyllama_scrambled        REF           rc=0 10.26s
+gen_cpu_tinyllama                  REF           rc=0 0.97s
+gen_cpu_q40                        REF           rc=0 31.84s
+gen_cpu_qwen_q4km                  REF           rc=0 2.83s
+gen_cpu_tinyllama_r2               CORRECT       rc=0 0.99s
+ppl_cpu_q40                        REF           rc=0 17.4s
+ppl_cpu_qwen_q4km                  REF           rc=0 20.2s
+gen_vk1_tinyllama                  INCORRECT     rc=0 1.72s
+ppl_vk1_tinyllama                  CORRECT       rc=0 12.54s
+gen_vk1_q40                        INCORRECT     rc=0 3.19s
+ppl_vk1_q40                        CORRECT       rc=0 19.84s
+gen_vk1_qwen_q4km                  INCORRECT     rc=0 2.88s
+ppl_vk1_qwen_q4km                  CORRECT       rc=0 21.31s
+gen_vk99_tinyllama                 ABORT         rc=-6 1.49s
+ppl_vk99_tinyllama                 ABORT         rc=-6 1.2s
+gen_vk99_q40                       INCORRECT     rc=0 5.58s
+ppl_vk99_q40                       CORRECT       rc=0 26.67s
+gen_vk99_qwen_q4km                 ABORT         rc=-6 4.38s
+ppl_vk99_qwen_q4km                 ABORT         rc=-6 4.4s
+gen_vk2_tinyllama                  ABORT         rc=-6 5.47s
+gen_vk11_tinyllama                 ABORT         rc=-6 4.6s
+gen_vk21_tinyllama                 ABORT         rc=-6 2.83s
+gen_vk22_tinyllama                 ABORT         rc=-6 2.23s
+gen_vk23_tinyllama                 ABORT         rc=-6 2.85s
+cli_vk99_tinyllama_r1              running ...
+
+cli_vk99_tinyllama_r1              ABORT         rc=-6 1.83s
+cli_vk99_tinyllama_r2              running ...
+
+cli_vk99_tinyllama_r2              ABORT         rc=-6 1.19s
+cli_vk99_tinyllama_r3              running ...
+
+cli_vk99_tinyllama_r3              ABORT         rc=-6 1.15s
+gen_vk1_tinyllama_mmvq             INCORRECT     rc=0 1.39s
+gen_vk1_tinyllama_f16              INCORRECT     rc=0 1.82s
+gen_vk1_tinyllama_coopmat2dv       INCORRECT     rc=0 1.66s
+gen_vk1_tinyllama_dot2             INCORRECT     rc=0 1.48s
+gen_vk1_tinyllama_fusion           INCORRECT     rc=0 1.7s
+gen_vk1_tinyllama_graphopt         INCORRECT     rc=0 1.69s
+
+== VK-1 report (vk1-probe 1) ==
+preflight 2026-10-06T12:38:22-0500  prereg_sha256=99e048102150cf4ce040b62f0547381340ccaaed28935582238d4a0aec313bd9
+gen tool: llama-completion  ppl tool: /data/data/com.termux/files/usr/bin/llama-perplexity
+  model q40: present ok dcd819ff094852c3
+  model qwen_q4km: present UNPINNED 6a1a2eb6d15622bf
+  model tinyllama: present ok 9fecc3b3cd76bba8
+
+-- cells --
+  ppl_cpu_tinyllama                  REF           rc=0        ppl=26244199.822  avail=5116MiB
+  ppl_cpu_tinyllama_scrambled        REF           rc=0        ppl=11284845.151  avail=5024MiB
+  gen_cpu_tinyllama                  REF           rc=0        text="[end of text]"  avail=5100MiB
+  gen_cpu_q40                        REF           rc=0        text="Evidence is the information or data that"  avail=5076MiB
+  gen_cpu_qwen_q4km                  REF           rc=0        text="Evidence is the information or data that"  avail=4946MiB
+  gen_cpu_tinyllama_r2               CORRECT       rc=0        text="[end of text]"  avail=5024MiB
+  ppl_cpu_q40                        REF           rc=0        ppl=7045803223.079  avail=5020MiB
+  ppl_cpu_qwen_q4km                  REF           rc=0        ppl=26577930162.123  avail=5220MiB
+  gen_vk1_tinyllama                  INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5822MiB
+  ppl_vk1_tinyllama                  CORRECT       rc=0        ppl=26244199.822  avail=5853MiB
+  gen_vk1_q40                        INCORRECT     rc=0        text="Iteration遮 s 除外mark he hehe hehehehehehe"  avail=5857MiB
+  ppl_vk1_q40                        CORRECT       rc=0        ppl=7045803223.078  avail=5855MiB
+  gen_vk1_qwen_q4km                  INCORRECT     rc=0        text="apixeleoneoneoneoneoneoneoneoneoneoneone"  avail=5816MiB
+  ppl_vk1_qwen_q4km                  CORRECT       rc=0        ppl=26577930162.123  avail=5819MiB
+  gen_vk99_tinyllama                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5814MiB
+  ppl_vk99_tinyllama                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5667MiB
+  gen_vk99_q40                       INCORRECT     rc=0        text="anca圈 gr gr gr granton apology apology A"  avail=5653MiB
+  ppl_vk99_q40                       CORRECT       rc=0        ppl=7045803223.079  avail=5400MiB
+  gen_vk99_qwen_q4km                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5485MiB
+  ppl_vk99_qwen_q4km                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5501MiB
+  gen_vk2_tinyllama                  ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5608MiB
+  gen_vk11_tinyllama                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5650MiB
+  gen_vk21_tinyllama                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5688MiB
+  gen_vk22_tinyllama                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5290MiB
+  gen_vk23_tinyllama                 ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5255MiB
+  cli_vk99_tinyllama_r1              ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5202MiB
+  cli_vk99_tinyllama_r2              ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5183MiB
+  cli_vk99_tinyllama_r3              ABORT         rc=-6       abort=mul_mat_vec_q4_k_f32_f32  avail=5263MiB
+  gen_vk1_tinyllama_mmvq             INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5330MiB
+  gen_vk1_tinyllama_f16              INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5299MiB
+  gen_vk1_tinyllama_coopmat2dv       INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5310MiB
+  gen_vk1_tinyllama_dot2             INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5325MiB
+  gen_vk1_tinyllama_fusion           INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5292MiB
+  gen_vk1_tinyllama_graphopt         INCORRECT     rc=0        text="Analysis Research Lab Research Lab Analy"  avail=5292MiB
+
+-- registered predictions (P4-P7 predict FAILURE of the Vulkan path) --
+  P1   HELD          Adreno 830 listed under Vulkan
+  P2a  REFUTED       scrambled/text = 0.43
+  P2b  HELD          CORRECT
+  P3   HELD          REF, REF, REF
+  P4   HELD          gen_vk1_tinyllama = INCORRECT
+  P5   REFUTED       ppl_vk1_tinyllama = CORRECT
+  P6   HELD          gen_vk1_q40 = INCORRECT
+  P7   HELD          gen_vk1_qwen_q4km = INCORRECT
+  P8   HELD          ABORT:mul_mat_vec_q4_k_f32_f32 / ABORT:mul_mat_vec_q4_k_f32_f32 / ABORT:mul_mat_vec_q4_k_f32_f32
+  P9   HELD          monotone=True onset_ngl=2 1:INCORRECT 2:ABORT 11:ABORT 21:ABORT 22:ABORT 23:ABORT 99:ABORT
+
+VERDICT 8 of 10 determinate predictions held as registered (0 indeterminate of 10)
+
+-- exploratory (no predictions) --
+  GGML_VK_DISABLE_MMVQ                       INCORRECT
+  GGML_VK_DISABLE_F16                        INCORRECT
+  GGML_VK_DISABLE_COOPMAT2_DECODE_VECTOR     INCORRECT
+  GGML_VK_DISABLE_DOT2                       INCORRECT
+  GGML_VK_DISABLE_FUSION                     INCORRECT
+  GGML_VK_DISABLE_GRAPH_OPTIMIZE             INCORRECT
+
+-- labels the evidence allows --
+  tinyllama: correct output, but Vulkan not evidenced in log: NOT DEMONSTRATED [ppl_vk1_tinyllama]
+  q40: correct output, but Vulkan not evidenced in log: NOT DEMONSTRATED [ppl_vk1_q40, ppl_vk99_q40]
+  qwen_q4km: correct output, but Vulkan not evidenced in log: NOT DEMONSTRATED [ppl_vk1_qwen_q4km]
+
+DIGEST e464c9443057b6626f1fb94aa0d12c672255dec41700bad98d0261447f8055a4
+RECORDED not pinned yet (first device run pins it, as a separate step)
+NOT VALIDATED on the S25 until this report comes from a device run.

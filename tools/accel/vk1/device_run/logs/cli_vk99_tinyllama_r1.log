@@ -1,0 +1,32 @@
+# cli_vk99_tinyllama_r1 2026-10-06T12:42:34-0500
+# argv: ["/data/data/com.termux/files/usr/bin/llama-cli", "-m", "/data/data/com.termux/files/home/models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf", "-ngl", "99", "-c", "512", "-p", "Explain in one sentence what evidence means.", "-n", "32"]
+# env flags: {}
+# rc: -6  wall_s: 1.83
+# ---- stdout ----
+
+# ---- stderr ----
+0.00.147.011 E ggml_opencl: platform IDs not available.
+ggml_vulkan: compute pipeline creation failed for mul_mat_vec_q4_k_f32_f32: vk::Device::createComputePipeline: ErrorUnknown
+0: 0x7c25366090 
+1: 0x7c25366040 ggml_print_backtrace
+2: 0x7c2537cc2c 
+3: 0x7c24eb76e0 
+4: 0x7c24ed55d8 __cxa_rethrow
+5: 0x797e310898 
+6: 0x797e301a2c 
+7: 0x797e32d370 
+8: 0x797e356a9c 
+9: 0x797e36d8f4 
+10: 0x7c25386d04 ggml_backend_sched_graph_compute_async
+11: 0x7c20e238b0 _ZN13llama_context13graph_computeEP11ggml_cgraphb
+12: 0x7c20e233d8 _ZN13llama_context14process_ubatchERK12llama_ubatch14llm_graph_typeP22llama_memory_context_iR11ggml_status
+13: 0x7c20e24d18 _ZN13llama_context6decodeERK15llama_batch_ext
+14: 0x7c164ccfe8 _Z23common_init_from_paramsR13common_paramsb
+15: 0x7c238d2058 _ZN19server_context_impl10load_modelER13common_params
+16: 0x7c23816fdc _Z12llama_serverR13common_paramsiPPcR12server_child
+17: 0x7c238192b8 _Z12llama_serverR13common_paramsiPPc
+18: 0x7c20febe7c 
+19: 0x7c134a06f0 
+20: 0x7c13493010 
+libc++abi: terminating due to uncaught exception of type N2vk12UnknownErrorE: vk::Device::createComputePipeline: ErrorUnknown
+
