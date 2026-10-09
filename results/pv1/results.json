@@ -1,0 +1,92 @@
+{
+ "results": {
+  "A0": {
+   "exit": 0,
+   "failed": [],
+   "tags": {
+    "compute_budget": "DEFAULTED",
+    "power_status": "DEFAULTED",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+  },
+  "A1": {
+   "exit": 0,
+   "failed": [],
+   "tags": {
+    "compute_budget": "OPERATOR",
+    "power_status": "OPERATOR",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+  },
+  "A2": {
+   "exit": 1,
+   "failed": [
+    "limitations_declared",
+    "package_digest"
+   ],
+   "tags": {
+    "compute_budget": "OPERATOR",
+    "power_status": "OPERATOR",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  2 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+  },
+  "A3": {
+   "exit": 0,
+   "failed": [],
+   "tags": {
+    "compute_budget": "OPERATOR",
+    "power_status": "OPERATOR",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+  },
+  "A4": {
+   "exit": 1,
+   "failed": [
+    "evidence_states"
+   ],
+   "tags": {
+    "compute_budget": "MEASURED",
+    "power_status": "DEFAULTED",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+  },
+  "S_A1": {
+   "exit": 0,
+   "failed": [],
+   "tags": {
+    "compute_budget": "OPERATOR",
+    "power_status": "OPERATOR",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:pv1-throwaway@example.invalid"
+  },
+  "S_A3": {
+   "exit": 0,
+   "failed": [],
+   "tags": {
+    "compute_budget": "OPERATOR",
+    "power_status": "OPERATOR",
+    "thermal_status": "OPERATOR"
+   },
+   "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=SIGNED:pv1-throwaway@example.invalid"
+  },
+  "W5": {
+   "decision_equal": true,
+   "gate_inputs_equal": true
+  },
+  "W6_declarer_paths": []
+ },
+ "verdicts": {
+  "W1": true,
+  "W2": true,
+  "W3": true,
+  "W4": true,
+  "W5": true,
+  "W6": true
+ }
+}
