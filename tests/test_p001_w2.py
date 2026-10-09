@@ -156,7 +156,7 @@ def test_b03_contract_substitution_fails_even_when_resealed_and_validly_signed(t
     assert any(l.startswith("PASS  signature") for l in lines)        # authenticity passes
     binding = next(l for l in lines if "contract_binding" in l)
     assert binding.startswith("FAIL") and field in binding, binding  # the reason names the field
-    assert "contract=UNBOUND" in r.stdout
+    assert "CONTRACT UNBOUND" in r.stdout
     st = tmp_path / "state.json"
     c = k.accept(pkg, sig, write_log(tmp_path / "w.log", [pkg]), st)
     assert c.returncode == 1 and state_bytes(st) is None
@@ -174,7 +174,7 @@ def test_b04_the_trusted_pair_passes_the_full_verifier(tmp_path):
     assert r.returncode == 0, r.stdout
     assert "PASS  contract_binding" in r.stdout
     assert "VERDICT  CONSISTENT" in r.stdout and "authenticity=SIGNED:chad" in r.stdout
-    assert "contract=BOUND:sv.gate/0" in r.stdout
+    assert "CONTRACT BOUND:sv.gate/0" in r.stdout
 
 
 def test_b04_trusted_digest_equals_the_one_recomputed_from_the_shipped_vectors():
@@ -249,13 +249,13 @@ def test_b06_signed_legacy_keeps_its_original_signature_and_is_legacy_unbound():
     r = verify_cli("--legacy", LEGACY_SIGNED, "--signature", f"{LEGACY_SIGNED}.sig",
                    "--allowed-signers", ROOT / "keys" / "allowed_signers", "--identity", "holland202")
     assert r.returncode == 0, r.stdout
-    assert "authenticity=SIGNED:holland202" in r.stdout and "contract=LEGACY_UNBOUND" in r.stdout
+    assert "authenticity=SIGNED:holland202" in r.stdout and "CONTRACT LEGACY_UNBOUND" in r.stdout
 
 
 def test_b06_unsigned_legacy_is_inspectable_legacy_unbound_and_not_proven():
     r = verify_cli("--legacy", LEGACY_UNSIGNED)
     assert r.returncode == 0, r.stdout
-    assert "authenticity=NOT_PROVEN" in r.stdout and "contract=LEGACY_UNBOUND" in r.stdout
+    assert "authenticity=NOT_PROVEN" in r.stdout and "CONTRACT LEGACY_UNBOUND" in r.stdout
     assert "SIGNED" not in r.stdout
 
 
@@ -356,12 +356,12 @@ def test_b08_documented_commands_run_end_to_end(tmp_path):
         p = run(cmd, pkg)
         assert p.returncode == 0, (cmd, p.stdout + p.stderr)
     p = run(DOC_COMMANDS[4], pkg)
-    assert p.returncode == 0 and "authenticity=SIGNED:tester" in p.stdout and "contract=BOUND:sv.gate/0" in p.stdout, \
+    assert p.returncode == 0 and "authenticity=SIGNED:tester" in p.stdout and "CONTRACT BOUND:sv.gate/0" in p.stdout, \
         p.stdout
     p = run(DOC_COMMANDS[5], pkg)
     assert p.returncode == 0 and "CONSUMER  ACCEPTED" in p.stdout, p.stdout
     p = run(DOC_COMMANDS[6])
-    assert p.returncode == 0 and "contract=LEGACY_UNBOUND" in p.stdout and "SIGNED:holland202" in p.stdout, p.stdout
+    assert p.returncode == 0 and "CONTRACT LEGACY_UNBOUND" in p.stdout and "SIGNED:holland202" in p.stdout, p.stdout
     os.remove(pkg)
     out = os.environ.get("P001_B08_TRANSCRIPT")
     if out:  # CI keeps the command lines and outputs (ACCEPTANCE B08)

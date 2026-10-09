@@ -11,8 +11,8 @@ There are three different roles, and they don't substitute for each other.
 | Role | Tool | What it can say | What it cannot say |
 |---|---|---|---|
 | **Accept** a new package (production) | `tools/consumer.py accept` | ACCEPTED: signed by an allowed key, `sv.package/1`, bound to the locally trusted Gate contract, consistent, latest witnessed, not a replay, no rollback; state updated | that the decision is true, that the key holder is honest, that the time is current |
-| **Inspect** a package | `tools/verify_package.py` | CONSISTENT, `authenticity=SIGNED:ID` or `NOT_PROVEN`, `contract=BOUND:sv.gate/0` / `LEGACY_UNBOUND` | ACCEPTED: it has no state and never writes any |
-| **Inspect a legacy** `sv.package/0` | `tools/verify_package.py --legacy` | the historical checks, `contract=LEGACY_UNBOUND` | that the package was bound to any contract: it never was |
+| **Inspect** a package | `tools/verify_package.py` | CONSISTENT, `authenticity=SIGNED:ID` or `NOT_PROVEN`, a `CONTRACT BOUND:sv.gate/0` or `CONTRACT LEGACY_UNBOUND` line | ACCEPTED: it has no state and never writes any |
+| **Inspect a legacy** `sv.package/0` | `tools/verify_package.py --legacy` | the historical checks, `CONTRACT LEGACY_UNBOUND` | that the package was bound to any contract: it never was |
 
 ## Trust anchors
 

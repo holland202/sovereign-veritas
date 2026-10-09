@@ -25,7 +25,7 @@ Contract binding (P-001 W2): an sv.package/1 names the Gate contract it was deci
 (contract.id, contract.conformance_digest). This verifier compares both with its own locally pinned
 TRUSTED_CONTRACTS, never with anything else in the package, so a package cannot vouch for itself.
 An sv.package/0 has no binding: without --legacy it fails contract_binding; with --legacy it is
-inspected and reported contract=LEGACY_UNBOUND. Inspection is never acceptance (tools/consumer.py
+inspected and reported CONTRACT LEGACY_UNBOUND. Inspection is never acceptance (tools/consumer.py
 accepts only signed sv.package/1).
 """
 import base64, hashlib, json, math, os, shutil, subprocess, sys, tempfile
@@ -809,7 +809,7 @@ def contract_binding(pkg):
 
 
 def contract_status(pkg, legacy=False):
-    """The VERDICT line's contract= field."""
+    """The CONTRACT line printed just before VERDICT."""
     if pkg.get("schema") == SCHEMA_V0:
         return "LEGACY_UNBOUND"
     if pkg.get("schema") == SCHEMA_V1:
@@ -1104,9 +1104,10 @@ def main():
     # then the named key holder signed exactly these failing bytes, which is itself worth knowing.
     signed = sig is not None and any(n == "signature" and ok for n, ok, _ in checks)
     authenticity = f"SIGNED:{sig[2]}" if signed else "NOT_PROVEN"
+    # Own line, before VERDICT: the VERDICT line's format is parsed by registered probes (EO-1 E4 digests it).
+    print(f"CONTRACT {contract_status(pkg)}")
     print(f"VERDICT  {'CONSISTENT' if not failed else f'{len(failed)} check(s) failed'}"
-          f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}"
-          f"  contract={contract_status(pkg)}")
+          f"  freshness={freshness or pkg['freshness']['status']}  authenticity={authenticity}")
     sys.exit(1 if failed else 0)
 
 

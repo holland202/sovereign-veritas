@@ -4,6 +4,13 @@
   python tools/jg2_probe.py              exit 0 only on the RECORDED outcome; 2 = could not run
   python tools/jg2_probe.py --sabotage   P6's byte change is skipped: P6 must be REFUTED, exit 1
   python tools/jg2_probe.py --pre-fix    P4 expects the gap that F1 closes (run once, before F1)
+  python tools/jg2_probe.py --pre-w1     P7 expects the gap that P-001 W1 closes (the recorded 2026-10 outcome;
+                                         only reproducible on code before W1)
+
+P7 after P-001 W1 (2026-10-09): the registered P7 (signatures opt-in) HELD before W1 and is kept as
+recorded in docs/JG2_RESULTS.md. W1 made the three signature options required, so by default P7 now
+checks the fixed behaviour: no package is accepted without a signature (argparse usage error, exit 2),
+and verify_package.py --legacy still inspects the unsigned file as authenticity=NOT_PROVEN.
 """
 import glob
 import hashlib
@@ -110,8 +117,8 @@ def p6(sabotage):
     return {"tampered_copy_verifies": still}, (not still)
 
 
-def p7():
-    out = {}
+def p7(pre_w1=False):
+    out, exits = {}, []
     with tempfile.TemporaryDirectory() as tmp:
         accepted = None
         for p in PACKAGES:
@@ -119,24 +126,28 @@ def p7():
             r = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "consumer.py"), "accept", p,
                                 "--witness-log", os.path.join(ROOT, "witness", "packages.log"), "--state", state],
                                capture_output=True, text=True)
+            exits.append(r.returncode)
             if r.returncode == 0:
                 accepted = os.path.basename(p)
                 break
         out["consumer_accepts_without_signature"] = accepted
-    v = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "verify_package.py"), PACKAGES[0]],
-                       capture_output=True, text=True)
+    v = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "verify_package.py"), PACKAGES[0]]
+                       + ([] if pre_w1 else ["--legacy"]), capture_output=True, text=True)
     m = re.search(r"authenticity=(\S+)", v.stdout)
     out["verify_without_signature_exit"] = v.returncode
     out["verify_authenticity"] = m.group(1) if m else None
-    held = (accepted is not None and v.returncode == 0 and out["verify_authenticity"] == "NOT_PROVEN")
-    return out, held
+    inspect_ok = v.returncode == 0 and out["verify_authenticity"] == "NOT_PROVEN"
+    if pre_w1:
+        return out, (accepted is not None and inspect_ok)
+    out["consumer_exits_without_signature"] = sorted(set(exits))
+    return out, (accepted is None and set(exits) == {2} and inspect_ok)
 
 
 def main(argv):
     sab = "--sabotage" in argv
     if sab:
         print("SABOTAGE: P6 checks an untampered copy")
-    obs = {"P1": p1(), "P3": p3(), "P4": p4("--pre-fix" in argv), "P5": p5(), "P6": p6(sab), "P7": p7()}
+    obs = {"P1": p1(), "P3": p3(), "P4": p4("--pre-fix" in argv), "P5": p5(), "P6": p6(sab), "P7": p7("--pre-w1" in argv)}
     for pid, (d, ok) in obs.items():
         print(f"{'HELD   ' if ok else 'REFUTED'} {pid}  {json.dumps(d, sort_keys=True)}")
     print("NOT RUN P2  (Android / Termux: not run here)")
@@ -147,7 +158,7 @@ def main(argv):
     print(f"DIGEST {digest}")
     if sab:
         return 0 if all(held) else 1
-    if RECORDED is None or "--pre-fix" in argv:
+    if RECORDED is None or "--pre-fix" in argv or "--pre-w1" in argv:
         print("RECORDED not pinned yet")
         return 0 if all(held) else 1
     return 0 if held == RECORDED else 1
