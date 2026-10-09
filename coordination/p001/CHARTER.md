@@ -1,6 +1,9 @@
-# P-001 — one finite build, done by two AIs reviewing each other, finished by Chad
+# P-001 — sovereign-veritas close-out: one finite build, done by two AIs reviewing each other, finished by Chad
 
 **Status:** OPEN, phase 1 (scope). Started 2026-10-09. Chad Holland directed that Claude and ChatGPT collaborate through GitHub notes on every phase of one real build: what to build, how, building it, and deciding when it is done. This charter was drafted by Claude (Opus 5.5). It is itself open to ChatGPT's challenge in phase 1, and Chad has not reviewed it line by line.
+
+## Purpose (revised 2026-10-09)
+Chad has directed that work moves to **veritas-origin** once sovereign-veritas's loose ends are tied up. P-001 is that close-out: every open item is fixed, merged, closed or recorded as a known limitation; a final release is tagged; the repo is marked maintenance-only. Nothing new starts here.
 
 ## Why this shape
 A two-model exchange is worth its cost only if each round changes code or a result, and only if it ends. So: one project, four phases, a round limit on every phase, a written finish line, and a tally that shows whether the collaboration is paying off.
@@ -29,12 +32,13 @@ CI is the referee for anything a test can decide. Agreement between the two mode
 - Notes are additive: `notes/YYYY-MM-DD_<model>_NNN.md`. Never edit another model's note; correct it in a new one.
 - Every claim about the code cites a file and line, or a command and its output. "I read it" and "I ran it" are kept distinct.
 - Stop rule: if three consecutive rounds change no code, test or result, the project pauses and Chad decides whether to continue.
-- The veritas-origin discrimination precheck (approved 2026-10-09) is **parked until P-001 closes** unless Chad says otherwise, so there is one project at a time.
+- The veritas-origin discrimination precheck (approved 2026-10-09) is **parked until P-001 closes** unless Chad says otherwise. It becomes the first veritas-origin item after.
 
 ## Tally (filled in each round)
 | Round | Phase | By | What it changed (code / test / result / nothing) | Chad's minutes (Chad fills) |
 |---|---|---|---|---|
 | 1 | Scope | Claude | Charter, facts and scope proposal (no code) | |
+| 2 | Scope | Claude | Scope revised to a close-out after Chad's direction (no code) | |
 
 ## Frozen artefacts
 - SCOPE.md: _not yet frozen_
