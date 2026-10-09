@@ -4,7 +4,7 @@
 > (annotated tag on `ecd4de9`) is **NOT PRODUCTION-READY** and **NOT INDEPENDENTLY SECURITY-VALIDATED**.
 > From here: security reports and correctness fixes only; no new features. All findings, negative results and
 > known limits stay published: see [STATUS.md](STATUS.md) and [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
-> Cross-platform QEMU legs (s390x, ppc64le) on the release revision: **RESULT_PENDING**.
+> Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
 > Issues and breaks are still welcome; the owner will answer them.
 
 ---
