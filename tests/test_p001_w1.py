@@ -306,3 +306,37 @@ def test_a08_documentation_does_not_claim_power_loss_durability():
     doc = CONSUMER.read_text(encoding="utf-8")
     assert "not a durability guarantee against power loss" in doc
     assert ROOT.joinpath("tools", "consumer.py") == CONSUMER
+
+
+# ---- additive (ChatGPT review probe 2, #66 comment 6085812504): not frozen cases, added attacks --------
+
+@pytest.mark.parametrize("breakage", ["chain is a string", "contract is a list", "artifact missing", "top level list"])
+def test_add_malformed_nested_v1_with_a_valid_signature_is_could_not_look_or_refused(kit, breakage):
+    pkg, sig, log, st = seeded(kit)
+    before = state_bytes(st)
+    p = json.loads(pkg.read_text(encoding="utf-8"))
+    if breakage == "chain is a string":
+        p["provenance"]["chain"] = "x"
+    elif breakage == "contract is a list":
+        p["contract"] = ["sv.gate/0"]
+    elif breakage == "artifact missing":
+        del p["artifact"]
+    else:
+        p = [p]
+    bad, bsig = kit.pkg("bad.json", pkg=p if isinstance(p, list) else reseal(p))
+    r = kit.accept(bad, bsig, write_log(kit.d / "wb.log", [pkg]) if isinstance(p, list) else
+                   write_log(kit.d / "wb.log", [kit.d / "first.json", bad]), st)
+    assert r.returncode in (1, 2) and no_traceback(r), (breakage, r.stdout + r.stderr)
+    assert "ACCEPTED" not in r.stdout.replace("NOT ACCEPTED", "")
+    assert state_bytes(st) == before
+
+
+def test_add_malformed_v1_without_ssh_keygen_is_could_not_look(kit):
+    pkg, sig, log, st = seeded(kit)
+    before = state_bytes(st)
+    p = json.loads(pkg.read_text(encoding="utf-8"))
+    p["provenance"]["chain"] = "x"
+    bad, bsig = kit.pkg("bad.json", pkg=reseal(p))
+    r = kit.accept(bad, bsig, log, st, env=dict(os.environ, PATH=str(kit.d / "empty-path")))
+    assert r.returncode == 2 and "COULD NOT LOOK" in r.stdout and no_traceback(r)
+    assert state_bytes(st) == before

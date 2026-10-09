@@ -63,3 +63,10 @@ python tools/verify_package.py --legacy evidence/sv_package_7548237bceca.json --
 - Archived `sv.package/0` files are not rewritten, resealed or re-signed (`tests/p001/legacy_manifest_709da9e.sha256`).
 - `tools/consumer.py` refuses every `sv.package/0`, signed or not.
 - The consumer writes state to a temporary file in the same directory and moves it into place with `os.replace`. An interrupted write leaves the previous state. That is atomic replacement, not durability against power loss.
+
+## Known limits these changes do not address
+
+- **Concurrent consumers:** two `consumer.py` processes that share one state file are not serialised. Both can read the same old state and both accept the same package, so replay protection holds per process, not across concurrent processes. A08's atomic replace prevents a torn file. It does not prevent a lost update. Not tested; no locking was added.
+- **First use:** a new consumer has no anchor, so it cannot detect a rollback that happened before it first looked.
+- **Signed is not true or fresh:** see the Trust anchors section. The all-DEFAULTED `ALLOW` (W3) and the OPERATOR declarer gap (PV-1) are unchanged.
+
