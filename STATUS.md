@@ -9,6 +9,23 @@
 
 ---
 
+## OPEN findings (unfixed)
+
+- **SV-ATTACK-001 Q1 (2026-10-09): an ALLOW covers parameters changed after the decision.** `EvidenceWorkflow.run()`
+  decides on a copy of the action's parameters (`workflow.py` L188), but executes the caller's original,
+  mutable `ActionProposal` (L253). A change between the two runs unauthorized parameters, while the ledger
+  records the authorized ones. Reproduced in the kernel and on `FakeVehicle` (a `goto` 500 m north, outside
+  the fence) by a deterministic hook standing in for a concurrent writer. This shows the window exists, not
+  how often it is hit. Container only; not run on the S25. See [docs/SV_ATTACK_001_RESULTS.md](docs/SV_ATTACK_001_RESULTS.md).
+  Motivated by John Rodriguez's external-review concern about gate manipulation. The attack design is not
+  his, and he has not reviewed it.
+- **SV-ATTACK-001 Q3 (2026-10-09): `verify_package.py` does not compare `commands_sent` with the authorized
+  parameters.** The package from the run above verifies `CONSISTENT` (exit 0). Separate component, separate
+  finding.
+- Replay of an earlier approval for a modified action was refused in both forms tested (Q2 PASS).
+
+---
+
 ## CREDITED breaks
 
 - **Davorin Popović** — AI-assisted private review/report (2026-10-02) identifying that `execute()` runs before
