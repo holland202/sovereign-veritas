@@ -1,0 +1,29 @@
+SV-ATTACK-001 probe  label=run1  python=3.13.15  platform=Linux-6.18.44-fc-v114-x86_64-with-glibc2.39
+probe sha256 67324e5e8a1f0317d760a8d2885ea629bd6bd01c98a8313dd9ac8a222d5b9752
+ok       dc845506e704ef9c305128b4272031dc67c60aafbc10b278f6b32d273e34a358  sovereign_veritas/workflow.py
+ok       84a4a59a4692973b9440e66fdcafdaa0e57d18e5f1e284ab04a9ccacd1893462  sovereign_veritas/decision.py
+ok       21183bd8cab0e39bb670c5e7248270a192b4f127cf0265e65c2ff3d10e8c03b3  sovereign_veritas/interfaces/contracts.py
+ok       6eb33ba5d013f54658b6422042340563bef053c39d972543d232c3ccf0554ace  sovereign_veritas/evidence.py
+ok       b8e92c6f5da51c2569dd9e8f7024ca166829d2fd17183037047946ebbdbbdd3a  sovereign_veritas/idempotency.py
+ok       960922275727eff2862c5dce60852fdd2787dafcdd87f0ba84c3a45a73c2aada  sovereign_veritas/package.py
+ok       408b3d5b1a58087805cda1b586b3452f06af7ed53dc3c6d59986c5ba3a00b657  tools/vehicle_action.py
+ok       fc952616158c3ab6d7749dd9e27ed9bf58b76f12a6eaa6a02aabdeac224d7746  tools/verify_package.py
+C3 comparator self-test: ok
+
+A0  ALLOW  effects 1  divergence False  authorized {'target': 'sandbox/a.txt', 'mode': 'append'}  executed [{'target': 'sandbox/a.txt', 'mode': 'append'}]  order ['evaluate_returned', 'execute']
+A1  ALLOW  effects 1  divergence True  authorized {'target': 'sandbox/a.txt', 'mode': 'append'}  executed [{'target': '/etc/passwd', 'mode': 'overwrite'}]  order ['evaluate_returned', 'mutated', 'execute']
+O1  ALLOW  effects 1  divergence False  authorized {'target': '/etc/passwd', 'mode': 'overwrite'}  executed [{'target': '/etc/passwd', 'mode': 'overwrite'}]
+A2  refused_before_execution True  new_effects 0  ValueError: duplicate record_id refused before execution: A0
+A3  refused_before_execution True  new_effects 0  ReservationRefused: idempotency key 'k1' is COMPLETED: refused before execution
+B0  ALLOW  effects 1  divergence False  authorized {'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}  executed [{'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}]  order ['evaluate_returned', 'execute']
+B0  commands_sent ['goto {"alt_m":20.0,"lat_e7":353640993,"lon_e7":-969270000}']
+B0  verify_package exit 0  VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+B1  ALLOW  effects 1  divergence True  authorized {'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}  executed [{'alt_m': 20.0, 'lat_e7': 353676966, 'lon_e7': -969270000}]  order ['evaluate_returned', 'mutated', 'execute']
+B1  commands_sent ['goto {"alt_m":20.0,"lat_e7":353676966,"lon_e7":-969270000}']
+B1  verify_package exit 0  VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+B2  verify_package exit 1  VERDICT  3 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN
+
+controls  C1 True  C2 True  C3 True  C4 True
+VERDICT  Q1 (execution boundary) FAIL  |  Q2 (replay) PASS  |  Q3 (offline verifier) FAIL
+         observation: ALLOW, 1 effect(s) (not a verdict)
+Q1 is a deterministic race simulation: it shows the window, not how likely a real writer hits it (M2).
