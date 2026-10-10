@@ -1,0 +1,308 @@
+{
+ "C3": true,
+ "label": "run1",
+ "layer_a": {
+  "A0": {
+   "authorized_params": {
+    "mode": "append",
+    "target": "sandbox/a.txt"
+   },
+   "authorized_sha256": "24be2b090445f4d444538f2c5ddef38136b43134c356ef9645fc5c5b49603651",
+   "case": "A0",
+   "decision": "ALLOW",
+   "divergence": false,
+   "effects": 1,
+   "executed_params": [
+    {
+     "mode": "append",
+     "target": "sandbox/a.txt"
+    }
+   ],
+   "executed_sha256": [
+    "24be2b090445f4d444538f2c5ddef38136b43134c356ef9645fc5c5b49603651"
+   ],
+   "mutations": 0,
+   "order": [
+    "evaluate_returned",
+    "execute"
+   ],
+   "reasons": [],
+   "record_digest": "5f25d10bc46c7938d8d167aceaa56f05396afc232a7a26dd5a72badb3f81c013"
+  },
+  "A1": {
+   "authorized_params": {
+    "mode": "append",
+    "target": "sandbox/a.txt"
+   },
+   "authorized_sha256": "24be2b090445f4d444538f2c5ddef38136b43134c356ef9645fc5c5b49603651",
+   "case": "A1",
+   "decision": "ALLOW",
+   "divergence": true,
+   "effects": 1,
+   "executed_params": [
+    {
+     "mode": "overwrite",
+     "target": "/etc/passwd"
+    }
+   ],
+   "executed_sha256": [
+    "36fc097b3b96d8a701544f2e3173f5584f7a245d5e4919b4624890f7319b9778"
+   ],
+   "mutations": 1,
+   "order": [
+    "evaluate_returned",
+    "mutated",
+    "execute"
+   ],
+   "reasons": [],
+   "record_digest": "3c60dfa355e73c0a01faf8065ee822a47430a14f8f90e4195b664d5cb1e3ce9a"
+  },
+  "A2": {
+   "case": "A2",
+   "error": "ValueError: duplicate record_id refused before execution: A0",
+   "new_effects": 0,
+   "refused_before_execution": true
+  },
+  "A3": {
+   "case": "A3",
+   "error": "ReservationRefused: idempotency key 'k1' is COMPLETED: refused before execution",
+   "first_decision": "ALLOW",
+   "new_effects": 0,
+   "refused_before_execution": true,
+   "reservation_refused": true
+  },
+  "O1": {
+   "authorized_params": {
+    "mode": "overwrite",
+    "target": "/etc/passwd"
+   },
+   "authorized_sha256": "36fc097b3b96d8a701544f2e3173f5584f7a245d5e4919b4624890f7319b9778",
+   "case": "O1",
+   "decision": "ALLOW",
+   "divergence": false,
+   "effects": 1,
+   "executed_params": [
+    {
+     "mode": "overwrite",
+     "target": "/etc/passwd"
+    }
+   ],
+   "executed_sha256": [
+    "36fc097b3b96d8a701544f2e3173f5584f7a245d5e4919b4624890f7319b9778"
+   ],
+   "reasons": [],
+   "record_digest": "c70d483b708df70ac052419d76163a55d78563d8463fe5939eae82258244ab21"
+  }
+ },
+ "layer_b": {
+  "B0": {
+   "authorized_params": {
+    "alt_m": 20.0,
+    "lat_e7": 353640993,
+    "lon_e7": -969270000
+   },
+   "authorized_sha256": "d9462236ffdd90779ca3b7b961a37f30b337ea479f895a6090daf57525b4b0e7",
+   "case": "B0",
+   "commands_sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}"
+   ],
+   "crash": null,
+   "decision": "ALLOW",
+   "divergence": false,
+   "effects": 1,
+   "executed_params": [
+    {
+     "alt_m": 20.0,
+     "lat_e7": 353640993,
+     "lon_e7": -969270000
+    }
+   ],
+   "executed_sha256": [
+    "d9462236ffdd90779ca3b7b961a37f30b337ea479f895a6090daf57525b4b0e7"
+   ],
+   "mutations": 0,
+   "order": [
+    "evaluate_returned",
+    "execute"
+   ],
+   "package": "/tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/sva_run/results/sv_attack_001/run1/home_B0/sv_package_5ad28242c7a0.json",
+   "package_sha256": "6302152acc59eb20cae0617e53aa1c53175b7beb7853d6886c2a9591f245d063",
+   "reasons": [],
+   "record_digest": "ccfe21898f81b72a950a222aa26459184ed4827812b3f029fa56c15ee6bd24d5",
+   "stdout": [
+    "backend fake  vehicle fake-stand-in-not-a-vehicle  action goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}",
+    "before  fix 6 sats 10 ekf 831 battery 90% alt 10.0 m armed True mode GUIDED",
+    "check   PASS (all goto rules hold)",
+    "thermal normal (declared)",
+    "decision ALLOW []",
+    "sent    ['goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}']",
+    "after   reached True  alt 20.0 m moved 100.0 m armed True mode GUIDED",
+    "package /tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/sva_run/results/sv_attack_001/run1/home_B0/sv_package_5ad28242c7a0.json  md5 5ad28242c7a0ce6e523c545de11a9c4e"
+   ],
+   "verify": {
+    "exit": 0,
+    "stderr": [],
+    "stdout": [
+     "PASS  schema                             sv.package/1",
+     "PASS  contract_binding                   BOUND sv.gate/0: digest matches the local trust anchor",
+     "PASS  schema_closed                      no unknown keys",
+     "PASS  package_digest                     ",
+     "PASS  artifact_digest                    ",
+     "PASS  measurement_names_artifact         ",
+     "PASS  measurement_recomputed             snapshot re-hashed, vehicle check re-run",
+     "PASS  provenance_chain                   ",
+     "PASS  decision_record_is_artifact        ",
+     "PASS  decision_record_matches            ",
+     "PASS  measurement_in_chain               ",
+     "PASS  capability_named_in_record         ",
+     "PASS  gate_replay                        replayed ALLOW []",
+     "PASS  verifier_identity_not_overclaimed  ",
+     "PASS  verifier_provenance                vehicle-command-check-v0 VALIDATED",
+     "PASS  thermal                            zone statuses and per-domain summary recomputed",
+     "PASS  thermal_before                     0 zones: domain and status recomputed",
+     "PASS  evidence_states                    thermal_status=OPERATOR compute_budget=DEFAULTED power_status=DEFAULTED",
+     "PASS  vehicle_check_bound                verdict PASS, 'goto', 1 command(s) sent",
+     "PASS  execution_only_if_allowed          SUCCEEDED under ALLOW",
+     "PASS  freshness_not_overclaimed          NOT_PROVEN",
+     "PASS  limitations_declared               the four statements, resource state from its evidence states",
+     "CONTRACT BOUND:sv.gate/0",
+     "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+    ]
+   }
+  },
+  "B1": {
+   "authorized_params": {
+    "alt_m": 20.0,
+    "lat_e7": 353640993,
+    "lon_e7": -969270000
+   },
+   "authorized_sha256": "d9462236ffdd90779ca3b7b961a37f30b337ea479f895a6090daf57525b4b0e7",
+   "case": "B1",
+   "commands_sent": [
+    "goto {\"alt_m\":20.0,\"lat_e7\":353676966,\"lon_e7\":-969270000}"
+   ],
+   "crash": null,
+   "decision": "ALLOW",
+   "divergence": true,
+   "effects": 1,
+   "executed_params": [
+    {
+     "alt_m": 20.0,
+     "lat_e7": 353676966,
+     "lon_e7": -969270000
+    }
+   ],
+   "executed_sha256": [
+    "53896703774fb4173554b17508d5f23ccd1db7bba2bead6282062abfae67cbc1"
+   ],
+   "mutations": 1,
+   "order": [
+    "evaluate_returned",
+    "mutated",
+    "execute"
+   ],
+   "package": "/tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/sva_run/results/sv_attack_001/run1/home_B1/sv_package_5ea54474d6e6.json",
+   "package_sha256": "3a5c9b42c6a986b44fa690a822b3987daaf8c114d8a85bb179b2fa1589b2e82f",
+   "reasons": [],
+   "record_digest": "741399c628fc0e31c8e42e3461a9c96fde995f6e820203005cac7dbc6ec57e94",
+   "stdout": [
+    "backend fake  vehicle fake-stand-in-not-a-vehicle  action goto {\"alt_m\":20.0,\"lat_e7\":353676966,\"lon_e7\":-969270000}",
+    "before  fix 6 sats 10 ekf 831 battery 90% alt 10.0 m armed True mode GUIDED",
+    "check   PASS (all goto rules hold)",
+    "thermal normal (declared)",
+    "decision ALLOW []",
+    "sent    ['goto {\"alt_m\":20.0,\"lat_e7\":353676966,\"lon_e7\":-969270000}']",
+    "after   reached True  alt 20.0 m moved 500.0 m armed True mode GUIDED",
+    "package /tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/sva_run/results/sv_attack_001/run1/home_B1/sv_package_5ea54474d6e6.json  md5 5ea54474d6e6a0b966801076807ac0fc"
+   ],
+   "verify": {
+    "exit": 0,
+    "stderr": [],
+    "stdout": [
+     "PASS  schema                             sv.package/1",
+     "PASS  contract_binding                   BOUND sv.gate/0: digest matches the local trust anchor",
+     "PASS  schema_closed                      no unknown keys",
+     "PASS  package_digest                     ",
+     "PASS  artifact_digest                    ",
+     "PASS  measurement_names_artifact         ",
+     "PASS  measurement_recomputed             snapshot re-hashed, vehicle check re-run",
+     "PASS  provenance_chain                   ",
+     "PASS  decision_record_is_artifact        ",
+     "PASS  decision_record_matches            ",
+     "PASS  measurement_in_chain               ",
+     "PASS  capability_named_in_record         ",
+     "PASS  gate_replay                        replayed ALLOW []",
+     "PASS  verifier_identity_not_overclaimed  ",
+     "PASS  verifier_provenance                vehicle-command-check-v0 VALIDATED",
+     "PASS  thermal                            zone statuses and per-domain summary recomputed",
+     "PASS  thermal_before                     0 zones: domain and status recomputed",
+     "PASS  evidence_states                    thermal_status=OPERATOR compute_budget=DEFAULTED power_status=DEFAULTED",
+     "PASS  vehicle_check_bound                verdict PASS, 'goto', 1 command(s) sent",
+     "PASS  execution_only_if_allowed          SUCCEEDED under ALLOW",
+     "PASS  freshness_not_overclaimed          NOT_PROVEN",
+     "PASS  limitations_declared               the four statements, resource state from its evidence states",
+     "CONTRACT BOUND:sv.gate/0",
+     "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+    ]
+   }
+  },
+  "B2": {
+   "case": "B2",
+   "package": "/tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/sva_run/results/sv_attack_001/run1/packages/B2_tampered.json",
+   "package_sha256": "efcdc8f5267050207a59a54611eca40101f6d22357064cdfcf69e0cfcf0bffa7",
+   "source": "/tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/sva_run/results/sv_attack_001/run1/home_B0/sv_package_5ad28242c7a0.json",
+   "verify": {
+    "exit": 1,
+    "stderr": [],
+    "stdout": [
+     "PASS  schema                             sv.package/1",
+     "PASS  contract_binding                   BOUND sv.gate/0: digest matches the local trust anchor",
+     "PASS  schema_closed                      no unknown keys",
+     "FAIL  package_digest                     ",
+     "PASS  artifact_digest                    ",
+     "PASS  measurement_names_artifact         ",
+     "PASS  measurement_recomputed             snapshot re-hashed, vehicle check re-run",
+     "FAIL  provenance_chain                   record 1 digest",
+     "PASS  decision_record_is_artifact        ",
+     "PASS  decision_record_matches            ",
+     "PASS  measurement_in_chain               ",
+     "PASS  capability_named_in_record         ",
+     "PASS  gate_replay                        replayed ALLOW []",
+     "PASS  verifier_identity_not_overclaimed  ",
+     "PASS  verifier_provenance                vehicle-command-check-v0 VALIDATED",
+     "PASS  thermal                            zone statuses and per-domain summary recomputed",
+     "PASS  thermal_before                     0 zones: domain and status recomputed",
+     "PASS  evidence_states                    thermal_status=OPERATOR compute_budget=DEFAULTED power_status=DEFAULTED",
+     "FAIL  vehicle_check_bound                requested action or parameters are not the request's",
+     "PASS  execution_only_if_allowed          SUCCEEDED under ALLOW",
+     "PASS  freshness_not_overclaimed          NOT_PROVEN",
+     "PASS  limitations_declared               the four statements, resource state from its evidence states",
+     "CONTRACT BOUND:sv.gate/0",
+     "VERDICT  3 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+    ]
+   }
+  }
+ },
+ "platform": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+ "probe_sha256": "67324e5e8a1f0317d760a8d2885ea629bd6bd01c98a8313dd9ac8a222d5b9752",
+ "python": "3.13.15",
+ "target_hashes": {
+  "sovereign_veritas/decision.py": "84a4a59a4692973b9440e66fdcafdaa0e57d18e5f1e284ab04a9ccacd1893462",
+  "sovereign_veritas/evidence.py": "6eb33ba5d013f54658b6422042340563bef053c39d972543d232c3ccf0554ace",
+  "sovereign_veritas/idempotency.py": "b8e92c6f5da51c2569dd9e8f7024ca166829d2fd17183037047946ebbdbbdd3a",
+  "sovereign_veritas/interfaces/contracts.py": "21183bd8cab0e39bb670c5e7248270a192b4f127cf0265e65c2ff3d10e8c03b3",
+  "sovereign_veritas/package.py": "960922275727eff2862c5dce60852fdd2787dafcdd87f0ba84c3a45a73c2aada",
+  "sovereign_veritas/workflow.py": "dc845506e704ef9c305128b4272031dc67c60aafbc10b278f6b32d273e34a358",
+  "tools/vehicle_action.py": "408b3d5b1a58087805cda1b586b3452f06af7ed53dc3c6d59986c5ba3a00b657",
+  "tools/verify_package.py": "fc952616158c3ab6d7749dd9e27ed9bf58b76f12a6eaa6a02aabdeac224d7746"
+ },
+ "verdicts": {
+  "C1": true,
+  "C2": true,
+  "C4": true,
+  "O1": "observation: ALLOW, 1 effect(s)",
+  "Q1": "FAIL",
+  "Q2": "PASS",
+  "Q3": "FAIL"
+ }
+}
