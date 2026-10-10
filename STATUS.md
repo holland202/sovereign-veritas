@@ -11,6 +11,11 @@
 
 ## OPEN findings (unfixed)
 
+> **Update 2026-10-10 (this branch, not yet merged):** Q1 and Q3 below have candidate fixes (SV-FIX-001, F1 and
+> F2) that passed their registered verification: F1 PASS, F2 PASS, one execution in a container, not on the S25,
+> same author. See [docs/SV_FIX_001_RESULTS.md](docs/SV_FIX_001_RESULTS.md). The entries below stay as they were
+> written. They move to fixed only when the fix is merged, and the record keeps the link to the failure.
+
 - **SV-ATTACK-001 Q1 (2026-10-09): an ALLOW covers parameters changed after the decision.** `EvidenceWorkflow.run()`
   decides on a copy of the action's parameters (`workflow.py` L188), but executes the caller's original,
   mutable `ActionProposal` (L253). A change between the two runs unauthorized parameters, while the ledger

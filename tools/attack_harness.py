@@ -295,6 +295,13 @@ def main():
         if req["action"] == "goto" and pkg["decision"]["decision"] == "ALLOW":
             p5 = copy.deepcopy(pkg)
             req["params"]["lon_e7"] += EAST_100M_E7
+            # Amendment 1 (docs/ATTACK_HARNESS_AMENDMENT1.md): a fully consistent rewrite also rewrites the
+            # position command it claims was sent, formatted as MavlinkVehicle.run formats it.
+            rp = req["params"]
+            p5["measurement"]["commands_sent"] = [
+                f"SET_POSITION_TARGET_GLOBAL_INT {rp['lat_e7']} {rp['lon_e7']} {rp['alt_m']}"
+                if c.startswith("SET_POSITION_TARGET_GLOBAL_INT ") else c
+                for c in p5["measurement"]["commands_sent"]]
             recompute_all(vp, p5, req)
             record("A5", name, forged(name, p5), failed_names(p5))
 

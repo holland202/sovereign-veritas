@@ -321,6 +321,45 @@ def canon(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
+def sent_command_problems(backend, requested, params, sent):
+    """SV-FIX-001 F2: compare the commands a vehicle backend recorded with the authorized parameters.
+
+    fake: exactly one command, "<requested> <canonical params>" (FakeVehicle.run's format).
+    mavlink: ARM and SET_MODE <name> carry no movement parameters; NAV_TAKEOFF <alt_m> and
+    SET_POSITION_TARGET_GLOBAL_INT <lat_e7> <lon_e7> <alt_m> must equal the authorized values (formatted
+    as MavlinkVehicle.run formats them); a goto has exactly one position command, a takeoff exactly one
+    NAV_TAKEOFF; any other command name fails (closed list). Any other backend fails.
+    """
+    if not all(isinstance(c, str) for c in sent):
+        return ["a sent command is not a string"]
+    if backend == "fake":
+        want = [f"{requested} {canon(params)}"]
+        return [] if sent == want else [f"commands sent {sent!r} are not the authorized {want!r}"]
+    if backend != "mavlink":
+        return [f"unknown backend {backend!r}: sent commands cannot be checked"]
+    out, takeoffs, gotos = [], 0, 0
+    for c in sent:
+        name = c.split(" ", 1)[0]
+        if c == "ARM" or (name == "SET_MODE" and len(c.split(" ")) == 2):
+            continue
+        if name == "NAV_TAKEOFF":
+            takeoffs += 1
+            if c != f"NAV_TAKEOFF {params.get('alt_m')}":
+                out.append(f"sent {c!r} is not the authorized takeoff altitude")
+        elif name == "SET_POSITION_TARGET_GLOBAL_INT":
+            gotos += 1
+            want = f"SET_POSITION_TARGET_GLOBAL_INT {params.get('lat_e7')} {params.get('lon_e7')} {params.get('alt_m')}"
+            if c != want:
+                out.append(f"sent {c!r} is not the authorized {want!r}")
+        else:
+            out.append(f"sent command {c!r} is not on the closed list")
+    if requested == "goto" and gotos != 1:
+        out.append(f"goto sent {gotos} position command(s), not exactly 1")
+    if requested == "takeoff" and takeoffs != 1:
+        out.append(f"takeoff sent {takeoffs} NAV_TAKEOFF command(s), not exactly 1")
+    return out
+
+
 def sha(text_or_bytes):
     data = text_or_bytes.encode("utf-8") if isinstance(text_or_bytes, str) else text_or_bytes
     return hashlib.sha256(data).hexdigest()
@@ -1007,6 +1046,11 @@ def verify(pkg, allow_recorded_only=False, legacy=False):
             broken.append(f"{len(sent)} command(s) sent under {dec['decision']} with execution {status}")
         if (m.get("outcome") is not None) != (status == "SUCCEEDED"):
             broken.append("an outcome is recorded exactly when the action ran")
+        if isinstance(sent, list) and dec["decision"] == "ALLOW" and status in ("SUCCEEDED", "FAILED"):
+            # SV-FIX-001 F2 (docs/SV_FIX_001_PREREG.md; SV-ATTACK-001 Q3): what was sent must carry exactly
+            # the authorized parameters. The reference is the record's action, already bound to the request
+            # above; nothing the package says about the commands is trusted as the reference.
+            broken += sent_command_problems(m.get("backend"), act.get("requested"), act.get("parameters") or {}, sent)
         check("vehicle_check_bound", not broken, "; ".join(broken) or
               f"verdict {chk.get('verdict')}, {act.get('requested')!r}, {len(sent or [])} command(s) sent")
 

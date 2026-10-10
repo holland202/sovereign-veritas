@@ -6,7 +6,7 @@ from typing import Any
 
 from .capability import Capability
 from .decision import Decision, Gate
-from .evidence import EvidenceRecord
+from .evidence import EvidenceRecord, _thaw
 from .interfaces.contracts import (
     ActionExecutor,
     ActionProposal,
@@ -249,8 +249,13 @@ class EvidenceWorkflow:
                 # RK-2: reserved before the effect. Raises ReservationRefused if the key exists in any state.
                 # RK-3: the lease is the caller's to set; the token lets a late holder be recorded, not obeyed.
                 holder_token = self.reservations.reserve(idempotency_key, lease_s)
+            # SV-FIX-001 F1 (docs/SV_FIX_001_PREREG.md; SV-ATTACK-001 Q1): execute exactly what the Gate decided
+            # on, the frozen action in the decision record, never the caller's mutable object. A change the
+            # caller makes after the decision cannot reach the executor, and the record holds what ran.
+            decided = _thaw(evidence.action)
+            decided_action = ActionProposal(decided["capability"], decided["requested"], decided["parameters"])
             try:
-                execution_result = self.executor.execute(action)
+                execution_result = self.executor.execute(decided_action)
             except Exception as exc:
                 failed_metadata = dict(evidence.metadata)
                 if idempotency_key is None:
