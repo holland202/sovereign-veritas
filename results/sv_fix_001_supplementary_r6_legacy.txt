@@ -1,0 +1,24 @@
+SAME evidence/attacks/issue-005/finite_bad_battery.json :: FAIL vehicle_check_bound 3 command(s) sent under REFUSE with execution SUCCEEDED|VERDICT 2 check(s) failed freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME evidence/attacks/issue-005/nan_allow.json :: COULD NOT LOOK: ValueError: non-standard JSON literal NaN (NaN and Infinity are not JSON)|
+SAME evidence/attacks/issue-005/nan_allow_postfix.json :: COULD NOT LOOK: ValueError: non-standard JSON literal NaN (NaN and Infinity are not JSON)|
+SAME runs/vehicle_sitl/sv_package_38697f863557.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_48a574f7a293.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_80855d390a48.json :: PASS vehicle_check_bound verdict PASS, 'goto', 2 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_8416b7537ad7.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_98b78fd97e64.json :: PASS vehicle_check_bound verdict PASS, 'takeoff', 3 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_a684ca47cdbb.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_aa2fd72afe52.json :: PASS vehicle_check_bound verdict PASS, 'land', 1 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_d048e1f2d4b2.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_eef440c1a19d.json :: PASS vehicle_check_bound verdict FAIL, 'takeoff', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl/sv_package_fd0198365f0b.json :: PASS vehicle_check_bound verdict PASS, 'disarm', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v11/try1_battery/sv_package_31c566b45699.json :: PASS vehicle_check_bound verdict PASS, 'takeoff', 3 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v11/try1_battery/sv_package_a3db3dd426a2.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v11/try2/sv_package_01e41ea9d04d.json :: PASS vehicle_check_bound verdict PASS, 'goto', 2 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v11/try2/sv_package_c212b1be77bb.json :: PASS vehicle_check_bound verdict PASS, 'takeoff', 3 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v12/sv_package_1506bcc87b3f.json :: PASS vehicle_check_bound verdict PASS, 'goto', 2 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v12/sv_package_17fc46618269.json :: PASS vehicle_check_bound verdict FAIL, 'rtl', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v12/sv_package_1cb1bc93e3fe.json :: PASS vehicle_check_bound verdict PASS, 'takeoff', 3 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v12/sv_package_63be8f24ae27.json :: PASS vehicle_check_bound verdict FAIL, 'goto', 0 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v12/sv_package_e2742efd6cd8.json :: PASS vehicle_check_bound verdict PASS, 'goto', 2 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v12/sv_package_e7b6562cec75.json :: PASS vehicle_check_bound verdict PASS, 'land', 1 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
+SAME runs/vehicle_sitl_v13/sv_package_a911244dfcf7.json :: PASS vehicle_check_bound verdict PASS, 'takeoff', 3 command(s) sent|VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN|
