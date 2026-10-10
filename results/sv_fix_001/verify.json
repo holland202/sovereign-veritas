@@ -1,0 +1,279 @@
+{
+ "R1_R3_probe": {
+  "cmd": [
+   "/usr/bin/python3",
+   "-I",
+   "tools/sv_fix_001_probe.py",
+   "--label",
+   "run1",
+   "--out",
+   "results/sv_fix_001"
+  ],
+  "exit": 0,
+  "stderr": [],
+  "stdout": [
+   "SV-ATTACK-001 probe  label=run1  python=3.13.15  platform=Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+   "probe sha256 9dd60a1c2d822c6b7caa283845c5e98b3bcc557671b5e6999d3160794570f631",
+   "ok       6431eeb772063cd6e21750a065a8903b6919daa9f2a173db516fcc2ff24efd88  sovereign_veritas/workflow.py",
+   "ok       84a4a59a4692973b9440e66fdcafdaa0e57d18e5f1e284ab04a9ccacd1893462  sovereign_veritas/decision.py",
+   "ok       21183bd8cab0e39bb670c5e7248270a192b4f127cf0265e65c2ff3d10e8c03b3  sovereign_veritas/interfaces/contracts.py",
+   "ok       6eb33ba5d013f54658b6422042340563bef053c39d972543d232c3ccf0554ace  sovereign_veritas/evidence.py",
+   "ok       b8e92c6f5da51c2569dd9e8f7024ca166829d2fd17183037047946ebbdbbdd3a  sovereign_veritas/idempotency.py",
+   "ok       960922275727eff2862c5dce60852fdd2787dafcdd87f0ba84c3a45a73c2aada  sovereign_veritas/package.py",
+   "ok       408b3d5b1a58087805cda1b586b3452f06af7ed53dc3c6d59986c5ba3a00b657  tools/vehicle_action.py",
+   "ok       e5e760f0ec06e6e12d57690421d36852271d9923026c5807766235d07d78d2db  tools/verify_package.py",
+   "C3 comparator self-test: ok",
+   "",
+   "A0  ALLOW  effects 1  divergence False  authorized {'target': 'sandbox/a.txt', 'mode': 'append'}  executed [{'target': 'sandbox/a.txt', 'mode': 'append'}]  order ['evaluate_returned', 'execute']",
+   "A1  ALLOW  effects 1  divergence False  authorized {'target': 'sandbox/a.txt', 'mode': 'append'}  executed [{'target': 'sandbox/a.txt', 'mode': 'append'}]  order ['evaluate_returned', 'mutated', 'execute']",
+   "O1  ALLOW  effects 1  divergence False  authorized {'target': '/etc/passwd', 'mode': 'overwrite'}  executed [{'target': '/etc/passwd', 'mode': 'overwrite'}]",
+   "A2  refused_before_execution True  new_effects 0  ValueError: duplicate record_id refused before execution: A0",
+   "A3  refused_before_execution True  new_effects 0  ReservationRefused: idempotency key 'k1' is COMPLETED: refused before execution",
+   "B0  ALLOW  effects 1  divergence False  authorized {'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}  executed [{'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}]  order ['evaluate_returned', 'execute']",
+   "B0  commands_sent ['goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}']",
+   "B0  verify_package exit 0  VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN",
+   "B1  ALLOW  effects 1  divergence False  authorized {'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}  executed [{'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}]  order ['evaluate_returned', 'mutated', 'execute']",
+   "B1  commands_sent ['goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}']",
+   "B1  verify_package exit 0  VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN",
+   "B2  verify_package exit 1  VERDICT  3 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN",
+   "",
+   "controls  C1 True  C2 True  C3 True  C4 True",
+   "VERDICT  Q1 (execution boundary) PASS  |  Q2 (replay) PASS  |  Q3 (offline verifier) FAIL",
+   "         observation: ALLOW, 1 effect(s) (not a verdict)",
+   "Q1 is a deterministic race simulation: it shows the window, not how likely a real writer hits it (M2).",
+   "evidence: /tmp/claude-0/-home-claude/214b5a97-9112-5d99-b888-70888203409b/scratchpad/fix_run/results/sv_fix_001/run1  (SHA256SUMS sha256 c186e8cf1d0216ec79aec9a8d18cbcc8a6a389448e73c04ffc5482ff5ac4418b)"
+  ]
+ },
+ "R4": {
+  "exit": 1,
+  "failed": [
+   "FAIL  vehicle_check_bound                commands sent ['goto {\"alt_m\":20.0,\"lat_e7\":353676966,\"lon_e7\":-969270000}'] are not the authorized ['goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}']"
+  ],
+  "verdict": "VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+ },
+ "R5": {
+  "exit": 0,
+  "failed": [],
+  "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+ },
+ "R6": {
+  "changed": [],
+  "n": 24,
+  "rows": [
+   {
+    "fixed_exit": 1,
+    "package": "evidence/attacks/issue-005/finite_bad_battery.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 2,
+    "package": "evidence/attacks/issue-005/nan_allow.json",
+    "unfixed_exit": 2
+   },
+   {
+    "fixed_exit": 2,
+    "package": "evidence/attacks/issue-005/nan_allow_postfix.json",
+    "unfixed_exit": 2
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_38697f863557.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_48a574f7a293.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_80855d390a48.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_8416b7537ad7.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_98b78fd97e64.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_a684ca47cdbb.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_aa2fd72afe52.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_d048e1f2d4b2.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_eef440c1a19d.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl/sv_package_fd0198365f0b.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v11/try1_battery/sv_package_31c566b45699.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v11/try1_battery/sv_package_a3db3dd426a2.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v11/try2/sv_package_01e41ea9d04d.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v11/try2/sv_package_c212b1be77bb.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v12/sv_package_1506bcc87b3f.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v12/sv_package_17fc46618269.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v12/sv_package_1cb1bc93e3fe.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v12/sv_package_63be8f24ae27.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v12/sv_package_e2742efd6cd8.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v12/sv_package_e7b6562cec75.json",
+    "unfixed_exit": 1
+   },
+   {
+    "fixed_exit": 1,
+    "package": "runs/vehicle_sitl_v13/sv_package_a911244dfcf7.json",
+    "unfixed_exit": 1
+   }
+  ]
+ },
+ "R8": {
+  "diff": [
+   "--- workflow.py",
+   "+++ workflow.py (R8 mutant)",
+   "@@ -255,7 +255,7 @@",
+   "             decided = _thaw(evidence.action)",
+   "             decided_action = ActionProposal(decided[\"capability\"], decided[\"requested\"], decided[\"parameters\"])",
+   "             try:",
+   "-                execution_result = self.executor.execute(decided_action)",
+   "+                execution_result = self.executor.execute(action)",
+   "             except Exception as exc:",
+   "                 failed_metadata = dict(evidence.metadata)",
+   "                 if idempotency_key is None:"
+  ],
+  "mutant_workflow_sha256": "de021b0b878027a16e9ff18ab6ee60283764dcfddabcfad5daecfcf52671e022",
+  "probe_stdout": [
+   "SV-ATTACK-001 probe  label=R8  python=3.13.15  platform=Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+   "probe sha256 213cc6b56d5d4b0ea5a505850feb8ff23b34ed476568013f39a6a8d934e87d42",
+   "ok       de021b0b878027a16e9ff18ab6ee60283764dcfddabcfad5daecfcf52671e022  sovereign_veritas/workflow.py",
+   "ok       84a4a59a4692973b9440e66fdcafdaa0e57d18e5f1e284ab04a9ccacd1893462  sovereign_veritas/decision.py",
+   "ok       21183bd8cab0e39bb670c5e7248270a192b4f127cf0265e65c2ff3d10e8c03b3  sovereign_veritas/interfaces/contracts.py",
+   "ok       6eb33ba5d013f54658b6422042340563bef053c39d972543d232c3ccf0554ace  sovereign_veritas/evidence.py",
+   "ok       b8e92c6f5da51c2569dd9e8f7024ca166829d2fd17183037047946ebbdbbdd3a  sovereign_veritas/idempotency.py",
+   "ok       960922275727eff2862c5dce60852fdd2787dafcdd87f0ba84c3a45a73c2aada  sovereign_veritas/package.py",
+   "ok       408b3d5b1a58087805cda1b586b3452f06af7ed53dc3c6d59986c5ba3a00b657  tools/vehicle_action.py",
+   "ok       e5e760f0ec06e6e12d57690421d36852271d9923026c5807766235d07d78d2db  tools/verify_package.py",
+   "C3 comparator self-test: ok",
+   "",
+   "A0  ALLOW  effects 1  divergence False  authorized {'target': 'sandbox/a.txt', 'mode': 'append'}  executed [{'target': 'sandbox/a.txt', 'mode': 'append'}]  order ['evaluate_returned', 'execute']",
+   "A1  ALLOW  effects 1  divergence True  authorized {'target': 'sandbox/a.txt', 'mode': 'append'}  executed [{'target': '/etc/passwd', 'mode': 'overwrite'}]  order ['evaluate_returned', 'mutated', 'execute']",
+   "O1  ALLOW  effects 1  divergence False  authorized {'target': '/etc/passwd', 'mode': 'overwrite'}  executed [{'target': '/etc/passwd', 'mode': 'overwrite'}]",
+   "A2  refused_before_execution True  new_effects 0  ValueError: duplicate record_id refused before execution: A0",
+   "A3  refused_before_execution True  new_effects 0  ReservationRefused: idempotency key 'k1' is COMPLETED: refused before execution",
+   "B0  ALLOW  effects 1  divergence False  authorized {'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}  executed [{'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}]  order ['evaluate_returned', 'execute']",
+   "B0  commands_sent ['goto {\"alt_m\":20.0,\"lat_e7\":353640993,\"lon_e7\":-969270000}']",
+   "B0  verify_package exit 0  VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN",
+   "B1  ALLOW  effects 1  divergence True  authorized {'alt_m': 20.0, 'lat_e7': 353640993, 'lon_e7': -969270000}  executed [{'alt_m': 20.0, 'lat_e7': 353676966, 'lon_e7': -969270000}]  order ['evaluate_returned', 'mutated', 'execute']",
+   "B1  commands_sent ['goto {\"alt_m\":20.0,\"lat_e7\":353676966,\"lon_e7\":-969270000}']",
+   "B1  verify_package exit 1  VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN",
+   "B2  verify_package exit 1  VERDICT  3 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN",
+   "",
+   "controls  C1 True  C2 True  C3 True  C4 True",
+   "VERDICT  Q1 (execution boundary) FAIL  |  Q2 (replay) PASS  |  Q3 (offline verifier) PASS",
+   "         observation: ALLOW, 1 effect(s) (not a verdict)",
+   "Q1 is a deterministic race simulation: it shows the window, not how likely a real writer hits it (M2).",
+   "evidence: /tmp/sv_fix_001_igxszza1/r8_out/R8  (SHA256SUMS sha256 d0bfad108acb5f90eab07c6a219658b34a58c612bf387459520186690a4b6ab6)"
+  ],
+  "verdicts": {
+   "C1": true,
+   "C2": true,
+   "C4": true,
+   "O1": "observation: ALLOW, 1 effect(s)",
+   "Q1": "FAIL",
+   "Q2": "PASS",
+   "Q3": "PASS"
+  }
+ },
+ "R9": {
+  "diff": [
+   "--- verify_package.py",
+   "+++ verify_package.py (R9 mutant)",
+   "@@ -1050,7 +1050,7 @@",
+   "             # SV-FIX-001 F2 (docs/SV_FIX_001_PREREG.md; SV-ATTACK-001 Q3): what was sent must carry exactly",
+   "             # the authorized parameters. The reference is the record's action, already bound to the request",
+   "             # above; nothing the package says about the commands is trusted as the reference.",
+   "-            broken += sent_command_problems(m.get(\"backend\"), act.get(\"requested\"), act.get(\"parameters\") or {}, sent)",
+   "+            pass  # R9 mutant: F2 removed",
+   "         check(\"vehicle_check_bound\", not broken, \"; \".join(broken) or",
+   "               f\"verdict {chk.get('verdict')}, {act.get('requested')!r}, {len(sent or [])} command(s) sent\")",
+   " "
+  ],
+  "exit": 0,
+  "failed": [],
+  "verdict": "VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN"
+ },
+ "driver_sha256": "b7320a48ea66e88f5742dd08499e056ba6bbca1d43b6e80a48e609a364ed619e",
+ "platform": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+ "probe_sha256": "9dd60a1c2d822c6b7caa283845c5e98b3bcc557671b5e6999d3160794570f631",
+ "python": "3.13.15",
+ "verdicts": {
+  "F1_excluding_R7": "PASS",
+  "F2": "PASS",
+  "probe": {
+   "C1": true,
+   "C2": true,
+   "C4": true,
+   "O1": "observation: ALLOW, 1 effect(s)",
+   "Q1": "PASS",
+   "Q2": "PASS",
+   "Q3": "FAIL"
+  }
+ },
+ "verify_package_sha256": "e5e760f0ec06e6e12d57690421d36852271d9923026c5807766235d07d78d2db",
+ "workflow_sha256": "6431eeb772063cd6e21750a065a8903b6919daa9f2a173db516fcc2ff24efd88"
+}
