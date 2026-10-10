@@ -9,12 +9,14 @@
 
 ---
 
-## OPEN findings (unfixed)
+## FIXED findings: SV-ATTACK-001 (found 2026-10-09, fixed 2026-10-10)
 
-> **Update 2026-10-10 (this branch, not yet merged):** Q1 and Q3 below have candidate fixes (SV-FIX-001, F1 and
-> F2) that passed their registered verification: F1 PASS, F2 PASS, one execution in a container, not on the S25,
-> same author. See [docs/SV_FIX_001_RESULTS.md](docs/SV_FIX_001_RESULTS.md). The entries below stay as they were
-> written. They move to fixed only when the fix is merged, and the record keeps the link to the failure.
+> **Fixed 2026-10-10, merged as `fff4f68` (PR #71).** Q1 is fixed by SV-FIX-001 F1 (the executor receives the
+> decision record's frozen action) and Q3 by F2 (`verify_package.py` compares `commands_sent` with the authorized
+> parameters). The registered verification gave F1 PASS and F2 PASS: one execution, in a container, not on the
+> S25, by the same author, not independent. See [docs/SV_FIX_001_RESULTS.md](docs/SV_FIX_001_RESULTS.md).
+> The failure entries below are kept exactly as first written (PR #70, `36b324a`). Their evidence stays in
+> `results/sv_attack_001/`.
 
 - **SV-ATTACK-001 Q1 (2026-10-09): an ALLOW covers parameters changed after the decision.** `EvidenceWorkflow.run()`
   decides on a copy of the action's parameters (`workflow.py` L188), but executes the caller's original,
