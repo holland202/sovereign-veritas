@@ -1,0 +1,24 @@
+{
+  "binary_archived": false,
+  "binary_sha256": "f644e9458f2a6424f0b45ea2746b6c54a1ec6b513e8811e7c8fa01ee76797e05",
+  "classification": "deliberately_planted_vulnerability",
+  "compiler": "Clang 21.1.8",
+  "cross_substrate_verified": false,
+  "discovery": "asan_diagnostic_observed",
+  "experiment": "SEC-003A",
+  "files": {
+    "corpus/seed1": "559aead08264d5795d3909718cdd05abd49572e84fe55590eef31a88a08fdffd",
+    "corpus/seed2": "a4cd8b4d9855cd16b37997eb7a5e1c293555d8340b50b90fc729e9b5628443b8",
+    "findings/crash-6cba7117cce8b98eb837e84388855e2db6d4ecb3": "e7692250c07c17e58e2d202e3a1181746744b20c9d5e5fb695ed2c258f53b57a",
+    "fuzz_stack.c": "9986e787a5348ad1a403b6daa7f2338bee0577309b1ca5b49f7c25bf6fcf69a6",
+    "fuzzer.log": "5813f0d0ef4d505e26ffcd7d7b55a82e660e67247b51257697edb3c8460e24cc",
+    "replay.log": "f7318327c63818df5bbcc10f1464173258fe0c47894fff086f96085dbf4d1dca",
+    "replay_status.json": "0561518de7932e3aab61a732a2588ef0a6318cf666732a7d4aa8d5ffaf30533c"
+  },
+  "finding": "stack-buffer-overflow",
+  "independent_external_validation": false,
+  "platform": "Android ARM64 / Termux",
+  "replay": "confirmed_in_local_execution",
+  "repository_base_commit": "d83ef9dac98d1b4f3ce59a7f6d0ce70adbd89d25",
+  "source_sha256": "9986e787a5348ad1a403b6daa7f2338bee0577309b1ca5b49f7c25bf6fcf69a6"
+}
