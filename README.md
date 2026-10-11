@@ -7,6 +7,21 @@
 > Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
 > Issues and breaks are still welcome; the owner will answer them.
 
+## What is Sovereign Veritas?
+
+**Sovereign Veritas is an experimental, open-source permission and verification system for AI-driven actions.** It sits between a proposed action and an executor, asks whether the recorded evidence, capability authorization, policy, and runtime state satisfy defined rules, and returns **ALLOW**, **DEFER**, or **REFUSE**. The objective is to make the boundary between an AI's proposal and a real-world action explicit, testable, and independently inspectable—not to trust an AI's confidence or a self-reported success label.
+
+In practical terms, it provides:
+
+- **A fail-closed Gate:** missing or invalid authorization and runtime information can prevent an action, rather than silently permitting it.
+- **An evidence package:** records the inputs, decision, digests, and declared limits, with optional signatures and witness-log checks.
+- **An offline verifier:** recomputes the recorded Gate decision and checks package consistency, without sharing the Gate kernel's code.
+- **A reproducible test contract:** [4,690 published decision vectors](CONTRACT.md), demos, adversarial tests, and documented failures that others can challenge.
+
+**Example:** An AI proposes moving a simulated vehicle. The Gate examines its declared authority, required evidence, policy restrictions, and runtime state before the workflow may execute it. An offline reviewer can later check whether the *recorded* decision followed those rules. This does **not** establish that a sensor was honest, that the physical action happened as recorded, or that every execution race is prevented.
+
+**Scope and maturity:** This is a research prototype, **not** a general-purpose AI model, a replacement for a production policy engine, or a certified safety system. It is **not production-ready or independently security-validated**; the repository is maintenance-only from v0.2.0. See [STATUS.md](STATUS.md) for open findings and negative results, [CONTRACT.md](CONTRACT.md) for the exact Gate rules, and the [30-second demo](#30-second-demo--prototype) for a quick hands-on example.
+
 <!-- 30s-demo -->
 > **Status labels used below.** **PROTOTYPE:** runs, is tested, and is not hardened for production.
 > **RESEARCH HYPOTHESIS:** stated, not yet shown. **NOT PRODUCTION-READY:** nothing in this repository is.
