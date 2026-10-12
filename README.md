@@ -1,5 +1,9 @@
 # Sovereign Veritas
 
+<!-- collaboration-invitation:start -->
+> **🤝 Independent reviewers and security contributors welcome.** Help reproduce results, test the 4,690-vector Gate contract, or challenge authorization and execution-boundary claims. **[Join the collaboration and technical review invitation → Issue #79](https://github.com/holland202/sovereign-veritas/issues/79)**. This repository is **maintenance-only**: security findings, correctness fixes, and independent review are welcome; new features are not in scope.
+<!-- collaboration-invitation:end -->
+
 > **MAINTENANCE-ONLY (from v0.2.0).** Active development of this repository has ended. Release `v0.2.0`
 > (annotated tag on `ecd4de9`) is **NOT PRODUCTION-READY** and **NOT INDEPENDENTLY SECURITY-VALIDATED**.
 > From here: security reports and correctness fixes only; no new features. All findings, negative results and
