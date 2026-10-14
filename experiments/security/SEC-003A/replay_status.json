@@ -1,0 +1,9 @@
+{
+  "experiment": "SEC-003A",
+  "replay_returncode": -6,
+  "asan_stack_overflow": true,
+  "source_location_match": true,
+  "confirmed": true,
+  "crash_sha256": "e7692250c07c17e58e2d202e3a1181746744b20c9d5e5fb695ed2c258f53b57a",
+  "cross_substrate_verified": false
+}
