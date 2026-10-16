@@ -9,12 +9,22 @@
 
 ---
 
-## OPEN findings (unfixed)
+## SV-ATTACK-001 Q1/Q3 — fixed in current `main` within tested scope; vulnerable in tagged `v0.2.0`
 
-> **Update 2026-10-10 (this branch, not yet merged):** Q1 and Q3 below have candidate fixes (SV-FIX-001, F1 and
-> F2) that passed their registered verification: F1 PASS, F2 PASS, one execution in a container, not on the S25,
-> same author. See [docs/SV_FIX_001_RESULTS.md](docs/SV_FIX_001_RESULTS.md). The entries below stay as they were
-> written. They move to fixed only when the fix is merged, and the record keeps the link to the failure.
+> **Revision-specific status (2026-10-12):** PR #71 merged targeted fixes F1/F2 into `main` at
+> `fff4f68`. The original tagged `v0.2.0` release (`ecd4de9`) predates those fixes and retains the
+> demonstrated Q1/Q3 behavior. No amended `v0.2.0` release is claimed here.
+>
+> **Bounded fixes:** SV-FIX-001 F1 executes a separate action reconstructed from the frozen decision record;
+> F2 makes `verify_package.py` compare recorded `commands_sent` with authorized parameters. Registered
+> verification reported F1 PASS and F2 PASS in one x86-64 container execution (not S25), written and tested
+> by the same author; **not independently validated**. See [docs/SV_FIX_001_RESULTS.md](docs/SV_FIX_001_RESULTS.md).
+> These mechanisms do **not** establish complete execution-time authorization, real-world effect observation,
+> malicious-executor resistance, or production readiness.
+>
+> The original attack findings below remain intact as historical observations at the vulnerable revision
+> (PR #70, `36b324a`; evidence `results/sv_attack_001/`). This section does not reclassify other open
+> authorization, crash/replay, or evidence-boundary findings as fixed.
 
 - **SV-ATTACK-001 Q1 (2026-10-09): an ALLOW covers parameters changed after the decision.** `EvidenceWorkflow.run()`
   decides on a copy of the action's parameters (`workflow.py` L188), but executes the caller's original,
