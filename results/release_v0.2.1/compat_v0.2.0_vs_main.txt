@@ -1,0 +1,12 @@
+packages compared: 56 (old = v0.2.0, new = working tree, both with --legacy)
+  exit 0->0: 48
+  exit 0->1: 2
+  exit 1->1: 4
+  exit 2->2: 2
+verdict changed: 2
+CHANGED  results/sv_attack_001/run1/home_B1/sv_package_5ea54474d6e6.json
+  v0.2.0: exit 0  VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN
+  new:    exit 1  VERDICT 1 check(s) failed freshness=NOT_PROVEN authenticity=NOT_PROVEN
+CHANGED  results/sv_attack_001/run1/packages/B1.json
+  v0.2.0: exit 0  VERDICT CONSISTENT freshness=NOT_PROVEN authenticity=NOT_PROVEN
+  new:    exit 1  VERDICT 1 check(s) failed freshness=NOT_PROVEN authenticity=NOT_PROVEN
