@@ -36,6 +36,16 @@ If you change Gate rules or decision semantics:
 - Do not add production deployment guidance or security guarantees that the prototype does not support.
 - Do not use `git add -A` or broad cleanups when contributing community or documentation files; keep changes focused.
 
+## Licensing of contributions
+
+By opening a pull request, or otherwise submitting code or documentation for inclusion, you agree that your
+contribution is licensed under the MIT License in [`LICENSE`](LICENSE), the same terms as the rest of the project,
+and you confirm that you have the right to submit it under those terms.
+
+If you want something kept here **only as a record** and not under MIT (a review, a report, test cases you
+want to keep control of), say so in the issue or pull request. It will be stored under `docs/external/` with its
+terms written down; see [`docs/external/README.md`](docs/external/README.md).
+
 ## Practical steps
 
 1. Fork and clone.
