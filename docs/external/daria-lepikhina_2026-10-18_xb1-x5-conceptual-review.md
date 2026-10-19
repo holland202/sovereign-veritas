@@ -1,7 +1,7 @@
 > **Independent conceptual review — source review only**  
 > **Author:** Daria Lepikhina, Independent Researcher  
 > **Original review:** 18 October 2026 · Published with the author's approval on 19 October 2026  
-> **Scope:** XB-1 case X5 in the original public Sovereign Veritas repository. This is not experimental reproduction, a v3 audit, validation of the wider system, or evidence of actual harm.  
+> **Scope:** XB-1 case X5 in the public Sovereign Veritas repository. This is not experimental reproduction, a whole-system audit, or evidence of actual harm.  
 > **Editorial preparation:** Markdown layout and companion metadata prepared with ChatGPT (OpenAI GPT-6) at Chad Holland's direction; the authored review below is preserved.  
 
 ---
