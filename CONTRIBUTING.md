@@ -44,3 +44,11 @@ If you change Gate rules or decision semantics:
 4. Keep PRs focused. Prefer evidence and failing cases over narrative.
 
 Thank you for testing the claims rather than the story.
+
+## License and independent review permissions
+
+The repository remains **MIT-licensed** and maintenance-only; see [LICENSING.md](LICENSING.md). Code proposed for incorporation should be contributed only by someone entitled to offer it under the existing MIT terms, with any required third-party notices.
+
+For an independently authored review, record the author's publication permission and approved attribution. Publication consent does not automatically confer copyright ownership, unrelated republication rights, or an endorsement. No blanket copyright assignment or contributor license agreement is introduced here. Any separate paid evaluation, confidential materials or non-public testing scope requires explicit arrangements; none modifies the rights previously granted under MIT.
+
+**Provenance (2026-10-19):** This explanatory section was prepared with ChatGPT (OpenAI, GPT-6) at Chad Holland's direction; legal review not performed.
