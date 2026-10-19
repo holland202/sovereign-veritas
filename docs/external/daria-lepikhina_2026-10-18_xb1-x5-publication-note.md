@@ -9,7 +9,7 @@
 
 ## Repository context
 
-This is an independent conceptual review of the original public Sovereign Veritas XB-1/X5 source materials, not a reproduction or evaluation of later architectures.
+This is an independent conceptual review of the Sovereign Veritas XB-1/X5 source materials, not experimental reproduction or a whole-system audit.
 
 ## Short description
 
