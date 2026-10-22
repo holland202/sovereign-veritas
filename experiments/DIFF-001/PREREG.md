@@ -78,3 +78,10 @@ Each implementation gets a deep copy of the case. Its outcome is `(decision, rea
    Smoke-2 and mutant summaries are in [results/](results/).
 8. **Amendment A3 (schedule).** The Azure run could not start before 20:30Z: regional core quota was exhausted in Central US and West US 2. The registered run will start later, and the `--until` deadline is given in the launch command and recorded here before results are read. The predictions are unchanged.
 9. **Follow-up.** The overflow class from smoke 2/3 became OVF-1: registered, fixed and tested in sovereign-veritas PR #89. Against the fixed K/V, this harness found 0 disagreements in 3,000 cases (OVF-1 R7). P2/P3 in the registered run stay scored against the code at this branch's pinned commit. That code does **not** include the OVF-1 fix, so the overflow class is expected to recur there.
+10. **Amendment A4 (device and deadline for the registered run), written 2026-10-22 ~19:50Z, before any registered-run output exists.**
+    - **Device:** the owner's Samsung Galaxy S23 under Termux (aarch64; Python version recorded by the summary file), not an Azure VM. This replaces the run plan's Azure VM; C-DEVICE now reads: S23 / Termux, plus the earlier container smoke on x86.
+    - **Workers:** 2 (`--worker 0` and `--worker 1`, `--workers 2`), interleaved indices as registered.
+    - **Deadline:** `--until 2026-10-23T12:00:00Z` for both workers. The owner starts them in the evening of 2026-10-22, so the run lasts roughly 14 hours. The case count is whatever fits.
+    - **Code:** this commit. The harness is unchanged since the A1/A2 commit `026ccfb` (`diff_fuzz.py` SHA-256 `55b32b13…4095`), and the phone checks that hash before starting.
+    - **Output:** `$HOME/diff001_s23/worker{0,1}.summary.json` and `.disagreements.jsonl`. The owner sends them back, and they are added to `results/` unedited.
+    - Predictions and the interpretation rule are unchanged. As item 9 says, the overflow class is expected to recur, because this code predates the OVF-1 fix.
