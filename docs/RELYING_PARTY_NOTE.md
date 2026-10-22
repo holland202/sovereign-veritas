@@ -144,8 +144,20 @@ From this one prototype, the points I would want a replay section to make explic
 2. The at-most-once key is an action or intent identifier fixed before the first attempt and bound into the signed
    record. A receipt digest is not enough, because one action can produce many receipts.
 3. Claiming that key must be atomic and durable before the action, against concurrent relying parties and against a
-   crash between the claim and the action. A section could say which way a crash may fail. "Possibly zero, never
-   twice" is what I would want. My executor meets it in the cases measured. My consumer does not (P6, P7).
+   crash between the claim and the action. A section could say which way a crash may fail, and it should name which
+   event the guarantee counts. A crash or a lost reply can make these three differ:
+   - **consumer acceptance**: the relying party records the package or key as used (`tools/consumer.py` here);
+   - **executor invocation**: the executor is called (`EvidenceWorkflow` calling `execute`);
+   - **downstream effect**: the change actually happens outside the system.
+
+   A crash after acceptance and before the caller acts gives one acceptance and no invocation. An executor that
+   raises gives one invocation and an effect nobody can confirm. A lost reply after the effect gives one effect and
+   a caller that does not know about it. "Possibly zero, never twice" is what I would want **for the downstream
+   effect**; acceptance and invocation are only evidence about it. In the measured cases here (RK-2, MP-1), the
+   counting executor's invocation *is* its effect, so what was measured is "never invoked twice". My executor meets
+   that in the cases measured. My consumer can speak only about acceptance, and does not meet it even there (P6,
+   P7). A related case is now registered, not run: the same intent key coming back with changed action parameters
+   ([KC-1](KC1_PREREG.md)).
 4. "Latest in a witness log" needs a stated scope (per issuer, per action, per claim). Relying parties without
    retained state cannot detect a rollback.
 
@@ -160,3 +172,19 @@ From this one prototype, the points I would want a replay section to make explic
 
 Make the consumer claim an intent key atomically (exclusive create, fsynced), give `make_package.py` a key fixed at
 intent, and rerun P3 and P6–P8 with the predictions flipped.
+
+A second, registered and not run: [KC-1](KC1_PREREG.md), the same intent key reused with changed action parameters,
+to see whether the executor's store can tell a conflicting reuse from a plain duplicate.
+
+## Record corrections (W9)
+
+**2026-10-22.** Section 6, point 3 now says which event "possibly zero, never twice" counts (consumer acceptance,
+executor invocation or downstream effect), and that a crash or a lost reply can make them differ. Joe Krausz asked
+for this. The superseded text, verbatim:
+
+> 3. Claiming that key must be atomic and durable before the action, against concurrent relying parties and against a
+>    crash between the claim and the action. A section could say which way a crash may fail. "Possibly zero, never
+>    twice" is what I would want. My executor meets it in the cases measured. My consumer does not (P6, P7).
+
+Correction provenance: Claude (Anthropic, Opus 5.5) drafted it → human validation: not performed → human editing:
+none → human responsibility: Chad Holland, who gave direction. No vector was rerun for this edit.
