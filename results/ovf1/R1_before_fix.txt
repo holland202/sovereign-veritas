@@ -1,0 +1,11 @@
+OVF-1 R1: new tests on unfixed main 3ff59ef (Python 3.13.16). Self-tested.
+                ("verification_not_passed",),
+            # Attestation is the boolean True. "FAILED", {"ok": False} and
+E               OverflowError: int too large to convert to float
+sovereign_veritas/decision.py:113: OverflowError
+            return "REFUSE", ["verification_not_passed"]
+E               OverflowError: int too large to convert to float
+tools/verify_package.py:457: OverflowError
+FAILED tests/test_gate_floor_overflow.py::test_huge_floor_defers_with_inf_instead_of_crashing[kernel]
+FAILED tests/test_gate_floor_overflow.py::test_huge_floor_defers_with_inf_instead_of_crashing[verifier]
+2 failed, 2 passed in 0.46s
