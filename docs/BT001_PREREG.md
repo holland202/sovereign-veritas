@@ -122,6 +122,33 @@ Kill rates leave out the two identical mutants and count only mutants that ran.
 4. **The container stops between turns.** The blue arm resumes from its JSONL, and the red arm runs in two
    segments.
 
+## Amendment A1 (2026-10-22 ~21:05Z, after launch 1 stopped itself; no mutant has run)
+
+- **What happened.** Launch 1 (`d193c00`) ran only the `null` control, and the control failed:
+  `T FAIL rc 1, "1 failed, 425 passed, 3 skipped in 68.17s"`, `C PASS`. The run stopped with exit 2, as
+  registered. **BT-P1 is REFUTED for launch 1 and kept.**
+- **Cause, found by rerunning on the scratch copy:**
+  - The unmutated copy passes: `542 passed, 3 skipped`. Two tests skip there because the copy is not a git
+    checkout (`test_gate_contract.py:114`, `test_witness.py:116`); `pymavlink` is missing for the third.
+  - With `decision.py` re-emitted from its AST, `tools/gate_constraint.py --target <copy>` is `VERDICT CLEAN`
+    (rc 0), but `--mutants` reports `M15 INVALID anchor matched 0x` and `M17 INVALID anchor matched 0x`, and
+    "instrument NOT validated".
+  - The test `test_gate_constraint_instrument_kills_its_mutants` finds its patches by exact source text. AST
+    re-emission changes quoting and drops comments, so that test would fail on every mutant, whatever the
+    mutant does. Every kill would have been fake.
+- **Instrument changes (no prediction changes):**
+  1. Each mutant is now a **minimal text edit**: only the mutated node's source span changes, and every other
+     byte is kept. Every mutant's text is checked to parse to exactly the same AST as the registered mutation;
+     a mismatch stops the tool. All 351 passed that check, and the census is unchanged (same counts by file and
+     operator, and the same two textually-null mutants).
+  2. `null` is now the target byte-for-byte unchanged. `always-allow` is the same text edit, applied to
+     `Gate.evaluate`'s first statement.
+  3. T leaves out that one test (`--deselect`). It checks gate_constraint's own instrument by source text, not
+     the kernel's behaviour, so it fails on any edit to an anchored line. Leaving it out can only lower T's
+     kills, never raise them.
+  4. T in the scratch copy runs 541 tests and skips 3. The two git-only tests do not take part.
+- **Records:** launch 1's control record stays in `blue_launch1.jsonl`. The amended run writes `blue_a1.jsonl`.
+
 ## Door (unrun)
 
 **BT-002:** turn each GAP into a test that fails on that mutant and passes on main. Then re-run BT-001's

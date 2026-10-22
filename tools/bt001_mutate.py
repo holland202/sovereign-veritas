@@ -15,7 +15,7 @@ off. Bytecode caching is off (-B, PYTHONDONTWRITEBYTECODE) and __pycache__ is cl
 same-size, same-second edit cannot be masked by a stale .pyc.
 
 Controls (run first, every launch):
-  null          the target re-emitted from its own AST, unchanged in meaning: both oracles must PASS
+  null          the Gate file byte-for-byte unchanged (Amendment A1; the launch-1 null was an AST re-emission)
   always-allow  `return Decision("ALLOW")` as the first statement of Gate.evaluate: both oracles must FAIL
 
 Usage:
@@ -31,6 +31,9 @@ TARGETS = ["sovereign_veritas/decision.py", "sovereign_veritas/verification.py",
            "sovereign_veritas/evidence.py", "sovereign_veritas/capability.py", "sovereign_veritas/runtime.py",
            "sovereign_veritas/workflow.py"]
 T_TIMEOUT, C_TIMEOUT = 600, 120
+# Amendment A1: this test locates its own patches by exact source text, so it fails on ANY edit to an anchored
+# line whatever the behaviour. It tests gate_constraint's instrument, not the kernel, and is left out of T.
+DESELECT = "tests/test_gate_constraint.py::test_gate_constraint_instrument_kills_its_mutants"
 CMP_SWAP = {ast.Lt: ast.LtE, ast.LtE: ast.Lt, ast.Gt: ast.GtE, ast.GtE: ast.Gt, ast.Eq: ast.NotEq,
             ast.NotEq: ast.Eq, ast.In: ast.NotIn, ast.NotIn: ast.In, ast.Is: ast.IsNot, ast.IsNot: ast.Is}
 
@@ -137,14 +140,52 @@ def apply(tree, pt):
     return ast.unparse(ast.fix_missing_locations(t))
 
 
-def always_allow(tree):
-    t = copy.deepcopy(tree)
-    for n in ast.walk(t):
+def span_patch(src, node, new_text):
+    """Replace exactly `node`'s source span (UTF-8 byte offsets, as ast reports them); every other byte is kept."""
+    b = src.encode("utf-8")
+    starts = [0]
+    for line in src.encode("utf-8").splitlines(keepends=True):
+        starts.append(starts[-1] + len(line))
+    lo = starts[node.lineno - 1] + node.col_offset
+    hi = starts[node.end_lineno - 1] + node.end_col_offset
+    return (b[:lo] + new_text.encode("utf-8") + b[hi:]).decode("utf-8")
+
+
+def apply_text(src, tree, pt):
+    """Amendment A1: the same mutation as `apply`, written as a minimal edit of the original text, so formatting
+    and comments elsewhere are byte-identical. Checked: the patched text parses to the same AST as `apply`."""
+    path, kind, k = pt
+    n = resolve(tree, path)
+    seg = lambda x: ast.get_source_segment(src, x)
+    if kind in ("cmp", "boolop"):
+        target, new = n, "(" + ast.unparse(resolve(ast.parse(apply(tree, pt)), path)) + ")"
+    elif kind == "drop-not":
+        target, new = n, "(" + seg(n.operand) + ")"
+    elif kind == "flip-bool":
+        target, new = n, repr(not n.value)
+    elif kind == "num+1":
+        target, new = n, repr(n.value + 1)
+    elif kind == "return-none":
+        target, new = n.value, "None"
+    elif kind == "raise-to-pass":
+        target, new = n, "pass"
+    elif kind == "negate-if":
+        target, new = n.test, "not (" + seg(n.test) + ")"
+    text = span_patch(src, target, new)
+    if ast.dump(ast.parse(text)) != ast.dump(ast.parse(apply(tree, pt))):
+        raise SystemExit(f"apply_text disagrees with apply at {kind} line {getattr(n, 'lineno', '?')}")
+    return text
+
+
+def always_allow(src, tree):
+    """Amendment A1: Gate.evaluate's first statement (after its docstring, if any) becomes `return Decision("ALLOW")`,
+    as a minimal text edit."""
+    for n in ast.walk(tree):
         if isinstance(n, ast.ClassDef) and n.name == "Gate":
             for f in n.body:
                 if isinstance(f, ast.FunctionDef) and f.name == "evaluate":
-                    f.body.insert(0, ast.parse('return Decision("ALLOW")').body[0])
-                    return ast.unparse(ast.fix_missing_locations(t))
+                    first = f.body[1] if id(f.body[0].value if isinstance(f.body[0], ast.Expr) else None) in docstring_nodes(tree) else f.body[0]
+                    return span_patch(src, first, 'return Decision("ALLOW")')
     raise SystemExit("control always-allow: Gate.evaluate not found")
 
 
@@ -153,12 +194,14 @@ def mutants(target):
     tree = ast.parse(src)
     base = ast.unparse(tree)
     out = []
+    base_dump = ast.dump(tree)
     for k, pt in enumerate(points(tree)):
-        text = apply(tree, pt)
+        text = apply_text(src, tree, pt)
         line = getattr(resolve(tree, pt[0]), "lineno", None)
         out.append({"id": f"{target}#{k}", "target": target, "op": pt[1], "line": line,
-                    "equal_to_base": text == base, "sha256": hashlib.sha256(text.encode()).hexdigest(), "text": text})
-    return base, out
+                    "equal_to_base": ast.dump(ast.parse(text)) == base_dump,
+                    "sha256": hashlib.sha256(text.encode()).hexdigest(), "text": text})
+    return src, out
 
 
 def tests_order(work, target):
@@ -183,7 +226,7 @@ def oracles(work, target):
     t0 = time.time()
     try:
         p = subprocess.run([sys.executable, "-B", "-m", "pytest", "-x", "-q", "-p", "no:cacheprovider",
-                            *tests_order(work, target)], cwd=work, env=env, capture_output=True, text=True,
+                            "--deselect", DESELECT, *tests_order(work, target)], cwd=work, env=env, capture_output=True, text=True,
                            timeout=T_TIMEOUT)
         tail = p.stdout.strip().splitlines()[-1:] or [""]
         res["T"] = {"verdict": "PASS" if p.returncode == 0 else "FAIL", "rc": p.returncode, "tail": tail[0][:300]}
@@ -266,7 +309,7 @@ def main(argv=None):
     dsrc = open(os.path.join(ROOT, "sovereign_veritas/decision.py"), encoding="utf-8").read()
     dtree = ast.parse(dsrc)
     launch = sum(1 for i in done if i.startswith("control:")) // 2 + 1
-    for name, text, want in (("null", ast.unparse(dtree), "PASS"), ("always-allow", always_allow(dtree), "FAIL")):
+    for name, text, want in (("null", dsrc, "PASS"), ("always-allow", always_allow(dsrc, dtree), "FAIL")):
         r = run_one(work, "sovereign_veritas/decision.py", text)
         ok = r["T"]["verdict"] == want and r["C"]["verdict"] == want
         emit({"id": f"control:{name}:launch{launch}", "control": name, "expected": want, "as_expected": ok, **r})
