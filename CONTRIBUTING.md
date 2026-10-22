@@ -57,7 +57,7 @@ Thank you for testing the claims rather than the story.
 
 ## License and independent review permissions
 
-The repository remains **MIT-licensed** and maintenance-only; see [LICENSING.md](LICENSING.md). Code proposed for incorporation should be contributed only by someone entitled to offer it under the existing MIT terms, with any required third-party notices.
+The repository remains **MIT-licensed** (active development resumed 2026-10-22); see [LICENSING.md](LICENSING.md). Code proposed for incorporation should be contributed only by someone entitled to offer it under the existing MIT terms, with any required third-party notices.
 
 For an independently authored review, record the author's publication permission and approved attribution. Publication consent does not automatically confer copyright ownership, unrelated republication rights, or an endorsement. No blanket copyright assignment or contributor license agreement is introduced here. Any separate paid evaluation, confidential materials or non-public testing scope requires explicit arrangements; none modifies the rights previously granted under MIT.
 

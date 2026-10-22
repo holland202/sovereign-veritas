@@ -1,6 +1,6 @@
 # Licensing and independent review rights — Sovereign Veritas
 
-**Status:** Proposed documentation-only clarification, 2026-10-19. **Maintenance-only** repository; this file changes no kernel code, experimental record, Gate contract or release artifact.
+**Status:** Proposed documentation-only clarification, 2026-10-19. **Maintenance-only** repository; this file changes no kernel code, experimental record, Gate contract or release artifact. *(Repository status updated 2026-10-22: active development resumed; see [STATUS.md](STATUS.md). The 2026-10-19 wording above is kept as written.)*
 
 ## Public license remains MIT
 
@@ -20,7 +20,7 @@ The author's [publication note for Daria Lepikhina's conceptual XB-1/X5 review](
 
 [CITATION.cff](CITATION.cff) requests scholarly credit; citation is not an additional condition imposed on MIT users beyond the license text. Keep author credit and provenance separate from conclusions about independent validation.
 
-The repository is [maintenance-only and not production-ready](README.md). This page does not imply certification, a warranty, a production right beyond MIT, or authorization to test somebody else's systems or access protected infrastructure.
+The repository is [not production-ready](README.md); active development resumed on 2026-10-22. This page does not imply certification, a warranty, a production right beyond MIT, or authorization to test somebody else's systems or access protected infrastructure.
 
 ## Potential commercial work
 
