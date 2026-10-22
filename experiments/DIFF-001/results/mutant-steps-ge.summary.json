@@ -1,0 +1,121 @@
+{
+ "cases": 100000,
+ "disagreeing_pairs": {
+  "KI": 1307,
+  "VI": 1307
+ },
+ "disagreement_cases": 1307,
+ "final": true,
+ "kernel_decisions": {
+  "ALLOW": 4471,
+  "DEFER": 28040,
+  "ERROR": 239,
+  "REFUSE": 67250
+ },
+ "label": "mutant-steps-ge",
+ "python": "3.13.16",
+ "seconds": 22.4,
+ "top_signatures": [
+  [
+   "K:DEFER:runtime_not_healthy | V:DEFER:runtime_not_healthy | I:REFUSE:capability_max_steps_exceeded:1>1",
+   152
+  ],
+  [
+   "K:DEFER:runtime_not_healthy | V:DEFER:runtime_not_healthy | I:REFUSE:capability_max_steps_exceeded:3>3",
+   129
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:REFUSE:capability_max_steps_exceeded:1>1",
+   120
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:REFUSE:capability_max_steps_exceeded:3>3",
+   109
+  ],
+  [
+   "K:ALLOW:[] | V:ALLOW:[] | I:REFUSE:capability_max_steps_exceeded:3>3",
+   84
+  ],
+  [
+   "K:ALLOW:[] | V:ALLOW:[] | I:REFUSE:capability_max_steps_exceeded:1>1",
+   82
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:verification_insufficient_evidence",
+   65
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:runtime_not_healthy",
+   51
+  ],
+  [
+   "K:REFUSE:action_not_permitted_by_policy | V:REFUSE:action_not_permitted_by_policy | I:REFUSE:capability_max_steps_exceeded:1>1",
+   49
+  ],
+  [
+   "K:REFUSE:action_not_permitted_by_policy | V:REFUSE:action_not_permitted_by_policy | I:REFUSE:capability_max_steps_exceeded:3>3",
+   45
+  ],
+  [
+   "K:DEFER:missing_required_evidence:calibration | V:DEFER:missing_required_evidence:calibration | I:REFUSE:capability_max_steps_exceeded:1>1",
+   35
+  ],
+  [
+   "K:DEFER:missing_required_evidence:calibration | V:DEFER:missing_required_evidence:calibration | I:REFUSE:capability_max_steps_exceeded:3>3",
+   35
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.9000<inf",
+   30
+  ],
+  [
+   "K:DEFER:evidence_quality_below_threshold:0.0000<0.5000 | V:DEFER:evidence_quality_below_threshold:0.0000<0.5000 | I:REFUSE:capability_max_steps_exceeded:1>1",
+   22
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:action_not_permitted_by_policy",
+   20
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.0000<inf",
+   15
+  ],
+  [
+   "K:DEFER:evidence_quality_below_threshold:0.0000<0.5000 | V:DEFER:evidence_quality_below_threshold:0.0000<0.5000 | I:REFUSE:capability_max_steps_exceeded:3>3",
+   14
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:calibration",
+   14
+  ],
+  [
+   "K:DEFER:evidence_quality_below_threshold:0.2000<0.5000 | V:DEFER:evidence_quality_below_threshold:0.2000<0.5000 | I:REFUSE:capability_max_steps_exceeded:1>1",
+   12
+  ],
+  [
+   "K:DEFER:evidence_quality_invalid:1e+16 | V:DEFER:evidence_quality_invalid:1e+16 | I:REFUSE:capability_max_steps_exceeded:1>1",
+   9
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.5000<inf",
+   8
+  ],
+  [
+   "K:DEFER:evidence_quality_invalid:-0.5 | V:DEFER:evidence_quality_invalid:-0.5 | I:REFUSE:capability_max_steps_exceeded:1>1",
+   7
+  ],
+  [
+   "K:DEFER:evidence_quality_below_threshold:0.2000<0.5000 | V:DEFER:evidence_quality_below_threshold:0.2000<0.5000 | I:REFUSE:capability_max_steps_exceeded:3>3",
+   7
+  ],
+  [
+   "K:DEFER:evidence_quality_invalid:2.0 | V:DEFER:evidence_quality_invalid:2.0 | I:REFUSE:capability_max_steps_exceeded:3>3",
+   7
+  ],
+  [
+   "K:DEFER:missing_required_evidence: | V:DEFER:missing_required_evidence: | I:REFUSE:capability_max_steps_exceeded:1>1",
+   7
+  ]
+ ],
+ "utc": "2026-10-22T15:03:03+00:00"
+}

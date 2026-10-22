@@ -69,3 +69,12 @@ Each implementation gets a deep copy of the case. Its outcome is `(decision, rea
    - The summary now lists all signatures, not just the top 25.
    - Made after smoke 2 showed one dominant class.
 6. **Smoke 3** (A1+A2, 3,000 cases, which include smoke 2's 2,000 indices): 9 disagreements, all K-I/V-I, with K and V raising errors (9 kernel ERROR outcomes). `steps-ge` re-check on 20,000 cases: caught (exit 0).
+7. **Reproductions for the owner-requested #86 review** (2026-10-22 ~15:20Z, outputs in [results/reproductions_2026-10-22.txt](results/reproductions_2026-10-22.txt), helpers in [repro/](repro/)):
+   - the contract pin `d3a9a881` is blob-identical to `main` for CONTRACT.md, the vectors and the checker;
+   - the #86 port conforms (digest `44823d0f…`);
+   - the always-ALLOW control is rejected (4,675/4,690 differ);
+   - #86's 22 hand-derived boundary cases pass against the port, the kernel and the verifier.
+
+   Smoke-2 and mutant summaries are in [results/](results/).
+8. **Amendment A3 (schedule).** The Azure run could not start before 20:30Z: regional core quota was exhausted in Central US and West US 2. The registered run will start later, and the `--until` deadline is given in the launch command and recorded here before results are read. The predictions are unchanged.
+9. **Follow-up.** The overflow class from smoke 2/3 became OVF-1: registered, fixed and tested in sovereign-veritas PR #89. Against the fixed K/V, this harness found 0 disagreements in 3,000 cases (OVF-1 R7). P2/P3 in the registered run stay scored against the code at this branch's pinned commit. That code does **not** include the OVF-1 fix, so the overflow class is expected to recur there.
