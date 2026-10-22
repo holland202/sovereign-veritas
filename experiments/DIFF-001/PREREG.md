@@ -1,0 +1,53 @@
+# DIFF-001: do three sv.gate/0 implementations decide alike beyond the published vectors?
+
+**State:** REGISTERED, NOT RUN. Committed before the harness has been executed even once, and before any generated case has been observed.
+**Authors:** Direction: Chad Holland (2026-10-22). Design and harness: Claude (Anthropic, Opus 5.5). Human review level: direction only. Everything run here is **self-tested** (M10).
+
+**The independent implementation under test** is by Putluru Sandeep (@sunny-kavixo, SV PR #86, head `4fddb8b`). This branch is that head plus a merge of `main` (`3ff59ef`). Before writing this file, its source was read in full: a pure function plus a stdin/stdout line runner, with no network, file or subprocess use.
+
+**Prior fact, observed while writing this registration** (a re-run of a check the contributor had already reported): `python3 tools/gate_contract.py --check-command python3 ports/python_independent/independent_gate.py` → `VERDICT CONFORMS`, digest `44823d0f…0628`. This reproduces the contributor's reported 4,690/4,690 result on this merged tree.
+
+## Question
+
+The published 4,690 vectors show that the kernel Gate (K), the package verifier's `replay_gate` (V) and Sandeep's independent port (I) agree on those inputs. **Do they still agree on many more inputs** that stay inside the contract's declared types but were never published?
+
+## Instrument
+
+[`diff_fuzz.py`](diff_fuzz.py). Case *i* is generated deterministically from seed 20261022 and *i*:
+- start from a random published vector;
+- apply 1 to 6 type-preserving mutations: statuses, truthy-ish values, numbers including -0.0, 0.49999, 1.00001, 1e300 and 10**400, step counts, parents, registries, runtime words and policy lists;
+- keep registry keys equal to entry names, so the kernel adapter's by-name registration cannot create artificial disagreements.
+
+Each implementation gets a deep copy of the case. Its outcome is `(decision, reasons)`, or `("ERROR", exception type)`. A disagreement is any case where the three outcomes are not identical, reasons and their order included. Any disagreement can be re-generated with `--replay INDEX`.
+
+## Predictions
+
+| ID | Prediction | Credence | Precisely wrong if |
+|---|---|---|---|
+| **P1 (anti-vacuity)** | Each of two planted mutants of I (`steps-ge`: `>` becomes `>=`; `insufficient-is-pass`: the INSUFFICIENT_EVIDENCE reason is dropped) produces at least one K-I disagreement within 100,000 cases. `--mutant` exits 0 only if it does | high | either mutant survives 100,000 cases |
+| **P2** | K and V (same author) never disagree during the registered run | high (about 0.85) | any K-V disagreement |
+| **P3** | K and I never disagree during the registered run | **uncertain (about 0.5)** | any K-I disagreement. The likeliest sources are number formatting inside reason strings (`repr`, `:.4f`), overflow at 10**400 and type edges |
+| P4 (door, unrun) | Disagreements found here persist when the inputs come from outside a single mutation grammar | — | — |
+
+**Interpretation rule, fixed now:** a disagreement shows that **at least one** implementation, or the contract text, is wrong or ambiguous for that input. It does **not** say which one is wrong. Assigning fault needs a separate source reading per signature, reported case by case.
+
+## Run plan
+
+- **Smoke check here (Linux container):** P1 with both mutants (100,000 cases each), plus a 2,000-case unmutated run that checks the harness works. These numbers are reported, not hidden.
+- **Registered run:** one new Azure VM (Central US), 2 workers (interleaved indices), from start until **2026-10-22T20:30:00Z** (15:30 CDT). The total case count is whatever fits; no count is promised.
+- Outputs: per-worker summary JSON and up to 1,000 full disagreement records per worker.
+
+## Trigger table (M16)
+
+| Trigger | Control | Answer |
+|---|---|---|
+| Feasibility | C-FEAS | yes: throughput unknown, so only existence predictions are made |
+| Noise | C-NOISE | no: the implementations are deterministic, cases are seeded, and any case replays exactly |
+| Statistics | C-STAT | no rates claimed; P2/P3 are "no disagreement in the cases actually run" |
+| Evidence | C-EVID | n/a: the gates' evidence semantics are what is under test, not the harness's |
+| Independence | C-INDEP | yes: I is by a different author than K and V. The harness is by Claude, a third party to I and not to K/V's tooling. Self-tested |
+| External | C-EXT | yes: contributor code from SV PR #86, read in full before running |
+| Device | C-DEVICE | yes: Azure ARM64 Ubuntu 24.04 VM (Python 3.12). Container smoke on x86 Python 3.13 |
+| Verdict code | C-BUILD | yes: `--mutant` exits 1 if the harness fails to catch a planted defect |
+| Exploration | C-EXPLORE | no run of any kind before this commit |
+| Method comparison | C-METHCOMP | no |
