@@ -24,6 +24,7 @@ from datetime import datetime, timezone
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SEED = 20261022
 MAX_SAVED = 1000
+PER_SIGNATURE = 20   # Amendment A2: keep up to 20 examples of EACH signature, so one frequent class cannot hide others
 
 
 def load(name, path):
@@ -37,15 +38,23 @@ GC = load("gate_contract", os.path.join(ROOT, "tools", "gate_contract.py"))
 IND_PATH = os.path.join(ROOT, "ports", "python_independent", "independent_gate.py")
 VECTORS = [json.loads(l) for l in open(os.path.join(ROOT, "contract", "gate_vectors.jsonl"), encoding="utf-8") if l.strip()]
 
-STATUS = ["PASS", "FAIL", "REFUTED", "INSUFFICIENT_EVIDENCE", "NOT_VERIFIED", "UNKNOWN", "pass", "", "PASSED", None]
-THERMAL = ["normal", "cool", "warning", "high", "hot", "critical", "unsafe", "Normal", "", "melting"]
-BUDGET = ["available", "constrained", "low", "exhausted", "AVAILABLE", "", "infinite"]
-POWER = ["stable", "unsafe", "Stable", "", "brownout"]
-TRUTHY = [True, False, None, "true", "false", "", 1, 0, "x", []]
+# Amendment A1 (after the disclosed 2,000-case smoke run): every list is (valid, odd); `pick` takes a valid
+# value 85% of the time, so cases reach ALLOW and DEFER paths instead of stopping at the first REFUSE.
+NONREFUSE = [v for v in VECTORS if v["expect"]["decision"] != "REFUSE"]
+STATUS = (["PASS", "PASS", "INSUFFICIENT_EVIDENCE", "FAIL", "REFUTED", "NOT_VERIFIED", "UNKNOWN"], ["pass", "", "PASSED", None])
+THERMAL = (["normal", "cool", "normal", "warning", "high", "hot", "critical", "unsafe"], ["Normal", "", "melting"])
+BUDGET = (["available", "constrained", "low", "available", "exhausted"], ["AVAILABLE", "", "infinite"])
+POWER = (["stable", "stable", "unsafe"], ["Stable", "", "brownout"])
+TRUTHY = ([True, True, False, None], ["true", "false", "", 1, 0, "x", []])
 NUMS = [0, 1, 0.0, 1.0, -0.0, 0.5, 0.49999, 0.50001, 0.99999, 1.00001, -0.1, 2, 1e-9, 1e300, 10 ** 400, 3, 0.1 + 0.2]
 INTS = [0, 1, 2, 3, 5, -1, 10 ** 20]
 NAMES = ["read_sensor", "write_actuator", "root-on", "root-off", "root-str", "root-null", "ghost", "", "Read_Sensor"]
 EVID = ["calibration", "operator_ok", "sensor_selftest", "", "Calibration"]
+
+
+def pick(rng, choices):
+    valid, odd = choices
+    return rng.choice(valid) if rng.random() < 0.85 else rng.choice(odd)
 
 
 def mutate(rng, inp):
@@ -54,7 +63,7 @@ def mutate(rng, inp):
     if k == 0:
         rec["input_digest"] = rng.choice(["sha256:abc", "", None, "x", 0, 1])
     elif k == 1:
-        rec["verification"] = None if rng.random() < 0.15 else {"status": rng.choice(STATUS)}
+        rec["verification"] = None if rng.random() < 0.15 else {"status": pick(rng, STATUS)}
     elif k == 2:
         rec["evidence_quality"] = rng.choice(NUMS + [None])
     elif k == 3:
@@ -62,13 +71,13 @@ def mutate(rng, inp):
     elif k == 4:
         rec["metadata"]["step_count"] = rng.choice(INTS + [None, True, 1.5])
     elif k == 5:
-        rec["metadata"][rng.choice(EVID)] = rng.choice(TRUTHY)
+        rec["metadata"][rng.choice(EVID)] = pick(rng, TRUTHY)
     elif k == 6:
         rec["action"] = None if rng.random() < 0.15 else {"capability": rng.choice(NAMES + [None]), "requested": rng.choice(NAMES + [None])}
     elif k == 7:
         inp["capability"] = None if rng.random() < 0.1 else (cap or {"name": "read_sensor", "authorized": True, "required_evidence": [], "parent": None, "min_evidence_quality": None, "max_steps": None})
     elif k == 8 and cap is not None:
-        cap["authorized"] = rng.choice(TRUTHY)
+        cap["authorized"] = pick(rng, TRUTHY)
     elif k == 9 and cap is not None:
         cap["parent"] = rng.choice(NAMES + [None, None])
     elif k == 10 and cap is not None:
@@ -85,22 +94,23 @@ def mutate(rng, inp):
         else:
             reg = inp["capability_registry"] = reg or {}
             name = rng.choice(NAMES)
-            reg[name] = None if rng.random() < 0.2 else {"name": name, "authorized": rng.choice(TRUTHY), "required_evidence": [],
+            reg[name] = None if rng.random() < 0.2 else {"name": name, "authorized": pick(rng, TRUTHY), "required_evidence": [],
                                                        "parent": None, "min_evidence_quality": None, "max_steps": None}
     elif k == 15:
-        rt["thermal_status"] = rng.choice(THERMAL)
+        rt["thermal_status"] = pick(rng, THERMAL)
     elif k == 16:
-        rt["compute_budget"] = rng.choice(BUDGET)
+        rt["compute_budget"] = pick(rng, BUDGET)
     elif k == 17:
-        rt["power_status"] = rng.choice(POWER)
+        rt["power_status"] = pick(rng, POWER)
     elif k == 18:
         inp["policy"] = None if rng.random() < 0.2 else {"allow_only": rng.sample(NAMES, rng.randrange(0, 4)) if rng.random() < 0.9 else None}
 
 
 def case(i):
     rng = random.Random(SEED * 1_000_003 + i)
-    inp = copy.deepcopy(rng.choice(VECTORS)["input"])
-    for _ in range(rng.randint(1, 6)):
+    pool = NONREFUSE if (NONREFUSE and rng.random() < 0.7) else VECTORS
+    inp = copy.deepcopy(rng.choice(pool)["input"])
+    for _ in range(rng.randint(1, 4)):
         mutate(rng, inp)
     return inp
 
@@ -152,8 +162,9 @@ def run(indices, impls, out_dir, label, deadline=None):
                 for a, b in (("K", "V"), ("K", "I"), ("V", "I")):
                     if outs[a] != outs[b]:
                         pairs[a + b] += 1
-                sigs[signature(outs)] += 1
-                if saved < MAX_SAVED:
+                sig = signature(outs)
+                sigs[sig] += 1
+                if saved < MAX_SAVED and sigs[sig] <= PER_SIGNATURE:
                     dis.write(json.dumps({"index": i, "input": inp, "outcomes": outs}, sort_keys=True) + "\n")
                     saved += 1
             if n % 20000 == 0:
@@ -165,7 +176,7 @@ def write_summary(out_dir, label, n, pairs, sigs, decisions, t0, final):
     s = {"label": label, "final": final, "cases": n, "seconds": round(time.time() - t0, 1),
          "utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
          "kernel_decisions": dict(decisions), "disagreeing_pairs": dict(pairs),
-         "disagreement_cases": sum(sigs.values()), "top_signatures": sigs.most_common(25),
+         "disagreement_cases": sum(sigs.values()), "signatures": sigs.most_common(),
          "python": sys.version.split()[0]}
     tmp = os.path.join(out_dir, f"{label}.summary.json.tmp")
     with open(tmp, "w", encoding="utf-8") as fh:

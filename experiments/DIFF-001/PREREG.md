@@ -51,3 +51,21 @@ Each implementation gets a deep copy of the case. Its outcome is `(decision, rea
 | Verdict code | C-BUILD | yes: `--mutant` exits 1 if the harness fails to catch a planted defect |
 | Exploration | C-EXPLORE | no run of any kind before this commit |
 | Method comparison | C-METHCOMP | no |
+
+## Amendments and disclosed smoke observations (appended before the registered run; C-EXPLORE)
+
+1. **Smoke 1** (original generator, 2,000 cases, Linux x86, Python 3.13): decisions **1,990 REFUSE / 10 DEFER / 0 ALLOW**, 0 disagreements. The generator almost never reached the ALLOW/DEFER paths, because 4,616 of the 4,690 base vectors are REFUSE and the mutations mostly broke inputs.
+2. **Amendment A1 (generator).**
+   - Each mutation now picks a contract-valid value 85% of the time.
+   - 70% of cases start from one of the 74 non-REFUSE vectors.
+   - 1 to 4 mutations per case, instead of 1 to 6.
+3. **Smoke 2** (A1, 2,000 cases): decisions 89 ALLOW / 572 DEFER / 1,336 REFUSE / 3 ERROR. **3 disagreements, all one class:**
+   - `min_evidence_quality = 10**400` (a valid JSON number) makes **K and V raise `OverflowError`**;
+   - I returns DEFER with reason `evidence_quality_below_threshold:…<inf`.
+   - So P3 is effectively refuted before the registered run. It will still be scored on the registered run, as registered. The kernel crashing on a contract-typed number is a candidate defect in K and V, reported separately with source analysis.
+4. **P1 (anti-vacuity) on A1:** `steps-ge` → 1,307 K-I disagreements in 100,000 cases; `insufficient-is-pass` → 7,799. Both mutant runs exit 0. **P1 HELD.**
+5. **Amendment A2 (recording only; the generator is unchanged).**
+   - Save up to 20 examples **per disagreement signature**, so the frequent overflow class cannot fill the record and hide rarer classes.
+   - The summary now lists all signatures, not just the top 25.
+   - Made after smoke 2 showed one dominant class.
+6. **Smoke 3** (A1+A2, 3,000 cases, which include smoke 2's 2,000 indices): 9 disagreements, all K-I/V-I, with K and V raising errors (9 kernel ERROR outcomes). `steps-ge` re-check on 20,000 cases: caught (exit 0).
