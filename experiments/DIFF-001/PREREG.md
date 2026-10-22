@@ -85,3 +85,15 @@ Each implementation gets a deep copy of the case. Its outcome is `(decision, rea
     - **Code:** this commit. The harness is unchanged since the A1/A2 commit `026ccfb` (`diff_fuzz.py` SHA-256 `55b32b13…4095`), and the phone checks that hash before starting.
     - **Output:** `$HOME/diff001_s23/worker{0,1}.summary.json` and `.disagreements.jsonl`. The owner sends them back, and they are added to `results/` unedited.
     - Predictions and the interpretation rule are unchanged. As item 9 says, the overflow class is expected to recur, because this code predates the OVF-1 fix.
+11. **Amendment A5 (held-out start), written 2026-10-22 ~20:40Z, before any registered-run output exists.**
+    - **Why:** the A1 generator change was decided after looking at smoke runs over case indices 0–2,999. As
+      registered, the long run would start again at index 0 and re-judge the cases that shaped the generator. The
+      held-out rule proposed in Principia SWAY Amendment 4 (C-HOLDOUT, as tightened in review) flags exactly
+      this.
+    - **Change (no code change; `diff_fuzz.py` still SHA-256 `55b32b13…4095`):** the two workers start at
+      **3,010** and **3,011**, using the harness's own `--worker` start index: `--worker 3010 --workers 2` and
+      `--worker 3011 --workers 2`. That makes indices 3010, 3012, … and 3011, 3013, …. The output labels become
+      `worker3010` and `worker3011`. Device, deadline and predictions are unchanged from A4.
+    - **Disclosure (C-EXPLORE):** to confirm the start offset, a 5-case mechanics check ran on indices 3000–3008
+      in Claude's container. Only its case count (5) was read, and its output was deleted unread. The registered
+      run starts above those indices.
