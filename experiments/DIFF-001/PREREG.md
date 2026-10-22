@@ -97,3 +97,31 @@ Each implementation gets a deep copy of the case. Its outcome is `(decision, rea
     - **Disclosure (C-EXPLORE):** to confirm the start offset, a 5-case mechanics check ran on indices 3000–3008
       in Claude's container. Only its case count (5) was read, and its output was deleted unread. The registered
       run starts above those indices.
+12. **Amendment A6 (launch record and deviations), written 2026-10-22 ~20:40Z.** The run has started. No
+    registered-run output (summary, disagreements or log content) has been read. The source is the owner's Termux
+    transcript of the launch.
+    - **Launched as A5 says:**
+      - checkout `ade8820ec8b5f9248d1a15a91528c2a540aa7c84`;
+      - `--worker 3010 --workers 2` and `--worker 3011 --workers 2`;
+      - `--until 2026-10-23T12:00:00Z`, `--out $HOME/diff001_s23`, `python -I`, under `nohup`, after
+        `termux-wake-lock`.
+    - **Pre-run conformance on the phone**, pasted:
+      `gate_contract sv.gate/0 | python ports/python_independent/independent_gate.py | 4690 vectors`,
+      `conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628 (expected 44823d0f…0628)`,
+      `VERDICT  CONFORMS`.
+    - **Deviations (C-DEVICE):**
+      - **Device name.** The Termux banner reads `DEVICE: Galaxy S23 FE`. A4's "Samsung Galaxy S23" should read
+        Galaxy S23 FE.
+      - **Hash check.** A4's step "the phone checks that hash before starting" was not run before launch. The
+        checkout of `ade8820` fixes the file's content. The owner is asked to run the check now, against the
+        unchanged file on disk, and the result is added here when it comes back.
+      - **Python.** `pkg install` upgraded Termux's Python from 3.14.6 to 3.14.8 immediately before launch. The
+        summary file records the version that ran.
+      - **Background load.** The banner reported a local Ollama service as active, and the shell already held
+        another background job. The owner said a clip-on fan would be attached and Shizuku would be on. These can
+        change the case count (throughput), not a verdict. The harness is deterministic per case index.
+      - **Timestamps in A4 and A5.** The "~19:50Z" and "~20:40Z" in their text were estimates. The commits are
+        dated 19:35:13Z (`28f7973`) and 20:25:23Z (`ade8820`); the commit times govern.
+    - **Mid-run reading:** the harness rewrites `worker30xx.summary.json` every 20,000 cases with interim counts.
+      Nobody reads those files before the deadline; checks during the run use process state and file times only.
+      A run that stops early leaves `"final": false` in its last summary, and is reported as stopped early.
