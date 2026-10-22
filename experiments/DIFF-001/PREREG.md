@@ -115,6 +115,10 @@ Each implementation gets a deep copy of the case. Its outcome is `(decision, rea
       - **Hash check.** A4's step "the phone checks that hash before starting" was not run before launch. The
         checkout of `ade8820` fixes the file's content. The owner is asked to run the check now, against the
         unchanged file on disk, and the result is added here when it comes back.
+        **Result (2026-10-22 ~20:40Z, owner's transcript, pasted):**
+        `55b32b1320947f875cb5acaed4dc98267d1d9773f66da6ac8438e0f20f794095  experiments/DIFF-001/diff_fuzz.py`.
+        It matches the registered hash. In the same transcript, `jobs -l` showed both workers `Running`
+        (PIDs 17794 and 17807), alongside `ollama serve` (PID 10417).
       - **Python.** `pkg install` upgraded Termux's Python from 3.14.6 to 3.14.8 immediately before launch. The
         summary file records the version that ran.
       - **Background load.** The banner reported a local Ollama service as active, and the shell already held
