@@ -85,3 +85,27 @@ the attempt.
 `reserve` time, and refuse a mismatch with a distinct `CONFLICT` reason. Then rerun KC-1 with KC-P2 flipped (each C
 message differs from its D) and KC-P1 unchanged. Where that change belongs, the public v0.2 line or the
 development line, is the owner's decision.
+
+## Pre-run revisions (2026-10-22, before `tools/kc1_probe.py` exists)
+
+These come from a preliminary audit by ChatGPT (OpenAI; model version not recorded), relayed by Chad Holland on
+2026-10-22. They are checked here against this file and the code. Nothing was run. The original text above is
+kept as written.
+
+- **R1: KC-P4 was too weak.** A per-call counter in the refusal message shows that the comparison sees different
+  strings. It does not show that the probe would credit a store that really distinguishes conflicts. Added:
+  - **KC-P4b (anti-vacuity, decisive).** `--mutant digest-bound` swaps in a store that records a SHA-256 of the
+    canonical decided action (sorted keys, compact JSON) with each reservation. It refuses a mismatch with a
+    distinct `conflicting reuse` message. The probe must then report KC-P2 **REFUTED** for C1, C2, C3 and C4,
+    and exit 1. Credence 0.9. Precisely wrong if KC-P2 still holds under this mutant.
+
+  The original KC-P4 stays as a weaker string-level check.
+- **R2: KC-P3 is narrowed.** KC-P3 now says only that no D or C attempt adds a record to the workflow's ledger
+  sink, or an entry or history change to the reservation store. **Nothing is claimed about application logs,
+  exception traces or any other telemetry.**
+- **R3: canonicalization, a new prediction.**
+  - **KC-P7.** A duplicate whose parameters are the same values in a different key order (`{"b": 2, "a": 1}`
+    against `{"a": 1, "b": 2}`) is refused like D1 under the current stores (0 effects, the same message).
+    Under the KC-P4b mutant, it is treated as a duplicate, not a conflict: the same message as D1. Credence
+    0.85. Precisely wrong if either store treats key order as a conflict.
+  - This guards KC-2 (the door) against making harmless reorderings look like conflicting intents.
