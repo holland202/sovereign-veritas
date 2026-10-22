@@ -1,11 +1,30 @@
 # STATUS — Verified vs. Unverified
 
+> **ACTIVE DEVELOPMENT RESUMED (2026-10-22).** The maintenance-only period that began with `v0.2.0` has ended
+> by owner decision. Release `v0.2.0` (annotated tag on `ecd4de9`) remains **NOT PRODUCTION-READY** and
+> **NOT INDEPENDENTLY SECURITY-VALIDATED**. In scope: security reports, correctness fixes, tests, documentation,
+> independent review, and feature proposals opened as issues (the owner decides what is accepted). All findings,
+> negative results and known limits stay published: see [STATUS.md](STATUS.md) and
+> [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
+> Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
+> Issues and breaks are still welcome; the owner will answer them.
+
+### Status record — maintenance-only period ended (2026-10-22)
+
+Chad Holland ended the maintenance-only period on 2026-10-22. The notice it replaces at the top of this file
+and of README.md, preserved verbatim:
+
 > **MAINTENANCE-ONLY (from v0.2.0).** Active development of this repository has ended. Release `v0.2.0`
 > (annotated tag on `ecd4de9`) is **NOT PRODUCTION-READY** and **NOT INDEPENDENTLY SECURITY-VALIDATED**.
 > From here: security reports and correctness fixes only; no new features. All findings, negative results and
 > known limits stay published: see [STATUS.md](STATUS.md) and [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
-> Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
-> Issues and breaks are still welcome; the owner will answer them.
+
+Unchanged by this update: release `v0.2.0` and its limits, every finding and negative result below, and the
+historical registrations that describe the repository as maintenance-only at the time they were written
+(`docs/SV_ATTACK_001_PREREG.md`, `docs/SV_FIX_001_PREREG.md`). Those are records and stay as written.
+
+Provenance: Claude (Anthropic, Opus 5.5) drafted this wording → human validation: not performed → human
+editing/curation: direction by Chad Holland → human responsibility: Chad Holland. Review level: direction only.
 
 ---
 
