@@ -10,7 +10,17 @@ from .runtime import RuntimeState
 from .verification import REFUSAL_REASONS, VerificationStatus
 
 
+def _fixed4(value) -> str:
+    """Four-place fixed point of a JSON number. An integer too large for a double prints as a signed
+    infinity (CONTRACT.md rule 10), instead of raising OverflowError (OVF-1)."""
+    try:
+        return format(value, ".4f")
+    except OverflowError:
+        return format(math.inf if value > 0 else -math.inf, ".4f")
+
+
 @dataclass(frozen=True)
+
 class Decision:
     decision: str
     reasons: tuple[str, ...] = ()
@@ -110,7 +120,7 @@ class Gate:
                 reasons.append(f"evidence_quality_invalid:{quality!r}")
             elif quality < capability.min_evidence_quality:
                 reasons.append(
-                    f"evidence_quality_below_threshold:{quality:.4f}<{capability.min_evidence_quality:.4f}"
+                    f"evidence_quality_below_threshold:{quality:.4f}<{_fixed4(capability.min_evidence_quality)}"
                 )
 
         # Advisory step bound (callers that track steps put 'step_count' in metadata).

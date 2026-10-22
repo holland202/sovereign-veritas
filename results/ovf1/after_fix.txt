@@ -1,0 +1,18 @@
+OVF-1 after fix (Python 3.13.16, x86_64, 2026-10-22T15:17:50Z). Self-tested.
+## new tests
+4 passed in 0.41s
+## contract: kernel
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+## contract: verifier
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+## full suite
+544 passed, 1 skipped in 56.51s
+## R6 revert each half
+revert-kernel: 1 failed, 3 passed in 0.45s
+revert-verifier: 1 failed, 3 passed in 0.44s
+## R7 DIFF-001 harness (branch research/diff-001-gate-differential d0890ef, A1+A2) vs fixed K/V and the #86 port
+{"cases": 3000, "disagreeing_pairs": {}, "disagreement_cases": 0, "kernel_decisions": {"ALLOW": 129, "DEFER": 855, "REFUSE": 2016}, "label": "worker0", "seconds": 0.6}
+## additional (not registered): 100,000 cases
+{"cases": 100000, "disagreeing_pairs": {}, "disagreement_cases": 0, "kernel_decisions": {"ALLOW": 4471, "DEFER": 28250, "REFUSE": 67279}, "label": "worker0", "seconds": 21.2}

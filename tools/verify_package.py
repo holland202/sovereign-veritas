@@ -402,6 +402,14 @@ def as_quality(value):
         return math.inf if value > 0 else -math.inf
 
 
+def fixed4(value):
+    """Four-place fixed point; an integer too large for a double prints as a signed infinity (OVF-1)."""
+    try:
+        return format(value, ".4f")
+    except OverflowError:
+        return format(math.inf if value > 0 else -math.inf, ".4f")
+
+
 def quality_of(rec):
     """Top-level evidence_quality if present (not a number: 0.0), else metadata's, else 0.0."""
     if rec.get("evidence_quality") is not None:
@@ -454,7 +462,7 @@ def replay_gate(rec, cap, registry, runtime, policy):
         if not (math.isfinite(q) and 0.0 <= q <= 1.0):
             reasons.append(f"evidence_quality_invalid:{q!r}")
         elif q < floor:
-            reasons.append(f"evidence_quality_below_threshold:{q:.4f}<{floor:.4f}")
+            reasons.append(f"evidence_quality_below_threshold:{q:.4f}<{fixed4(floor)}")
     max_steps = cap.get("max_steps")
     if max_steps is not None:
         steps = meta.get("step_count")
