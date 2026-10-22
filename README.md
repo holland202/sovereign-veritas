@@ -1,13 +1,15 @@
 # Sovereign Veritas
 
 <!-- collaboration-invitation:start -->
-> **🤝 Independent reviewers and security contributors welcome.** Help reproduce results, test the 4,690-vector Gate contract, or challenge authorization and execution-boundary claims. **[Join the collaboration and technical review invitation → Issue #79](https://github.com/holland202/sovereign-veritas/issues/79)**. This repository is **maintenance-only**: security findings, correctness fixes, and independent review are welcome; new features are not in scope.
+> **🤝 Independent reviewers and security contributors welcome.** Help reproduce results, test the 4,690-vector Gate contract, or challenge authorization and execution-boundary claims. **[Join the collaboration and technical review invitation → Issue #79](https://github.com/holland202/sovereign-veritas/issues/79)**. Active development resumed on 2026-10-22: security findings, correctness fixes, independent review and feature proposals (as issues) are welcome.
 <!-- collaboration-invitation:end -->
 
-> **MAINTENANCE-ONLY (from v0.2.0).** Active development of this repository has ended. Release `v0.2.0`
-> (annotated tag on `ecd4de9`) is **NOT PRODUCTION-READY** and **NOT INDEPENDENTLY SECURITY-VALIDATED**.
-> From here: security reports and correctness fixes only; no new features. All findings, negative results and
-> known limits stay published: see [STATUS.md](STATUS.md) and [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
+> **ACTIVE DEVELOPMENT RESUMED (2026-10-22).** The maintenance-only period that began with `v0.2.0` has ended
+> by owner decision. Release `v0.2.0` (annotated tag on `ecd4de9`) remains **NOT PRODUCTION-READY** and
+> **NOT INDEPENDENTLY SECURITY-VALIDATED**. In scope: security reports, correctness fixes, tests, documentation,
+> independent review, and feature proposals opened as issues (the owner decides what is accepted). All findings,
+> negative results and known limits stay published: see [STATUS.md](STATUS.md) and
+> [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
 > Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
 > Issues and breaks are still welcome; the owner will answer them.
 > **Maintenance release v0.2.1: prepared, not tagged.** It fixes SV-ATTACK-001 Q1/Q3 (self-tested, not independently reviewed). The tag waits for the independent review under discussion. See [docs/RELEASE_NOTES_v0.2.1.md](docs/RELEASE_NOTES_v0.2.1.md).
@@ -25,7 +27,7 @@ In practical terms, it provides:
 
 **Example:** An AI proposes moving a simulated vehicle. The Gate examines its declared authority, required evidence, policy restrictions, and runtime state before the workflow may execute it. An offline reviewer can later check whether the *recorded* decision followed those rules. This does **not** establish that a sensor was honest, that the physical action happened as recorded, or that every execution race is prevented.
 
-**Scope and maturity:** This is a research prototype, **not** a general-purpose AI model, a replacement for a production policy engine, or a certified safety system. It is **not production-ready or independently security-validated**; the repository is maintenance-only from v0.2.0. See [STATUS.md](STATUS.md) for open findings and negative results, [CONTRACT.md](CONTRACT.md) for the exact Gate rules, and the [30-second demo](#30-second-demo--prototype) for a quick hands-on example.
+**Scope and maturity:** This is a research prototype, **not** a general-purpose AI model, a replacement for a production policy engine, or a certified safety system. It is **not production-ready or independently security-validated**; the repository was maintenance-only from v0.2.0 until 2026-10-22 and is under active development again. See [STATUS.md](STATUS.md) for open findings and negative results, [CONTRACT.md](CONTRACT.md) for the exact Gate rules, and the [30-second demo](#30-second-demo--prototype) for a quick hands-on example.
 
 <!-- 30s-demo -->
 > **Status labels used below.** **PROTOTYPE:** runs, is tested, and is not hardened for production.

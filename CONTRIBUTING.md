@@ -36,6 +36,16 @@ If you change Gate rules or decision semantics:
 - Do not add production deployment guidance or security guarantees that the prototype does not support.
 - Do not use `git add -A` or broad cleanups when contributing community or documentation files; keep changes focused.
 
+## Licensing of contributions
+
+By opening a pull request, or otherwise submitting code or documentation for inclusion, you agree that your
+contribution is licensed under the MIT License in [`LICENSE`](LICENSE), the same terms as the rest of the project,
+and you confirm that you have the right to submit it under those terms.
+
+If you want something kept here **only as a record** and not under MIT (a review, a report, test cases you
+want to keep control of), say so in the issue or pull request. It will be stored under `docs/external/` with its
+terms written down; see [`docs/external/README.md`](docs/external/README.md).
+
 ## Practical steps
 
 1. Fork and clone.
@@ -44,3 +54,11 @@ If you change Gate rules or decision semantics:
 4. Keep PRs focused. Prefer evidence and failing cases over narrative.
 
 Thank you for testing the claims rather than the story.
+
+## License and independent review permissions
+
+The repository remains **MIT-licensed** (active development resumed 2026-10-22); see [LICENSING.md](LICENSING.md). Code proposed for incorporation should be contributed only by someone entitled to offer it under the existing MIT terms, with any required third-party notices.
+
+For an independently authored review, record the author's publication permission and approved attribution. Publication consent does not automatically confer copyright ownership, unrelated republication rights, or an endorsement. No blanket copyright assignment or contributor license agreement is introduced here. Any separate paid evaluation, confidential materials or non-public testing scope requires explicit arrangements; none modifies the rights previously granted under MIT.
+
+**Provenance (2026-10-19):** This explanatory section was prepared with ChatGPT (OpenAI, GPT-6) at Chad Holland's direction; legal review not performed.
