@@ -1,0 +1,62 @@
+sovereign_veritas/capability.py#0  [flip-bool, line 19]  a Capability built without `authorized` is evaluated by the Gate
+    original: REFUSE
+    mutant:   ALLOW
+    GAP (differs)
+sovereign_veritas/capability.py#16  [flip-bool, line 84]  CapabilityRegistry.check on a name that is not registered
+    original: (False, ['capability_missing:ghost'])
+    mutant:   (True, ['capability_missing:ghost'])
+    GAP (differs)
+sovereign_veritas/decision.py#72  [cmp, line 133]  step_count equal to max_steps
+    original: ALLOW
+    mutant:   REFUSE
+    GAP (differs)
+sovereign_veritas/evidence.py#59  [raise-to-pass, line 228]  Ledger.append of a record with an empty record_id
+    original: ValueError: record_id and input_digest are required
+    mutant:   ''
+    GAP (differs)
+sovereign_veritas/evidence.py#56  [boolop, line 227]  Ledger.append of a record with an id but an empty input_digest
+    original: ValueError: record_id and input_digest are required
+    mutant:   'r'
+    GAP (differs)
+sovereign_veritas/evidence.py#70  [raise-to-pass, line 247]  a ledger whose record 1 points at the wrong predecessor, digests kept consistent
+    original: ValueError: ledger chain broken at index 1
+    mutant:   True
+    GAP (differs)
+sovereign_veritas/evidence.py#18  [flip-bool, line 43]  canonical JSON of a non-ASCII value (the hash-chain input)
+    original: {"name":"café"}
+    mutant:   {"name":"caf\u00e9"}
+    GAP (differs)
+sovereign_veritas/evidence.py#20  [flip-bool, line 53]  a dict with mixed key types passed to the JSON validator
+    original: TypeError: non-JSON-serializable value at value
+    mutant:   None
+    GAP (differs)
+sovereign_veritas/evidence.py#7  [return-none, line 23]  a tuple inside action parameters, as frozen into a record
+    original: (1, 2)
+    mutant:   None
+    GAP (differs)
+sovereign_veritas/workflow.py#18  [raise-to-pass, line 100]  a prediction whose uncertainty is NaN, everything else ALLOW (effects counted at the executor)
+    original: effects 0 | ValueError: non-finite prediction uncertainty refused before execution: nan
+    mutant:   effects 1 | 'ALLOW'
+    GAP (differs)
+sovereign_veritas/idempotency.py#44  [return-none, line 145]  a reservation file that is not valid JSON, then reserve() on its key
+    original: ReservationRefused: idempotency key 'K' is IN_FLIGHT: refused before execution
+    mutant:   AttributeError: 'NoneType' object has no attribute 'get'
+    GAP (differs)
+sovereign_veritas/idempotency.py#42  [boolop, line 143]  a reservation file holding {} (no state), then state() and release()
+    original: IN_FLIGHT | ValueError: release is allowed only from UNKNOWN: 'K'
+    mutant:   IN_FLIGHT | ValueError: release is allowed only from UNKNOWN: 'K'
+    SAME (not shown to differ by this input)
+sovereign_veritas/idempotency.py#42  [boolop, line 143]  a reservation file holding a JSON list that contains "state", then reserve()
+    original: ReservationRefused: idempotency key 'K' is IN_FLIGHT: refused before execution
+    mutant:   AttributeError: 'list' object has no attribute 'get'
+    GAP (differs)
+sovereign_veritas/idempotency.py#38  [flip-bool, line 134]  a FileReservations directory whose parent does not exist
+    original: 'FileReservations'
+    mutant:   FileNotFoundError: [Errno 2] No such file or directory: '<tmpdir>/a/b'
+    GAP (differs)
+sovereign_veritas/idempotency.py#4  [cmp, line 42]  lease_s=0 with the clock frozen (a coarse clock reads the same instant twice)
+    original: UNKNOWN
+    mutant:   IN_FLIGHT
+    GAP (differs)
+
+14 of 15 inputs separate the mutant from the original
