@@ -1,0 +1,69 @@
+name: SEC-004 registered release race
+
+on:
+  push:
+    branches: [security/sec-004-release-race]
+    paths:
+      - "tools/sec004_release_race_probe.py"
+      - ".github/workflows/sec004-release-race.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sec004:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture exact environment and run once
+        shell: bash
+        run: |
+          mkdir -p sec004-evidence
+          {
+            echo "EXPERIMENT=SEC-004"
+            echo "SOURCE_REVISION=$(git rev-parse HEAD)"
+            python --version
+            uname -a
+            sha256sum tools/sec004_release_race_probe.py
+            sha256sum sovereign_veritas/idempotency.py
+          } > sec004-evidence/environment.txt
+          set +e
+          python -I tools/sec004_release_race_probe.py > sec004-evidence/run.log 2>&1
+          rc=$?
+          set -e
+          printf "%s\n" "$rc" > sec004-evidence/exit_code.txt
+          cat sec004-evidence/run.log
+          echo "PROBE_EXIT=$rc"
+      - name: Hash original evidence files
+        if: always()
+        shell: bash
+        run: |
+          cd sec004-evidence
+          sha256sum environment.txt run.log exit_code.txt > SHA256SUMS
+      - name: Upload SEC-004 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sec004-first-registered-run
+          path: sec004-evidence/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Final classification (fail CI on security fail or inconclusive)
+        shell: bash
+        run: |
+          rc=$(cat sec004-evidence/exit_code.txt)
+          if [ "$rc" != "0" ]; then
+            echo "::error::SEC-004 inconclusive or probe exception: exit=$rc"
+            exit 1
+          fi
+          if grep -q '^GATE=SECURITY_FAIL$' sec004-evidence/run.log; then
+            echo "::error::SEC-004 SECURITY_FAIL: stale reservation ownership overwritten"
+            exit 1
+          elif grep -q '^GATE=BOUNDED_SECURITY_PASS$' sec004-evidence/run.log; then
+            echo "SEC-004 BOUNDED_SECURITY_PASS in registered local interleaving"
+          else
+            echo "::error::SEC-004 unexpected outcome; not a security pass"
+            exit 1
+          fi
