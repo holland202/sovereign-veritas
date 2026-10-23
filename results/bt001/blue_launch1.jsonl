@@ -1,0 +1,1 @@
+{"C": {"rc": 0, "seconds": 0.8, "tail": "VERDICT  CONFORMS", "verdict": "PASS"}, "T": {"rc": 1, "seconds": 68.7, "tail": "1 failed, 425 passed, 3 skipped in 68.17s (0:01:08)", "verdict": "FAIL"}, "as_expected": false, "control": "null", "expected": "PASS", "id": "control:null:launch1", "utc": "2026-10-22T20:46:45+00:00"}

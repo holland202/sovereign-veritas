@@ -1,0 +1,75 @@
+records 353: controls 2, mutants 351 (2 textually identical to the original, left out of rates)
+  control:null:launch1         expected PASS T PASS C PASS as_expected=True
+  control:always-allow:launch1 expected FAIL T FAIL C FAIL as_expected=True
+
+per target           mutants  T-killed   T-rate  C-killed   C-rate  T-collection-errors
+  decision.py             88        82    93.2%        81    92.0%  0
+  verification.py          7         7   100.0%         4    57.1%  0
+  idempotency.py          71        54    76.1%         0     0.0%  0
+  evidence.py             80        64    80.0%        20    25.0%  0
+  capability.py           26        21    80.8%         1     3.8%  0
+  runtime.py               9         8    88.9%         7    77.8%  0
+  workflow.py             68        64    94.1%         0     0.0%  0
+  ALL                    349       300    86.0%
+
+decision.py: T 93.2%, C 92.0%; killed by C but not T: none
+raise->pass in idempotency/workflow: 10 mutants, T survivors: ['sovereign_veritas/workflow.py#18']
+timeouts: none
+  BT-P1  HELD
+  BT-P2  HELD
+  BT-P3  HELD
+  BT-P4  HELD
+  BT-P5  HELD
+  BT-P6  REFUTED
+  BT-P7  needs the survivor triage below (by reading each one)
+
+T survivors (49), for triage:
+  sovereign_veritas/decision.py#2            cmp            line 19  C=PASS
+  sovereign_veritas/decision.py#3            num+1          line 19  C=PASS
+  sovereign_veritas/decision.py#4            return-none    line 30  C=PASS
+  sovereign_veritas/decision.py#5            flip-bool      line 22  C=PASS
+  sovereign_veritas/decision.py#18           return-none    line 77  C=PASS
+  sovereign_veritas/decision.py#72           cmp            line 133  C=PASS
+  sovereign_veritas/idempotency.py#0         num+1          line 34  C=PASS
+  sovereign_veritas/idempotency.py#4         cmp            line 42  C=PASS
+  sovereign_veritas/idempotency.py#5         num+1          line 42  C=PASS
+  sovereign_veritas/idempotency.py#14        num+1          line 62  C=PASS
+  sovereign_veritas/idempotency.py#19        num+1          line 81  C=PASS
+  sovereign_veritas/idempotency.py#30        return-none    line 112  C=PASS
+  sovereign_veritas/idempotency.py#31        boolop         line 112  C=PASS
+  sovereign_veritas/idempotency.py#38        flip-bool      line 134  C=PASS
+  sovereign_veritas/idempotency.py#42        boolop         line 143  C=PASS
+  sovereign_veritas/idempotency.py#44        return-none    line 145  C=PASS
+  sovereign_veritas/idempotency.py#45        flip-bool      line 151  C=PASS
+  sovereign_veritas/idempotency.py#46        num+1          line 158  C=PASS
+  sovereign_veritas/idempotency.py#47        num+1          line 162  C=PASS
+  sovereign_veritas/idempotency.py#49        flip-bool      line 166  C=PASS
+  sovereign_veritas/idempotency.py#58        flip-bool      line 180  C=PASS
+  sovereign_veritas/idempotency.py#61        return-none    line 198  C=PASS
+  sovereign_veritas/idempotency.py#67        return-none    line 208  C=PASS
+  sovereign_veritas/evidence.py#5            return-none    line 21  C=PASS
+  sovereign_veritas/evidence.py#7            return-none    line 23  C=PASS
+  sovereign_veritas/evidence.py#14           return-none    line 33  C=PASS
+  sovereign_veritas/evidence.py#18           flip-bool      line 43  C=PASS
+  sovereign_veritas/evidence.py#20           flip-bool      line 53  C=PASS
+  sovereign_veritas/evidence.py#21           flip-bool      line 53  C=PASS
+  sovereign_veritas/evidence.py#29           cmp            line 65  C=PASS
+  sovereign_veritas/evidence.py#30           num+1          line 65  C=PASS
+  sovereign_veritas/evidence.py#36           num+1          line 161  C=PASS
+  sovereign_veritas/evidence.py#43           flip-bool      line 68  C=PASS
+  sovereign_veritas/evidence.py#45           return-none    line 200  C=PASS
+  sovereign_veritas/evidence.py#54           flip-bool      line 176  C=PASS
+  sovereign_veritas/evidence.py#56           boolop         line 227  C=PASS
+  sovereign_veritas/evidence.py#59           raise-to-pass  line 228  C=PASS
+  sovereign_veritas/evidence.py#70           raise-to-pass  line 247  C=PASS
+  sovereign_veritas/evidence.py#80           flip-bool      line 276  C=PASS
+  sovereign_veritas/capability.py#0          flip-bool      line 19  C=PASS
+  sovereign_veritas/capability.py#2          flip-bool      line 7  C=PASS
+  sovereign_veritas/capability.py#3          return-none    line 44  C=PASS
+  sovereign_veritas/capability.py#15         return-none    line 84  C=PASS
+  sovereign_veritas/capability.py#16         flip-bool      line 84  C=PASS
+  sovereign_veritas/runtime.py#8             flip-bool      line 22  C=PASS
+  sovereign_veritas/workflow.py#2            flip-bool      line 23  C=PASS
+  sovereign_veritas/workflow.py#4            num+1          line 76  C=PASS
+  sovereign_veritas/workflow.py#16           drop-not       line 97  C=PASS
+  sovereign_veritas/workflow.py#18           raise-to-pass  line 100  C=PASS
