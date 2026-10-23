@@ -13,6 +13,12 @@
 > Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
 > Issues and breaks are still welcome; the owner will answer them.
 
+## AI governance and agent action authorization — project overview
+
+**AI agent governance / fail-closed authorization research.** Sovereign Veritas is a research prototype for **evidence-bound AI actions**: it evaluates a proposed action against declared capabilities, policy, evidence, and runtime state before returning ALLOW, DEFER, or REFUSE. Its separate deterministic verifier can re-check whether a *recorded decision* followed the Gate contract. These mechanisms do **not** authenticate the outside world, prove execution effects, or establish production-grade security. The project is maintenance-only; please read the status and negative findings below before reuse.
+
+**Related independent research, not an integrated or validated platform:** [Evidence Ledger](https://github.com/holland202/evidence-ledger) (evidence-state accounting), [Veritas Companion](https://github.com/holland202/veritas-companion) (evidence-grounded model delegation), [SLC v12](https://github.com/holland202/slc-v12-) (experimental memory admission), [SKN-V1](https://github.com/holland202/skn-v1-) (simulated swarm controls), [Veritas-Origin](https://github.com/holland202/veritas-origin) (experimental research prechecks), and [Principia Artificialis](https://github.com/holland202/principia-artificialis) (research methodology). These repositories make different claims and have separate validation status. See [discoverability audit](docs/DISCOVERABILITY_AUDIT_2026-10-11.md) for the scope of these documentation changes.
+
 ## What is Sovereign Veritas?
 
 **Sovereign Veritas is an experimental, open-source permission and verification system for AI-driven actions.** It sits between a proposed action and an executor, asks whether the recorded evidence, capability authorization, policy, and runtime state satisfy defined rules, and returns **ALLOW**, **DEFER**, or **REFUSE**. The objective is to make the boundary between an AI's proposal and a real-world action explicit, testable, and independently inspectable—not to trust an AI's confidence or a self-reported success label.

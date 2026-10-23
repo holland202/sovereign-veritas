@@ -2,6 +2,8 @@
 
 This repository is a research prototype. Contributions that **challenge**, **reproduce**, or **independently implement** the design are more valuable than praise or cosmetic polish.
 
+**Looking for AI agent governance / fail-closed action authorization examples?** Start with [README.md](README.md) for the prototype scope, [CONTRACT.md](CONTRACT.md) for the rules, [STATUS.md](STATUS.md) for unresolved findings, and the [discoverability audit](docs/DISCOVERABILITY_AUDIT_2026-10-11.md) for documentation-only changes. Please distinguish independent verification of a recorded decision from source authenticity or proof of external execution.
+
 ## What we value
 
 - **Reproducibility over praise.** Report what you ran, on which commit/OS/Python version, and what it printed.
