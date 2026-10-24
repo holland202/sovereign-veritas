@@ -85,8 +85,10 @@ Derived (arithmetic on the lines above):
 The summary is saved every 20,000 cases by an atomic replace, so each worker stopped less than 20,000 cases (about
 23 s) after its last save. Cases after the last save were run but not recorded, and they are not counted.
 
-**Not yet in the repo:** the raw summary and disagreement files are still on the phone. Only the owner's `grep`
-paste is quoted here. The raw files should be added unedited when they can be transferred.
+**Raw files:** [results/lr001/](../results/lr001/), unedited, with [SHA256SUMS](../results/lr001/SHA256SUMS). The
+owner transferred them from the phone on 2026-10-24 as one archive (SHA-256 `4ed42505…49e2`). Both summaries read
+`"final": false`. Both disagreement files are 0 bytes. Every summary field except timing (`seconds`, `utc`,
+`python`, `final`) equals the x86 reproduction's. The quotes above are the owner's pastes of the same files.
 
 ## What this supports (C-DESIGN)
 
