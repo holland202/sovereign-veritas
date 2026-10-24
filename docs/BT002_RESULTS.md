@@ -32,7 +32,7 @@ Claude. Chad Holland chose the run and operated the phone. He has not reviewed t
 | BT2-P4 | At most 3 of the 27 argued-not-run GAPs killed | **HELD: 1 of 27** (`capability.py#15`) |
 | BT2-P5 | Every BT-001-killed mutant reached is still killed | **HELD: 230 of 230** |
 | BT2-P6 | The run ends by itself and writes `end.json` | **HELD:** `{"end": "deadline reached", "launch": 1, "mutants_this_launch": 281, "utc": "2026-10-24T15:25:07+00:00"}` |
-| BT2-P7 | Same verdicts on x86 | NOT RUN (door). Partial cross-check: the C oracle's verdict equals BT-001's (container, x86) for **281 of 281** mutants run |
+| BT2-P7 | Same verdicts on x86 | Registered as P7a/P7b (amendment A1) and run on x86: **both HELD**, see below |
 
 No T or C timeouts. The SHA-256 of every mutant run equals BT-001's.
 
@@ -58,6 +58,22 @@ Mutants identical to the original are left out, as in BT-001 (the two such survi
   (max 275); a killed one stops in a median 9 s. The `null` control took 212 s. In the container the same suite
   takes about 45 s.
 
+## BT2-P7: the x86 re-run (amendment A1)
+
+All 351 mutants were run in Claude's Linux x86 container (Python 3.13.17) with the same driver and code, from
+16:16Z to 17:09Z on 2026-10-24, after A1 was pushed. Raw records: [`results/bt002_x86/`](../results/bt002_x86/),
+with [`SHA256SUMS`](../results/bt002_x86/SHA256SUMS). Both controls behaved as stated, there were no timeouts, and
+the run ended with `"all mutants done"`.
+
+| ID | Prediction | Result |
+|---|---|---|
+| BT2-P7a | The 281 phone-run mutants get identical T and C verdicts on x86 | **HELD: 281 of 281**, for both T and C |
+| BT2-P7b | The 70 mutants the phone did not reach are killed by T | **HELD: 70 of 70** |
+
+The 90.5% projection above is now **measured on x86: 316 of 349 non-identical mutants killed (90.5%)**. On the phone
+it stays partial (279 run). The verdicts agree across both devices even though x86 skips the 49 signature tests that
+the phone runs.
+
 ## What this supports (C-DESIGN)
 
 This was a mutation audit with registered predictions, run on one device. On it, the 15 new tests close every gap
@@ -67,7 +83,6 @@ public methods returning `None`.
 
 ## Doors (unrun)
 
-- **BT2-P7:** re-run all 351 on x86 with the new tests, and compare verdicts mutant by mutant.
 - **BT-003:** tests for the 26 argued gaps, starting with the `frozen=False` immutability group (6 mutants), which
   one shared test pattern would cover.
 - **Device telemetry:** install the Termux:API app (or set up Shizuku's `rish`) before the next long run, and check
