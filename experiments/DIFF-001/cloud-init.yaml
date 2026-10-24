@@ -1,0 +1,34 @@
+#cloud-config
+# DIFF-001 runner VM: clones sovereign-veritas at the pinned harness commit, verifies it, and runs two workers
+# until 2026-10-22T20:30:00Z. Each worker has its OWN state directory (lesson from PA-HONEY-001 D4).
+write_files:
+  - path: /etc/systemd/system/diff001@.service
+    content: |
+      [Unit]
+      Description=DIFF-001 differential worker %i
+      After=network-online.target
+      [Service]
+      Type=simple
+      DynamicUser=yes
+      StateDirectory=diff001-w%i
+      NoNewPrivileges=yes
+      ProtectSystem=strict
+      ProtectHome=yes
+      PrivateTmp=yes
+      PrivateNetwork=yes
+      ExecStart=/usr/bin/python3 -I /opt/svdiff/experiments/DIFF-001/diff_fuzz.py --worker %i --workers 2 --until 2026-10-22T20:30:00Z --out /var/lib/diff001-w%i
+      Restart=no
+runcmd:
+  - - bash
+    - -c
+    - |
+      set -euo pipefail
+      SHA=026ccfb8b1afd319a34c765460df540daff7bccf
+      git clone -q --filter=blob:none https://github.com/holland202/sovereign-veritas /opt/svdiff
+      cd /opt/svdiff
+      git -c advice.detachedHead=false checkout -q "$SHA"
+      test "$(git rev-parse HEAD)" = "$SHA"
+      python3 -I tools/gate_contract.py --check-command python3 ports/python_independent/independent_gate.py > /var/log/diff001-conformance.txt 2>&1
+      systemctl daemon-reload
+      systemctl start diff001@0.service diff001@1.service
+      echo "DIFF-001 started $(date -u +%FT%TZ) at $SHA" > /var/log/diff001-STARTED

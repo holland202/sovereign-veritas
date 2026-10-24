@@ -1,0 +1,16 @@
+DIFF-001 reproductions at d0890ef (#86 head 4fddb8b + main 3ff59ef), Python 3.13.16, x86_64, 2026-10-22T15:20:03Z. Self-run by Claude; not independent of Claude.
+## contract pin: blob identity d3a9a881 vs main 3ff59ef
+CONTRACT.md 451c3c70420cede8ba70e2837fd29ec8bfb468fd 451c3c70420cede8ba70e2837fd29ec8bfb468fd SAME
+contract/gate_vectors.jsonl c205026dde44c4b0990a33a25e6e983dbd3ec687 c205026dde44c4b0990a33a25e6e983dbd3ec687 SAME
+tools/gate_contract.py 3f969be0015c6a2f9178e405a310ee4564a7dfcc 3f969be0015c6a2f9178e405a310ee4564a7dfcc SAME
+## #86 port vs 4,690 vectors
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+## negative control: always-ALLOW
+VERDICT  4675 of 4690 vectors differ
+## 22 boundary cases (#86 boundary_cases.py) vs port
+VERDICT: 22 hand-derived decision cases PASS; 3 malformed inputs rejected with exit 2
+## 22 boundary cases (#86 boundary_cases.py) vs kernel
+VERDICT: 22 hand-derived decision cases PASS; 3 malformed inputs rejected with exit 2
+## 22 boundary cases (#86 boundary_cases.py) vs verifier
+VERDICT: 22 hand-derived decision cases PASS; 3 malformed inputs rejected with exit 2
