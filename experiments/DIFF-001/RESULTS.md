@@ -1,0 +1,75 @@
+# DIFF-001 results: the registered phone run stopped after about 30 minutes; P3 refuted (the overflow class, as expected), P2 held
+
+**State:** REGISTERED RUN, STOPPED EARLY, scored against [PREREG.md](PREREG.md) as amended through A6 (launch
+commit `ade8820`). Self-tested (M10).
+**Authors:** Direction and device operation: Chad Holland. Design, scoring and write-up: Claude (Anthropic,
+Opus 5.5). Human review level: the owner ran the phone commands and pasted the outputs used here. He had not
+reviewed this write-up when it was committed.
+
+## Failures first
+
+1. **The run stopped after about 30 minutes, not at the deadline.** The window ran to 2026-10-23T12:00:00Z,
+   roughly 14 hours. The last summary saves are at 21:05:23Z (worker3010, 1,835.7 s) and 21:05:07Z (worker3011,
+   1,817.5 s). worker3011's summary reads `"final": false`. worker3010's `final` line falls outside the owner's
+   paste, but 1,835.7 s on a 14-hour window shows it also stopped early. Both stopped within the same 20,000-case
+   save interval, so it is consistent with one event stopping both. Cause unknown. A6 records an `ollama serve`
+   process alongside the workers at launch, and later evidence (LR-001) shows this phone stops long runs when it is
+   off the charger. Neither is shown to be the cause here.
+2. **P3 REFUTED, as amendment item 9 expected.** There are 8,906 K-I disagreements (4,572 + 4,334). Every one is a
+   case where K and V raise `OverflowError` and I returns a decision. This is the OVF-1 class, which is fixed on
+   main by PR #89. The code pinned here predates that fix. No other disagreement class appeared.
+3. **Raw files not yet in the repo.** The phone's `worker30xx.summary.json` and `.disagreements.jsonl` files are
+   still on the phone. A4 says they are added here unedited. What is committed instead:
+   - the owner's paste of both summaries, unedited. It begins partway into worker3010's file, so that file's
+     `cases`, `disagreeing_pairs` and `final` lines are not in it;
+   - an x86 reproduction, labelled as such.
+
+   The raw files should still be added when they can be transferred.
+
+## Scoring
+
+| ID | Prediction | Result |
+|---|---|---|
+| P1 | Both planted mutants are caught | HELD before the run (amendment item 4) |
+| P2 | K and V never disagree during the registered run | **HELD on the cases run:** 0 K-V disagreements in 3,360,000 cases. Every signature has K and V both `ERROR:OverflowError` |
+| P3 | K and I never disagree during the registered run | **REFUTED:** 8,906 K-I disagreements, all of the OVF-1 overflow class |
+| P4 | Disagreements persist for inputs outside a single mutation grammar | NOT RUN (door) |
+
+Following the interpretation rule, the disagreement says at least one implementation is wrong for these inputs. The
+fault assignment, K and V crashing on a contract-typed number, comes from the separate source reading in OVF-1, not
+from this run.
+
+## Counts
+
+From the owner's paste ([s23_registered/owner_paste_summaries.txt](results/s23_registered/owner_paste_summaries.txt)):
+
+| Worker | Cases | ALLOW | DEFER | REFUSE | ERROR (K) | K-I = V-I disagreements | Python | Seconds |
+|---|---|---|---|---|---|---|---|---|
+| worker3010 | 1,740,000 (sum of the four decision counts) | 77,601 | 488,350 | 1,169,477 | 4,572 | 4,572 (sum of the 28 signature counts) | 3.14.8 | 1,835.7 |
+| worker3011 | 1,620,000 | 72,400 | 455,191 | 1,088,075 | 4,334 | 4,334 | 3.14.8 | 1,817.5 |
+
+Every kernel ERROR is a disagreement case, and every disagreement case is a kernel ERROR. There are 28 signatures
+for worker3010 and 31 for worker3011. They vary only in I's first reason, because the signature records I's
+reason next to K's and V's shared error.
+
+## Cross-device reproduction (exact)
+
+The same index ranges and case counts were re-run in a Linux x86 container (Python 3.13.17) at the A5 code. The
+runs used `itertools.islice(range(start, …, 2), cases)` passed to `diff_fuzz.run`, from starts 3010 and 3011.
+- The kernel decision counts, the disagreement counts and **all 59 signatures with their counts** are identical to
+  the phone's.
+- The reproduction summaries are
+  [x86_repro_worker3010.summary.json](results/s23_registered/x86_repro_worker3010.summary.json) and
+  [x86_repro_worker3011.summary.json](results/s23_registered/x86_repro_worker3011.summary.json). Their
+  `"final": true` belongs to the reproduction, which stops at the case count; it says nothing about the phone run.
+- The match also confirms the phone ran with stride 2 from 3010 and 3011, as A5 says.
+- Prediction stated in chat before running: identical counts if the stride was 2, credence about 0.75.
+
+## What this supports (C-DESIGN)
+
+- At the pinned pre-OVF-1 code, the only K-I disagreement class in 3.36 million generated cases from indices 3,010
+  upward is the overflow crash already fixed by PR #89.
+- The harness is deterministic across devices: aarch64/Android/Python 3.14.8 and x86/Linux/Python 3.13.17 give
+  identical results case for case at the summary level.
+- The follow-on runs on fixed main, which found 0 disagreements, are in [BT-001](../../docs/BT001_RESULTS.md) and
+  LR-001 (PR #93).

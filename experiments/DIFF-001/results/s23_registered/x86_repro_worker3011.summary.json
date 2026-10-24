@@ -1,0 +1,145 @@
+{
+ "cases": 1620000,
+ "disagreeing_pairs": {
+  "KI": 4334,
+  "VI": 4334
+ },
+ "disagreement_cases": 4334,
+ "final": true,
+ "kernel_decisions": {
+  "ALLOW": 72400,
+  "DEFER": 455191,
+  "ERROR": 4334,
+  "REFUSE": 1088075
+ },
+ "label": "worker3011",
+ "python": "3.13.17",
+ "seconds": 393.6,
+ "signatures": [
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:runtime_not_healthy",
+   1012
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:verification_insufficient_evidence",
+   916
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.9000<inf",
+   711
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:action_not_permitted_by_policy",
+   395
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:calibration",
+   353
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.0000<inf",
+   248
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.5000<inf",
+   122
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:1.0000<inf",
+   88
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:5>3",
+   72
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.2000<inf",
+   62
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:1>0",
+   53
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:1>-1",
+   49
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:",
+   43
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.0312<inf",
+   39
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:operator_ok",
+   36
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:100000000000000000000>3",
+   35
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:sensor_selftest",
+   29
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:Calibration",
+   21
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:-0.0000<inf",
+   20
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.3000<inf",
+   15
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:100000000000000000000>0",
+   2
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:5>1",
+   2
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:3>1",
+   2
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:5>-1",
+   2
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:100000000000000000000>5",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:100000000000000000000>2",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:3>2",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:100000000000000000000>1",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:2>0",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:policy_invalid:allow_only_must_be_a_collection",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:capability_max_steps_exceeded:2>-1",
+   1
+  ]
+ ],
+ "utc": "2026-10-23T20:40:25+00:00"
+}
