@@ -14,7 +14,10 @@ when it was committed.
    and its pre-mortem names the charger as a mitigation. The owner reports the phone was not charging and its
    battery died overnight. LR-P2 was therefore tested under a deviation. This run does not show whether the phone
    can last the night on a charger.
-3. **The two workers stopped an hour apart** (last saves at 00:20:57Z and 01:20:59Z). A single battery death would
+3. **Possible confound:** the phone's Termux start-up banner (pasted after the run) shows `Ollama Engine: ACTIVE`. If
+   Ollama starts with every Termux session, it was probably running during the test, competing for CPU and battery.
+   Not checked.
+4. **The two workers stopped an hour apart** (last saves at 00:20:57Z and 01:20:59Z). A single battery death would
    have stopped both together, so something stopped worker 0 first, about an hour before the phone went down. Cause
    unknown. One possibility is Android limiting background work at low battery, but nothing here tests that.
 
@@ -26,7 +29,7 @@ when it was committed.
 | LR-P2 | Both workers write `"final": true` | **REFUTED** (see above, including the deviation) |
 | LR-P3 | 0 disagreements among K, V and I | **HELD on the cases run:** 15,920,000 cases, 0 disagreements. This is a partial run, so it says nothing about the indices it never reached |
 | LR-P4 | Each worker averages at least 700 cases/s | **HELD, weak.** 874 and 850 cases/s. As the registration says, the threshold was set before the shakedown but the shakedown rate (about 915/s) was known at commit, so this is a weak test |
-| LR-P5 | The same counts reproduce on x86 | NOT RUN (door) |
+| LR-P5 | The same counts reproduce on x86 | **HELD.** Both index ranges were re-run in a Linux x86 container (Python 3.13.17) at the same overlay. Kernel decision counts are identical for both workers, with 0 disagreements. Prediction stated in chat before running, credence 0.9 |
 
 ## Evidence
 
@@ -47,6 +50,28 @@ first, files in name order):
  "final": false,
  "seconds": 11059.7,
  "utc": "2026-10-24T01:20:59+00:00"
+```
+
+Kernel decision counts, as pasted by the owner (worker 0 first):
+
+```
+  "ALLOW": 290161,
+  "DEFER": 1846254,
+  "REFUSE": 4383585
+  "ALLOW": 418596,
+  "DEFER": 2662348,
+  "REFUSE": 6319056
+```
+
+They add up to 6,520,000 and 9,400,000, with no ERROR outcomes.
+
+**x86 reproduction (LR-P5)**, run by Claude in a container from the same index ranges and case counts, with
+`itertools.islice(range(start, ..., 2), cases)` passed to `diff_fuzz.run` (overlay check: main `827b49b`, port
+SHA-256 `015924869d4e…`, harness `55b32b132094…`):
+
+```
+{"cases": 6520000, "disagreeing_pairs": {}, "disagreement_cases": 0, "kernel_decisions": {"ALLOW": 290161, "DEFER": 1846254, "REFUSE": 4383585}, "label": "worker4000000000"}
+{"cases": 9400000, "disagreeing_pairs": {}, "disagreement_cases": 0, "kernel_decisions": {"ALLOW": 418596, "DEFER": 2662348, "REFUSE": 6319056}, "label": "worker4000000001"}
 ```
 
 Derived (arithmetic on the lines above):
@@ -75,5 +100,3 @@ paste is quoted here. The raw files should be added unedited when they can be tr
 
 - **LR-002:** repeat with the phone on a charger, and with the charger's output recorded. Predict `"final": true`
   for both workers. If the charger can't keep up with two workers, test whether one worker reaches the deadline.
-- **LR-P5:** reproduce both partial counts on x86 from the same indices, as was done for DIFF-001's phone run.
-  That needs the `kernel_decisions` lines from the phone, which the paste above leaves out.
