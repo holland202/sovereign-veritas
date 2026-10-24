@@ -10,21 +10,18 @@ reviewed this write-up when it was committed.
 
 1. **The run stopped after about 30 minutes, not at the deadline.** The window ran to 2026-10-23T12:00:00Z,
    roughly 14 hours. The last summary saves are at 21:05:23Z (worker3010, 1,835.7 s) and 21:05:07Z (worker3011,
-   1,817.5 s). worker3011's summary reads `"final": false`. worker3010's `final` line falls outside the owner's
-   paste, but 1,835.7 s on a 14-hour window shows it also stopped early. Both stopped within the same 20,000-case
+   1,817.5 s). Both raw summaries read `"final": false`. Both stopped within the same 20,000-case
    save interval, so it is consistent with one event stopping both. Cause unknown. A6 records an `ollama serve`
    process alongside the workers at launch, and later evidence (LR-001) shows this phone stops long runs when it is
    off the charger. Neither is shown to be the cause here.
 2. **P3 REFUTED, as amendment item 9 expected.** There are 8,906 K-I disagreements (4,572 + 4,334). Every one is a
    case where K and V raise `OverflowError` and I returns a decision. This is the OVF-1 class, which is fixed on
    main by PR #89. The code pinned here predates that fix. No other disagreement class appeared.
-3. **Raw files not yet in the repo.** The phone's `worker30xx.summary.json` and `.disagreements.jsonl` files are
-   still on the phone. A4 says they are added here unedited. What is committed instead:
-   - the owner's paste of both summaries, unedited. It begins partway into worker3010's file, so that file's
-     `cases`, `disagreeing_pairs` and `final` lines are not in it;
-   - an x86 reproduction, labelled as such.
-
-   The raw files should still be added when they can be transferred.
+3. **The stop lost unwritten disagreement records.** The phone's disagreement files are byte-exact prefixes of the
+   x86 reproduction's: 385 of 409 records for worker3010 and 382 of 410 for worker3011. The harness writes those
+   records through a buffered file it never flushes until exit. The kill that stopped the run dropped what was still
+   in the buffer. Its summaries are unaffected, because they are rewritten atomically every 20,000 cases. Any later
+   long run should flush each record as it is written.
 
 ## Scoring
 
@@ -41,7 +38,11 @@ from this run.
 
 ## Counts
 
-From the owner's paste ([s23_registered/owner_paste_summaries.txt](results/s23_registered/owner_paste_summaries.txt)):
+From the phone's raw files ([s23_registered/raw/](results/s23_registered/raw/), unedited, with
+[SHA256SUMS](results/s23_registered/raw/SHA256SUMS)). The owner transferred them as one archive (SHA-256
+`4ed42505…49e2`) on 2026-10-24. They match the owner's earlier paste
+([owner_paste_summaries.txt](results/s23_registered/owner_paste_summaries.txt)) and show `"final": false` for both
+workers:
 
 | Worker | Cases | ALLOW | DEFER | REFUSE | ERROR (K) | K-I = V-I disagreements | Python | Seconds |
 |---|---|---|---|---|---|---|---|---|
@@ -56,8 +57,8 @@ reason next to K's and V's shared error.
 
 The same index ranges and case counts were re-run in a Linux x86 container (Python 3.13.17) at the A5 code. The
 runs used `itertools.islice(range(start, …, 2), cases)` passed to `diff_fuzz.run`, from starts 3010 and 3011.
-- The kernel decision counts, the disagreement counts and **all 59 signatures with their counts** are identical to
-  the phone's.
+- Every summary field except timing (`seconds`, `utc`, `python`, `final`) is identical to the phone's raw summary:
+  the decision counts, the disagreement counts and **all 59 signatures with their counts**.
 - The reproduction summaries are
   [x86_repro_worker3010.summary.json](results/s23_registered/x86_repro_worker3010.summary.json) and
   [x86_repro_worker3011.summary.json](results/s23_registered/x86_repro_worker3011.summary.json). Their
