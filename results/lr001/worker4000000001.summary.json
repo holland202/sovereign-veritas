@@ -1,0 +1,16 @@
+{
+ "cases": 9400000,
+ "disagreeing_pairs": {},
+ "disagreement_cases": 0,
+ "final": false,
+ "kernel_decisions": {
+  "ALLOW": 418596,
+  "DEFER": 2662348,
+  "REFUSE": 6319056
+ },
+ "label": "worker4000000001",
+ "python": "3.14.8",
+ "seconds": 11059.7,
+ "signatures": [],
+ "utc": "2026-10-24T01:20:59+00:00"
+}
