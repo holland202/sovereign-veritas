@@ -23,6 +23,15 @@ reviewed this write-up when it was committed.
    in the buffer. Its summaries are unaffected, because they are rewritten atomically every 20,000 cases. Any later
    long run should flush each record as it is written.
 
+## Correction (2026-10-24): the device is a Galaxy S23 Ultra, not an S23 FE
+
+On 2026-10-24 the phone reported `ro.product.model` = **SM-S918U** (Galaxy S23 Ultra, US) and `ro.soc.model` =
+**SM8550** (Snapdragon 8 Gen 2). It runs Android 16, with `nproc` 6. The owner confirmed this on the phone's About
+screen. Amendment A6's "device name" deviation, and its statement that the device is a Galaxy S23 FE, were wrong.
+"S23 FE" came from a hard-coded line in the phone's Termux start-up banner, not from the device. The same start-up
+file launches `ollama serve` in the background with every new Termux session, so the `ollama serve` process that A6
+saw beside the workers was part of the phone's normal setup. Its load during the run was not measured.
+
 ## Scoring
 
 | ID | Prediction | Result |
