@@ -16,7 +16,8 @@ when it was committed.
    can last the night on a charger.
 3. **Possible confound:** the phone's Termux start-up banner (pasted after the run) shows `Ollama Engine: ACTIVE`. If
    Ollama starts with every Termux session, it was probably running during the test, competing for CPU and battery.
-   Not checked.
+   Not checked for this run. DIFF-001 amendment A6 recorded an `ollama serve` process running beside its workers on
+   the same phone (2026-10-22).
 4. **The two workers stopped an hour apart** (last saves at 00:20:57Z and 01:20:59Z). A single battery death would
    have stopped both together, so something stopped worker 0 first, about an hour before the phone went down. Cause
    unknown. One possibility is Android limiting background work at low battery, but nothing here tests that.
