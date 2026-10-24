@@ -72,3 +72,18 @@ timeout counts as a kill, as in BT-001, and timeouts are reported separately.
   (exit 2). That is a setup failure, recorded as such.
 - **Slow phone:** the survivors each run the whole suite. If 4 hours covers only part of the survivors, P2/P3/P4
   are scored on the ones reached, and the rest are NOT RUN.
+
+## Amendment A1 (2026-10-24 ~16:15Z, after the phone results, before any x86 run): BT2-P7 registered
+
+The phone run is scored in [BT002_RESULTS.md](BT002_RESULTS.md). The x86 re-run below runs nothing on the phone and
+changes no phone verdict.
+
+- **Run:** `python tools/bt002_run.py --until <now + 3 h> --out <scratch>` in Claude's Linux x86 container (Python
+  3.13.17) at this branch's code, with the same driver, order and oracles. Here 49 signature tests are skipped,
+  because there is no `ssh-keygen`.
+- **BT2-P7a (conf. 0.9):** for each of the 281 mutants the phone ran, the T and C verdicts are identical on x86.
+  *Precisely wrong if* any differs. A difference is a finding about platform-dependent tests (the skipped signature
+  tests are the obvious suspect), not a phone error.
+- **BT2-P7b (conf. 0.9):** all 70 mutants the phone did not reach (64 in `workflow.py`, 6 in `runtime.py`) are
+  killed by T. This tests the results file's 90.5% projection. *Precisely wrong if* any survives; the projection
+  is then corrected, not deleted.
