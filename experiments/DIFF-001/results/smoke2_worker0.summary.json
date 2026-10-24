@@ -1,0 +1,33 @@
+{
+ "cases": 2000,
+ "disagreeing_pairs": {
+  "KI": 3,
+  "VI": 3
+ },
+ "disagreement_cases": 3,
+ "final": true,
+ "kernel_decisions": {
+  "ALLOW": 89,
+  "DEFER": 572,
+  "ERROR": 3,
+  "REFUSE": 1336
+ },
+ "label": "worker0",
+ "python": "3.13.16",
+ "seconds": 0.5,
+ "top_signatures": [
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:verification_insufficient_evidence",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:sensor_selftest",
+   1
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:runtime_not_healthy",
+   1
+  ]
+ ],
+ "utc": "2026-10-22T15:02:40+00:00"
+}

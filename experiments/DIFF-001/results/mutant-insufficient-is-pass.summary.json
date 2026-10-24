@@ -1,0 +1,121 @@
+{
+ "cases": 100000,
+ "disagreeing_pairs": {
+  "KI": 7799,
+  "VI": 7799
+ },
+ "disagreement_cases": 7799,
+ "final": true,
+ "kernel_decisions": {
+  "ALLOW": 4471,
+  "DEFER": 28040,
+  "ERROR": 239,
+  "REFUSE": 67250
+ },
+ "label": "mutant-insufficient-is-pass",
+ "python": "3.13.16",
+ "seconds": 22.3,
+ "top_signatures": [
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:runtime_not_healthy",
+   5255
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:missing_required_evidence:calibration",
+   811
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:ALLOW:[]",
+   624
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_below_threshold:0.2000<0.5000",
+   272
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:runtime_not_healthy",
+   99
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_below_threshold:0.0000<0.5000",
+   73
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:invalid_step_count_metadata",
+   60
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:missing_required_evidence:sensor_selftest",
+   57
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:missing_required_evidence:",
+   44
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:missing_required_evidence:operator_ok",
+   42
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.9000<inf",
+   35
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:missing_required_evidence:Calibration",
+   34
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_invalid:2.0",
+   31
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_invalid:inf",
+   26
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_invalid:1.00001",
+   24
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_below_threshold:0.5000<0.5000",
+   23
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:missing_required_evidence:calibration",
+   22
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_invalid:-0.1",
+   21
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_below_threshold:0.9000<1.0000",
+   21
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_invalid:1e+300",
+   21
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:REFUSE:action_not_permitted_by_policy",
+   20
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_invalid:3.0",
+   17
+  ],
+  [
+   "K:ERROR:OverflowError | V:ERROR:OverflowError | I:DEFER:evidence_quality_below_threshold:0.0000<inf",
+   15
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_below_threshold:-0.0000<0.5000",
+   14
+  ],
+  [
+   "K:DEFER:verification_insufficient_evidence | V:DEFER:verification_insufficient_evidence | I:DEFER:evidence_quality_below_threshold:0.3000<0.5000",
+   14
+  ]
+ ],
+ "utc": "2026-10-22T15:03:26+00:00"
+}
