@@ -14,13 +14,22 @@ when it was committed.
    and its pre-mortem names the charger as a mitigation. The owner reports the phone was not charging and its
    battery died overnight. LR-P2 was therefore tested under a deviation. This run does not show whether the phone
    can last the night on a charger.
-3. **Possible confound:** the phone's Termux start-up banner (pasted after the run) shows `Ollama Engine: ACTIVE`. If
-   Ollama starts with every Termux session, it was probably running during the test, competing for CPU and battery.
-   Not checked for this run. DIFF-001 amendment A6 recorded an `ollama serve` process running beside its workers on
-   the same phone (2026-10-22).
+3. **Confound confirmed present, effect not measured.** The phone's Termux start-up file (`~/.bashrc`, read on
+   2026-10-24) starts `ollama serve` in the background with every new Termux session. So an Ollama server was almost
+   certainly running beside the workers, as one also was during DIFF-001 (amendment A6). Its CPU, memory and battery
+   load during the run were not measured. At the 2026-10-24 reading, the phone showed 6.9 GiB of RAM visible, 207 MiB
+   free and 1.3 GiB of swap in use. Memory pressure is one possible reason Android stopped a worker; nothing here
+   tests it.
 4. **The two workers stopped an hour apart** (last saves at 00:20:57Z and 01:20:59Z). A single battery death would
    have stopped both together, so something stopped worker 0 first, about an hour before the phone went down. Cause
    unknown. One possibility is Android limiting background work at low battery, but nothing here tests that.
+
+## Correction (2026-10-24): the device is a Galaxy S23 Ultra, not an S23 FE
+
+The registration and the text below call the device an S23 FE. On 2026-10-24 the phone reported `ro.product.model`
+= **SM-S918U** (Galaxy S23 Ultra, US) and `ro.soc.model` = **SM8550** (Snapdragon 8 Gen 2). It runs Android 16, with
+`nproc` 6. The owner confirmed this on the phone's About screen. "S23 FE" came from a hard-coded Termux banner line.
+The registration is left as committed; read "S23 FE" there as SM-S918U.
 
 ## Scoring
 
