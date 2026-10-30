@@ -2,10 +2,15 @@
 
 **EXPERIMENTAL research prototype. NOT PRODUCTION-READY. NOT INDEPENDENTLY SECURITY-VALIDATED.**
 
-**Release state: PREPARED, NOT TAGGED.** The tag is held until the independent review of the SV-FIX-001 protocol
-that is under discussion has been agreed in writing and done, or until Chad Holland decides otherwise. Chad
-creates the tag on the merged commit. Until then, `v0.2.0` is the latest release, and it is affected by both
-findings below.
+**Release state: TAGGED 2026-10-30, without independent review.** From 2026-10-16 the tag was held for an
+independent review of the SV-FIX-001 protocol. That review did not take place. The release was made without it,
+so that the latest release is no longer `v0.2.0`, which is affected by both findings below. The fixes are
+self-tested only (CI and the compatibility run below); an independent review is still welcome.
+
+*Record (W9): until 2026-10-30 this paragraph read "Release state: PREPARED, NOT TAGGED. The tag is held until the
+independent review of the SV-FIX-001 protocol that is under discussion has been agreed in writing and done, or until
+Chad Holland decides otherwise. Chad creates the tag on the merged commit. Until then, `v0.2.0` is the latest
+release, and it is affected by both findings below."*
 
 This is a maintenance release under the maintenance-only rule set at v0.2.0: security fixes only, no new
 features.

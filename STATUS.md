@@ -8,7 +8,7 @@
 > [docs/RELEASE_NOTES_v0.2.0.md](docs/RELEASE_NOTES_v0.2.0.md).
 > Cross-platform legs on the release revision `ecd4de9`: all 6 PASS, including s390x big-endian and ppc64le under QEMU emulation (not IBM hardware), run after the tag (xplat run `37990718927`, attempt 3).
 > Issues and breaks are still welcome; the owner will answer them.
-> **Maintenance release v0.2.1: prepared, not tagged.** It fixes SV-ATTACK-001 Q1/Q3 (self-tested, not independently reviewed). The tag waits for the independent review under discussion. See [docs/RELEASE_NOTES_v0.2.1.md](docs/RELEASE_NOTES_v0.2.1.md).
+> **Maintenance release v0.2.1: tagged 2026-10-30.** It fixes SV-ATTACK-001 Q1/Q3 (self-tested, **not independently reviewed**). The independent review the tag waited for from 2026-10-16 did not take place; the release was made without it so that the latest release is no longer one affected by Q1/Q3. See [docs/RELEASE_NOTES_v0.2.1.md](docs/RELEASE_NOTES_v0.2.1.md).
 
 ### Status record — maintenance-only period ended (2026-10-22)
 
@@ -258,4 +258,4 @@ See `docs/PHYSICAL_DURABILITY_RUNS.md`.
 
 ## Version
 
-`__version__ = "0.2.1"` (prepared 2026-10-16; the `v0.2.1` tag is not yet created). Until v0.2.0, `__init__.py` said 0.1.1 and `pyproject.toml` said 0.1.0; both now agree.
+`__version__ = "0.2.1"` (prepared 2026-10-16; tagged `v0.2.1` on 2026-10-30). Until v0.2.0, `__init__.py` said 0.1.1 and `pyproject.toml` said 0.1.0; both now agree.
