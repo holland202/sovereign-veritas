@@ -27,8 +27,15 @@ import secrets
 import os
 import threading
 import time
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
+
+try:  # SEC-005: an exclusive OS lock per key file
+    import fcntl
+except ImportError:  # Windows
+    fcntl = None  # type: ignore[assignment]
+    import msvcrt
 
 IN_FLIGHT, COMPLETED, UNKNOWN = "IN_FLIGHT", "COMPLETED", "UNKNOWN"
 DEFAULT_LEASE_S = 30.0
@@ -125,9 +132,34 @@ class MemoryReservations:
             return list(self._released.get(key, []))
 
 
+def _lock_fd(fd: int) -> None:
+    if fcntl is not None:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        return
+    os.lseek(fd, 0, os.SEEK_SET)
+    while True:  # msvcrt.LK_LOCK gives up after about 10 s; keep waiting, as flock does
+        try:
+            msvcrt.locking(fd, msvcrt.LK_LOCK, 1)
+            return
+        except OSError:
+            continue
+
+
+def _unlock_fd(fd: int) -> None:
+    if fcntl is not None:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        return
+    os.lseek(fd, 0, os.SEEK_SET)
+    msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+
+
 class FileReservations:
     """One file per key hash in a directory. The claim is os.open(O_CREAT|O_EXCL), atomic across threads and
-    processes on one local filesystem. A file that exists but cannot be read counts as IN_FLIGHT (fail closed)."""
+    processes on one local filesystem. A file that exists but cannot be read counts as IN_FLIGHT (fail closed).
+
+    SEC-005 (docs/SEC005_PREREG.md): reserve(), _move() and release() each hold an exclusive OS lock on the key's
+    lock file for their whole read-check-write(-rename), so a holder that passed its token check cannot write
+    after a release and a fresh reserve (SEC-004). The lock file is never deleted. Local filesystems only."""
 
     def __init__(self, directory: str | os.PathLike[str]) -> None:
         self._dir = Path(directory)
@@ -144,6 +176,18 @@ class FileReservations:
         except (OSError, ValueError):
             return {"state": IN_FLIGHT, "lease_expires": float("inf")}
 
+    @contextmanager
+    def _key_lock(self, key: str) -> Iterator[None]:
+        fd = os.open(self._path(key).with_suffix(".lock"), os.O_CREAT | os.O_RDWR, 0o600)
+        try:
+            _lock_fd(fd)
+            try:
+                yield
+            finally:
+                _unlock_fd(fd)
+        finally:
+            os.close(fd)
+
     def _write(self, key: str, entry: dict[str, Any]) -> None:
         path = self._path(key)
         tmp = path.with_suffix(f".tmp-{os.getpid()}-{threading.get_ident()}")
@@ -158,20 +202,25 @@ class FileReservations:
         token = secrets.token_hex(8)
         entry = {"key": key, "state": IN_FLIGHT, "lease_expires": now + lease_s, "token": token,
                  "history": [{"at": now, "to": IN_FLIGHT}]}
-        try:
-            fd = os.open(self._path(key), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-        except FileExistsError:
-            raise _refusal(key, _effective(self._read(key), now)) from None  # RK-3: never written here
-        with os.fdopen(fd, "w", encoding="utf-8") as fh:
-            json.dump(entry, fh, sort_keys=True)
-            fh.flush()
-            os.fsync(fh.fileno())
+        with self._key_lock(key):
+            try:
+                fd = os.open(self._path(key), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            except FileExistsError:  # RK-3: never written here
+                raise _refusal(key, _effective(self._read(key), now)) from None
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                json.dump(entry, fh, sort_keys=True)
+                fh.flush()
+                os.fsync(fh.fileno())
         return token
 
     def _late_path(self, key: str) -> Path:
         return self._path(key).with_suffix(".late.jsonl")  # no new hash site (JG-2 P1)
 
     def _move(self, key: str, to: str, why: str | None = None, token: str | None = None) -> None:
+        with self._key_lock(key):  # SEC-005: token check and write in one critical section
+            self._move_locked(key, to, why, token)
+
+    def _move_locked(self, key: str, to: str, why: str | None, token: str | None) -> None:
         if token is not None:
             exists = self._path(key).exists()
             entry = self._read(key) if exists else None
@@ -208,13 +257,14 @@ class FileReservations:
         return list(self._read(key).get("history", [])) if self._path(key).exists() else []
 
     def release(self, key: str, by: str, reason: str) -> None:
-        if self.state(key) != UNKNOWN:
-            raise ValueError(f"release is allowed only from UNKNOWN: {key!r}")
-        entry = self._read(key)
-        entry["history"] = _with_expiry(entry) + [{"at": time.time(), "to": "RELEASED", "by": by, "why": reason}]
-        self._write(key, entry)
-        path = self._path(key)
-        os.replace(path, path.with_suffix(f".released-{time.time_ns()}.json"))
+        with self._key_lock(key):  # SEC-005: check, write and rename in one critical section
+            if self.state(key) != UNKNOWN:
+                raise ValueError(f"release is allowed only from UNKNOWN: {key!r}")
+            entry = self._read(key)
+            entry["history"] = _with_expiry(entry) + [{"at": time.time(), "to": "RELEASED", "by": by, "why": reason}]
+            self._write(key, entry)
+            path = self._path(key)
+            os.replace(path, path.with_suffix(f".released-{time.time_ns()}.json"))
 
     def released_history(self, key: str) -> list[list[dict[str, Any]]]:
         stem = self._path(key).stem
