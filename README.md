@@ -80,6 +80,12 @@ independent reimplementations of the Gate that reproduce the contract digest.
   same, and a write failure after a successful execute leaves an effect with no record. The sequential case is
   closed (PR #8: a known `record_id` is refused before execution). The race and the effect-without-record case
   are **open**; they are workflow/ledger limits, not Gate-contract issues, and XB-2 tests the candidate mechanisms.
+- **A stale completion could overwrite a fresh reservation in the file store** (SEC-004,
+  [docs/SEC004_RESULTS.md](docs/SEC004_RESULTS.md): `SECURITY_FAIL` in a forced local schedule, 2026-10-11).
+  Fixed by a per-key OS lock in `FileReservations` (SEC-005, PR #98,
+  [docs/SEC005_RESULTS.md](docs/SEC005_RESULTS.md)): 6 of 6 as registered, and the no-lock arm in the same run
+  still reproduces the overwrite. Self-tested; local filesystems only; S25 NOT VALIDATED. It does not stop a
+  late holder's external effect.
 - **The record reports the workflow's account of execution, not the effect** (EO-1,
   [docs/EO1_RESULTS.md](docs/EO1_RESULTS.md); question prompted by Terry Snyder's Elyria harness). With the guard
   broken so the executor runs on REFUSE/DEFER, the record, the package and `verify_package.py` still say "no

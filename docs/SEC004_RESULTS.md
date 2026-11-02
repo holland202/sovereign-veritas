@@ -44,3 +44,22 @@ GATE=SECURITY_FAIL
 - Re-run the probe on current `main`, to confirm that the defect is still present rather than inferring it from the unchanged blob.
 
 Provenance: probe and registration as committed on 2026-10-11 (see the PR history). This results file was written by Claude (Anthropic, Opus 5.5) from the retained artifact, at Chad Holland's direction (2026-11-02, direction only) → human validation: not performed → human responsibility: Chad Holland.
+
+## Update, 2026-11-02 (appended; the text above is unchanged)
+
+Both "Open" items were done the same day, in SEC-005 ([`SEC005_PREREG.md`](SEC005_PREREG.md),
+[`SEC005_RESULTS.md`](SEC005_RESULTS.md), PR #98, merged as `8f0e739`):
+
+- **Re-run on current code:** the unchanged probe, run at `7e40c12` (`idempotency.py` blob `071fc3fe…`, Python
+  3.13.18, Linux x86_64), printed `GATE=SECURITY_FAIL` again. Raw output:
+  `results/sec005/run1/sec004_baseline_7e40c12.txt`.
+- **Fix:** a per-key OS lock held across each of `reserve()`, `_move()` and `release()`, not the compare-and-swap
+  suggested above (a compare-and-swap on file contents cannot cover `release()`'s rename).
+- **Correction to "a registered re-run of this probe would then be expected to flip P2":** that was wrong. This
+  probe is pinned to the old blob, so on the fixed module it prints `GATE=INCONCLUSIVE_SOURCE_CHANGED` (exit 2).
+  Its schedule also cannot finish against a lock: the paused holder is inside the lock while the release waits
+  for it. SEC-005 therefore has its own probe, which imports this probe's case functions and keeps a no-lock arm
+  that reproduces this file's result.
+
+Provenance: Claude (Anthropic, Opus 5.5), at Chad Holland's direction (2026-11-02, direction only) → human
+validation: not performed → human responsibility: Chad Holland.
