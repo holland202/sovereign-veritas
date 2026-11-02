@@ -106,9 +106,27 @@ The normal run was repeated three more times in this sandbox; each printed the s
   Android; that a late holder's *external* effect is prevented (that still needs a fence at the target, OBS-1);
   independent validation.
 
-## CI
+## CI (appended 2026-11-02)
 
-To be appended after the matrix run on the PR.
+On commit `8f08769` (fix, probe and pin; PR #98), GitHub Actions:
+
+- `test` matrix, 12 of 12 green: ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest, each on Python
+  3.10, 3.12 and 3.14. That suite includes `tests/test_sec005_lock.py`, which asserts
+  `VERDICT FIXED_IN_TESTED_SCHEDULES: 6 of 6 as registered` and `RECORDED MATCH` (the digest pinned from run1),
+  and that `--sabotage` exits 1 with `VERDICT NOT_FIXED`. So the recorded outcome was reproduced on all 12 legs,
+  including Windows (`msvcrt.locking`) and macOS (`flock`). P7 **HELD**.
+- `red-team` job: `python tools/jg2_probe.py | tail -4` printed, verbatim:
+
+```
+NOT RUN P2  (Android / Termux: not run here)
+VERDICT 6 of 6 as registered (P2 not run)
+DIGEST 1e78ae61486aa05f0cf6a66905fcbb155940197dd97f93e283d5edbc1bde54cb
+```
+
+  and the job succeeded, so JG-2 P1 (no new hash site) held. P9 **HELD** (on CI, not locally). The JG-2 `P2`
+  shown as NOT RUN is JG-2's own Android prediction, not SEC-005's.
+
+These are GitHub's runners, not the S25.
 
 ## Still open (the door)
 
