@@ -33,7 +33,10 @@ _spec.loader.exec_module(sec004)  # the SEC-004 case functions, imported, not co
 
 BLOCK_S = 3.0
 DONE_S = 20.0
-RECORDED: tuple[tuple[str, ...], str] | None = None  # pinned in a separate commit after the first run
+RECORDED: tuple[tuple[str, ...], str] | None = (  # pinned after run1 (results/sec005/run1/run.txt)
+    ("P1", "P2", "P3", "P4", "P5", "P6"),
+    "41c7e72443d77b2e3f7b1b7697a67bd05809661afb9d1c08b9b9858d5e2a96de",
+)
 
 _REAL_LOCK = FileReservations._key_lock
 
