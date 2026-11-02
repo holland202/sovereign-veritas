@@ -1,0 +1,6 @@
+EXPERIMENT=SEC-004
+SOURCE_REVISION=8338e836d0579b971472fa4c5fec969c0a113aa2
+Python 3.12.3
+Linux runnervmmprz5 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+b25be65985a513cc611817c7e4c9e3cc8351e40fbdfc4b924ff3728227be0cab  tools/sec004_release_race_probe.py
+b8e92c6f5da51c2569dd9e8f7024ca166829d2fd17183037047946ebbdbbdd3a  sovereign_veritas/idempotency.py
