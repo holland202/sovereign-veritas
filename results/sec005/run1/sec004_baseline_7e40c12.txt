@@ -1,0 +1,180 @@
+EXPERIMENT=SEC-004
+PHASE=REGISTERED_PROBE
+REGISTRATION=docs/SEC004_PREREG.md
+PYTHON=3.13.18
+PLATFORM=Linux-6.18.44-fc-v185-x86_64-with-glibc2.39
+{
+  "cases": {
+    "C0": {
+      "late_events": [
+        {
+          "at": 1793634856.7313597,
+          "current_token": "119c756fe21b7f6f",
+          "event": "late_complete",
+          "late_token": "d3d3e8e15d8276b3"
+        }
+      ],
+      "new_token": "119c756fe21b7f6f",
+      "old_token": "d3d3e8e15d8276b3",
+      "pass": true,
+      "state_after_new_complete": "COMPLETED",
+      "state_after_old_complete": "IN_FLIGHT"
+    },
+    "C1": {
+      "after": {
+        "entry_state": "COMPLETED",
+        "history": [
+          {
+            "at": 1793634856.7339575,
+            "to": "IN_FLIGHT"
+          },
+          {
+            "at": 1793634856.7359252,
+            "to": "COMPLETED"
+          }
+        ],
+        "present": true,
+        "sha256": "6e35ee8b22620883fb9f49c4dd73867d1bad28488bb7e666e48a2413fde2b49f",
+        "state": "COMPLETED",
+        "token": "7eb62964513b9854"
+      },
+      "before": {
+        "entry_state": "IN_FLIGHT",
+        "history": [
+          {
+            "at": 1793634856.7339575,
+            "to": "IN_FLIGHT"
+          }
+        ],
+        "present": true,
+        "sha256": "d0ca6ab6582fc6eb7aa98d9ae81dd3dfbf6466612c88c3918794fe0de7b32ff0",
+        "state": "IN_FLIGHT",
+        "token": "7eb62964513b9854"
+      },
+      "late_events": [
+        {
+          "at": 1793634856.7344368,
+          "current_token": "7eb62964513b9854",
+          "event": "late_complete",
+          "late_token": "0c85992907d0e0e3"
+        }
+      ],
+      "new_token": "7eb62964513b9854",
+      "old_token": "0c85992907d0e0e3",
+      "pass": true
+    },
+    "C2": {
+      "after_resume": {
+        "entry_state": "COMPLETED",
+        "history": [
+          {
+            "at": 1793634856.7368686,
+            "to": "IN_FLIGHT"
+          },
+          {
+            "at": 1793634856.7380447,
+            "to": "COMPLETED"
+          }
+        ],
+        "present": true,
+        "sha256": "dfbc82ed4dc2f7b4bbde2df7ed11243b11e8e5f30bcfb4e77f299cd3c7bf3659",
+        "state": "COMPLETED",
+        "token": "3502af858f32b57e"
+      },
+      "before_resume": {
+        "entry_state": "IN_FLIGHT",
+        "history": [
+          {
+            "at": 1793634856.7392511,
+            "to": "IN_FLIGHT"
+          }
+        ],
+        "present": true,
+        "sha256": "1c33a1af9b3eda442c7193fe6770f7c9f6cefde828c0249785c247e078a8ee99",
+        "state": "IN_FLIGHT",
+        "token": "ffb2462994373416"
+      },
+      "late_events": [],
+      "new_token": "ffb2462994373416",
+      "new_token_survives": false,
+      "old_token": "3502af858f32b57e",
+      "ordered": true,
+      "p2_old_token_replaced_new": true,
+      "p3_no_stale_late_event": true,
+      "pause_count": 1,
+      "paused": {
+        "entry_state": "IN_FLIGHT",
+        "history": [
+          {
+            "at": 1793634856.7368686,
+            "to": "IN_FLIGHT"
+          }
+        ],
+        "present": true,
+        "sha256": "9c10dd8e1ffd647ac4b761f6e7d14c699ae6651bbb93d80eb7d259aba1586e8c",
+        "state": "UNKNOWN",
+        "token": "3502af858f32b57e"
+      },
+      "released_history_count_after_resume": 1,
+      "released_history_count_before_resume": 1
+    },
+    "C3": {
+      "after": {
+        "entry_state": "COMPLETED",
+        "history": [
+          {
+            "at": 1793634856.7422476,
+            "to": "IN_FLIGHT"
+          },
+          {
+            "at": 1793634856.742976,
+            "to": "COMPLETED"
+          }
+        ],
+        "present": true,
+        "sha256": "c53c1ec5f1e7d1a1651f028caf98ff0d045720a6bd9514716279a6047589e07b",
+        "state": "COMPLETED",
+        "token": "b26a19f329cbc103"
+      },
+      "before": {
+        "entry_state": "COMPLETED",
+        "history": [
+          {
+            "at": 1793634856.7422476,
+            "to": "IN_FLIGHT"
+          },
+          {
+            "at": 1793634856.742976,
+            "to": "COMPLETED"
+          }
+        ],
+        "present": true,
+        "sha256": "c53c1ec5f1e7d1a1651f028caf98ff0d045720a6bd9514716279a6047589e07b",
+        "state": "COMPLETED",
+        "token": "b26a19f329cbc103"
+      },
+      "pass": true,
+      "refused": true
+    }
+  },
+  "cross_substrate_verified": false,
+  "duration_s": 0.0149,
+  "experiment": "SEC-004",
+  "independent_validation": false,
+  "predictions": {
+    "P0": true,
+    "P1": true,
+    "P2": true,
+    "P3": true,
+    "P4": true,
+    "P5": true
+  },
+  "source_git_blobs": {
+    "docs/OBS1_RESULTS.md": "8a294a7dc5332b8c4777f6e9bc8d85df6381c7a3",
+    "docs/RK3_RESULTS.md": "acddf169a76cdd07a1d52c5628eb626a6dfa5308",
+    "sovereign_veritas/idempotency.py": "071fc3fe64672c6cdbe7a3fe6e6406554c03a574",
+    "tests/test_idempotency.py": "aa977253933cd6b0155cd923f5e06c4eb6586d63"
+  },
+  "verdict": "SECURITY_FAIL"
+}
+GATE=SECURITY_FAIL

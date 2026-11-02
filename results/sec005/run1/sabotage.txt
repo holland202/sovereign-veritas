@@ -1,0 +1,89 @@
+EXPERIMENT=SEC-005
+REGISTRATION=docs/SEC005_PREREG.md
+PYTHON=3.13.18
+PLATFORM=Linux-6.18.44-fc-v185-x86_64-with-glibc2.39
+IDEMPOTENCY_BLOB=8013269f8051653c4dd0c900a86927453f448cd9
+SABOTAGE=True
+{
+  "LOCK_ARM": {
+    "L0": {
+      "C0": true,
+      "C1": true,
+      "C3": true
+    },
+    "L1": {
+      "a_errors": [],
+      "b_blocked_while_a_paused": false,
+      "b_error": null,
+      "b_released": true,
+      "final_is_old": true,
+      "final_state": "COMPLETED",
+      "new_token_issued": true,
+      "overwrite": true,
+      "pause_count": 1,
+      "released_history": 1
+    },
+    "L2": {
+      "a_errors": [],
+      "final_is_new": true,
+      "final_state": "IN_FLIGHT",
+      "late_complete_for_old": 1
+    },
+    "L3": {
+      "blocked_while_child_held": false,
+      "child_rc": 0,
+      "release_done": true,
+      "release_error": null
+    },
+    "L4": {
+      "child_rc": 0,
+      "release_done_after_crash": true,
+      "release_error": null
+    }
+  },
+  "NOLOCK_ARM": {
+    "L0": {
+      "C0": true,
+      "C1": true,
+      "C3": true
+    },
+    "L1": {
+      "a_errors": [],
+      "b_blocked_while_a_paused": false,
+      "b_error": null,
+      "b_released": true,
+      "final_is_old": true,
+      "final_state": "COMPLETED",
+      "new_token_issued": true,
+      "overwrite": true,
+      "pause_count": 1,
+      "released_history": 1
+    },
+    "L2": {
+      "a_errors": [],
+      "final_is_new": true,
+      "final_state": "IN_FLIGHT",
+      "late_complete_for_old": 1
+    },
+    "L3": {
+      "blocked_while_child_held": false,
+      "child_rc": 0,
+      "release_done": true,
+      "release_error": null
+    },
+    "L4": {
+      "child_rc": 0,
+      "release_done_after_crash": true,
+      "release_error": null
+    }
+  }
+}
+P1 HELD
+P2 REFUTED
+P3 HELD
+P4 REFUTED
+P5 HELD
+P6 HELD
+DURATION_S=0.4
+VERDICT NOT_FIXED: 4 of 6 as registered
+DIGEST=08927dd624e4474ed4e616e79eec2423bfb2dd3550804985f40ae1d703f3b27d

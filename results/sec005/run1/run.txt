@@ -1,0 +1,90 @@
+EXPERIMENT=SEC-005
+REGISTRATION=docs/SEC005_PREREG.md
+PYTHON=3.13.18
+PLATFORM=Linux-6.18.44-fc-v185-x86_64-with-glibc2.39
+IDEMPOTENCY_BLOB=8013269f8051653c4dd0c900a86927453f448cd9
+SABOTAGE=False
+{
+  "LOCK_ARM": {
+    "L0": {
+      "C0": true,
+      "C1": true,
+      "C3": true
+    },
+    "L1": {
+      "a_errors": [],
+      "b_blocked_while_a_paused": true,
+      "b_error": "ValueError",
+      "b_released": false,
+      "final_is_old": true,
+      "final_state": "COMPLETED",
+      "new_token_issued": false,
+      "overwrite": false,
+      "pause_count": 1,
+      "released_history": 0
+    },
+    "L2": {
+      "a_errors": [],
+      "final_is_new": true,
+      "final_state": "IN_FLIGHT",
+      "late_complete_for_old": 1
+    },
+    "L3": {
+      "blocked_while_child_held": true,
+      "child_rc": 0,
+      "release_done": true,
+      "release_error": null
+    },
+    "L4": {
+      "child_rc": 0,
+      "release_done_after_crash": true,
+      "release_error": null
+    }
+  },
+  "NOLOCK_ARM": {
+    "L0": {
+      "C0": true,
+      "C1": true,
+      "C3": true
+    },
+    "L1": {
+      "a_errors": [],
+      "b_blocked_while_a_paused": false,
+      "b_error": null,
+      "b_released": true,
+      "final_is_old": true,
+      "final_state": "COMPLETED",
+      "new_token_issued": true,
+      "overwrite": true,
+      "pause_count": 1,
+      "released_history": 1
+    },
+    "L2": {
+      "a_errors": [],
+      "final_is_new": true,
+      "final_state": "IN_FLIGHT",
+      "late_complete_for_old": 1
+    },
+    "L3": {
+      "blocked_while_child_held": false,
+      "child_rc": 0,
+      "release_done": true,
+      "release_error": null
+    },
+    "L4": {
+      "child_rc": 0,
+      "release_done_after_crash": true,
+      "release_error": null
+    }
+  }
+}
+P1 HELD
+P2 HELD
+P3 HELD
+P4 HELD
+P5 HELD
+P6 HELD
+DURATION_S=6.4
+VERDICT FIXED_IN_TESTED_SCHEDULES: 6 of 6 as registered
+DIGEST=41c7e72443d77b2e3f7b1b7697a67bd05809661afb9d1c08b9b9858d5e2a96de
+RECORDED=UNPINNED
