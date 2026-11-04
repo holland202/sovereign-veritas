@@ -84,7 +84,7 @@ independent reimplementations of the Gate that reproduce the contract digest.
   [docs/SEC004_RESULTS.md](docs/SEC004_RESULTS.md): `SECURITY_FAIL` in a forced local schedule, 2026-10-11).
   Fixed by a per-key OS lock in `FileReservations` (SEC-005, PR #98,
   [docs/SEC005_RESULTS.md](docs/SEC005_RESULTS.md)): 6 of 6 as registered, and the no-lock arm in the same run
-  still reproduces the overwrite. Self-tested; local filesystems only; S25 NOT VALIDATED. It does not stop a
+  still reproduces the overwrite. Self-tested; local filesystems only; reproduced on the S25 under Termux on 2026-11-04 (same digests, self-tested). It does not stop a
   late holder's external effect.
 - **The record reports the workflow's account of execution, not the effect** (EO-1,
   [docs/EO1_RESULTS.md](docs/EO1_RESULTS.md); question prompted by Terry Snyder's Elyria harness). With the guard

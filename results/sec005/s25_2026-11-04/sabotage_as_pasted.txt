@@ -1,0 +1,10 @@
+[Γ] SOVEREIGN_EVOLUTION ~/sovereign-veritas $ python -I tools/sec005_lock_probe.py --sabotage > ~/sec005_s25_sabotage.txt 2>&1; echo rc=$?; grep -E "^(P[0-9]|VERDICT|DIGEST)" ~/sec005_s25_sabotage.txt
+rc=1
+P1 HELD
+P2 REFUTED
+P3 HELD
+P4 REFUTED
+P5 HELD
+P6 HELD
+VERDICT NOT_FIXED: 4 of 6 as registered
+DIGEST=08927dd624e4474ed4e616e79eec2423bfb2dd3550804985f40ae1d703f3b27d
