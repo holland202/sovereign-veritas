@@ -140,3 +140,40 @@ These are GitHub's runners, not the S25.
 Claude (Anthropic, Opus 5.5) designed, built, ran and wrote this up → human validation: not performed → human
 editing/curation: direction by Chad Holland, 2026-11-02 → human responsibility: Chad Holland. Review level:
 direction only.
+
+## Update, 2026-11-04: run on the S25 (appended; the text above is unchanged)
+
+Chad Holland ran the unchanged probe on his Samsung Galaxy S25 Ultra under Termux, at `b473fe0` (main), from a
+checkout where `sovereign_veritas/idempotency.py` is blob `8013269…` (the fixed module). Excerpts as pasted from the
+phone are in `results/sec005/s25_2026-11-04/` (`run_as_pasted.txt`, `sabotage_as_pasted.txt`). The full output files
+stay on the device (`~/sec005_s25_run1.txt`, `~/sec005_s25_sabotage.txt`) and were not copied into the repository.
+
+Predictions written before each run (in the session, not committed first): the normal run would give 6 of 6 and
+`RECORDED MATCH` if Android's `flock` behaves like Linux's, with P4 (cross-process) the most likely to fail; the
+sabotage run would give `NOT_FIXED` with P2 and P4 refuted.
+
+```
+PYTHON=3.14.6
+PLATFORM=Android-17-aarch64-64bit-ELF
+IDEMPOTENCY_BLOB=8013269f8051653c4dd0c900a86927453f448cd9
+VERDICT FIXED_IN_TESTED_SCHEDULES: 6 of 6 as registered
+DIGEST=41c7e72443d77b2e3f7b1b7697a67bd05809661afb9d1c08b9b9858d5e2a96de
+RECORDED MATCH                                      (rc=0)
+
+--sabotage:
+P2 REFUTED, P4 REFUTED
+VERDICT NOT_FIXED: 4 of 6 as registered
+DIGEST=08927dd624e4474ed4e616e79eec2423bfb2dd3550804985f40ae1d703f3b27d   (rc=1)
+```
+
+Both digests are the same as in run1 here (`results/sec005/run1/run.txt` and `sabotage.txt`), so the same schedules
+gave the same observations on Android as on Linux x86_64 and the 12 CI legs.
+
+- **Android/Termux status changes from NOT VALIDATED to SELF-TESTED on one device.** The lock held across
+  processes there (P4), and the no-lock control still reproduced SEC-004 there.
+- **Still not shown:** other Android devices or storage locations, network filesystems, unforced schedules, and
+  independent validation. The phone run was performed by the owner but designed and judged by Claude, so it is
+  not independent.
+
+Provenance: run by Chad Holland on his device; recorded by Claude (Anthropic, Opus 5.5) from the pasted output →
+human validation: the owner ran the commands and pasted the output → human responsibility: Chad Holland.
