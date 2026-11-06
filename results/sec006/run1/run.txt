@@ -1,0 +1,56 @@
+EXPERIMENT=SEC-006
+REGISTRATION=docs/SEC006_PREREG.md
+PYTHON=3.13.18
+PLATFORM=Linux-6.18.44-fc-v242-x86_64-with-glibc2.39
+IDEMPOTENCY_BLOB=8013269f8051653c4dd0c900a86927453f448cd9
+SEEDS=registered 1..20  SABOTAGE=False
+WORKLOAD P=6 K=8 M=250
+seed   1 lock   violations=0 late_complete=133 release_ok=237 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   1 nolock violations=8 late_complete=125 release_ok=233 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   2 lock   violations=0 late_complete=128 release_ok=211 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   2 nolock violations=8 late_complete= 92 release_ok=214 errors=12 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   3 lock   violations=0 late_complete=144 release_ok=203 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   3 nolock violations=8 late_complete=110 release_ok=203 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   4 lock   violations=0 late_complete=119 release_ok=213 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   4 nolock violations=8 late_complete=127 release_ok=236 errors=7 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   5 lock   violations=0 late_complete=124 release_ok=246 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   5 nolock violations=8 late_complete=117 release_ok=244 errors=6 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   6 lock   violations=0 late_complete=132 release_ok=210 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   6 nolock violations=8 late_complete=144 release_ok=241 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   7 lock   violations=0 late_complete=136 release_ok=189 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   7 nolock violations=8 late_complete=136 release_ok=230 errors=11 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   8 lock   violations=0 late_complete=132 release_ok=229 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   8 nolock violations=8 late_complete=113 release_ok=237 errors=6 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   9 lock   violations=0 late_complete=127 release_ok=211 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   9 nolock violations=8 late_complete=126 release_ok=228 errors=7 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  10 lock   violations=0 late_complete=146 release_ok=199 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  10 nolock violations=8 late_complete=131 release_ok=235 errors=15 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  11 lock   violations=0 late_complete=143 release_ok=224 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  11 nolock violations=8 late_complete=124 release_ok=256 errors=7 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  12 lock   violations=0 late_complete=143 release_ok=203 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  12 nolock violations=8 late_complete=125 release_ok=210 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  13 lock   violations=0 late_complete=154 release_ok=215 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  13 nolock violations=8 late_complete=132 release_ok=238 errors=7 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  14 lock   violations=0 late_complete=121 release_ok=199 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  14 nolock violations=8 late_complete=116 release_ok=239 errors=11 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  15 lock   violations=0 late_complete=131 release_ok=245 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  15 nolock violations=8 late_complete=122 release_ok=246 errors=5 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  16 lock   violations=0 late_complete=128 release_ok=212 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  16 nolock violations=8 late_complete=112 release_ok=273 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  17 lock   violations=0 late_complete=121 release_ok=201 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  17 nolock violations=8 late_complete=127 release_ok=240 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  18 lock   violations=0 late_complete=135 release_ok=224 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  18 nolock violations=8 late_complete=129 release_ok=261 errors=6 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  19 lock   violations=0 late_complete=126 release_ok=211 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  19 nolock violations=8 late_complete= 85 release_ok=213 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  20 lock   violations=0 late_complete=128 release_ok=233 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  20 nolock violations=8 late_complete=122 release_ok=260 errors=14 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+LOCK   trials with a violation: 0 of 20; late_complete total 2651; releases 4315
+NOLOCK trials with a violation: 20 of 20; keys violated total 160
+P1 HELD
+P2 HELD
+P3 HELD
+P4 HELD
+DURATION_S=25.6
+VERDICT NO_VIOLATION_IN_TESTED_SCHEDULES: 4 of 4 as registered
+DIGEST=fb3a3c571b7c04d69c362174262af85376ecb5eb45fd126d4ce8a0d70a8ae9f2  (not pinned: counts depend on OS scheduling)

@@ -1,0 +1,31 @@
+EXPERIMENT=SEC-006
+REGISTRATION=docs/SEC006_PREREG.md
+PYTHON=3.12.10
+PLATFORM=Windows-2025Server-10.0.26100-SP0
+IDEMPOTENCY_BLOB=6e49e5b4ab1730d8f25496e4c7eab5a93a2433a1
+SEEDS=registered 1..20  SABOTAGE=False
+WORKLOAD P=6 K=8 M=250
+seed   1 lock   violations=0 late_complete= 92 release_ok=189 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+Traceback (most recent call last):
+  File "D:\a\sovereign-veritas\sovereign-veritas\tools\sec006_stress_probe.py", line 194, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\a\sovereign-veritas\sovereign-veritas\tools\sec006_stress_probe.py", line 153, in main
+    r = run_trial(seed, run_arm, Path(t))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\sovereign-veritas\sovereign-veritas\tools\sec006_stress_probe.py", line 129, in run_trial
+    late_complete += sum(1 for e in store.late_events(key) if e.get("event") == "late_complete")
+                                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\sovereign-veritas\sovereign-veritas\sovereign_veritas\idempotency.py", line 249, in late_events
+    return [json.loads(line) for line in fh if line.strip()]
+            ^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+##[error]Process completed with exit code 1.
