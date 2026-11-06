@@ -88,3 +88,38 @@ of the main test suite, because its counts depend on scheduling. CI results are 
 Claude (Anthropic, Opus 5.5) designed, built, ran and wrote this up → human validation: not performed → human
 editing/curation: direction by Chad Holland, 2026-11-06 → human responsibility: Chad Holland. Review level:
 direction only.
+
+## Amendment 1, 2026-11-06 (appended; the text above is unchanged): the oracle crashed on Windows CI
+
+**What happened.** On PR #101 (head `30f886c`), the `sec006 (windows-latest)` job ran seed 1's LOCK arm cleanly
+(`violations=0`, all workers exited 0), then crashed in seed 1's NOLOCK arm with `JSONDecodeError` inside
+`FileReservations.late_events()`, called by the harness's oracle. Raw log excerpt:
+`results/sec006/ci_windows_job127867391414_crash.txt`.
+
+**Cause.** Without the lock, concurrent appends to a key's late-event log on Windows left a line that is not
+valid JSON. `late_events()` parses every line and raises on a bad one, so the oracle stopped. The registration did
+not foresee an oracle crash. **The Windows run is INCONCLUSIVE.** It is not a violation in the LOCK arm, and it is
+not a pass.
+
+**Change (harness only, `tools/sec006_stress_probe.py`).** The oracle now reads the late-event log line by line
+itself and counts an unreadable line in `unreadable`, instead of calling `late_events()`. In the LOCK arm an
+unreadable line therefore fails P1, which is stricter than before. Workload, seeds, predictions and the verdict
+rule are unchanged. `sovereign_veritas/` is unchanged.
+
+**Re-run on Linux after the change** (`results/sec006/amend1_linux_run.txt`, `amend1_linux_sabotage.txt`):
+
+```
+LOCK   trials with a violation: 0 of 20; late_complete total 2530; releases 4263
+NOLOCK trials with a violation: 20 of 20; keys violated total 160
+VERDICT NO_VIOLATION_IN_TESTED_SCHEDULES: 4 of 4 as registered
+--sabotage: VERDICT VIOLATION: 2 of 4 as registered (exit 1)
+```
+
+**A side observation, not changed here.** `late_events()` raises on a corrupted line rather than skipping it.
+That is loud, not silent, so it does not hide anything; with the lock held, the log is only written inside the
+critical section. Whether it should report corruption explicitly is left as an open question.
+
+**Windows result:** to be appended when CI re-runs on this change.
+
+Provenance: Claude (Anthropic, Opus 5.5), at Chad Holland's direction (2026-11-06, direction only) → human
+validation: not performed → human responsibility: Chad Holland.

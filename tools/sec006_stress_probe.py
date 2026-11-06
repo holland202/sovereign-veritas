@@ -126,7 +126,20 @@ def run_trial(seed: int, arm: str, d: Path) -> dict:
                 unreadable += 1
         if collections.Counter(found) != collections.Counter(granted[key]):
             violations.append(key)
-        late_complete += sum(1 for e in store.late_events(key) if e.get("event") == "late_complete")
+        # Amendment 1 (2026-11-06, docs/SEC006_RESULTS.md): read the late-event log line by line here instead of
+        # store.late_events(), which raises on a corrupted line. That crashed the oracle in the NOLOCK arm on
+        # Windows CI. An unreadable line counts in `unreadable`, so in the LOCK arm it fails P1.
+        lp = store._late_path(key)
+        if lp.exists():
+            for line in lp.read_bytes().decode("utf-8", "replace").splitlines():
+                if not line.strip():
+                    continue
+                try:
+                    e = json.loads(line)
+                except ValueError:
+                    unreadable += 1
+                    continue
+                late_complete += 1 if isinstance(e, dict) and e.get("event") == "late_complete" else 0
     return {"seed": seed, "arm": arm, "violations": len(violations), "unreadable": unreadable,
             "late_complete": late_complete, "counts": dict(sorted(counts.items())), "errors": errors,
             "timed_out": timed_out, "worker_rcs": rcs}
