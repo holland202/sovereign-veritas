@@ -7,6 +7,11 @@ on:
       - "sovereign_veritas/idempotency.py"
       - "tools/sec006_stress_probe.py"
       - ".github/workflows/sec006-stress.yml"
+  pull_request:
+    paths:
+      - "sovereign_veritas/idempotency.py"
+      - "tools/sec006_stress_probe.py"
+      - ".github/workflows/sec006-stress.yml"
   workflow_dispatch:
 
 permissions:
