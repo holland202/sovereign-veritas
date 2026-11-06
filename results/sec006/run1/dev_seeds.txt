@@ -1,0 +1,23 @@
+EXPERIMENT=SEC-006
+REGISTRATION=docs/SEC006_PREREG.md
+PYTHON=3.13.18
+PLATFORM=Linux-6.18.44-fc-v242-x86_64-with-glibc2.39
+IDEMPOTENCY_BLOB=8013269f8051653c4dd0c900a86927453f448cd9
+SEEDS=dev 101..103  SABOTAGE=False
+WORKLOAD P=6 K=8 M=250
+seed 101 lock   violations=0 late_complete=131 release_ok=220 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed 101 nolock violations=8 late_complete=101 release_ok=216 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed 102 lock   violations=0 late_complete=125 release_ok=197 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed 102 nolock violations=8 late_complete=134 release_ok=253 errors=5 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed 103 lock   violations=0 late_complete=126 release_ok=205 errors=0 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed 103 nolock violations=8 late_complete=110 release_ok=259 errors=14 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+LOCK   trials with a violation: 0 of 3; late_complete total 382; releases 622
+NOLOCK trials with a violation: 3 of 3; keys violated total 24
+P1 HELD
+P2 HELD
+P3 HELD
+P4 HELD
+DURATION_S=3.3
+VERDICT NO_VIOLATION_IN_TESTED_SCHEDULES: 4 of 4 as registered
+DIGEST=68263174ee9971e58ba6fa523f6ecabf3be7f5515a65f0679c17f3599fc9cd74  (not pinned: counts depend on OS scheduling)
+NOTE dev seeds: not scored

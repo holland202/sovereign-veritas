@@ -1,0 +1,2 @@
+lock   trials with a lost reservation: 0/20 (lost tokens total 0); trials with duplicated entries: 0/20; trials with a file missing its token: 0/20
+nolock trials with a lost reservation: 20/20 (lost tokens total 410); trials with duplicated entries: 20/20; trials with a file missing its token: 14/20

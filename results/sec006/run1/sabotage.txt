@@ -1,0 +1,116 @@
+EXPERIMENT=SEC-006
+REGISTRATION=docs/SEC006_PREREG.md
+PYTHON=3.13.18
+PLATFORM=Linux-6.18.44-fc-v242-x86_64-with-glibc2.39
+IDEMPOTENCY_BLOB=8013269f8051653c4dd0c900a86927453f448cd9
+SEEDS=registered 1..20  SABOTAGE=True
+WORKLOAD P=6 K=8 M=250
+seed   1 lock   violations=8 late_complete=107 release_ok=219 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   1 nolock violations=8 late_complete=121 release_ok=233 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   2 lock   violations=8 late_complete=101 release_ok=268 errors=7 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   2 nolock violations=8 late_complete= 94 release_ok=222 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   3 lock   violations=8 late_complete=122 release_ok=227 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   3 nolock violations=8 late_complete= 92 release_ok=206 errors=6 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   4 lock   violations=8 late_complete=115 release_ok=263 errors=14 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   4 nolock violations=8 late_complete=118 release_ok=243 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   5 lock   violations=8 late_complete=109 release_ok=239 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   5 nolock violations=8 late_complete=102 release_ok=233 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   6 lock   violations=8 late_complete=131 release_ok=260 errors=11 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   6 nolock violations=8 late_complete=128 release_ok=234 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   7 lock   violations=8 late_complete=127 release_ok=238 errors=11 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   7 nolock violations=8 late_complete=121 release_ok=240 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   8 lock   violations=8 late_complete=106 release_ok=226 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   8 nolock violations=8 late_complete=118 release_ok=262 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   9 lock   violations=8 late_complete=113 release_ok=243 errors=6 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed   9 nolock violations=8 late_complete=119 release_ok=227 errors=18 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  10 lock   violations=8 late_complete=123 release_ok=221 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  10 nolock violations=8 late_complete=124 release_ok=251 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  11 lock   violations=8 late_complete=127 release_ok=242 errors=5 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  11 nolock violations=8 late_complete= 99 release_ok=193 errors=6 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  12 lock   violations=8 late_complete=135 release_ok=250 errors=13 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  12 nolock violations=8 late_complete=115 release_ok=225 errors=17 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  13 lock   violations=8 late_complete=127 release_ok=231 errors=11 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  13 nolock violations=8 late_complete=127 release_ok=226 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  14 lock   violations=8 late_complete=121 release_ok=200 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  14 nolock violations=8 late_complete=124 release_ok=207 errors=12 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  15 lock   violations=8 late_complete=101 release_ok=250 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  15 nolock violations=8 late_complete=116 release_ok=275 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  16 lock   violations=8 late_complete=133 release_ok=278 errors=16 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  16 nolock violations=8 late_complete=118 release_ok=230 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  17 lock   violations=8 late_complete=103 release_ok=205 errors=10 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  17 nolock violations=8 late_complete=132 release_ok=240 errors=5 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  18 lock   violations=7 late_complete= 82 release_ok=211 errors=3 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  18 nolock violations=8 late_complete=116 release_ok=269 errors=8 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  19 lock   violations=8 late_complete=105 release_ok=220 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  19 nolock violations=8 late_complete= 94 release_ok=203 errors=9 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  20 lock   violations=8 late_complete=115 release_ok=252 errors=12 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+seed  20 nolock violations=8 late_complete=120 release_ok=238 errors=15 timeout=False rcs=[0, 0, 0, 0, 0, 0]
+  LOCK seed 1 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-g7km0jah/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-g7km0jah/54c41e0402abdddf802
+  LOCK seed 1 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-g7km0jah/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-g7km0jah/da07580314824bbe11e
+  LOCK seed 1 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-g7km0jah/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-g7km0jah/badb7283766a112aebd
+  LOCK seed 2 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-x8s3sc1n/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-x8s3sc1n/badb7283766a112aebd
+  LOCK seed 2 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-x8s3sc1n/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-x8s3sc1n/4ab811cbefec4e9599f
+  LOCK seed 2 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-x8s3sc1n/6897ab3e7bed435cf094a10477f16bf68af03a04d99b2833d43902ce2b40f0a9.json' -> '/tmp/sec006-x8s3sc1n/6897ab3e7bed435cf09
+  LOCK seed 3 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-frr61n6c/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-frr61n6c/da07580314824bbe11e
+  LOCK seed 3 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-frr61n6c/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-frr61n6c/c7fd51757fca49764c8
+  LOCK seed 3 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-frr61n6c/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-frr61n6c/8704a01a73fa56816fb
+  LOCK seed 4 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-ybmd_a35/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-ybmd_a35/badb7283766a112aebd
+  LOCK seed 4 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-ybmd_a35/e75d1509b86b903f14316bbc8b9ba4ccb96f18b8543a423f24e5e869aac65097.json' -> '/tmp/sec006-ybmd_a35/e75d1509b86b903f143
+  LOCK seed 4 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-ybmd_a35/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-ybmd_a35/8704a01a73fa56816fb
+  LOCK seed 5 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-628n9bvr/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-628n9bvr/badb7283766a112aebd
+  LOCK seed 5 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-628n9bvr/e75d1509b86b903f14316bbc8b9ba4ccb96f18b8543a423f24e5e869aac65097.json' -> '/tmp/sec006-628n9bvr/e75d1509b86b903f143
+  LOCK seed 5 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-628n9bvr/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-628n9bvr/badb7283766a112aebd
+  LOCK seed 6 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-k90o7ybn/e75d1509b86b903f14316bbc8b9ba4ccb96f18b8543a423f24e5e869aac65097.json' -> '/tmp/sec006-k90o7ybn/e75d1509b86b903f143
+  LOCK seed 6 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-k90o7ybn/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-k90o7ybn/c7fd51757fca49764c8
+  LOCK seed 6 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-k90o7ybn/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-k90o7ybn/8704a01a73fa56816fb
+  LOCK seed 7 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-0rghmo9p/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-0rghmo9p/54c41e0402abdddf802
+  LOCK seed 7 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-0rghmo9p/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-0rghmo9p/4ab811cbefec4e9599f
+  LOCK seed 7 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-0rghmo9p/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-0rghmo9p/da07580314824bbe11e
+  LOCK seed 8 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-crqivppw/e75d1509b86b903f14316bbc8b9ba4ccb96f18b8543a423f24e5e869aac65097.json' -> '/tmp/sec006-crqivppw/e75d1509b86b903f143
+  LOCK seed 8 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-crqivppw/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-crqivppw/da07580314824bbe11e
+  LOCK seed 8 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-crqivppw/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-crqivppw/c7fd51757fca49764c8
+  LOCK seed 9 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-i8kca0mu/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-i8kca0mu/da07580314824bbe11e
+  LOCK seed 9 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-i8kca0mu/e75d1509b86b903f14316bbc8b9ba4ccb96f18b8543a423f24e5e869aac65097.json' -> '/tmp/sec006-i8kca0mu/e75d1509b86b903f143
+  LOCK seed 9 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-i8kca0mu/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-i8kca0mu/da07580314824bbe11e
+  LOCK seed 10 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-i4_9q1ys/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-i4_9q1ys/54c41e0402abdddf802
+  LOCK seed 10 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-i4_9q1ys/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-i4_9q1ys/badb7283766a112aebd
+  LOCK seed 10 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-i4_9q1ys/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-i4_9q1ys/54c41e0402abdddf802
+  LOCK seed 11 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-wc7ehimz/6897ab3e7bed435cf094a10477f16bf68af03a04d99b2833d43902ce2b40f0a9.json' -> '/tmp/sec006-wc7ehimz/6897ab3e7bed435cf09
+  LOCK seed 11 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-wc7ehimz/e75d1509b86b903f14316bbc8b9ba4ccb96f18b8543a423f24e5e869aac65097.json' -> '/tmp/sec006-wc7ehimz/e75d1509b86b903f143
+  LOCK seed 11 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-wc7ehimz/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-wc7ehimz/c7fd51757fca49764c8
+  LOCK seed 12 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-2lfnah5z/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-2lfnah5z/8704a01a73fa56816fb
+  LOCK seed 12 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-2lfnah5z/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-2lfnah5z/c7fd51757fca49764c8
+  LOCK seed 12 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-2lfnah5z/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-2lfnah5z/c7fd51757fca49764c8
+  LOCK seed 13 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-fcvhdccj/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-fcvhdccj/4ab811cbefec4e9599f
+  LOCK seed 13 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-fcvhdccj/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-fcvhdccj/c7fd51757fca49764c8
+  LOCK seed 13 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-fcvhdccj/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-fcvhdccj/4ab811cbefec4e9599f
+  LOCK seed 14 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-mnyey6zd/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-mnyey6zd/da07580314824bbe11e
+  LOCK seed 14 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-mnyey6zd/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-mnyey6zd/54c41e0402abdddf802
+  LOCK seed 14 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-mnyey6zd/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-mnyey6zd/da07580314824bbe11e
+  LOCK seed 15 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-kzl72dxd/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-kzl72dxd/8704a01a73fa56816fb
+  LOCK seed 15 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-kzl72dxd/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-kzl72dxd/8704a01a73fa56816fb
+  LOCK seed 15 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-kzl72dxd/6897ab3e7bed435cf094a10477f16bf68af03a04d99b2833d43902ce2b40f0a9.json' -> '/tmp/sec006-kzl72dxd/6897ab3e7bed435cf09
+  LOCK seed 16 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-r8qxu7g1/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-r8qxu7g1/54c41e0402abdddf802
+  LOCK seed 16 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-r8qxu7g1/54c41e0402abdddf802c5423f301d6e4231e205de082057831912ae6450d95be.json' -> '/tmp/sec006-r8qxu7g1/54c41e0402abdddf802
+  LOCK seed 16 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-r8qxu7g1/6897ab3e7bed435cf094a10477f16bf68af03a04d99b2833d43902ce2b40f0a9.json' -> '/tmp/sec006-r8qxu7g1/6897ab3e7bed435cf09
+  LOCK seed 17 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-e6z8htnj/6897ab3e7bed435cf094a10477f16bf68af03a04d99b2833d43902ce2b40f0a9.json' -> '/tmp/sec006-e6z8htnj/6897ab3e7bed435cf09
+  LOCK seed 17 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-e6z8htnj/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-e6z8htnj/4ab811cbefec4e9599f
+  LOCK seed 17 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-e6z8htnj/6897ab3e7bed435cf094a10477f16bf68af03a04d99b2833d43902ce2b40f0a9.json' -> '/tmp/sec006-e6z8htnj/6897ab3e7bed435cf09
+  LOCK seed 18 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-tiy1z_n8/c7fd51757fca49764c881a1196c3671e88d5cfc059fd5f4e6c50fb37d78c044d.json' -> '/tmp/sec006-tiy1z_n8/c7fd51757fca49764c8
+  LOCK seed 18 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-tiy1z_n8/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-tiy1z_n8/8704a01a73fa56816fb
+  LOCK seed 18 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-tiy1z_n8/8704a01a73fa56816fb473d937190aa74b3e8ba54b92c30f8c80c1c50823a5af.json' -> '/tmp/sec006-tiy1z_n8/8704a01a73fa56816fb
+  LOCK seed 19 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-fdw79yw4/badb7283766a112aebdb2936077a25f5db85ea465cdbac330ba6641d38c4ac77.json' -> '/tmp/sec006-fdw79yw4/badb7283766a112aebd
+  LOCK seed 19 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-fdw79yw4/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-fdw79yw4/4ab811cbefec4e9599f
+  LOCK seed 19 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-fdw79yw4/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-fdw79yw4/da07580314824bbe11e
+  LOCK seed 20 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-8bymq0hx/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-8bymq0hx/da07580314824bbe11e
+  LOCK seed 20 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-8bymq0hx/da07580314824bbe11e1bf1f657970f60dd0a0495976fa1b85f4e314602d8bc8.json' -> '/tmp/sec006-8bymq0hx/da07580314824bbe11e
+  LOCK seed 20 error: release:FileNotFoundError:[Errno 2] No such file or directory: '/tmp/sec006-8bymq0hx/4ab811cbefec4e9599ff3e9ccf5030371ba1325cee1ab43f4bca924ad887a8c7.json' -> '/tmp/sec006-8bymq0hx/4ab811cbefec4e9599f
+LOCK   trials with a violation: 20 of 20; late_complete total 2303; releases 4743
+NOLOCK trials with a violation: 20 of 20; keys violated total 160
+P1 REFUTED
+P2 HELD
+P3 REFUTED
+P4 HELD
+DURATION_S=25.8
+VERDICT VIOLATION: 2 of 4 as registered
+DIGEST=124268796ef93f95e516362a76b8eb952b5f22f6d05a0f96016e6d9d7f459d1a  (not pinned: counts depend on OS scheduling)

@@ -1,0 +1,44 @@
+name: SEC-006 lock stress (registered)
+
+on:
+  push:
+    branches: [main, security/sec-006-stress]
+    paths:
+      - "sovereign_veritas/idempotency.py"
+      - "tools/sec006_stress_probe.py"
+      - ".github/workflows/sec006-stress.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sec006:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Registered run (must report NO_VIOLATION_IN_TESTED_SCHEDULES)
+        shell: bash
+        run: python -I tools/sec006_stress_probe.py | tee sec006-run.txt
+      - name: Sabotage (lock removed) must exit 1
+        shell: bash
+        run: |
+          set +e
+          python -I tools/sec006_stress_probe.py --sabotage > sec006-sabotage.txt 2>&1
+          rc=$?
+          set -e
+          grep -E "^(LOCK|NOLOCK|P[0-9]|VERDICT)" sec006-sabotage.txt
+          test "$rc" = "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sec006-${{ matrix.os }}
+          path: sec006-*.txt
