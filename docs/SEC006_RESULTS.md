@@ -119,7 +119,22 @@ VERDICT NO_VIOLATION_IN_TESTED_SCHEDULES: 4 of 4 as registered
 That is loud, not silent, so it does not hide anything; with the lock held, the log is only written inside the
 critical section. Whether it should report corruption explicitly is left as an open question.
 
-**Windows result:** to be appended when CI re-runs on this change.
+**Windows result (CI job 127871273312, on `fdefa92`):**
+
+```
+PYTHON=3.12.10
+PLATFORM=Windows-2025Server-10.0.26100-SP0
+IDEMPOTENCY_BLOB=6e49e5b4ab1730d8f25496e4c7eab5a93a2433a1
+LOCK   trials with a violation: 0 of 20; late_complete total 1821; releases 3304
+NOLOCK trials with a violation: 20 of 20; keys violated total 155
+VERDICT NO_VIOLATION_IN_TESTED_SCHEDULES: 4 of 4 as registered
+--sabotage: LOCK 20 of 20 violated; VERDICT VIOLATION: 2 of 4 as registered
+```
+
+The different `IDEMPOTENCY_BLOB` is the same file with CRLF line endings from the Windows checkout: hashing the
+committed `idempotency.py` with each LF replaced by CRLF gives `6e49e5b4…`, and with LF gives `8013269…`. macOS and
+Linux CI legs on the same commit also passed. Windows uses `msvcrt.locking`, so this is the first sampled-schedule
+evidence for the Windows lock path. The Windows error-handling issue in the lock loop is still unreproduced.
 
 Provenance: Claude (Anthropic, Opus 5.5), at Chad Holland's direction (2026-11-06, direction only) → human
 validation: not performed → human responsibility: Chad Holland.
