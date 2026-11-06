@@ -302,3 +302,32 @@ round-half-even at four places. The CI job `port-go` now reruns the check on eve
 push", was written before that job had run. It then failed on its first six runs (`47bd4de` to
 `b84486b`): `go build ./ports/go` needs a Go module at the repository root, and there is none. Fixed in
 `41cf2fc` by building inside `ports/go`. `port-go` has passed since.
+
+## C7: a Rust port, written from CONTRACT.md only (registered 2026-11-06, before the port)
+
+**What.** `ports/rust/` is a Rust implementation of `sv.gate/0`, standard library only (no crates), written
+from `CONTRACT.md`. It is checked with
+`(cd ports/rust && cargo build --release) && python tools/gate_contract.py --check-command ports/rust/target/release/svgate`.
+
+**What it can show.** Whether CONTRACT.md is enough to port the Gate into a language with no built-in JSON at all,
+strict integer types, and its own float formatting. Every number, equality and truthiness rule has to be built
+from the contract's words. **What it cannot show.** Independence: the port is by the same model family (Claude)
+that wrote the Python Gate and the Go port, so B10 stays open.
+
+**Disclosed before writing.** In this session the author has read the first 60 lines of `ports/go/main.go`
+(its header and three helpers: JSON number handling, `toFloat`, `present`) and the C6 section above. It has not
+read `sovereign_veritas/decision.py` or `tools/verify_package.py` in this session, and will not read them, or any
+more of the Go port, until C7's first run is recorded. Earlier sessions by the same model may have read them.
+
+**Registered.**
+- **C7a** Every mismatch on the *first* run is recorded here with its cause, before any fix. A first run with zero
+  mismatches is recorded as that.
+- **C7b** After fixes made only from what CONTRACT.md says (each fix cites the contract), the port reproduces the
+  conformance digest `44823d0f…0628`.
+- **C7c** If a fix needs anything CONTRACT.md does not say, that is a contract defect, recorded as such, and the
+  contract text is amended in the same commit.
+- **C7d (anti-vacuity)** One deliberate one-line change to the finished port, chosen from a trap the contract
+  names, makes the checker report at least one differing vector.
+
+**Provenance (M13).** Claude (Anthropic, Opus 5.5) → human validation: not performed → curation: direction by
+Chad Holland, 2026-11-06 → responsibility: Chad Holland. Review level: direction only.
