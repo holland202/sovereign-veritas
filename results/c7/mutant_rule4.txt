@@ -1,0 +1,7 @@
+gate_contract sv.gate/0 | /tmp/claude-0/-home-claude/20deaf03-7883-5e1f-bdbb-23fc34858bca/scratchpad/c7_mutant/target/release/svgate | 4690 vectors
+  MISMATCH S:authorized='false': expected REFUSE ['capability_not_authorized'], got ALLOW []
+  MISMATCH S:authorized='0': expected REFUSE ['capability_not_authorized'], got ALLOW []
+  MISMATCH X:authorized='true' (a string is not true): expected REFUSE ['capability_not_authorized'], got ALLOW []
+  MISMATCH X:authorized=1 (1 is not true): expected REFUSE ['capability_not_authorized'], got ALLOW []
+conformance digest 913a1c095f2b572444609c30832a58f57f7575ed462b8ba5f12a6c8cace76430  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  4 of 4690 vectors differ

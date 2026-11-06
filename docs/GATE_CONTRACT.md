@@ -331,3 +331,27 @@ more of the Go port, until C7's first run is recorded. Earlier sessions by the s
 
 **Provenance (M13).** Claude (Anthropic, Opus 5.5) → human validation: not performed → curation: direction by
 Chad Holland, 2026-11-06 → responsibility: Chad Holland. Review level: direction only.
+
+### C7 results (container x86_64, Rust 1.97.0, 2026-11-06)
+
+Raw output: `results/c7/first_run.txt` and `results/c7/mutant_rule4.txt`. Pasted:
+
+```
+gate_contract sv.gate/0 | ports/rust/target/release/svgate | 4690 vectors
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+```
+
+- **C7a: the first run had 0 mismatches.** One compile error was fixed before that run (a lifetime error on the
+  line that maps the verification status string); it changed no logic, and no run had happened.
+- **C7b held** without any fix.
+- **C7c: no contract defect found.** Every rule, including the formatting rules, was buildable from CONTRACT.md's
+  text. Rust's `{:.4}` formatting rounds ties to even from the exact binary value, as the contract requires
+  (0.03125 gives `0.0312`); Python's `repr` needed its exponent rule (below -4 or at least 16) built by hand.
+- **C7d held (anti-vacuity).** A copy with rule 4 reading `authorized` by truthiness instead of "is the boolean
+  `true`" (`results/c7/mutant_rule4.txt`) gave `VERDICT  4 of 4690 vectors differ`: `S:authorized='false'`,
+  `S:authorized='0'`, `X:authorized='true'` and `X:authorized=1`, each expected REFUSE, got ALLOW.
+- **What this weakens.** The port is by the same model family as the other three implementations, and the
+  author had read the Go port's number helpers (disclosed in the registration), so a first-run pass is weaker
+  evidence than an outside author's would be. B10, an implementation by someone else, stays open.
+- **CI.** The new `port-rust` job builds the port and runs the checker on Linux, macOS and Windows.

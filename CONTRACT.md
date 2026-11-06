@@ -4,9 +4,9 @@ What the Sovereign Veritas Gate decides, precisely enough for someone else to bu
 language and prove it decides the same way. The rules below are taken from the code
 (`sovereign_veritas/decision.py`), and 4690 test vectors hold the code to them.
 
-**Status: self-tested.** Three implementations exist and all pass every vector: the kernel Gate,
-`replay_gate` in `tools/verify_package.py`, and a Go port (`ports/go`, C6). All three are by the same
-author, so agreeing proves less than it sounds. No outside implementation exists yet. Registration and results:
+**Status: self-tested.** Four implementations exist and all pass every vector: the kernel Gate,
+`replay_gate` in `tools/verify_package.py`, a Go port (`ports/go`, C6) and a Rust port (`ports/rust`, C7). All
+four are by the same author, so agreeing proves less than it sounds. No outside implementation exists yet. Registration and results:
 `docs/GATE_CONTRACT.md`.
 
 ## Test your implementation

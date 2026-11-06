@@ -1,0 +1,3 @@
+gate_contract sv.gate/0 | ports/rust/target/release/svgate | 4690 vectors
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS

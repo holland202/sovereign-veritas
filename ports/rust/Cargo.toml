@@ -1,0 +1,12 @@
+[package]
+name = "svgate"
+version = "0.1.0"
+edition = "2021"
+description = "A Rust port of the Sovereign Veritas Gate contract sv.gate/0, written from CONTRACT.md only (C7)"
+license = "MIT"
+publish = false
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
