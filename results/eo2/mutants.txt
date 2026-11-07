@@ -1,0 +1,8 @@
+KILLED   M1 binding ignored
+KILLED   M2 REFUSE/DEFER change accepted
+KILLED   M3 status not checked
+KILLED   M4 strict rule dropped
+KILLED   M5 extra changed keys allowed
+KILLED   M6 no-change reported OK
+KILLED   M7 digest ignores parameters
+mutants killed: 7/7

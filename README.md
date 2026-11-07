@@ -91,7 +91,7 @@ independent reimplementations of the Gate that reproduce the contract digest.
   broken so the executor runs on REFUSE/DEFER, the record, the package and `verify_package.py` still say "no
   execution recorded" and verify CONSISTENT. `SUCCEEDED` means the executor returned without raising: a no-op and a
   wrong action both record `SUCCEEDED`. The test suite does catch the broken guard (35 tests fail). **Open**; the
-  candidate real fix is an executor-issued effect receipt the verifier checks.
+  candidate real fix is an executor-issued effect receipt the verifier checks. EO-2 ([docs/EO2_RESULTS.md](docs/EO2_RESULTS.md)) tested that and an opt-in independent observer: a receipt catches 2 of 7 attacks; a bound read-back of the target's state catches 6 of 7 after Amendment 1 (the registered rule was refuted on one case) and misses a compromised observer. Self-tested, on a file-backed stand-in.
 - **"PASS" and "authorized" are labels the caller writes.** An external review filed eleven breaks
   ([issue #4](https://github.com/holland202/sovereign-veritas/issues/4)). Two are fixed; the rest are
   assigned to `sv.gate/1`.

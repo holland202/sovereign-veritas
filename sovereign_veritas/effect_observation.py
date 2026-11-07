@@ -39,9 +39,12 @@ def changed_keys(before: Mapping[str, Any], after: Mapping[str, Any]) -> set:
 
 
 def check_observed_effect(record: Mapping[str, Any], observation: Mapping[str, Any] | None,
-                          expected: Mapping[str, Any] | None, *, bind: bool = True) -> str:
+                          expected: Mapping[str, Any] | None, *, bind: bool = True, strict: bool = True) -> str:
     """Verdict for one record. `record` is EvidenceRecord.to_dict(); `expected` is the state the recorded
-    action should produce (key -> value), or None when the action is unknown to the effect spec."""
+    action should produce (key -> value), or None when the action is unknown to the effect spec.
+
+    strict (EO-2 Amendment 1): when the expected state was already present, UNOBSERVABLE only if nothing changed;
+    a change is WRONG_EFFECT. strict=False is the rule as first registered, kept so that run reproduces."""
     if observation is None:
         return NO_OBSERVATION
     if bind and (observation.get("record_id") != record.get("record_id")
@@ -57,8 +60,8 @@ def check_observed_effect(record: Mapping[str, Any], observation: Mapping[str, A
     if not expected:
         return WRONG_EFFECT if changed else NO_EFFECT
     if all(before.get(k) == v for k, v in expected.items()) and all(k in before for k in expected):
-        # As registered: expected state already present -> UNOBSERVABLE, even if other keys changed.
-        # (Reporting WRONG_EFFECT when other keys changed would be stricter; it is a door, not this rule.)
+        if strict and changed:
+            return WRONG_EFFECT
         return UNOBSERVABLE
     if not changed:
         return NO_EFFECT

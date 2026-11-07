@@ -1,0 +1,11 @@
+EO-2 Amendment 1 | registered run | python 3.13.18 | linux
+                          C1                   C2                   C3                   C4                   A1                   A2                   A3                   A4                   A5                   A6                   A7                   A8
+  R2                      OK                   OK                   OK         UNOBSERVABLE  UNAUTHORIZED_EFFECT  UNAUTHORIZED_EFFECT            NO_EFFECT         UNOBSERVABLE            NO_EFFECT     BINDING_MISMATCH                   OK         UNOBSERVABLE
+  R2s                     OK                   OK                   OK         UNOBSERVABLE  UNAUTHORIZED_EFFECT  UNAUTHORIZED_EFFECT            NO_EFFECT         WRONG_EFFECT            NO_EFFECT     BINDING_MISMATCH                   OK         WRONG_EFFECT
+  A8: {"real_before_after": [{"V1": "open"}, {"V1": "open", "V2": "open"}], "record": "ALLOW", "status": "SUCCEEDED"}
+
+  Q1  HELD
+  Q2  HELD
+  Q3  HELD  (not fresh: A4 prompted the amendment)
+VERDICT 3 of 3 as amended (Q4 is --sabotage)
+DIGEST 0f5badf94843f6b79a5077b1d62d828dc19382281447755376f2ac1b74afc89f

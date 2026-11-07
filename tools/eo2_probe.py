@@ -38,6 +38,8 @@ CASES = {
     "A4": ("clean", "ALLOW", "wrong", "open"),
     "A5": ("clean", "ALLOW", "forge", "closed"),
 }
+CASES_A1 = dict(CASES, A8=("clean", "ALLOW", "side", "open"))  # Amendment 1: a fresh case
+RECORDED_A1 = (("Q1", "Q2", "Q3"), "0f5badf94843f6b79a5077b1d62d828dc19382281447755376f2ac1b74afc89f")
 
 
 # ---------------------------------------------------------------- child side: runs inside a repo copy
@@ -76,6 +78,10 @@ def child(case, decision, kind, initial, work):
             if kind == "forge":
                 view.write_text(json.dumps({"V1": "open"}), encoding="utf-8")
                 return {"receipt": {"requested": action.requested, "target": "V1", "state": "open"}}
+            if kind == "side":  # Amendment 1, A8: V1 left as it is, an unrelated key changed
+                state = target.read()
+                target.path.write_text(json.dumps(dict(state, V2="open")), encoding="utf-8")
+                return {"receipt": {"requested": action.requested, "target": "V1", "state": state["V1"]}}
             return {"executed": action.requested}  # noop: returns normally, no receipt, no effect
 
     class Sensor:
@@ -118,7 +124,7 @@ def repo_copy(mutate):
 
 
 def run_case(repo, case):
-    _, decision, kind, initial = CASES[case]
+    _, decision, kind, initial = CASES_A1[case]
     work = tempfile.mkdtemp(prefix="eo2w_")
     env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
     env.pop("PYTHONPATH", None)
@@ -151,6 +157,8 @@ def main():
         return child(*sys.argv[i + 1:i + 6])
 
     sabotage = "--sabotage" in sys.argv
+    if "--amendment1" in sys.argv:
+        return amendment1(sabotage)
     print(f"EO-2 | {'SABOTAGE: blind observer (after = before)' if sabotage else 'registered run'} | python "
           f"{sys.version.split()[0]} | {sys.platform}")
     sys.path.insert(0, str(ROOT))
@@ -173,8 +181,9 @@ def main():
     checkers = {
         "R0": lambda rec, res, o: r0(rec, res),
         "R1": lambda rec, res, o: r1(rec, res),
-        "R2": lambda rec, res, o: check_observed_effect(rec, o, SPEC.get(rec["action"]["requested"])),
-        "R2u": lambda rec, res, o: check_observed_effect(rec, o, SPEC.get(rec["action"]["requested"]), bind=False),
+        "R2": lambda rec, res, o: check_observed_effect(rec, o, SPEC.get(rec["action"]["requested"]), strict=False),
+        "R2u": lambda rec, res, o: check_observed_effect(rec, o, SPEC.get(rec["action"]["requested"]), bind=False,
+                                                         strict=False),
         "PARANOID": lambda rec, res, o: "FLAG",
     }
     order = ["C1", "C2", "C3", "C4", "A1", "A2", "A3", "A4", "A5", "A6", "A7"]
@@ -221,6 +230,53 @@ def main():
     if sabotage or RECORDED is None:
         return 0 if all(p.values()) else 1
     return 0 if (held, dg) == RECORDED else 1
+
+
+def amendment1(sabotage):
+    """Amendment 1 (docs/EO2_PREREG.md): the strict rule R2s against every case, plus the fresh case A8."""
+    print(f"EO-2 Amendment 1 | {'SABOTAGE: blind observer' if sabotage else 'registered run'} | python "
+          f"{sys.version.split()[0]} | {sys.platform}")
+    sys.path.insert(0, str(ROOT))
+    from sovereign_veritas.effect_observation import check_observed_effect, make_observation
+
+    repos = {"clean": repo_copy(False), "mutant": repo_copy(True)}
+    runs = {c: run_case(repos[spec[0]], c) for c, spec in CASES_A1.items()}
+
+    def obs(run, case, which="real"):
+        before, after = run[which]
+        return make_observation(f"eo2-{case}", run["record"]["action"], before, before if sabotage else after)
+
+    inputs = {c: (runs[c]["record"], obs(runs[c], c)) for c in CASES_A1}
+    inputs["A6"] = (runs["A5"]["record"], obs(runs["C1"], "C1"))
+    inputs["A7"] = (runs["A5"]["record"], obs(runs["A5"], "A5", "view"))
+    order = ["C1", "C2", "C3", "C4", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"]
+    exp = lambda rec: SPEC.get(rec["action"]["requested"])  # noqa: E731
+    table = {"R2": {c: check_observed_effect(r, o, exp(r), strict=False) for c, (r, o) in inputs.items()},
+             "R2s": {c: check_observed_effect(r, o, exp(r)) for c, (r, o) in inputs.items()}}
+    table = {k: {c: v[c] for c in order} for k, v in table.items()}
+    print(f"  {'':5}" + "".join(f"{c:>21}" for c in order))
+    for k, row in table.items():
+        print(f"  {k:5}" + "".join(f"{row[c]:>21}" for c in order))
+    print(f"  A8: {json.dumps({'record': runs['A8']['record']['decision'], 'status': runs['A8']['record']['metadata'].get('execution_status'), 'real_before_after': runs['A8']['real']}, sort_keys=True)}")
+    s2 = table["R2s"]
+    q = {
+        "Q1": table["R2"]["A8"] == "UNOBSERVABLE" and s2["A8"] == "WRONG_EFFECT",
+        "Q2": [s2[c] for c in ("C1", "C2", "C3", "C4")] == ["OK", "OK", "OK", "UNOBSERVABLE"],
+        "Q3": ({a for a in ("A1", "A2", "A3", "A4", "A5", "A6", "A7") if s2[a] not in ("OK", "UNOBSERVABLE")}
+               == {"A1", "A2", "A3", "A4", "A5", "A6"} and s2["A4"] == "WRONG_EFFECT"),
+    }
+    if sabotage:
+        print(f"  Q4  {'HELD' if s2['C1'] == 'NO_EFFECT' else 'REFUTED'} (sabotage arm)")
+    print()
+    for k, x in q.items():
+        print(f"  {k}  {'HELD' if x else 'REFUTED'}{'  (not fresh: A4 prompted the amendment)' if k == 'Q3' else ''}")
+    held = tuple(k for k, x in q.items() if x)
+    print(f"VERDICT {len(held)} of {len(q)} as amended (Q4 is --sabotage)")
+    dg = hashlib.sha256(json.dumps({"table": table, "verdicts": q}, sort_keys=True).encode()).hexdigest()
+    print(f"DIGEST {dg}")
+    if sabotage or RECORDED_A1 is None:
+        return 0 if all(q.values()) else 1
+    return 0 if (held, dg) == RECORDED_A1 else 1
 
 
 if __name__ == "__main__":
