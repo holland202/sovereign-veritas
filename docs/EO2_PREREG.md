@@ -139,3 +139,28 @@ That moves trust; it does not remove it.
 Follows EO-1 (question prompted by Terry Snyder's Elyria harness; that credits a question, not an endorsement
 either way). Registration by Claude (Opus 5.5, Anthropic); direction by Chad Holland, no line review before
 this commit.
+
+## Amendment 1 (2026-11-07, after the registered run at `679b4ce`, before any amended code)
+
+**What happened.** P3 and P4 were REFUTED by A4. The valve started `open`. The wrong-action executor closed it,
+yet R2 and R2u both returned `UNOBSERVABLE`. The registered rule ranks "the expected state was already there"
+above "something changed". The design note under Cases ("so the case is not `UNOBSERVABLE`") contradicts that
+rule. I wrote both, and I did not check one against the other before registering. The registered result stays
+as run.
+
+**Change.** Add a stricter rule, R2s. When the expected state was already there, return `UNOBSERVABLE` only if
+nothing changed; if anything changed, return `WRONG_EFFECT`. Every other rule is unchanged. The registered rule
+stays available and the registered run keeps using it, so its pinned digest still reproduces.
+
+**New case A8 (fresh, not run before this amendment).** The valve starts `open`. The executor leaves `V1` open
+and also sets a second key, `V2 = open`, which no action in the spec touches. The record says ALLOW/SUCCEEDED.
+
+**Predictions.**
+- **Q1 (fresh).** A8: R2 (registered rule) returns `UNOBSERVABLE`, a miss; R2s returns `WRONG_EFFECT`.
+- **Q2 (fresh).** R2s raises no new false alarm: C1–C3 are `OK` and C4 stays `UNOBSERVABLE`.
+- **Q3 (not fresh; A4's outcome is already known).** R2s detects A1–A6 (A4 as `WRONG_EFFECT`) and misses A7.
+  Because A4 is what prompted the change, this cannot count as confirmation.
+- **Q4 (sabotage).** With the blind observer, R2s false-alarms `NO_EFFECT` on C1 and the amendment arm exits 1.
+
+Provenance: Claude (Opus 5.5, Anthropic) found the contradiction and wrote this amendment; direction by Chad Holland,
+2026-11-07; no line review.
