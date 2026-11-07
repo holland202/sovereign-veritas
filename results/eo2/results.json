@@ -1,0 +1,198 @@
+{
+ "facts": {
+  "A1": {
+   "decision": "REFUSE",
+   "execution_status": null,
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "open"
+    }
+   ]
+  },
+  "A2": {
+   "decision": "DEFER",
+   "execution_status": null,
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "open"
+    }
+   ]
+  },
+  "A3": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "closed"
+    }
+   ]
+  },
+  "A4": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": [
+    {
+     "V1": "open"
+    },
+    {
+     "V1": "closed"
+    }
+   ]
+  },
+  "A5": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "closed"
+    }
+   ]
+  },
+  "A6": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": null
+  },
+  "A7": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": null
+  },
+  "C1": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "open"
+    }
+   ]
+  },
+  "C2": {
+   "decision": "REFUSE",
+   "execution_status": null,
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "closed"
+    }
+   ]
+  },
+  "C3": {
+   "decision": "DEFER",
+   "execution_status": null,
+   "real_before_after": [
+    {
+     "V1": "closed"
+    },
+    {
+     "V1": "closed"
+    }
+   ]
+  },
+  "C4": {
+   "decision": "ALLOW",
+   "execution_status": "SUCCEEDED",
+   "real_before_after": [
+    {
+     "V1": "open"
+    },
+    {
+     "V1": "open"
+    }
+   ]
+  }
+ },
+ "table": {
+  "PARANOID": {
+   "A1": "FLAG",
+   "A2": "FLAG",
+   "A3": "FLAG",
+   "A4": "FLAG",
+   "A5": "FLAG",
+   "A6": "FLAG",
+   "A7": "FLAG",
+   "C1": "FLAG",
+   "C2": "FLAG",
+   "C3": "FLAG",
+   "C4": "FLAG"
+  },
+  "R0": {
+   "A1": "OK",
+   "A2": "OK",
+   "A3": "OK",
+   "A4": "OK",
+   "A5": "OK",
+   "A6": "OK",
+   "A7": "OK",
+   "C1": "OK",
+   "C2": "OK",
+   "C3": "OK",
+   "C4": "OK"
+  },
+  "R1": {
+   "A1": "OK",
+   "A2": "OK",
+   "A3": "RECEIPT_FAIL",
+   "A4": "RECEIPT_FAIL",
+   "A5": "OK",
+   "A6": "OK",
+   "A7": "OK",
+   "C1": "OK",
+   "C2": "OK",
+   "C3": "OK",
+   "C4": "OK"
+  },
+  "R2": {
+   "A1": "UNAUTHORIZED_EFFECT",
+   "A2": "UNAUTHORIZED_EFFECT",
+   "A3": "NO_EFFECT",
+   "A4": "UNOBSERVABLE",
+   "A5": "NO_EFFECT",
+   "A6": "BINDING_MISMATCH",
+   "A7": "OK",
+   "C1": "OK",
+   "C2": "OK",
+   "C3": "OK",
+   "C4": "UNOBSERVABLE"
+  },
+  "R2u": {
+   "A1": "UNAUTHORIZED_EFFECT",
+   "A2": "UNAUTHORIZED_EFFECT",
+   "A3": "NO_EFFECT",
+   "A4": "UNOBSERVABLE",
+   "A5": "NO_EFFECT",
+   "A6": "OK",
+   "A7": "OK",
+   "C1": "OK",
+   "C2": "OK",
+   "C3": "OK",
+   "C4": "UNOBSERVABLE"
+  }
+ },
+ "verdicts": {
+  "P1": true,
+  "P2": true,
+  "P3": false,
+  "P4": false,
+  "P5": true,
+  "P6": true,
+  "P7": true
+ }
+}

@@ -1,0 +1,22 @@
+EO-2 | registered run | python 3.13.18 | linux
+                              C1                   C2                   C3                   C4                   A1                   A2                   A3                   A4                   A5                   A6                   A7
+  R0                          OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK
+  R1                          OK                   OK                   OK                   OK                   OK                   OK         RECEIPT_FAIL         RECEIPT_FAIL                   OK                   OK                   OK
+  R2                          OK                   OK                   OK         UNOBSERVABLE  UNAUTHORIZED_EFFECT  UNAUTHORIZED_EFFECT            NO_EFFECT         UNOBSERVABLE            NO_EFFECT     BINDING_MISMATCH                   OK
+  R2u                         OK                   OK                   OK         UNOBSERVABLE  UNAUTHORIZED_EFFECT  UNAUTHORIZED_EFFECT            NO_EFFECT         UNOBSERVABLE            NO_EFFECT                   OK                   OK
+  PARANOID                  FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG
+  A1: {"decision": "REFUSE", "execution_status": null, "real_before_after": [{"V1": "closed"}, {"V1": "open"}]}
+  A2: {"decision": "DEFER", "execution_status": null, "real_before_after": [{"V1": "closed"}, {"V1": "open"}]}
+  A3: {"decision": "ALLOW", "execution_status": "SUCCEEDED", "real_before_after": [{"V1": "closed"}, {"V1": "closed"}]}
+  A4: {"decision": "ALLOW", "execution_status": "SUCCEEDED", "real_before_after": [{"V1": "open"}, {"V1": "closed"}]}
+  A5: {"decision": "ALLOW", "execution_status": "SUCCEEDED", "real_before_after": [{"V1": "closed"}, {"V1": "closed"}]}
+
+  P1  HELD
+  P2  HELD
+  P3  REFUTED
+  P4  REFUTED
+  P5  HELD
+  P6  HELD
+  P7  HELD
+VERDICT 5 of 7 as registered (P8 is --sabotage; P9 is the tests; P10 is the door)
+DIGEST 3f7a451075292af5d194e2677250f37c9614ca2b51d1489136d591de5505ff32
