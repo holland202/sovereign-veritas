@@ -11,21 +11,21 @@
    "REFUTED": 2
   },
   "sabotage": {
-   "HELD": 26,
+   "HELD": 32,
    "NOT RUN": 0,
-   "REFUTED": 21
+   "REFUTED": 27
   },
   "unclassified": {
-   "HELD": 190,
+   "HELD": 198,
    "NOT RUN": 2,
-   "REFUTED": 14
+   "REFUTED": 16
   }
  },
- "commit": "47df77553893a6dda6bde0d091428165efc6f312",
- "experiments": 18,
- "files_read": 81,
- "files_with_rows": 45,
- "rows": 269,
+ "commit": "6db45d51398623797b2f1bcbd4e22d93d95d71f3",
+ "experiments": 19,
+ "files_read": 86,
+ "files_with_rows": 49,
+ "rows": 291,
  "verdict_files_without_rows": [
   "results/c7/first_run.txt",
   "results/c7/mutant_rule4.txt",

@@ -33,14 +33,14 @@ the commit it was read at.
 - **Self-tested.** The exporter's self-test checks both forms, rejects look-alikes such as `HELDOUT` and lower-case
   `held`, and detects a sabotage file name. It was not independently reviewed.
 
-## At commit `47df77553893a6dda6bde0d091428165efc6f312`
+## At commit `6db45d51398623797b2f1bcbd4e22d93d95d71f3`
 
-From `summary.json`: 269 rows, from 45 of 81 result files, across 18 experiments.
+From `summary.json`: 291 rows, from 49 of 86 result files, across 19 experiments.
 
 | arm (from file name) | HELD | REFUTED | NOT RUN |
 |---|---|---|---|
-| unclassified | 190 | 14 | 2 |
-| sabotage | 26 | 21 | 0 |
+| unclassified | 198 | 16 | 2 |
+| sabotage | 32 | 27 | 0 |
 | control | 7 | 2 | 0 |
 | baseline | 6 | 0 | 1 |
 
@@ -61,9 +61,13 @@ From `summary.json`: 269 rows, from 45 of 81 result files, across 18 experiments
 
 ```
 git clone https://github.com/holland202/sovereign-veritas && cd sovereign-veritas
-git checkout 47df77553893a6dda6bde0d091428165efc6f312
+git checkout 6db45d51398623797b2f1bcbd4e22d93d95d71f3
 python3 tools/prediction_ledger.py out
 ```
+
+## Changes
+
+- 2026-11-07: first upload carried the card and summary but not `ledger.jsonl` (the repository ignored `*.jsonl`). Rebuilt at `6db45d5`, which adds EO-2.
 
 ## Provenance
 
