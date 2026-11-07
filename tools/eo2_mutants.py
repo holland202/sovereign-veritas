@@ -11,8 +11,8 @@ MUTANTS = [
     ("M4 strict rule dropped", "        if strict and changed:\n            return WRONG_EFFECT\n", ""),
     ("M5 extra changed keys allowed", " and changed <= set(expected):", ":"),
     ("M6 no-change reported OK", "    if not changed:\n        return NO_EFFECT\n", "    if not changed:\n        return OK\n"),
-    ("M7 digest ignores parameters", "canon = json.dumps(action,",
-     "canon = json.dumps({k: v for k, v in (action or {}).items() if k != 'requested'},"),
+    ("M7 digest ignores the requested action", "hashlib.sha256(canonical_json(action)",
+     "hashlib.sha256(canonical_json({k: v for k, v in (action or {}).items() if k != 'requested'})"),
 ]
 
 

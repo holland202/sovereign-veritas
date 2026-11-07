@@ -21,6 +21,10 @@ registered run (`679b4ce`) and before any amended code.
 3. **The first draft of the property tests could not reach `OK`.** Its random generator never produced "the
    expected change and nothing else". Every rule assertion passed, but the coverage assertion failed. The
    generator was fixed to produce that case, and the coverage assertion now passes. No module code changed.
+4. **CI's red-team job caught a rule I broke.** JG-2 P1 refuses any hash in `sovereign_veritas/` that is not
+   taken over the repository's `canonical_json`. My `action_digest` built the same canonical form by hand with
+   `json.dumps`, so P1 refused it. It now calls `canonical_json`, which produces the same bytes; no EO-2 verdict or
+   digest changed. Mutant M7 was updated to match.
 
 ## Raw output (`results/eo2/run.txt`)
 

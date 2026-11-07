@@ -4,5 +4,5 @@ KILLED   M3 status not checked
 KILLED   M4 strict rule dropped
 KILLED   M5 extra changed keys allowed
 KILLED   M6 no-change reported OK
-KILLED   M7 digest ignores parameters
+KILLED   M7 digest ignores the requested action
 mutants killed: 7/7

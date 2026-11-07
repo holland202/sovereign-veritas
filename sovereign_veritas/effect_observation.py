@@ -8,8 +8,9 @@ executor can write to defeats it (EO-2 P5). Binding is integrity, not authentici
 from __future__ import annotations
 
 import hashlib
-import json
 from typing import Any, Mapping
+
+from .evidence import canonical_json
 
 OK = "OK"
 UNOBSERVABLE = "UNOBSERVABLE"
@@ -23,8 +24,8 @@ EFFECT_DESPITE_FAILURE = "EFFECT_DESPITE_FAILURE"
 
 def action_digest(action: Mapping[str, Any] | None) -> str:
     """sha256 of the record's action in canonical JSON (sorted keys, no spaces)."""
-    canon = json.dumps(action, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    return "sha256:" + hashlib.sha256(canon.encode("utf-8")).hexdigest()
+    # The repository's one canonical form (JG-2 P1 refuses any other hash input in sovereign_veritas/).
+    return "sha256:" + hashlib.sha256(canonical_json(action).encode("utf-8")).hexdigest()
 
 
 def make_observation(record_id: str, action: Mapping[str, Any] | None,
