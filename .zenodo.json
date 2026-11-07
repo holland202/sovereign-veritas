@@ -1,0 +1,26 @@
+{
+  "title": "Sovereign Veritas: a fail-closed permission gate for AI actions with independently verifiable evidence packages",
+  "description": "A fail-closed permission gate for AI actions. Every decision can be packaged, signed and independently re-verified. Built and run on a phone. Experimental; see STATUS.md for known limits.",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Holland, Chad",
+      "orcid": "0009-0004-1943-0585"
+    }
+  ],
+  "keywords": [
+    "AI safety",
+    "authorization",
+    "evidence",
+    "verification",
+    "reproducibility"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/holland202/sovereign-veritas",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

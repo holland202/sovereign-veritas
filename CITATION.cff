@@ -6,6 +6,7 @@ authors:
   - family-names: Holland
     given-names: Chad
     alias: holland202
+    orcid: "https://orcid.org/0009-0004-1943-0585"
 repository-code: "https://github.com/holland202/sovereign-veritas"
 license: MIT
 keywords:
