@@ -1,0 +1,23 @@
+name: eo2
+on:
+  push:
+  pull_request:
+jobs:
+  eo2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e ".[test]"
+      - name: EO-2 registered run reproduces its recorded outcome (5 of 7, P3/P4 refuted)
+        run: python tools/eo2_probe.py
+      - name: EO-2 Amendment 1 reproduces its recorded outcome
+        run: python tools/eo2_probe.py --amendment1
+      - name: Sabotage (blind observer) must exit 1, both arms
+        run: |
+          if python tools/eo2_probe.py --sabotage > /dev/null; then echo "sabotage passed: probe is vacuous"; exit 1; fi
+          if python tools/eo2_probe.py --amendment1 --sabotage > /dev/null; then echo "sabotage passed: amendment arm is vacuous"; exit 1; fi
+      - name: P9 mutants of effect_observation.py are all killed
+        run: python tools/eo2_mutants.py

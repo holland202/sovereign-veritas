@@ -1,0 +1,12 @@
+EO-2 Amendment 1 | SABOTAGE: blind observer | python 3.13.18 | linux
+                          C1                   C2                   C3                   C4                   A1                   A2                   A3                   A4                   A5                   A6                   A7                   A8
+  R2               NO_EFFECT                   OK                   OK         UNOBSERVABLE                   OK                   OK            NO_EFFECT         UNOBSERVABLE            NO_EFFECT     BINDING_MISMATCH            NO_EFFECT         UNOBSERVABLE
+  R2s              NO_EFFECT                   OK                   OK         UNOBSERVABLE                   OK                   OK            NO_EFFECT         UNOBSERVABLE            NO_EFFECT     BINDING_MISMATCH            NO_EFFECT         UNOBSERVABLE
+  A8: {"real_before_after": [{"V1": "open"}, {"V1": "open", "V2": "open"}], "record": "ALLOW", "status": "SUCCEEDED"}
+  Q4  HELD (sabotage arm)
+
+  Q1  REFUTED
+  Q2  REFUTED
+  Q3  REFUTED  (not fresh: A4 prompted the amendment)
+VERDICT 0 of 3 as amended (Q4 is --sabotage)
+DIGEST 769938995d68bcfafbd9e969e049be3a480cea1405576972bf10b3f6f3fd29a6

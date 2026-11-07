@@ -1,0 +1,23 @@
+EO-2 | SABOTAGE: blind observer (after = before) | python 3.13.18 | linux
+                              C1                   C2                   C3                   C4                   A1                   A2                   A3                   A4                   A5                   A6                   A7
+  R0                          OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK                   OK
+  R1                          OK                   OK                   OK                   OK                   OK                   OK         RECEIPT_FAIL         RECEIPT_FAIL                   OK                   OK                   OK
+  R2                   NO_EFFECT                   OK                   OK         UNOBSERVABLE                   OK                   OK            NO_EFFECT         UNOBSERVABLE            NO_EFFECT     BINDING_MISMATCH            NO_EFFECT
+  R2u                  NO_EFFECT                   OK                   OK         UNOBSERVABLE                   OK                   OK            NO_EFFECT         UNOBSERVABLE            NO_EFFECT            NO_EFFECT            NO_EFFECT
+  PARANOID                  FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG                 FLAG
+  A1: {"decision": "REFUSE", "execution_status": null, "real_before_after": [{"V1": "closed"}, {"V1": "open"}]}
+  A2: {"decision": "DEFER", "execution_status": null, "real_before_after": [{"V1": "closed"}, {"V1": "open"}]}
+  A3: {"decision": "ALLOW", "execution_status": "SUCCEEDED", "real_before_after": [{"V1": "closed"}, {"V1": "closed"}]}
+  A4: {"decision": "ALLOW", "execution_status": "SUCCEEDED", "real_before_after": [{"V1": "open"}, {"V1": "closed"}]}
+  A5: {"decision": "ALLOW", "execution_status": "SUCCEEDED", "real_before_after": [{"V1": "closed"}, {"V1": "closed"}]}
+
+  P1  HELD
+  P2  HELD
+  P3  REFUTED
+  P4  REFUTED
+  P5  REFUTED
+  P6  HELD
+  P7  HELD
+  P8  HELD (sabotage arm)
+VERDICT 4 of 7 as registered (P8 is --sabotage; P9 is the tests; P10 is the door)
+DIGEST 0b0515791d28e4f05bcbca440a4b23aafd35faa8e2a49537d06f0e04d0d62f02
