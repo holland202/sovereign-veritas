@@ -112,3 +112,6 @@ svgate
 
 # OBS-1 store logs are evidence (Amos Tipton found them missing from 2d0766d, 2026-10-05)
 !results/obs1/**/store_events.jsonl
+
+# The prediction ledger dataset is committed so it can be published (exports/prediction_ledger/README.md).
+!exports/prediction_ledger/ledger.jsonl
