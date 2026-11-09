@@ -102,3 +102,17 @@ Follows EO-1, whose question was prompted by Terry Snyder's Elyria harness. That
 endorsement either way. AI participation: Claude (Opus 5.5, Anthropic) wrote the registration, amendment,
 module, harness, tests, mutants and this file. Human validation: not performed. Chad Holland chose EO-2 over the
 alternatives offered and directed the work; no line review. Chad Holland is responsible for the final artifact.
+
+## Figure (added 2026-11-09; drawn from the committed run outputs, no new numbers)
+
+![EO-2 catch matrix: which evidence catches which attack](figures/eo2_catch_matrix.png)
+
+`tools/eo2_figure.py` reads `results/eo2/run.txt` and `results/eo2/amendment1_run.txt` and prints every count it
+draws. Those counts match the results above: the record catches 0 of 7 attacks, the executor receipt 2 of 7, and
+the strict bound read-back (R2s) 6 of the registered 7 plus Amendment 1's A8. The paranoid checker catches every
+attack only by flagging every honest case too. Same limits as above: a file-backed stand-in, container only,
+self-tested.
+
+Provenance: Claude (Anthropic, Opus 5.5) drew the figure from the committed outputs → human validation: not
+performed → human direction: Chad Holland, 2026-11-08 → human responsibility: Chad Holland. Review level:
+direction only.
