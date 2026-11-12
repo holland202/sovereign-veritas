@@ -1,0 +1,5 @@
+$ /tmp/sv-venv/bin/python -m pytest tests/test_execution_boundary.py -q
+[run 2026-11-12, upstream pinned 13c663b3a3b058b7170fd3628325c1361112d07d]
+....                                                                     [100%]
+4 passed in 0.07s
+[exit 0]
