@@ -1,0 +1,34 @@
+{
+  "proof_of": "SOVEREIGN VERITAS COVERING SUITE",
+  "template": "SUITE__TEMPLATE GEN 01",
+  "template_manifest_sha256": "755683709be792e6e7d24f6f781785a20fb82852aac040215d2d5c7644370b53",
+  "convention": "This proof lives inside the suite it proves, as a hashed member of the suite manifest. It is excluded from its own E1 enumeration; the manifest binds its bytes.",
+  "elements": {
+    "E1_manifest_members_verify": {
+      "pass": true,
+      "detail": "20 members, 0 bad",
+      "bad": []
+    },
+    "E2_self_check_passes": {
+      "pass": true,
+      "detail": "SELF-CHECK: 54 PASS / 0 FAIL"
+    },
+    "E2b_checker_carries_template_checks": {
+      "pass": true,
+      "detail": "checker source names FUNDING + ProjectID"
+    },
+    "E3_face_carries_projectid_funding": {
+      "pass": true,
+      "detail": "README names ProjectID + Funding"
+    },
+    "E4_funding_statement": {
+      "pass": true,
+      "detail": "FUNDING__STATEMENT__01.md carries the three lines"
+    },
+    "E5_proof_in_suite": {
+      "pass": true,
+      "detail": "this file \u2014 a member of the suite it proves, bound by the manifest hash"
+    }
+  },
+  "verdict": "CONFORMANT"
+}
