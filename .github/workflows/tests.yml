@@ -61,6 +61,12 @@ jobs:
       - run: go build -o ../../svgate .
         working-directory: ports/go  # the Go module lives there, not at the repository root
       - run: python tools/gate_contract.py --check-command ./svgate
+      - name: OVF-1 (Go) - an infinite floor prints as inf, like the kernel (docs/OVF1_GO_PREREG.md)
+        env:
+          SVGATE_GO_BIN: ./svgate  # set, so a missing binary fails instead of skipping
+        run: |
+          python -m pip install -e ".[test]"
+          python -m pytest -q tests/test_port_go_infinite_floor.py
 
   port-rust:
     # C7 (docs/GATE_CONTRACT.md): the Rust port of sv.gate/0 must reproduce the conformance digest, on all three OSes.

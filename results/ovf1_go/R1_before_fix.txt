@@ -1,0 +1,38 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+___________ test_infinite_floor_prints_inf_like_the_kernel[10**400] ____________
+
+go_bin = '/tmp/pytest-of-root/pytest-24/go0/svgate'
+floor = 100000000000000000...0000000000000000000
+
+    @pytest.mark.parametrize("floor", [10 ** 400, 2 ** 1024], ids=["10**400", "2**1024"])
+    def test_infinite_floor_prints_inf_like_the_kernel(go_bin, floor):
+        expected = gct.kernel_gate()(base_input(floor))
+        assert expected == ("DEFER", ["evidence_quality_below_threshold:0.2000<inf"])
+>       assert go_decide(go_bin, floor) == expected
+E       AssertionError: assert ('DEFER', ['e...0.2000<+Inf']) == ('DEFER', ['e...:0.2000<inf'])
+E         
+E         At index 1 diff: ['evidence_quality_below_threshold:0.2000<+Inf'] != ['evidence_quality_below_threshold:0.2000<inf']
+E         Use -v to get more diff
+
+tests/test_port_go_infinite_floor.py:57: AssertionError
+___________ test_infinite_floor_prints_inf_like_the_kernel[2**1024] ____________
+
+go_bin = '/tmp/pytest-of-root/pytest-24/go0/svgate'
+floor = 179769313486231590...5356329624224137216
+
+    @pytest.mark.parametrize("floor", [10 ** 400, 2 ** 1024], ids=["10**400", "2**1024"])
+    def test_infinite_floor_prints_inf_like_the_kernel(go_bin, floor):
+        expected = gct.kernel_gate()(base_input(floor))
+        assert expected == ("DEFER", ["evidence_quality_below_threshold:0.2000<inf"])
+>       assert go_decide(go_bin, floor) == expected
+E       AssertionError: assert ('DEFER', ['e...0.2000<+Inf']) == ('DEFER', ['e...:0.2000<inf'])
+E         
+E         At index 1 diff: ['evidence_quality_below_threshold:0.2000<+Inf'] != ['evidence_quality_below_threshold:0.2000<inf']
+E         Use -v to get more diff
+
+tests/test_port_go_infinite_floor.py:57: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_port_go_infinite_floor.py::test_infinite_floor_prints_inf_like_the_kernel[10**400]
+FAILED tests/test_port_go_infinite_floor.py::test_infinite_floor_prints_inf_like_the_kernel[2**1024]
+2 failed, 1 passed in 0.84s

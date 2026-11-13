@@ -190,7 +190,17 @@ func pyRepr(f float64) string {
 	return s
 }
 
-func fixed4(f float64) string { return strconv.FormatFloat(f, 'f', 4, 64) }
+// fixed4: four-place fixed point; an infinite value prints as "inf" or "-inf", as Python's
+// format(x, ".4f") does (Go would print "+Inf"). docs/OVF1_GO_PREREG.md.
+func fixed4(f float64) string {
+	switch {
+	case math.IsInf(f, 1):
+		return "inf"
+	case math.IsInf(f, -1):
+		return "-inf"
+	}
+	return strconv.FormatFloat(f, 'f', 4, 64)
+}
 
 // ---- the Gate (CONTRACT.md, "Rules") --------------------------------------------------------------
 
