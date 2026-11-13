@@ -26,14 +26,14 @@ jobs:
     steps:
       - name: keep line endings as committed (file hashes and gate_constraint's md5 lines depend on it)
         run: git config --global core.autocrlf false
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.14"
       - name: run leg
         shell: bash
         run: PY=python bash .github/xplat_leg.sh "$RUNNER_TEMP/${{ matrix.leg }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: ${{ matrix.leg }}
@@ -50,9 +50,9 @@ jobs:
           - { leg: L5-s390x-bigendian, arch: s390x }
           - { leg: L6-ppc64le,         arch: ppc64le }
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - run: mkdir -p "${{ runner.temp }}/out"
-      - uses: uraimo/run-on-arch-action@v3
+      - uses: uraimo/run-on-arch-action@fa1f3e7de95534497266c7265950b5188355fbfb # v3.2.1
         with:
           arch: ${{ matrix.arch }}
           distro: ubuntu24.04
@@ -62,7 +62,7 @@ jobs:
             apt-get install -q -y python3 openssh-client git
           shell: /bin/bash
           run: PY=python3 bash .github/xplat_leg.sh "/out/${{ matrix.leg }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
           name: ${{ matrix.leg }}
@@ -74,11 +74,11 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.14"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: legs
           pattern: L*
