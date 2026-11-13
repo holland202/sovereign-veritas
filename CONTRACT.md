@@ -4,9 +4,11 @@ What the Sovereign Veritas Gate decides, precisely enough for someone else to bu
 language and prove it decides the same way. The rules below are taken from the code
 (`sovereign_veritas/decision.py`), and 4690 test vectors hold the code to them.
 
-**Status: self-tested.** Four implementations exist and all pass every vector: the kernel Gate,
-`replay_gate` in `tools/verify_package.py`, a Go port (`ports/go`, C6) and a Rust port (`ports/rust`, C7). All
-four are by the same author, so agreeing proves less than it sounds. No outside implementation exists yet. Registration and results:
+**Status: self-tested.** Five implementations exist and all pass every vector: the kernel Gate,
+`replay_gate` in `tools/verify_package.py`, a Go port (`ports/go`, C6) and a Rust port (`ports/rust`, C7), all
+four by the same author (Claude), so agreeing proves less than it sounds; and an independent Python port
+(`ports/python_independent`), written by OpenAI Codex at Putluru Sandeep's direction (PR #86), whose conformance
+was contributor reported and has since been re-run here (self-tested, DIFF-001). Registration and results:
 `docs/GATE_CONTRACT.md`.
 
 ## Test your implementation
@@ -134,7 +136,8 @@ The reason strings embed Python's number formatting, and the vectors pin it:
 - The four-place values in `evidence_quality_below_threshold` are fixed-point with exactly four
   decimals, rounded correctly from the exact binary value with ties to even: 0.03125 is `0.0312`
   (JavaScript's `toFixed(4)` gives `0.0313`), and 0.49999 is `0.5000`, so a correct refusal can
-  read `0.5000<0.5000`.
+  read `0.5000<0.5000`. An infinite value (a floor given as an integer too large for a double) prints
+  as `inf` or `-inf`, as Python's `format(x, ".4f")` does (`docs/OVF1_GO_PREREG.md`).
 - The integers in `capability_max_steps_exceeded` are plain decimal.
 - `in`/equality in rule 13 is Python's, which treats `1`, `1.0` and `true` as equal.
 

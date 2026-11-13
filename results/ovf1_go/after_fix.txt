@@ -1,0 +1,11 @@
+## R2/R3: new test after fix
+...                                                                      [100%]
+3 passed in 0.60s
+## R4: vectors
+conformance digest 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628  (expected 44823d0ff707213ae8bc310ed8b21e135f8e742fd8834e8f9474743d3a250628)
+VERDICT  CONFORMS
+vectors file unchanged
+## R5: full suite
+572 passed, 1 skipped in 52.09s
+## R6: Go change reverted (git stash of ports/go/main.go)
+2 failed, 1 passed in 0.68s
