@@ -1,0 +1,8 @@
+version: 2
+updates:
+  # Keep the pinned action SHAs current. PRs only — nothing merges itself.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
