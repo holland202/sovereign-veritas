@@ -1,0 +1,116 @@
+{
+  "suite": "SOVEREIGN VERITAS COVERING SUITE",
+  "generation": "02",
+  "project_id": "LINKEDIN-SOVEREIGN-VERITAS-EVAL",
+  "funding": "UNFUNDED",
+  "source": "Built by the StegVerse Build Lane (coordinator session, Muse) 2026-11-12: GEN 02 cure generation of the covering for holland202/sovereign-veritas; GEN 01 preserved separately as the baseline",
+  "derived_from": {
+    "template": "SUITE__TEMPLATE GEN 01",
+    "template_manifest_sha256": "755683709be792e6e7d24f6f781785a20fb82852aac040215d2d5c7644370b53",
+    "self_check_sha256": "7077bb42ec4a1e8169707e025df6f44a1c7b8ead7f857a4af0d19539e5f41748",
+    "checker_note": "GEN 02: self_check.py retains every template check verbatim and adds a vacancy layer (checks named 'vacancy:'); self_check_sha256 records the extended checker's hash."
+  },
+  "manifest_excludes": "PACKAGE__MANIFEST__01.json (this file)",
+  "members": [
+    {
+      "file": "ASSESSMENT__01.md",
+      "bytes": 4264,
+      "sha256": "97f0ba6eeffe9b238d824731abc9332ac750aaca2bef499941ba0184e115cde2"
+    },
+    {
+      "file": "COMPENSATION__BASIS__01.md",
+      "bytes": 2998,
+      "sha256": "6dd260b8ddd9126cb6f5716ea064c67daacfb1ac14571fa7d241c3231eaf3562"
+    },
+    {
+      "file": "CONFORMANCE__PROOF__01.json",
+      "bytes": 1163,
+      "sha256": "091eb307cf370ab700e54b267880058ad8c5c75f80029329d3fb0bc5d921cbe3"
+    },
+    {
+      "file": "COVER__PACKAGE__01.md",
+      "bytes": 1246,
+      "sha256": "b724d878aa9d7e5069e324b748c72089ea7061c1cd5f50a206b7752f988eaefa"
+    },
+    {
+      "file": "CURE__RECORD__01.md",
+      "bytes": 4742,
+      "sha256": "b77dc3b7fb94e9e5af44a8006c2e883df0b1e5e1e1d8f132ac12cd811debafc2"
+    },
+    {
+      "file": "EXPLANATION__01.md",
+      "bytes": 7269,
+      "sha256": "54f0b0cdd3ed03939fb5ea56702eb587092de476e7ce5b01bdec2592703f8da7"
+    },
+    {
+      "file": "FUNDING__STATEMENT__01.md",
+      "bytes": 2298,
+      "sha256": "542998f47edca6b788b628680d42b5b3cbc7cacce03db236796e7ef7f6db022d"
+    },
+    {
+      "file": "LEDGER__01.md",
+      "bytes": 2841,
+      "sha256": "bf1d53f4175fad851c8eed084def21eb64e4577e03e1c1a70547467669e9ad53"
+    },
+    {
+      "file": "README.md",
+      "bytes": 1971,
+      "sha256": "12e70caef8acbe5bac8352e7ee561069b3e3b28025df4e5d6be79d9dc79fe855"
+    },
+    {
+      "file": "REFERENCES__01.md",
+      "bytes": 3200,
+      "sha256": "6d6af0bf4aa7a09691a0ed4b8473692b8d9f8aa9a31b3ec86d5a2e758a9605cb"
+    },
+    {
+      "file": "REPRODUCTION__STATUS__01.md",
+      "bytes": 1652,
+      "sha256": "aa55cf65057b002fff2f0729b6748011b6c06e141f321690782e68b765638de4"
+    },
+    {
+      "file": "SPEC__MEMBER__01.md",
+      "bytes": 4756,
+      "sha256": "2016def2579730cb975dd4967ea9c8bb2ac12a461b86f9e5b061fcd147ffacb5"
+    },
+    {
+      "file": "SUITE__CHARTER__01.md",
+      "bytes": 3265,
+      "sha256": "2753753bdad6e01338dca91740dec2187af4eed123aaae2c2de541299fa3d074"
+    },
+    {
+      "file": "guarded_workflow.py",
+      "bytes": 5127,
+      "sha256": "fe1f082c1b07b2051e148db46edbf16f5f12f18ac98923b69530e6637b42ac4b"
+    },
+    {
+      "file": "run_cover_tests.py",
+      "bytes": 8642,
+      "sha256": "a4bf031d5b479258f626aa619bf2b9612d1d4b94433fca9c88ffca70ab6dac54"
+    },
+    {
+      "file": "self_check.py",
+      "bytes": 4802,
+      "sha256": "7077bb42ec4a1e8169707e025df6f44a1c7b8ead7f857a4af0d19539e5f41748"
+    },
+    {
+      "file": "test_lock_contention.py",
+      "bytes": 4955,
+      "sha256": "78337b8351d652966ec0867e99e6b757ae97077204b8ed1deca4b8be3a6936bf"
+    },
+    {
+      "file": "test_non_vacuity.py",
+      "bytes": 4650,
+      "sha256": "a858a1ac675137f7c7c18fe0032a87a21f7ede9b082834d8db44d8c7896498b8"
+    },
+    {
+      "file": "transition_ledger.py",
+      "bytes": 8332,
+      "sha256": "18612295ee24c0c8daa5ac139c435904d804073757def7e90cbc6677a452a290"
+    },
+    {
+      "file": "verify_transition.py",
+      "bytes": 5610,
+      "sha256": "97db5fa9c68d61ae79b260125ea8fb6047e05554c6dd15e868d004f99a31f9c9"
+    }
+  ]
+}

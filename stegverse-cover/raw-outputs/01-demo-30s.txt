@@ -1,0 +1,10 @@
+$ /tmp/sv-venv/bin/python tools/demo_30s.py
+[run 2026-11-12, upstream pinned 13c663b3a3b058b7170fd3628325c1361112d07d]
+    gate decision with a declared runtime state: ALLOW
+ok  1 genuine package                            exit 0  VERDICT  CONSISTENT  freshness=NOT_PROVEN  authenticity=NOT_PROVEN  (178 ms)
+    gate decision with no runtime state:          REFUSE ['runtime_state_unavailable']
+ok  2 policy edited, not resealed                exit 1  VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN  failed: package_digest  (218 ms)
+ok  3 authorization revoked, digests resealed    exit 1  VERDICT  1 check(s) failed  freshness=NOT_PROVEN  authenticity=NOT_PROVEN  failed: gate_replay  (186 ms)
+    verifier wall time, genuine package, 5 runs (incl. Python start): min 168 ms, max 178 ms
+DEMO PASS
+[exit 0]

@@ -1,0 +1,13 @@
+$ /tmp/sv-venv/bin/python tools/execution_boundary_probe.py --expect-fix
+[run 2026-11-12, upstream pinned 13c663b3a3b058b7170fd3628325c1361112d07d]
+XB-1 | expecting the refuse-before-effect fix
+AS REGISTERED      X0   effects 2 records 2 errors 0  (registered 2/2/0)  first error: -
+AS REGISTERED      X0r  effects 0 records 1 errors 0  (registered 0/1/0)  first error: -
+AS REGISTERED      X1   effects 1 records 1 errors 1  (registered 1/1/1)  first error: ValueError: duplicate record_id refused before execution: dup
+AS REGISTERED      X2   effects 1 records 1 errors 1  (registered 1/1/1)  first error: ValueError: duplicate record_id refused before execution: dup
+AS REGISTERED      X3   effects 1 records 1 errors 1  (registered 1/1/1)  first error: ValueError: duplicate record_id refused before execution: dup
+AS REGISTERED      X4   effects 2 records 1 errors 1  (registered 2/1/1)  first error: ValueError: duplicate record_id: race
+AS REGISTERED      X5   effects 1 records 0 errors 1  (registered 1/0/1)  first error: OSError: simulated write failure (disk full)
+AS REGISTERED      X6   effects 0 records 1 errors 1  (registered 0/1/1)  first error: RuntimeError: executor failed before any effect
+VERDICT  8 of 8 as registered
+[exit 0]

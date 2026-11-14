@@ -1,0 +1,11 @@
+$ /tmp/sv-venv/bin/python /home/hatch/workspace/sv-cover/run_cover_tests.py
+[run 2026-11-12, upstream pinned 13c663b3a3b058b7170fd3628325c1361112d07d]
+ok   C0 anti-vacuity: 2 effects, pair CONSISTENT  effects=2 failures=[]
+ok   C1 duplicate refused before effect (no has_record sink)  refused=True effects=1
+ok   C2 race: exactly one effect  effects=1 refusals=['ValueError']
+ok   C3 X5: completion stands, asymmetry named (not silence)  kinds=['INTENT', 'COMPLETION'] verifier_failures=['V4 COMPLETION without its evidence record: x5']
+ok   C4 EO-1 pair mismatch FAILS (V5)  failures=['V5 COMPLETION exists for a record claiming no execution: eo1']
+ok   C5 SUCCEEDED with no COMPLETION FAILS (V3)  failures=['V3 SUCCEEDED claimed with no COMPLETION: ghost']
+ok   C6 executor failure: UNKNOWN held, retry refused before executor  kinds=['INTENT', 'UNKNOWN'] refused=True executor_calls=1
+COVER VERDICT  PASS - 7/7 as registered
+[exit 0]
