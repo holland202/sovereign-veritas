@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: keep line endings as committed (file hashes and gate_constraint's md5 lines depend on it)
         run: git config --global core.autocrlf false
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.14"
@@ -50,7 +50,7 @@ jobs:
           - { leg: L5-s390x-bigendian, arch: s390x }
           - { leg: L6-ppc64le,         arch: ppc64le }
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: mkdir -p "${{ runner.temp }}/out"
       - uses: uraimo/run-on-arch-action@9893a0f995e5148dcc313ba661820f3992cffcc1 # v3.3
         with:
@@ -74,7 +74,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.14"
