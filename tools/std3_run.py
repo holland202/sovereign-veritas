@@ -3,6 +3,11 @@
 
   python tools/std3_run.py /path/to/oasb              run ARP + silent/echo/flag, judge
   python tools/std3_run.py /path/to/oasb --sabotage   replace adapter results with ARP's (P2 and P3 must refute)
+  --cached                                            judge the saved reports in results/std3/, run nothing
+  --expect-scenarios=N                                refuse to judge unless exactly N scenario tests ran under ARP
+
+The judge refuses (exit 2) when the four reports do not hold the same non-empty set of test keys, or a key repeats.
+Report file names are keyed from their "src/" segment on, so saved reports can be judged from another checkout.
 
 Exit codes: 0 = judged (predictions may hold or be refuted); 1 = sabotage not caught; 2 = could not run.
 """
@@ -39,9 +44,11 @@ def vitest(root, adapter_path, out, cached):
     if not os.path.isfile(out):
         could_not_run(f"vitest wrote no report for {adapter_path or 'arp'}")
     d = json.load(open(out))
-    tests, msgs, file_errors = {}, {}, {}
+    tests, msgs, file_errors, dups = {}, {}, {}, []
     for f in d["testResults"]:
-        rel = os.path.relpath(f["name"], root).replace(os.sep, "/")
+        name = f["name"].replace(os.sep, "/")
+        m = re.search(r"(?:^|/)(src/.*)$", name)
+        rel = m.group(1) if m else os.path.relpath(f["name"], root).replace(os.sep, "/")
         if not f["assertionResults"]:
             file_errors[rel] = (f.get("message") or "")[:200]
         for a in f["assertionResults"]:
@@ -52,8 +59,12 @@ def vitest(root, adapter_path, out, cached):
             k = (rel, re.sub(r" \[requires: [^\]]*\]", "", full))
             if tag:
                 TAGS.setdefault(adapter_path or "arp", {})[k] = ", ".join(tag)
+            if k in tests:
+                dups.append(k)
             tests[k] = a["status"]
             msgs[k] = " ".join(a.get("failureMessages") or [])[:400]
+    if dups:
+        could_not_run(f"{len(dups)} repeated test keys in {out}, e.g. {dups[0]}")
     return d, tests, msgs, file_errors
 
 
@@ -63,17 +74,21 @@ def main():
         could_not_run(__doc__)
     root = os.path.abspath(args[0])
     sabotage = "--sabotage" in sys.argv
+    cached = sabotage or "--cached" in sys.argv  # --cached: judge the saved reports, run nothing
     outdir = os.path.join(HERE, "..", "results", "std3")
     os.makedirs(outdir, exist_ok=True)
     head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
     print(f"OASB     {head}")
 
-    bd, base, base_msg, berr = vitest(root, None, os.path.join(outdir, "arp.json"), sabotage)
+    bd, base, base_msg, berr = vitest(root, None, os.path.join(outdir, "arp.json"), cached)
     print(f"ARP      total {bd['numTotalTests']} passed {bd['numPassedTests']} failed {bd['numFailedTests']} "
           f"skipped {bd['numPendingTests']}  load errors {len(berr)} {sorted(berr)[:3]}")
     runs, run_msg = {}, {}
     for name, fn in ADAPTERS.items():
-        d, t, m, err = vitest(root, os.path.join(HERE, "std2_adapters", fn), os.path.join(outdir, f"{name}.json"), sabotage)
+        d, t, m, err = vitest(root, os.path.join(HERE, "std2_adapters", fn), os.path.join(outdir, f"{name}.json"), cached)
+        if set(t) != set(base):
+            could_not_run(f"{name} report and ARP report hold different test keys "
+                          f"({len(set(t) - set(base))} only in {name}, {len(set(base) - set(t))} only in ARP)")
         if sabotage:
             t, m = dict(base), dict(base_msg)
         runs[name], run_msg[name] = t, m
@@ -92,6 +107,12 @@ def main():
 
     # P2: at most 5% of scenario tests (not skipped under ARP) do not move.
     denom = [k for k, s in base.items() if k[0].startswith(SCENARIO) and s != "skipped"]
+    if not denom:
+        could_not_run("no scenario tests found in the ARP report")
+    expect = [a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--expect-scenarios=")]
+    if expect and len(denom) != int(expect[0]):
+        could_not_run(f"{len(denom)} scenario tests ran under ARP, expected {expect[0]}")
+    print(f"INVENTORY {len(base)} test keys, identical in all four reports; {len(denom)} scenario tests ran under ARP")
     still = sorted(k for k in denom if all(runs[n].get(k) == base[k] for n in runs))
     share = len(still) / len(denom) if denom else 1.0
     p2 = bool(denom) and share <= 0.05
@@ -131,6 +152,8 @@ def main():
     for k in sorted(set(named))[:10]:
         print("           gated:", k[0], "|", k[1])
 
+    if cached and not sabotage:
+        return
     if sabotage:
         caught = not (p2 and p3)
         print("SABOTAGE", "caught (P2 or P3 refuted)" if caught else "NOT CAUGHT")

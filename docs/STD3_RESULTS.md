@@ -103,3 +103,53 @@ assert on the injected events only, is the maintainer's call.
 Why M1 is 0: which path the atomic process, network and filesystem tests take when the adapter declares those
 capabilities but has no `observe*` methods. Read the 15 atomic monitor tests' results under silent before
 claiming anything about them.
+
+## Amendment 1 (2026-11-25): a harness defect found by audit, and what the 212 is made of
+
+Added after the results above; nothing above is edited.
+
+**The defect (found by ChatGPT, `std3/chatgpt/005` on PR #121; reproduced by Claude).** Judging the saved reports
+from a checkout at a different path than the one they were made in, the harness keyed test files by a path relative
+to the new checkout, so no test matched the scenario directories. Under `--sabotage` it then printed
+`REFUTED P2 scenario tests not moving: 0 of 0 (100.0%)` and `SABOTAGE caught`, exit 0: the control reported
+success after judging nothing. Claude's reproduction, from a copy of OASB's `src/` at `/home/claude/oasb_moved`:
+
+```
+REFUTED  P2  scenario tests not moving: 0 of 0 (100.0%)
+SABOTAGE caught (P2 or P3 refuted)
+```
+
+The original run is not affected: its reports were judged in the checkout that made them, and ChatGPT's recount
+from the saved reports matches every line (CONTRIBUTOR REPORTED, consistent with Claude's own `--cached` replay).
+
+**The fix (`tools/std3_run.py`).** Files are keyed from their `src/` segment on. The judge refuses (exit 2) when
+the four reports do not hold the same non-empty set of test keys, when a key repeats, or, with
+`--expect-scenarios=N`, when the scenario count is not N. `--cached` judges the saved reports without running
+anything. Relocated sabotage now prints:
+
+```
+INVENTORY 445 test keys, identical in all four reports; 220 scenario tests ran under ARP
+REFUTED  P2  scenario tests not moving: 220 of 220 (100.0%)
+SABOTAGE caught (P2 or P3 refuted)
+```
+
+**Regression (`tools/test_std3_run.py`).** From a temporary directory: R1 relocated sabotage with
+`--expect-scenarios=220` must judge 220 of 220 and report caught; R2 `--expect-scenarios=219` must exit 2;
+R3 (given an OASB checkout) `--cached` must reproduce every judgment line of `results/std3/run.txt`. All three pass
+on the fixed harness. R1 and R2 fail on the harness at `eec4fdc`. R3 fails when one number in `run.txt` is altered.
+
+**What the 212 moving tests are made of** (Claude-run on the saved reports; the 9 and the 203 were first
+reported by ChatGPT):
+
+| Kind of move | Tests |
+|---|---|
+| Changed verdict (pass/fail) under at least one adapter, not explained below | 144 |
+| Failed under all three on OASB's own interface check: "the adapter declares process-monitoring but has no observeProcesses()" (filesystem 28, process 16, network 15) | 59 |
+| Passed under ARP, N/A under all three (the 8 capability-gated tests, plus AT-PROC-001 `should verify the process monitor is actively running`, which skips for any adapter that is not ARP) | 9 |
+
+All 212 still show the test reaches the plugged-in adapter, which is what oasb#40 was about. But 59 of them move
+because the frozen STD-2 adapters predate the `observe*` methods, not because of a detection verdict.
+
+**M1 explained.** M1 was 0 because OASB checks for the missing method itself and fails with the message above; the
+string `is not a function` never appears. M1 measured the wrong string. The next unrun test in the original section
+is answered by this.
