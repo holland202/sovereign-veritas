@@ -1,0 +1,29 @@
+{
+  "adapter": "arp",
+  "product": "arp-guard",
+  "version": "0.3.0",
+  "capabilities": [
+    "a2a-scanning",
+    "anomaly-detection",
+    "baseline-persistence",
+    "budget-management",
+    "connection-burst-detection",
+    "enforcement-alert",
+    "enforcement-kill",
+    "enforcement-log",
+    "enforcement-pause",
+    "enforcement-resume",
+    "event-correlation",
+    "filesystem-monitoring",
+    "http-response-scanning",
+    "mcp-scanning",
+    "network-monitoring",
+    "pattern-scanning",
+    "process-monitoring",
+    "prompt-input-scanning",
+    "prompt-output-scanning"
+  ],
+  "results": {
+    "sha256": "2310f84e22271f8e4c520b4bc2debbba7157fbdf7458a7c8e6863f00d02bcf1b"
+  }
+}

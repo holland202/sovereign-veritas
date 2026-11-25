@@ -1,0 +1,7 @@
+   × BL-001: Normal Agent Profile - Zero False Positives > should produce zero violations or threats from normal agent activity 8ms
+     → expected 50 to be 52 // Object.is equality
+   × BL-001: Normal Agent Profile - Zero False Positives > should correctly attribute events to all 3 monitor sources 3ms
+     → expected [ { id: 'std2-56', …(7) }, …(4) ] to have a length of 6 but got 5
+   ✓ BL-001: Normal Agent Profile - Zero False Positives > should handle mixed info and low severity without escalation 1ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 1 passed (3)

@@ -1,0 +1,26 @@
+{
+  "adapter": "/home/claude/sovereign-veritas/tools/std2_adapters/echo.cjs",
+  "product": "std2-echo",
+  "version": "0",
+  "capabilities": [
+    "a2a-scanning",
+    "anomaly-detection",
+    "budget-management",
+    "enforcement-alert",
+    "enforcement-kill",
+    "enforcement-log",
+    "enforcement-pause",
+    "enforcement-resume",
+    "event-correlation",
+    "filesystem-monitoring",
+    "mcp-scanning",
+    "network-monitoring",
+    "pattern-scanning",
+    "process-monitoring",
+    "prompt-input-scanning",
+    "prompt-output-scanning"
+  ],
+  "results": {
+    "sha256": "434b88416baf5d9aa78229ad532aeda518896853244feec0645ac7dc03f71602"
+  }
+}

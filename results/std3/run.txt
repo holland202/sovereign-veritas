@@ -1,0 +1,29 @@
+OASB     7bf7deb
+ARP      total 445 passed 441 failed 1 skipped 3  load errors 0 []
+SILENT   total 445 passed 249 failed 186 skipped 10  load errors 0 []  M1 not-a-function 0
+ECHO     total 445 passed 266 failed 169 skipped 10  load errors 0 []  M1 not-a-function 0
+FLAG     total 445 passed 240 failed 195 skipped 10  load errors 0 []  M1 not-a-function 0
+HELD     P1  ARP failures outside e2e: 0; e2e failures: 1
+           ARP failed: src/e2e/E2E-002.live-process-detection.test.ts | E2E-002: Live Process Detection should detect a suspicious binary (curl) as a violation
+HELD     P2  scenario tests not moving: 8 of 220 (3.6%)
+           not moving: passed | src/atomic/enforcement/AT-ENF-001.log-action.test.ts | AT-ENF-001: Log Enforcement Action should include a reason string in the result
+           not moving: passed | src/atomic/intelligence/AT-INT-001.l0-rule-match.test.ts | AT-INT-001: L0 Rule-Based Classification should not trigger kill for threat events below critical severity
+           not moving: passed | src/e2e/E2E-001.live-filesystem-detection.test.ts | E2E-001: Live Filesystem Detection should allow normal file creation without triggering violations
+           not moving: failed | src/e2e/E2E-002.live-process-detection.test.ts | E2E-002: Live Process Detection should detect a suspicious binary (curl) as a violation
+           not moving: passed | src/e2e/E2E-004.interceptor-process.test.ts | E2E-004: Process Interceptor should restore original functions after stop
+           not moving: passed | src/e2e/E2E-005.interceptor-network.test.ts | E2E-005: Network Interceptor should restore net.Socket after stop
+           not moving: passed | src/e2e/E2E-006.interceptor-filesystem.test.ts | E2E-006: Filesystem Interceptor should restore fs module after stop
+           not moving: passed | src/integration/INT-007.budget-exhaustion-attack.test.ts | INT-007: Budget Exhaustion Attack should create a budget controller with tiny budget
+HELD     P3  BL-001 under flag   ['failed', 'failed', 'failed']
+HELD     P4  BL-001 under silent ['failed', 'failed', 'failed']
+REFUTED  P5  BL-001 under echo   ['failed', 'passed', 'failed']
+         (for comparison) BL-001 under ARP ['passed', 'passed', 'passed']
+HELD     P6  tests carrying a [requires: <undeclared>] tag under the adapters: 8; in gated files, skipped under all three: 8 of 12; of those also skipped under ARP: 0
+           gated: src/atomic/network/AT-NET-003.connection-burst.test.ts | AT-NET-003: Connection Burst Detection should flag a minute with ten times the connections of the minutes before it
+           gated: src/atomic/network/AT-NET-003.connection-burst.test.ts | AT-NET-003: Connection Burst Detection should not flag a steady connection rate
+           gated: src/atomic/network/AT-NET-003.connection-burst.test.ts | AT-NET-003: Connection Burst Detection should raise an alert for a connection burst through the rules
+           gated: src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should accumulate baseline data during a session
+           gated: src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should keep learning from the restored baseline, not from zero
+           gated: src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should keep the baseline after a restart
+           gated: src/baseline/BL-003.baseline-persistence.test.ts | BL-003: Baseline Persistence Across Restarts should keep the baselines of every source after a restart
+           gated: src/integration/INT-003.prompt-injection-response.test.ts | INT-003: Prompt Injection with Anomaly Detection HTTP response scanning should detect a system prompt leak in a raw HTTP response body through the proxy
