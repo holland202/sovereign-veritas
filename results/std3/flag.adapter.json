@@ -1,0 +1,26 @@
+{
+  "adapter": "/home/claude/sovereign-veritas/tools/std2_adapters/flag.cjs",
+  "product": "std2-flag",
+  "version": "0",
+  "capabilities": [
+    "a2a-scanning",
+    "anomaly-detection",
+    "budget-management",
+    "enforcement-alert",
+    "enforcement-kill",
+    "enforcement-log",
+    "enforcement-pause",
+    "enforcement-resume",
+    "event-correlation",
+    "filesystem-monitoring",
+    "mcp-scanning",
+    "network-monitoring",
+    "pattern-scanning",
+    "process-monitoring",
+    "prompt-input-scanning",
+    "prompt-output-scanning"
+  ],
+  "results": {
+    "sha256": "327a9eb8b4d3801f18f0f4ad460aa2376972e45845f08dabfb80eeafd1b51256"
+  }
+}

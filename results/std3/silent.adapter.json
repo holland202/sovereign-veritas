@@ -1,0 +1,26 @@
+{
+  "adapter": "/home/claude/sovereign-veritas/tools/std2_adapters/silent.cjs",
+  "product": "std2-silent",
+  "version": "0",
+  "capabilities": [
+    "a2a-scanning",
+    "anomaly-detection",
+    "budget-management",
+    "enforcement-alert",
+    "enforcement-kill",
+    "enforcement-log",
+    "enforcement-pause",
+    "enforcement-resume",
+    "event-correlation",
+    "filesystem-monitoring",
+    "mcp-scanning",
+    "network-monitoring",
+    "pattern-scanning",
+    "process-monitoring",
+    "prompt-input-scanning",
+    "prompt-output-scanning"
+  ],
+  "results": {
+    "sha256": "c90df650d167d78b7055023e1b3e81c81d6024e39e7114946e8788623644ce93"
+  }
+}

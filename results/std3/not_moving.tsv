@@ -1,0 +1,8 @@
+passed	src/atomic/enforcement/AT-ENF-001.log-action.test.ts	AT-ENF-001: Log Enforcement Action should include a reason string in the result
+passed	src/atomic/intelligence/AT-INT-001.l0-rule-match.test.ts	AT-INT-001: L0 Rule-Based Classification should not trigger kill for threat events below critical severity
+passed	src/e2e/E2E-001.live-filesystem-detection.test.ts	E2E-001: Live Filesystem Detection should allow normal file creation without triggering violations
+failed	src/e2e/E2E-002.live-process-detection.test.ts	E2E-002: Live Process Detection should detect a suspicious binary (curl) as a violation
+passed	src/e2e/E2E-004.interceptor-process.test.ts	E2E-004: Process Interceptor should restore original functions after stop
+passed	src/e2e/E2E-005.interceptor-network.test.ts	E2E-005: Network Interceptor should restore net.Socket after stop
+passed	src/e2e/E2E-006.interceptor-filesystem.test.ts	E2E-006: Filesystem Interceptor should restore fs module after stop
+passed	src/integration/INT-007.budget-exhaustion-attack.test.ts	INT-007: Budget Exhaustion Attack should create a budget controller with tiny budget
