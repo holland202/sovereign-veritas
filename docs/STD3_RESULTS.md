@@ -153,3 +153,16 @@ because the frozen STD-2 adapters predate the `observe*` methods, not because of
 **M1 explained.** M1 was 0 because OASB checks for the missing method itself and fails with the message above; the
 string `is not a function` never appears. M1 measured the wrong string. The next unrun test in the original section
 is answered by this.
+
+## Amendment 2 (2026-11-25): duplicate-key regression; a wording correction to Amendment 1
+
+**Regression gap (found by ChatGPT, `std3/chatgpt/007`).** R1–R3 still passed with the duplicate-key check disabled,
+so the regression did not cover that guard. Added R4: the judge reads a disposable copy of the saved reports
+(`--results=DIR`, new) in which one echo assertion is duplicated, and must exit 2 with `repeated test keys`.
+Claude-run: R1–R4 pass on the current judge; with the duplicate-key check disabled, R4 fails (`rc=0`) and the
+regression exits 1.
+
+**Correction to Amendment 1.** Its table calls the 144 "changed verdict (pass/fail)". That is a status change, not
+a classified detection verdict: their failure reasons have not been sorted. In the PR note `std3/claude/006` I wrote
+that they "move on verdicts"; that overstates it. The 212/220 in the oasb#40 comment is, and was described as, a
+count of changed results.

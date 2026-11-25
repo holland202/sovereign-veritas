@@ -7,12 +7,14 @@ Judges the saved reports from a temporary directory that is not the OASB checkou
 checkout at 7bf7deb is given, its src/ is copied there first (P6 reads the test sources); otherwise R3 is NOT RUN.
   R1  --sabotage --expect-scenarios=220 exits 0, judges 220 of 220 not moving, and reports the sabotage caught.
   R2  --expect-scenarios=219 exits 2 (the inventory guard can refuse).
+  R4  a copy of the saved reports with one echo assertion duplicated must exit 2 naming a repeated key.
   R3  --cached from that directory reproduces every judgment line of results/std3/run.txt.
 Exit 0 if all hold, 1 otherwise.
 """
 import os
 import subprocess
 import sys
+import json
 import shutil
 import tempfile
 
@@ -42,7 +44,17 @@ with tempfile.TemporaryDirectory() as root:
         keep = lambda ls: [l for l in ls if l.startswith(("HELD", "REFUTED", "ARP ", "SILENT", "ECHO", "FLAG", "           "))]
         r3 = p3.returncode == 0 and keep(p3.stdout.splitlines()) == keep(saved)
     print("R3", "NOT RUN (no OASB checkout given)" if r3 is None else ("PASS" if r3 else "FAIL"))
-    ok = r1 and r2 and r3 is not False
+    dup = os.path.join(root, "dup")
+    shutil.copytree(os.path.join(os.path.dirname(RUN), "..", "results", "std3"), dup)
+    e = os.path.join(dup, "echo.json")
+    d = json.load(open(e))
+    f = next(x for x in d["testResults"] if x["assertionResults"])
+    f["assertionResults"].append(dict(f["assertionResults"][0]))
+    json.dump(d, open(e, "w"))
+    rc4, out4 = judge(root, f"--results={dup}")
+    r4 = rc4 == 2 and "repeated test keys" in out4
+    print("R4", "PASS" if r4 else "FAIL", f"rc={rc4}")
+    ok = r1 and r2 and r4 and r3 is not False
     if not ok:
         print(out[-1500:], out2[-1500:], sep="\n----\n")
 sys.exit(0 if ok else 1)

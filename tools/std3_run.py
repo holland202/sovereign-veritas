@@ -4,6 +4,7 @@
   python tools/std3_run.py /path/to/oasb              run ARP + silent/echo/flag, judge
   python tools/std3_run.py /path/to/oasb --sabotage   replace adapter results with ARP's (P2 and P3 must refute)
   --cached                                            judge the saved reports in results/std3/, run nothing
+  --results=DIR                                       read and write reports in DIR, not results/std3/
   --expect-scenarios=N                                refuse to judge unless exactly N scenario tests ran under ARP
 
 The judge refuses (exit 2) when the four reports do not hold the same non-empty set of test keys, or a key repeats.
@@ -75,7 +76,8 @@ def main():
     root = os.path.abspath(args[0])
     sabotage = "--sabotage" in sys.argv
     cached = sabotage or "--cached" in sys.argv  # --cached: judge the saved reports, run nothing
-    outdir = os.path.join(HERE, "..", "results", "std3")
+    res = [a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--results=")]
+    outdir = res[0] if res else os.path.join(HERE, "..", "results", "std3")
     os.makedirs(outdir, exist_ok=True)
     head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True).stdout.strip()
     print(f"OASB     {head}")
